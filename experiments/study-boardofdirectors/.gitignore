@@ -1,0 +1,16 @@
+appendonly.aof
+nohup.out
+analysis/results/.Rhistory
+analysis/results/*
+analysis/visualization/data/
+node_modules/
+*.bat
+*.swp
+.Rproj.user
+
+#################
+## NetBeans
+#################
+
+*.iml
+/nbproject

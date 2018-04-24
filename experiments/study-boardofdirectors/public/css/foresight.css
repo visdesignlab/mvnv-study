@@ -1,0 +1,17 @@
+.visualsearch-fade {
+    opacity: 0.5 !important;
+}
+
+.visualsearch-highlight {
+	stroke: #636363 !important; /*grey*/
+	/*stroke: #252525 !important;*/ /*Dark grey close to black*/
+	stroke-width: 1.5px !important;
+}
+
+text.visualsearch-fade {
+    opacity: 0.2 !important;
+}
+
+.selectedCompany {
+	stroke: #231f20 !important;
+}

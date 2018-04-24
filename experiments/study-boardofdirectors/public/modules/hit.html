@@ -1,0 +1,90 @@
+
+  <div>
+  </div>
+
+  <script>
+  ( function() {
+    var data  = {};
+
+
+    init();
+
+    function finishDataLog(){
+      if(currentSearch){
+            currentSearch.end = Date.now();
+            currentSearch.duration = currentSearch.end - currentSearch.start;
+            userData.searchLog.push(currentSearch);
+            currentSearch = null
+      }
+      if(currentSection){
+        currentSection['end'] = Date.now();
+        currentSection['duration'] = currentSection['end'] - currentSection['start'];
+        if(currentSection['duration'] > 100){
+            userData['sectionLog'].push(currentSection);
+            //console.log(userData['sectionLog'])
+        }
+        currentSection = null;
+      }
+      
+    }
+
+    function init() {
+
+      experimentr.hideNext();
+
+      d3.select('#hit').style('display', 'inline');
+      loadBoardroom();
+
+      experimentr.startTimer('exploration');
+
+      // "click here when you're finished" on bottom ends it
+      d3.select('#finished')
+      .on('click', function() { 
+        console.log("finished"); 
+        finishDataLog();
+        validate();
+       });
+    }
+
+    function validate() {
+      // Process our data for storage
+      //generate a list of uniqueVisit
+      userData['uniqueVisitArray'] = userData.visitLog.map(function(d){
+        return d['chartCode'];
+      })
+      // add search with name perfectly matched
+      var searchArray = userData.searchLog.map(function(d){
+        return d['content'].toLowerCase()
+      })
+      //console.log(searchArray)
+
+      searchArray = _.unique(searchArray)
+      //console.log(searchArray)
+      searchArray = searchData.filter(function(option){
+        for(var searched in searchArray){
+          if(searchArray[searched] === option.toLowerCase())
+            return true;
+        }
+        return false;
+      })
+      //console.log(searchArray)
+
+      userData['uniqueVisitArray'] = userData['uniqueVisitArray'].concat(searchArray)
+      userData['uniqueVisitArray']  = _.unique(userData['uniqueVisitArray'], function(d){return d.toLowerCase()})
+
+      //stringify visitLog and searchLog
+      userData.visitLog = JSON.stringify(userData.visitLog);
+      userData.searchLog = JSON.stringify(userData.searchLog)
+      userData['sectionLog'] = JSON.stringify(userData['sectionLog'])
+      
+      // Wrap up
+      experimentr.addData(userData);
+      experimentr.endTimer('exploration');
+      d3.select('#hit').style('display', 'none');
+      experimentr.next();
+
+    }
+
+  }());
+  </script>
+
