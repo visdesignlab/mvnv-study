@@ -1,13 +1,11 @@
-The Effects of Adding Search Functionality to Interactive Visualizations on the Web
+Amazon Turk Study for Multivariate Network Visualization Techniques 
+
 ===================
 
-![Search-in-Vis](docs/img/searchinvis.png?raw=true)
-
-This repo contains the experiment data and code from our [CHI '18 paper](docs/feng2018effects.pdf?raw=true). 
 
 Data
 ---
-The raw data from our experiments are in the [data](data) folder.
+The raw data from our experiments are stored in the [data](data) folder.
 
 Analysis
 ---
