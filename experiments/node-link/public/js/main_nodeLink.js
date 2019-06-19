@@ -249,7 +249,7 @@ function loadCollegeStructure(data) {
 }
 
 function showTooltip(d) {
-  tooltip
+  tooltips
     .style("top", d.y + d.r - size + "px")
     .style("left", d.x + 5 + "px")
     .transition()
@@ -307,173 +307,284 @@ function drawVis(root) {
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collision", d3.forceCollide().radius(radius));
 
+
   d3.json("../twitter_data/Eurovis2019Network.json", function(error, graph) {
     let toRemove = [];
 
-    console.log(graph)
+    // console.log(graph)
 
-    graph.links = graph.links.filter(l => {
-      let findSource = graph.nodes.find(n => l.source === n.id);
-      let findTarget = graph.nodes.find(n => l.target === n.id);
+    d3.json("../twitter_data/Eurovis2019Tweets.json", function(tweets) {
 
-      if (findSource && findTarget) {
-        return true;
-      } else {
-        return false;
+
+// let strLines = tweets.split( '{"created_at"' );
+
+// console.log('strLines',strLines)
+
+// // strLines.shift();
+
+// for (var i in strLines) {
+//   let tweet = strLines[i];
+//   console.log(tweet)
+//   var obj = JSON.parse(tweet);
+//   console.log(obj);
+// }
+
+console.log(graph.nodes);
+ graph.links=[];
+
+let newGraph = {'nodes':[],'links':[]};
+
+  //create edges from tweets. 
+
+  tweets = tweets.tweets;
+
+  tweets.map((tweet)=>{
+
+    //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person. 
+    tweet.entities.user_mentions.map(mention=>{
+      let source = graph.nodes.find(n=>n.id === tweet.user.id);
+      let target = graph.nodes.find(n=>n.id === mention.id);
+
+
+      if (source && target){
+        let link = {'source':source.id,'target':target.id,'type':'mentions'}
+
+        newGraph.links.push(link);
+        if (!newGraph.nodes.find(n=>n===source)){
+          newGraph.nodes.push(source);
+        }
+        if (!newGraph.nodes.find(n=>n===target)){
+          newGraph.nodes.push(target);
+        }
       }
-    });
+      // console.log('link',link)
+      
+    })
 
-    //subsample graph
-    // graph.links = graph.links.filter(d => Math.random() > 0.75);
+    
 
-    // graph.nodes = graph.nodes.filter(n => {
-    //   if (graph.links.find(l => l.source === n.id || l.target === n.id)) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // });
+    //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
+    if (tweet.retweeted_status){
+      let source = graph.nodes.find(n=>n.id === tweet.user.id);
+      let target = graph.nodes.find(n=>n.id === tweet.retweeted_status.user.id);
 
-    graph.nodes.map(n => {
-      n.attr1 = Math.random();
-      n.attr2 = Math.random();
-      n.atrr3 = Math.random();
-    });
 
-    let color = d3
-      .scaleLinear()
-      .domain(d3.extent(graph.nodes.map(n => n.statuses_count)))
-      .range(["purple", "orange"]);
+      if (source && target){
+        let link = {'source':source.id,'target':target.id,'type':'retweet'}
 
-      let size = d3
-      .scaleLinear()
-      .domain(d3.extent(graph.nodes.map(n => n.followers_count)))
-      .range([10,20]);
+        newGraph.links.push(link);
+        if (!newGraph.nodes.find(n=>n===source)){
+          newGraph.nodes.push(source);
+        }
+        if (!newGraph.nodes.find(n=>n===target)){
+          newGraph.nodes.push(target);
+        }
+      } 
+    
 
-    console.log(color.domain(), color.range());
 
-    //set datalist property for search box:
-
-    d3.select("#search-input").attr("list", "characters");
-    let inputParent = d3.select("#search-input").node().parentNode;
-
-    let datalist = d3
-      .select(inputParent)
-      .append("datalist")
-      .attr("id", "characters");
-
-    let options = datalist.selectAll("option").data(graph.nodes);
-
-    let optionsEnter = options.enter().append("option");
-    options.exit().remove();
-
-    options = optionsEnter.merge(options);
-    options.attr("value", d => d.id);
-
-    if (error) throw error;
-    // var link = svg
-    //   .append("g")
-    //   .attr("class", "links")
-    //   .selectAll("line")
-    //   .data(graph.links)
-    //   .enter()
-    //   .append("line")
-    //   .attr("stroke-width", function(d) {
-    //     return Math.sqrt(d.value);
-    //   });
-    var node = svg
-      .append("g")
-      .attr("class", "nodes")
-      .selectAll("circle")
-      .data(graph.nodes)
-      .enter()
-      .append("g");
-
-    node
-      .append("circle")
-      .attr("r", function(d) {
-        return size(d.followers_count);
-      })
-      .attr("fill", function(d) {
-        return color(d.statuses_count);
-      });
-
-    node
-      // .append("rect")
-      // .attr("width", radius)
-      // .attr("height", d => radius * d.attr1)
-      // .attr("x", -radius / 2)
-      // .attr("y", d => -(radius * d.attr1) / 2)
-      // .attr("fill", "black")
-
-    //Temporarily disable drag interaction
-      .call(
-        d3
-          .drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended)
-      );
-
-    node.on("click", function() {
-      d3.selectAll("circle").classed("clicked", false);
-      d3.select(this)
-        .select("circle")
-        .classed("clicked", true);
-    });
-
-    node.append("title").text(function(d) {
-      return d.id;
-    });
-    simulation.nodes(graph.nodes).on("tick", ticked);
-    simulation.force("link").links(graph.links);
-    function ticked() {
-      // link
-      //   .attr("x1", function(d) {
-      //     return d.source.x;
-      //   })
-      //   .attr("y1", function(d) {
-      //     return d.source.y;
-      //   })
-      //   .attr("x2", function(d) {
-      //     return d.target.x;
-      //   })
-      //   .attr("y2", function(d) {
-      //     return d.target.y;
-      //   });
-
-      //   node
-      //     .attr("cx", function(d) {
-      //       return (d.x = Math.max(radius, Math.min(width - radius, d.x)));
-      //     })
-      //     .attr("cy", function(d) {
-      //       return (d.y = Math.max(radius, Math.min(height - radius, d.y)));
-      //     });
-
-      node.attr(
-        "transform",
-        d =>
-          "translate(" +
-          Math.max(radius, Math.min(width - radius, d.x)) +
-          "," +
-          Math.max(radius, Math.min(height - radius, d.y)) +
-          ")"
-      );
-      // .attr("x", function(d) {
-      //   return (d.x = Math.max(radius, Math.min(width - radius, d.x)));
-      // })
-      // .attr("y", function(d) {
-      //   return (d.y = Math.max(radius, Math.min(height - radius, d.y)));
-      // });
-
-      //   node
-      //     .attr("cx", function(d) {
-      //       return d.x;
-      //     })
-      //     .attr("cy", function(d) {
-      //       return d.y;
-      //     });
     }
+
+    //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
+    if (tweet.in_reply_to_user_id_str){
+      let source = graph.nodes.find(n=>n.id === tweet.user.id);
+      let target = graph.nodes.find(n=>n.id === tweet.in_reply_to_user_id);
+  
+      if (source && target){
+        let link = {'source':source.id,'target':target.id,'type':'reply'}
+
+        newGraph.links.push(link);
+        if (!newGraph.nodes.find(n=>n===source)){
+          newGraph.nodes.push(source);
+        }
+        if (!newGraph.nodes.find(n=>n===target)){
+          newGraph.nodes.push(target);
+        }
+      }    
+  }
+
+  })
+
+  // console.log(newGraph)
+console.log(JSON.stringify(newGraph))
+  graph = newGraph;
+
+
+// graph.links = graph.links.filter(l => {
+//   let findSource = graph.nodes.find(n => l.source === n.id);
+//   let findTarget = graph.nodes.find(n => l.target === n.id);
+
+//   if (findSource && findTarget) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// });
+
+//subsample graph
+// graph.links = graph.links.filter(d => Math.random() > 0.75);
+
+// graph.nodes = graph.nodes.filter(n => {
+//   if (graph.links.find(l => l.source === n.id || l.target === n.id)) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// });
+
+
+let color = d3
+  .scaleLinear()
+  .domain(d3.extent(graph.nodes.map(n => n.statuses_count)))
+  .range(["purple", "orange"]);
+
+  let size = d3
+  .scaleLinear()
+  .domain(d3.extent(graph.nodes.map(n => n.followers_count)))
+  .range([10,20]);
+
+// console.log(color.domain(), color.range());
+
+//set datalist property for search box:
+
+d3.select("#search-input").attr("list", "characters");
+let inputParent = d3.select("#search-input").node().parentNode;
+
+let datalist = d3
+  .select(inputParent)
+  .append("datalist")
+  .attr("id", "characters");
+
+let options = datalist.selectAll("option").data(graph.nodes);
+
+let optionsEnter = options.enter().append("option");
+options.exit().remove();
+
+options = optionsEnter.merge(options);
+options.attr("value", d => d.id);
+
+if (error) throw error;
+var link = svg
+  .append("g")
+  .attr("class", "links")
+  .selectAll("line")
+  .data(graph.links);
+
+  let linkEnter = link
+  .enter()
+  .append("line")
+
+  link.exit().remove();
+
+
+  link = linkEnter.merge(link);
+
+  link
+  .style("stroke-width", 4)
+  .style("stroke", function(d) {
+    return d.type === 'reply' ? 'green' : (d.type === 'retweet' ? 'black' : 'orange');
+  })
+  // .style('opacity',1)
+
+
+var node = svg
+  .append("g")
+  .attr("class", "nodes")
+  .selectAll("circle")
+  .data(graph.nodes)
+  .enter()
+  .append("g");
+
+node
+  .append("circle")
+  .attr("r", function(d) {
+    return size(d.followers_count);
+  })
+  .attr("fill", function(d) {
+    return color(d.statuses_count);
+  });
+
+node
+  // .append("rect")
+  // .attr("width", radius)
+  // .attr("height", d => radius * d.attr1)
+  // .attr("x", -radius / 2)
+  // .attr("y", d => -(radius * d.attr1) / 2)
+  // .attr("fill", "black")
+
+//Temporarily disable drag interaction
+  .call(
+    d3
+      .drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended)
+  );
+
+node.on("click", function() {
+  d3.selectAll("circle").classed("clicked", false);
+  d3.select(this)
+    .select("circle")
+    .classed("clicked", true);
+});
+
+node.append("title").text(function(d) {
+  return d.id;
+});
+simulation.nodes(graph.nodes).on("tick", ticked);
+simulation.force("link").links(graph.links);
+function ticked() {
+  link
+    .attr("x1", function(d) {
+      return d.source.x;
+    })
+    .attr("y1", function(d) {
+      return d.source.y;
+    })
+    .attr("x2", function(d) {
+      return d.target.x;
+    })
+    .attr("y2", function(d) {
+      return d.target.y;
+    });
+
+  //   node
+  //     .attr("cx", function(d) {
+  //       return (d.x = Math.max(radius, Math.min(width - radius, d.x)));
+  //     })
+  //     .attr("cy", function(d) {
+  //       return (d.y = Math.max(radius, Math.min(height - radius, d.y)));
+  //     });
+
+  node.attr(
+    "transform",
+    d =>
+      "translate(" +
+      Math.max(radius, Math.min(width - radius, d.x)) +
+      "," +
+      Math.max(radius, Math.min(height - radius, d.y)) +
+      ")"
+  );
+  // .attr("x", function(d) {
+  //   return (d.x = Math.max(radius, Math.min(width - radius, d.x)));
+  // })
+  // .attr("y", function(d) {
+  //   return (d.y = Math.max(radius, Math.min(height - radius, d.y)));
+  // });
+
+  //   node
+  //     .attr("cx", function(d) {
+  //       return d.x;
+  //     })
+  //     .attr("cy", function(d) {
+  //       return d.y;
+  //     });
+}
+
+
+    })
+
+    
   });
   function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -505,11 +616,11 @@ function boot(error, data) {
   );
   color.domain([Math.pow(13000, 2), Math.pow(65000, 2)]);
 
-  console.log(
-    d3.extent(data, function(d) {
-      return Math.sqrt(d[COLOR_ATTR] / COLOR_DIVIDER);
-    })
-  );
+  // console.log(
+  //   d3.extent(data, function(d) {
+  //     return Math.sqrt(d[COLOR_ATTR] / COLOR_DIVIDER);
+  //   })
+  // );
   //console.log(d3.extent(data, function(d) { return d[RADIUS_ATTR]; }))
 
   //var root = loadExoplanetStructure(data);
