@@ -406,7 +406,7 @@ let newGraph = {'nodes':[],'links':[]};
   })
 
   // console.log(newGraph)
-console.log(JSON.stringify(newGraph))
+// console.log(JSON.stringify(newGraph))
   graph = newGraph;
 
 
