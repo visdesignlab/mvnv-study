@@ -1,0 +1,35 @@
+.container {
+  float: left;
+
+}
+
+.background {
+  fill: #eee;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 400px;
+  border-radius: 5px;
+  padding: 2px;
+  background: white;
+  border: 0px;
+  pointer-events: none;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+text.active {
+  fill: red;
+  font-weight: bold;
+}
+
+line {
+  stroke: #fff;
+}
+
+body {
+  background-color: black;
+  color: black;
+}
