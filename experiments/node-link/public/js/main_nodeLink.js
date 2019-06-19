@@ -308,12 +308,12 @@ function drawVis(root) {
     .force("collision", d3.forceCollide().radius(radius));
 
 
-  d3.json("../twitter_data/Eurovis2019Network.json", function(error, graph) {
+  d3.json("../public/twitter_data/Eurovis2019Network.json", function(error, graph) {
     let toRemove = [];
 
     // console.log(graph)
 
-    d3.json("../twitter_data/Eurovis2019Tweets.json", function(tweets) {
+    d3.json("../public/twitter_data/Eurovis2019Tweets.json", function(tweets) {
 
 
 // let strLines = tweets.split( '{"created_at"' );
