@@ -53,7 +53,7 @@ var color = d3
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
 
-var size = 720;
+var size = 1300//720;
 
 var DATASET =
   //"exoplanets"
@@ -312,9 +312,9 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-300))
+    .force("charge", d3.forceManyBody() .strength(-500))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(radius));
+    // .force("collision", d3.forceCollide().radius(radius));
 
 
   d3.json("../public/twitter_data/Eurovis2019Network.json", function(error, graph) {
@@ -510,7 +510,7 @@ let optionsEnter = options.enter().append("option");
 options.exit().remove();
 
 options = optionsEnter.merge(options);
-options.attr("value", d => d.id);
+options.attr("value", d => d.screen_name);
 
 if (error) throw error;
 var link = svg
@@ -551,6 +551,7 @@ node
 
 node
   .append("rect")
+  .attr('class','bar')
   .attr("width", radius/2)
   .attr("height", d => friends_scale(d.friends_count))
   .attr("x", -radius/2 )
@@ -559,15 +560,22 @@ node
 
   node
   .append("rect")
+  .attr('class','bar')
   .attr("width", radius/2)
   .attr("height", d => follower_scale(d.followers_count))
   .attr("x", 0 )
   .attr("y", d => -(follower_scale(d.followers_count)) / 2)
 
-  node.selectAll('rect')
+  node.selectAll('.bar')
   .style('fill','black')
   .style('stroke',d=>nodeColor(d.type))
   .style('stroke-width','2px')
+
+  node
+  .append("rect")
+  .attr('class','labelBackground')
+  
+
 
   node.append("text")
   // .attr("dx",0)
@@ -579,6 +587,16 @@ node
   .attr('dx',function(d){ 
     return -d3.select(this).node().getBBox().width/2})
 
+  node.select('.labelBackground')
+  .style('fill','white')
+  .style('opacity',.5)
+  .attr("width", function(d){ 
+    return d3.select(d3.select(this).node().parentNode).select('text').node().getBBox().width})
+  .attr("height", '2em')
+  .attr("x", function(d){ 
+    return -d3.select(d3.select(this).node().parentNode).select('text').node().getBBox().width/2})
+  .attr("y","-42")
+ 
 node
   .call(
     d3
@@ -596,7 +614,7 @@ node.on("click", function() {
 });
 
 node.append("title").text(function(d) {
-  return d.id;
+  return d.screen_name;
 });
 simulation.nodes(graph.nodes).on("tick", ticked);
 simulation.force("link").links(graph.links);
@@ -664,7 +682,8 @@ function ticked() {
     d.fy = d3.event.y;
   }
   function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
+    // console.log(simulation.alpha())
+    if (simulation.apha()>3) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
   }
