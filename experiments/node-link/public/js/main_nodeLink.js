@@ -289,10 +289,19 @@ function visitItem(item, data) {
 
 //drawLesMis NodeLink
 function drawVis(root) {
+
+  // userData["windowWidth"] = $(window).width();
+  // userData["windowHeight"] = $(window).height();
+
+  console.log(userData)
+
+  // d3.select("svg").attr('width',userData.windowWidth);
+
+
   var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height"),
-    radius = 15;
+    radius = 20;
 
   //   var color = d3.scaleOrdinal(d3.schemeCategory20);
   var simulation = d3
@@ -311,25 +320,11 @@ function drawVis(root) {
   d3.json("../public/twitter_data/Eurovis2019Network.json", function(error, graph) {
     let toRemove = [];
 
-    // console.log(graph)
-
     d3.json("../public/twitter_data/Eurovis2019Tweets.json", function(tweets) {
 
 
-// let strLines = tweets.split( '{"created_at"' );
 
-// console.log('strLines',strLines)
-
-// // strLines.shift();
-
-// for (var i in strLines) {
-//   let tweet = strLines[i];
-//   console.log(tweet)
-//   var obj = JSON.parse(tweet);
-//   console.log(obj);
-// }
-
-console.log(graph.nodes);
+// console.log(graph.nodes);
  graph.links=[];
 
 let newGraph = {'nodes':[],'links':[]};
@@ -347,13 +342,23 @@ let newGraph = {'nodes':[],'links':[]};
 
 
       if (source && target){
-        let link = {'source':source.id,'target':target.id,'type':'mentions'}
-
-        newGraph.links.push(link);
-        if (!newGraph.nodes.find(n=>n===source)){
+        let link = {'source':source.id,'target':target.id,'type':'mentions','count':1}
+        let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
+        //either increase the count of an existing link or add a new link
+        if (!existingLink){
+          newGraph.links.push(link);
+        } else {
+          existingLink.count = existingLink.count +1;
+        }
+        
+        if (!newGraph.nodes.find(n=>n.id===source.id)){
+          //randomly assign a categorical variable 'type'
+          source.type = Math.random()>0.6 ? 'institution' : 'person';
           newGraph.nodes.push(source);
         }
-        if (!newGraph.nodes.find(n=>n===target)){
+        if (!newGraph.nodes.find(n=>n.id===target.id)){
+          //randomly assign a categorical variable 'type'
+          target.type = Math.random()>0.6 ? 'institution' : 'person';
           newGraph.nodes.push(target);
         }
       }
@@ -370,9 +375,16 @@ let newGraph = {'nodes':[],'links':[]};
 
 
       if (source && target){
-        let link = {'source':source.id,'target':target.id,'type':'retweet'}
+        let link = {'source':source.id,'target':target.id,'type':'retweet','count':1}
 
-        newGraph.links.push(link);
+        let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
+        //either increase the count of an existing link or add a new link
+        if (!existingLink){
+          newGraph.links.push(link);
+        } else {
+          existingLink.count = existingLink.count +1;
+        }
+
         if (!newGraph.nodes.find(n=>n===source)){
           newGraph.nodes.push(source);
         }
@@ -391,9 +403,16 @@ let newGraph = {'nodes':[],'links':[]};
       let target = graph.nodes.find(n=>n.id === tweet.in_reply_to_user_id);
   
       if (source && target){
-        let link = {'source':source.id,'target':target.id,'type':'reply'}
+        let link = {'source':source.id,'target':target.id,'type':'reply','count':1}
 
-        newGraph.links.push(link);
+        let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
+        //either increase the count of an existing link or add a new link
+        if (!existingLink){
+          newGraph.links.push(link);
+        } else {
+          existingLink.count = existingLink.count +1;
+        }
+
         if (!newGraph.nodes.find(n=>n===source)){
           newGraph.nodes.push(source);
         }
@@ -433,15 +452,45 @@ let newGraph = {'nodes':[],'links':[]};
 // });
 
 
-let color = d3
-  .scaleLinear()
-  .domain(d3.extent(graph.nodes.map(n => n.statuses_count)))
-  .range(["purple", "orange"]);
+// let color = d3
+//   .scaleLinear()
+//   .domain(d3.extent(graph.nodes.map(n => n.statuses_count)))
+//   .range(["purple", "orange"]);
 
-  let size = d3
+  let nodeColor = d3
+  .scaleOrdinal()
+  .domain(d3.extent(graph.nodes.map(n => n.type)))
+  .range(["#e6ab02", '#7570b3']);
+
+  let edgeColor = d3
+  .scaleOrdinal()
+  .domain(d3.extent(graph.links.map(l => l.type)))
+  .range(["#1b9e77", "#d95f02","#666666"]);
+
+  let edgeScale = d3
+  .scaleLinear()
+  .domain(d3.extent(graph.links.map(l => l.count)))
+  .range([2,10]);
+
+
+  let follower_scale = d3
   .scaleLinear()
   .domain(d3.extent(graph.nodes.map(n => n.followers_count)))
   .range([10,20]);
+
+  let friends_scale = d3
+  .scaleLinear()
+  .domain(d3.extent(graph.nodes.map(n => n.friends_count)))
+  .range([10,20]);
+
+
+  // console.log(
+  //   'friends',d3.extent(graph.nodes.map(n => n.friends_count)),
+  //   'followers',d3.extent(graph.nodes.map(n => n.followers_count)),
+  //   'favorites',d3.extent(graph.nodes.map(n => n.favourites_count)),
+  //   'listed',d3.extent(graph.nodes.map(n => n.listed_count)),
+  //   'status_count',d3.extent(graph.nodes.map(n => n.statuses_count))
+  // )
 
 // console.log(color.domain(), color.range());
 
@@ -480,9 +529,9 @@ var link = svg
   link = linkEnter.merge(link);
 
   link
-  .style("stroke-width", 4)
+  .style("stroke-width", l=>edgeScale(l.count))
   .style("stroke", function(d) {
-    return d.type === 'reply' ? 'green' : (d.type === 'retweet' ? 'black' : 'orange');
+    return edgeColor(d.type);
   })
   // .style('opacity',1)
 
@@ -497,22 +546,40 @@ var node = svg
 
 node
   .append("circle")
-  .attr("r", function(d) {
-    return size(d.followers_count);
-  })
-  .attr("fill", function(d) {
-    return color(d.statuses_count);
-  });
+  .attr("r", radius)
+  .attr("fill", d=>nodeColor(d.type));
 
 node
-  // .append("rect")
-  // .attr("width", radius)
-  // .attr("height", d => radius * d.attr1)
-  // .attr("x", -radius / 2)
-  // .attr("y", d => -(radius * d.attr1) / 2)
-  // .attr("fill", "black")
+  .append("rect")
+  .attr("width", radius/2)
+  .attr("height", d => friends_scale(d.friends_count))
+  .attr("x", -radius/2 )
+  .attr("y", d => -(friends_scale(d.friends_count)) / 2)
+ 
 
-//Temporarily disable drag interaction
+  node
+  .append("rect")
+  .attr("width", radius/2)
+  .attr("height", d => follower_scale(d.followers_count))
+  .attr("x", 0 )
+  .attr("y", d => -(follower_scale(d.followers_count)) / 2)
+
+  node.selectAll('rect')
+  .style('fill','black')
+  .style('stroke',d=>nodeColor(d.type))
+  .style('stroke-width','2px')
+
+  node.append("text")
+  // .attr("dx",0)
+  .attr("dy", "-2em")
+  .classed('label',true)
+  .text(function(d) { return d.screen_name });
+
+  node.select('text')
+  .attr('dx',function(d){ 
+    return -d3.select(this).node().getBBox().width/2})
+
+node
   .call(
     d3
       .drag()
@@ -558,12 +625,13 @@ function ticked() {
 
   node.attr(
     "transform",
-    d =>
-      "translate(" +
-      Math.max(radius, Math.min(width - radius, d.x)) +
-      "," +
-      Math.max(radius, Math.min(height - radius, d.y)) +
-      ")"
+    d =>{
+      d.x = Math.max(radius, Math.min(width - radius, d.x));
+      d.y = Math.max(radius, Math.min(height - radius, d.y));
+      return "translate(" + d.x + "," + d.y +")"
+
+    }
+      
   );
   // .attr("x", function(d) {
   //   return (d.x = Math.max(radius, Math.min(width - radius, d.x)));
