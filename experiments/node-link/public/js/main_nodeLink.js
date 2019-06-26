@@ -662,9 +662,9 @@ function drawVis(root) {
           .selectAll("path")
           .classed("muted", d => !currentData.edges.find(n => n === d.id));
 
-        d3.select(".links")
-          .selectAll(".pathLabel")
-          .classed("hideLabel", d => !currentData.edges.find(n => n === d.id));
+        // d3.select(".links")
+        //   .selectAll(".pathLabel")
+        //   .classed("hideLabel", d => !currentData.edges.find(n => n === d.id));
 
         // console.log('pathData is ',d))
       });
