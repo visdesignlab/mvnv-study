@@ -332,8 +332,9 @@ let newGraph = {'nodes':[],'links':[]};
 let countSiblingLinks = function(graph,source, target) {
   var count = 0;
   let links = graph.links;
+
   for(var i = 0; i < links.length; ++i){
-      if( (links[i].source == source.id && links[i].target == target.id) || (links[i].source == target && links[i].target == source.id) )
+      if( (links[i].source.id == source.id && links[i].target.id == target.id) || (links[i].source.id == target.id && links[i].target.id == source.id) )
           count++;
   };
   return count;
@@ -344,7 +345,7 @@ let getSiblingLinks = function(graph,source, target) {
   let links = graph.links;
   for(var i = 0; i < links.length; ++i){
       if( (links[i].source.id == source.id && links[i].target.id == target.id) || (links[i].source.id == target.id && links[i].target.id == source.id) )
-          siblings.push(links[i].value);
+          siblings.push(links[i].type);
   };
   return siblings;
 };
@@ -356,7 +357,8 @@ let getSiblingLinks = function(graph,source, target) {
   let createEdge = function(source,target,type){
     if (source && target){
       let link = {'source':source.id,'target':target.id,type,'count':1,'id':source.id + target.id + type}
-      let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
+      let existingLink = newGraph.links.find(l=>
+        ((l.source === link.source && l.target === link.target) || (l.source === link.target && l.target === link.source)) && l.type === link.type);
       //either increase the count of an existing link or add a new link
       if (!existingLink){
         newGraph.links.push(link);
@@ -463,7 +465,7 @@ let getSiblingLinks = function(graph,source, target) {
   let nodeColor = d3
   .scaleOrdinal()
   .domain(d3.extent(graph.nodes.map(n => n.type)))
-  .range(["#e6ab02", '#7570b3']);
+  .range(["#bdbdbd", '#636363'])
 
   let edgeColor = d3
   .scaleOrdinal()
@@ -514,9 +516,7 @@ var link = svg
   let linkEnter = link
   .enter()
   .append("path")
-  .attr("id", function (d) {
-    return d.source+ "-" + d.type + "-" + d.target;
-    })
+  .attr("id", d=>d.id)
   .attr("class", "links")
 
 
@@ -563,10 +563,10 @@ node
   .attr("width", radius/2)
   .attr("height", d => follower_scale(d.followers_count))
   .attr("x", 0 )
-  .attr("y", d => -(follower_scale(d.followers_count)) / 2)
+  .attr("y", d => (friends_scale(d.friends_count)) / 2 - follower_scale(d.followers_count))
 
   node.selectAll('.bar')
-  .style('fill','black')
+  .style('fill','#000000')
   .style('stroke',d=>nodeColor(d.type))
   .style('stroke-width','2px')
 
@@ -615,7 +615,7 @@ node.on("click", function(currentData) {
   d3.select('.nodes').selectAll('g').classed('muted',d=>
     !(d === currentData || currentData.neighbors.find(n=>n === d.id)));  
 
-d3.select('.links').selectAll('line').classed('muted',d=>!(currentData.edges.find(n=>n === d.id)));
+d3.select('.links').selectAll('path').classed('muted',d=>!(currentData.edges.find(n=>n === d.id)));
    
 });
 
@@ -643,12 +643,12 @@ function arcPath(leftHand=true, d) {
 
       if (siblingCount > 1) {
           var siblings = getSiblingLinks(graph,d.source, d.target);
-          console.log(siblings);
-          var arcScale = d3.scale.ordinal()
+          var arcScale = d3.scaleOrdinal()
                                   .domain(siblings)
-                                  .rangePoints([1, siblingCount]);
-          drx = drx/(1 + (1/siblingCount) * (arcScale(d.value) - 1));
-          dry = dry/(1 + (1/siblingCount) * (arcScale(d.value) - 1));
+                                  .range([1, siblingCount]);
+
+          drx = drx/(1 + (1/siblingCount) * (arcScale(d.type) - 1));
+          dry = dry/(1 + (1/siblingCount) * (arcScale(d.type) - 1));
       }
 
   return "M" + x1 + "," + y1 + "A" + drx + ", " + dry + " " + xRotation + ", " + largeArc + ", " + sweep + " " + x2 + "," + y2;
