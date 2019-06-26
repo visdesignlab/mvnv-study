@@ -675,10 +675,10 @@ function drawVis(root) {
       simulation.nodes(graph.nodes).on("tick", ticked);
       simulation.force("link").links(graph.links);
 
-      for (var i = 0; i < 1000; ++i) simulation.tick();
-      simulation.stop();
+      // for (var i = 0; i < 1000; ++i) simulation.tick();
+      // simulation.stop();
 
-      function arcPath(leftHand = true, d) {
+      function arcPath(leftHand, d) {
         var x1 = leftHand ? d.source.x : d.target.x,
           y1 = leftHand ? d.source.y : d.target.y,
           x2 = leftHand ? d.target.x : d.source.x,
@@ -742,7 +742,10 @@ function drawVis(root) {
       updatePos();
 
       function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        if (!d3.event.active) 
+        simulation
+        .alphaTarget(0.1)
+        .restart();
         d.fx = d.x;
         d.fy = d.y;
       }
@@ -753,6 +756,7 @@ function drawVis(root) {
       }
       function dragended(d) {
         simulation.stop();
+        // simulation.velocityDecay(0.9)
         // console.log(simulation.alpha())
         //   if (simulation.apha()>3) simulation.alphaTarget(0);
         //   d.fx = null;
