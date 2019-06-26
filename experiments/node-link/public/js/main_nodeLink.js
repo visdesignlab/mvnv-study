@@ -312,9 +312,9 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody() .strength(-500))
+    .force("charge", d3.forceManyBody() .strength(-600))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    // .force("collision", d3.forceCollide().radius(radius));
+    .force("collision", d3.forceCollide().radius(radius*2.5)); 
 
 
   d3.json("../public/twitter_data/Eurovis2019Network.json", function(error, graph) {
@@ -329,9 +329,72 @@ function drawVis(root) {
 
 let newGraph = {'nodes':[],'links':[]};
 
+let countSiblingLinks = function(graph,source, target) {
+  var count = 0;
+  let links = graph.links;
+  for(var i = 0; i < links.length; ++i){
+      if( (links[i].source == source.id && links[i].target == target.id) || (links[i].source == target && links[i].target == source.id) )
+          count++;
+  };
+  return count;
+};
+
+let getSiblingLinks = function(graph,source, target) {
+  var siblings = [];
+  let links = graph.links;
+  for(var i = 0; i < links.length; ++i){
+      if( (links[i].source.id == source.id && links[i].target.id == target.id) || (links[i].source.id == target.id && links[i].target.id == source.id) )
+          siblings.push(links[i].value);
+  };
+  return siblings;
+};
+
   //create edges from tweets. 
 
   tweets = tweets.tweets;
+
+  let createEdge = function(source,target,type){
+    if (source && target){
+      let link = {'source':source.id,'target':target.id,type,'count':1,'id':source.id + target.id + type}
+      let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
+      //either increase the count of an existing link or add a new link
+      if (!existingLink){
+        newGraph.links.push(link);
+      } else {
+        existingLink.count = existingLink.count +1;
+      }
+      
+      if (!newGraph.nodes.find(n=>n.id===source.id)){
+        //randomly assign a categorical variable 'type'
+        source.type = Math.random()>0.6 ? 'institution' : 'person';
+        if (!existingLink){
+          source.neighbors = [target.id];
+          source.edges = [link.id];
+        }
+        newGraph.nodes.push(source);
+      } else {
+        if (!existingLink){
+          source.neighbors.push(target.id);
+          source.edges.push(link.id);
+        }
+      }
+      if (!newGraph.nodes.find(n=>n.id===target.id)){
+        //randomly assign a categorical variable 'type'
+        target.type = Math.random()>0.6 ? 'institution' : 'person';
+        if (!existingLink){
+          target.neighbors = [source.id];
+          target.edges = [link.id];
+        }
+        newGraph.nodes.push(target);
+        
+      } else {
+        if (!existingLink){
+          target.neighbors.push(source.id);
+          target.edges.push(link.id);
+        }
+      }
+    }
+  }
 
   tweets.map((tweet)=>{
 
@@ -340,30 +403,7 @@ let newGraph = {'nodes':[],'links':[]};
       let source = graph.nodes.find(n=>n.id === tweet.user.id);
       let target = graph.nodes.find(n=>n.id === mention.id);
 
-
-      if (source && target){
-        let link = {'source':source.id,'target':target.id,'type':'mentions','count':1}
-        let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
-        //either increase the count of an existing link or add a new link
-        if (!existingLink){
-          newGraph.links.push(link);
-        } else {
-          existingLink.count = existingLink.count +1;
-        }
-        
-        if (!newGraph.nodes.find(n=>n.id===source.id)){
-          //randomly assign a categorical variable 'type'
-          source.type = Math.random()>0.6 ? 'institution' : 'person';
-          newGraph.nodes.push(source);
-        }
-        if (!newGraph.nodes.find(n=>n.id===target.id)){
-          //randomly assign a categorical variable 'type'
-          target.type = Math.random()>0.6 ? 'institution' : 'person';
-          newGraph.nodes.push(target);
-        }
-      }
-      // console.log('link',link)
-      
+      createEdge(source,target,'mentions')
     })
 
     
@@ -373,27 +413,7 @@ let newGraph = {'nodes':[],'links':[]};
       let source = graph.nodes.find(n=>n.id === tweet.user.id);
       let target = graph.nodes.find(n=>n.id === tweet.retweeted_status.user.id);
 
-
-      if (source && target){
-        let link = {'source':source.id,'target':target.id,'type':'retweet','count':1}
-
-        let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
-        //either increase the count of an existing link or add a new link
-        if (!existingLink){
-          newGraph.links.push(link);
-        } else {
-          existingLink.count = existingLink.count +1;
-        }
-
-        if (!newGraph.nodes.find(n=>n===source)){
-          newGraph.nodes.push(source);
-        }
-        if (!newGraph.nodes.find(n=>n===target)){
-          newGraph.nodes.push(target);
-        }
-      } 
-    
-
+      createEdge(source,target,'retweet')
 
     }
 
@@ -402,24 +422,7 @@ let newGraph = {'nodes':[],'links':[]};
       let source = graph.nodes.find(n=>n.id === tweet.user.id);
       let target = graph.nodes.find(n=>n.id === tweet.in_reply_to_user_id);
   
-      if (source && target){
-        let link = {'source':source.id,'target':target.id,'type':'reply','count':1}
-
-        let existingLink = newGraph.links.find(l=>l.source === link.source && l.target === link.target && l.type === link.type);
-        //either increase the count of an existing link or add a new link
-        if (!existingLink){
-          newGraph.links.push(link);
-        } else {
-          existingLink.count = existingLink.count +1;
-        }
-
-        if (!newGraph.nodes.find(n=>n===source)){
-          newGraph.nodes.push(source);
-        }
-        if (!newGraph.nodes.find(n=>n===target)){
-          newGraph.nodes.push(target);
-        }
-      }    
+      createEdge(source,target,'reply')
   }
 
   })
@@ -483,17 +486,6 @@ let newGraph = {'nodes':[],'links':[]};
   .domain(d3.extent(graph.nodes.map(n => n.friends_count)))
   .range([10,20]);
 
-
-  // console.log(
-  //   'friends',d3.extent(graph.nodes.map(n => n.friends_count)),
-  //   'followers',d3.extent(graph.nodes.map(n => n.followers_count)),
-  //   'favorites',d3.extent(graph.nodes.map(n => n.favourites_count)),
-  //   'listed',d3.extent(graph.nodes.map(n => n.listed_count)),
-  //   'status_count',d3.extent(graph.nodes.map(n => n.statuses_count))
-  // )
-
-// console.log(color.domain(), color.range());
-
 //set datalist property for search box:
 
 d3.select("#search-input").attr("list", "characters");
@@ -521,7 +513,14 @@ var link = svg
 
   let linkEnter = link
   .enter()
-  .append("line")
+  .append("path")
+  .attr("id", function (d) {
+    return d.source+ "-" + d.type + "-" + d.target;
+    })
+  .attr("class", "links")
+
+
+  // .append("line")
 
   link.exit().remove();
 
@@ -589,7 +588,7 @@ node
 
   node.select('.labelBackground')
   .style('fill','white')
-  .style('opacity',.5)
+  .style('opacity',.7)
   .attr("width", function(d){ 
     return d3.select(d3.select(this).node().parentNode).select('text').node().getBBox().width})
   .attr("height", '2em')
@@ -606,11 +605,18 @@ node
       .on("end", dragended)
   );
 
-node.on("click", function() {
+node.on("click", function(currentData) {
   d3.selectAll("circle").classed("clicked", false);
   d3.select(this)
     .select("circle")
     .classed("clicked", true);
+
+  //set the class of everything to 'muted', except for the selected node and it's neighbors; 
+  d3.select('.nodes').selectAll('g').classed('muted',d=>
+    !(d === currentData || currentData.neighbors.find(n=>n === d.id)));  
+
+d3.select('.links').selectAll('line').classed('muted',d=>!(currentData.edges.find(n=>n === d.id)));
+   
 });
 
 node.append("title").text(function(d) {
@@ -618,20 +624,56 @@ node.append("title").text(function(d) {
 });
 simulation.nodes(graph.nodes).on("tick", ticked);
 simulation.force("link").links(graph.links);
+
+
+function arcPath(leftHand=true, d) {
+  var x1 = leftHand ? d.source.x : d.target.x,
+      y1 = leftHand ? d.source.y : d.target.y,
+      x2 = leftHand ? d.target.x : d.source.x,
+      y2 = leftHand ? d.target.y : d.source.y,
+      dx = x2 - x1,
+      dy = y2 - y1,
+      dr = Math.sqrt(dx * dx + dy * dy),
+      drx = dr,
+      dry = dr,
+      sweep = leftHand ? 0 : 1;
+      siblingCount = countSiblingLinks(graph,d.source, d.target)
+      xRotation = 0,
+      largeArc = 0;
+
+      if (siblingCount > 1) {
+          var siblings = getSiblingLinks(graph,d.source, d.target);
+          console.log(siblings);
+          var arcScale = d3.scale.ordinal()
+                                  .domain(siblings)
+                                  .rangePoints([1, siblingCount]);
+          drx = drx/(1 + (1/siblingCount) * (arcScale(d.value) - 1));
+          dry = dry/(1 + (1/siblingCount) * (arcScale(d.value) - 1));
+      }
+
+  return "M" + x1 + "," + y1 + "A" + drx + ", " + dry + " " + xRotation + ", " + largeArc + ", " + sweep + " " + x2 + "," + y2;
+}
+
+
+
 function ticked() {
-  link
-    .attr("x1", function(d) {
-      return d.source.x;
-    })
-    .attr("y1", function(d) {
-      return d.source.y;
-    })
-    .attr("x2", function(d) {
-      return d.target.x;
-    })
-    .attr("y2", function(d) {
-      return d.target.y;
-    });
+
+  link.attr("d", function(d) {
+    return arcPath(true, d);
+});
+  // link
+  //   .attr("x1", function(d) {
+  //     return d.source.x;
+  //   })
+  //   .attr("y1", function(d) {
+  //     return d.source.y;
+  //   })
+  //   .attr("x2", function(d) {
+  //     return d.target.x;
+  //   })
+  //   .attr("y2", function(d) {
+  //     return d.target.y;
+  //   });
 
   //   node
   //     .attr("cx", function(d) {
@@ -683,9 +725,9 @@ function ticked() {
   }
   function dragended(d) {
     // console.log(simulation.alpha())
-    if (simulation.apha()>3) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
+  //   if (simulation.apha()>3) simulation.alphaTarget(0);
+  //   d.fx = null;
+  //   d.fy = null;
   }
 }
 
