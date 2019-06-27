@@ -742,18 +742,40 @@ function drawVis(root) {
           .on("end", dragended)
       );
 
+      d3.select('#clear-selection').on('click',()=>{
+
+        let clearSelection = function(d){
+          let isNode = d.userSelectedNeighbors !== undefined;
+
+          d.selected = false;
+          if (isNode){
+            d.userSelectedNeighbors=[];
+          }
+          return true;
+        }
+      
+        d3.selectAll(".node")
+        .classed("clicked", false);
+        
+        d3.select(".nodes")
+          .selectAll("g")
+          .filter(clearSelection)
+          .classed('muted',false);
+
+        d3.select(".links")
+          .selectAll("path")
+          .filter(clearSelection)
+          .classed('muted',false);
+      });
+
       node.on("click", function(currentData) {
         d3.event.stopPropagation();
 
         let isClicked =  d3.select(this).select('.node').classed('clicked');
         
-        
-        
-        // d3.selectAll("circle").classed("clicked", false);
         d3.select(this)
-          .select(".node")
+          .selectAll(".node")
           .classed("clicked", !isClicked);
-
 
 
         let isNeighbor = function(d) {
@@ -805,6 +827,8 @@ function drawVis(root) {
 
         // console.log('pathData is ',d))
       });
+
+      
 
       node.append("title").text(function(d) {
         return d.screen_name;
