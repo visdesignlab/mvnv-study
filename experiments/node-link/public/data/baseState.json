@@ -1,0 +1,30 @@
+ {
+  "vis": "NL [AM]/JX])",
+  "graph":"../public/data/network_small.json",
+  "layout":{
+    "displayEdgeTypes":["mentions","retweets","combined"],
+    "colorAttr":"type",
+    "sizeAttr":"liked_count",
+    "barAttrs":{
+        "scale1":["followers_count","friends_count"],
+        "scale2":["statuses_count"]
+        },
+    "showNodeLabels":"always [onHover]",
+    "selectedNodes":"outline [color]"
+  },
+  "interaction":{
+      "onNodeClick":"highlightNeighbors [highlightNode]",
+      "onEdgeClick":"null",
+      "nodeTooltip":false,
+      "edgeTooltip":false,
+      "draggableNodes":true,
+      "multiNodeSelection":true,
+      "multiEdgeSelection":"true"
+  },
+  "state":{
+      "selectedNodes":["nodeID, nodeID, nodeID"],
+      "fixedNodes":["nodeID, nodeID, nodeID"]
+  }
+   
+
+}
