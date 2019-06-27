@@ -81,6 +81,11 @@
         r: 20px;
     }
 
+    .nodes rect.clicked {
+        stroke-width: 3px;
+        stroke: rgb(197, 34, 20);
+    }
+
     .pathLabel>textPath{
         font-size:14px;
     }
@@ -159,12 +164,15 @@
             <span><strong>Search: </strong></span>
             <input id="search-input" type="text" placeholder="Search for person..." value="" style="width:300px">
             <button id="search-reset">Reset Search</button>
+        
+            <img src="img/legend.png" alt="legend" height="150" ALIGN='right'>
+
         </div>
 
         <!-- for vis -->
         <div id="vis"></div>
 
-        <div id="vis2"></div>
+        <!-- <div id="vis2"></div> -->
 
 
         <div style="display:inline; padding-left: 20px;">

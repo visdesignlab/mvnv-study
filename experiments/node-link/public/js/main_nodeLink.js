@@ -53,7 +53,7 @@ var color = d3
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
 
-var size = 1300; //720;
+var size = 1200; //720;
 
 var DATASET =
   //"exoplanets"
@@ -292,13 +292,6 @@ function drawVis(root) {
   // userData["windowWidth"] = $(window).width();
   // userData["windowHeight"] = $(window).height();
 
-  //set listener to clear muted class;
-  d3.select('svg').on('click',()=>{
-    d3.selectAll('.muted').classed('muted',false);
-  })
-
-  console.log(userData);
-
   // d3.select("svg").attr('width',userData.windowWidth);
 
   var svg = d3.select("svg"),
@@ -315,7 +308,7 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-800))
+    .force("charge", d3.forceManyBody().strength(-500))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collision", d3.forceCollide().radius(radius * 2.5));
 
@@ -381,6 +374,7 @@ function drawVis(root) {
           );
           //either increase the count of an existing link or add a new link
           if (!existingLink) {
+            link.selected = false;
             newGraph.links.push(link);
           } else {
             existingLink.count = existingLink.count + 1;
@@ -393,6 +387,7 @@ function drawVis(root) {
               source.neighbors = [target.id];
               source.edges = [link.id];
             }
+            source.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
             newGraph.nodes.push(source);
           } else {
             if (!existingLink) {
@@ -407,6 +402,7 @@ function drawVis(root) {
               target.neighbors = [source.id];
               target.edges = [link.id];
             }
+            target.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
             newGraph.nodes.push(target);
           } else {
             if (!existingLink) {
@@ -454,12 +450,14 @@ function drawVis(root) {
         .scaleOrdinal()
         .domain(d3.extent(graph.nodes.map(n => n.type)))
         // .range(['#fe9929','#993404'])
-        .range(["#bdbdbd", "#636363"]);
+        .range(["#bdbdbd", "#7A7A7A"]);
 
       let edgeColor = d3
         .scaleOrdinal()
         .domain(d3.extent(graph.links.map(l => l.type)))
-        .range(["#9ebcda", "#88419d", "#4d004b"]);
+        // .range(["#9ebcda", "#88419d", "#4d004b"]);
+        .range(["#427d9b", "#88419d", "#5c9942"]);
+       
       // .range(["#1b9e77", "#d95f02","#666666"]);
 
       let edgeScale = d3
@@ -472,17 +470,19 @@ function drawVis(root) {
 
       let scaleExtent = d3.extent(friendExtent.concat(followerExtent))
 
+      let barPadding = radius*0.3;
       let follower_scale = d3
         .scaleLinear()
         .domain([0,2000])
-        .range([0, radius*1.2])
+        .range([0, 2*radius-barPadding])
         .clamp(true)
 
-        console.log(friendExtent,followerExtent,scaleExtent)
       let friends_scale = d3.scaleLinear()
       .domain([0,2000])
-      .range([0, radius*1.2])
+      .range([0, 2*radius-barPadding])
       .clamp(true)
+
+
 
       
 
@@ -621,14 +621,19 @@ function drawVis(root) {
       var node = svg
         .append("g")
         .attr("class", "nodes")
-        .selectAll("circle")
+        .selectAll("rect")
         .data(graph.nodes)
         .enter()
         .append("g");
 
       node
-        .append("circle")
-        .attr("r", radius)
+        .append("rect")
+        .attr('class','node')
+        // .attr("r", radius)
+        .attr('x',-radius)
+        .attr('y',-radius)
+        .attr('width',radius*2)
+        .attr('height', radius*2)
         .attr("fill", d => nodeColor(d.type));
 
       
@@ -639,7 +644,7 @@ function drawVis(root) {
         .attr("width", radius / 2)
         .attr("height", d => friends_scale(d.friends_count))
         .attr("x", -radius / 2 - 2)
-        .attr("y", d => radius/2 - friends_scale(d.friends_count) );
+        .attr("y", d => radius - barPadding/2  - friends_scale(d.friends_count));
 
       node
         .append("rect")
@@ -648,7 +653,7 @@ function drawVis(root) {
         .attr("height", d => follower_scale(d.followers_count))
         .attr("x", 2)
         .attr(
-          "y", d => radius/2 - follower_scale(d.followers_count)
+          "y", d => radius - barPadding/2  - follower_scale(d.followers_count) 
         );
 
         node
@@ -657,7 +662,7 @@ function drawVis(root) {
         .attr("width", radius / 2)
         .attr("height", friends_scale.range()[1])
         .attr("x", -radius / 2 - 2)
-        .attr("y",-radius *0.7 );
+        .attr("y",-radius +barPadding/2 );
 
       node
         .append("rect")
@@ -666,7 +671,7 @@ function drawVis(root) {
         .attr("height", follower_scale.range()[1])
         .attr("x", 2)
         .attr(
-          "y", -radius*0.7);
+          "y", -radius +barPadding/2);
 
 
         // node
@@ -737,27 +742,56 @@ function drawVis(root) {
 
       node.on("click", function(currentData) {
         d3.event.stopPropagation();
-        d3.selectAll("circle").classed("clicked", false);
-        d3.select(this)
-          .select("circle")
-          .classed("clicked", true);
 
-        //reveal edge labels for neighboring edges;
+        let isClicked =  d3.select(this).select('.node').classed('clicked');
+        
+        
+        
+        // d3.selectAll("circle").classed("clicked", false);
+        d3.select(this)
+          .select(".node")
+          .classed("clicked", !isClicked);
+
+
+
+        let isNeighbor = function(d) {
+
+          let isNode = d.userSelectedNeighbors !== undefined;
+
+          let isNeighbor =  d === currentData || currentData.neighbors.find(n => n === d.id) || currentData.edges.find(n => n === d.id);
+          
+          if (isNeighbor && isNode){ //add to list of selected neighbors
+            if (!isClicked){
+              d.userSelectedNeighbors.push(currentData.id);
+            } else {
+              d.userSelectedNeighbors = d.userSelectedNeighbors.filter(n=>n !== currentData.id);
+            }
+          } 
+          
+          if (!isNode && isNeighbor){
+            d.selected = !d.selected;
+          }
+
+          return true;
+        };
+
+        // see if there is at least one node 'clicked'
+        let hasUserSelection = d3.selectAll('.clicked').size()>0;
+
 
         //set the class of everything to 'muted', except for the selected node and it's neighbors;
         d3.select(".nodes")
           .selectAll("g")
-          .classed(
-            "muted",
-            d =>
-              !(
-                d === currentData || currentData.neighbors.find(n => n === d.id)
-              )
-          );
+          .filter(isNeighbor)
+          .classed('muted',d=>{
+            return hasUserSelection && d.userSelectedNeighbors.length<1; 
+          });
+          
 
         d3.select(".links")
           .selectAll("path")
-          .classed("muted", d => !currentData.edges.find(n => n === d.id));
+          .filter(isNeighbor)
+          .classed('muted',d=> hasUserSelection && !d.selected);
 
         // d3.select(".links")
         //   .selectAll(".pathLabel")
