@@ -452,7 +452,8 @@ function drawVis(root) {
         .scaleOrdinal()
         .domain(d3.extent(graph.nodes.map(n => n.type)))
         // .range(['#fe9929','#993404'])
-        .range(["#bdbdbd", "#7A7A7A"]);
+        // .range(["#bdbdbd", "#7A7A7A"]);
+        .range(["white", "white"]);
 
       let edgeColor = d3
         .scaleOrdinal()
@@ -639,6 +640,23 @@ function drawVis(root) {
         .attr("fill", d => nodeColor(d.type));
 
       
+        node
+        .append("rect")
+        .attr("class", "frame")
+        .attr("width", radius / 2)
+        .attr("height", friends_scale.range()[1])
+        .attr("x", -radius / 2 - 2)
+        .attr("y",-radius +barPadding/2 );
+
+      node
+        .append("rect")
+        .attr("class", "frame")
+        .attr("width", radius / 2)
+        .attr("height", follower_scale.range()[1])
+        .attr("x", 2)
+        .attr(
+          "y", -radius +barPadding/2);
+          
 
       node
         .append("rect")
@@ -658,22 +676,7 @@ function drawVis(root) {
           "y", d => radius - barPadding/2  - follower_scale(d.followers_count) 
         );
 
-        node
-        .append("rect")
-        .attr("class", "frame")
-        .attr("width", radius / 2)
-        .attr("height", friends_scale.range()[1])
-        .attr("x", -radius / 2 - 2)
-        .attr("y",-radius +barPadding/2 );
-
-      node
-        .append("rect")
-        .attr("class", "frame")
-        .attr("width", radius / 2)
-        .attr("height", follower_scale.range()[1])
-        .attr("x", 2)
-        .attr(
-          "y", -radius +barPadding/2);
+ 
 
 
         // node
@@ -688,8 +691,8 @@ function drawVis(root) {
       node
         .selectAll(".bar")
         .style("fill", "#000000")
-        .style("stroke", d => nodeColor(d.type))
-        .style("stroke-width", "2px");
+        // .style("stroke", d => nodeColor(d.type))
+        // .style("stroke-width", "2px");
 
       node.append("rect").attr("class", "labelBackground");
 
@@ -756,7 +759,7 @@ function drawVis(root) {
       
         d3.selectAll(".node")
         .classed("clicked", false);
-        
+
         d3.select(".nodes")
           .selectAll("g")
           .filter(clearSelection)
