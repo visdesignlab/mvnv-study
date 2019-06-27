@@ -467,15 +467,24 @@ function drawVis(root) {
         .domain(d3.extent(graph.links.map(l => l.count)))
         .range([2, 10]);
 
+      let friendExtent = d3.extent(graph.nodes.map(n => n.friends_count));
+      let followerExtent = d3.extent(graph.nodes.map(n => n.followers_count));
+
+      let scaleExtent = d3.extent(friendExtent.concat(followerExtent))
+
       let follower_scale = d3
         .scaleLinear()
-        .domain(d3.extent(graph.nodes.map(n => n.followers_count)))
-        .range([10, 20]);
+        .domain([0,2000])
+        .range([0, radius*1.2])
+        .clamp(true)
 
-      let friends_scale = d3
-        .scaleLinear()
-        .domain(d3.extent(graph.nodes.map(n => n.friends_count)))
-        .range([10, 20]);
+        console.log(friendExtent,followerExtent,scaleExtent)
+      let friends_scale = d3.scaleLinear()
+      .domain([0,2000])
+      .range([0, radius*1.2])
+      .clamp(true)
+
+      
 
       //set datalist property for search box:
 
@@ -547,6 +556,68 @@ function drawVis(root) {
           return d.type;
         });
 
+      //   let histScale = d3.scaleLinear()
+      // .domain(friendExtent)
+      // .range([5, 400]);
+
+      // let histScale2 = d3.scaleLinear()
+      // .domain(followerExtent)
+      // .range([5, 400]);
+      //   let svg1 = d3.select('#vis2').append('svg')
+      //   .attr('width',1200)
+      //   .attr('height',500)
+      //   .append("g")
+      //   .attr('class','histogram');
+
+      //   svg1
+      //   .selectAll('rect')
+      //   .data(graph.nodes)
+      //   .enter()
+      //   .append('rect')
+      //   .attr("width", radius*0.8)
+      //   .attr("height", d => histScale(d.friends_count))
+      //   .attr("x",(d,i)=>i*radius)
+      //   .attr("y", d => 500 - histScale(d.friends_count))
+
+      //   svg1
+      //   .selectAll('text')
+      //   .data(graph.nodes)
+      //   .enter()
+      //   .append('text')
+      //   .attr('font-size',13)
+      //   .attr("x",(d,i)=>i*radius)
+      //   .attr("y", d => 500 - histScale(d.friends_count))
+      //   .text(d=>d.screen_name)
+      //   // .attr('transform','rotate(90)')
+
+      //   let svg2 = d3.select('#vis2').append('svg')
+      //   .attr('width',1200)
+      //   .attr('height',500)
+      //   .append("g")
+      //   .attr('class','histogram');
+
+
+      //   svg2
+      //   .selectAll('rect')
+      //   .data(graph.nodes)
+      //   .enter()
+      //   .append('rect')
+      //   .attr("width", radius*0.8)
+      //   .attr("height", d => histScale2(d.followers_count))
+      //   .attr("x",(d,i)=>i*radius)
+      //   .attr("y", d => 500 - histScale2(d.followers_count))
+
+      //   svg2
+      //   .selectAll('text')
+      //   .data(graph.nodes)
+      //   .enter()
+      //   .append('text')
+      //   .attr('font-size',13)
+      //   .attr("x",(d,i)=>i*radius)
+      //   .attr("y", d => 500 - histScale2(d.followers_count))
+      //   .text(d=>d.screen_name)
+
+
       var node = svg
         .append("g")
         .attr("class", "nodes")
@@ -560,26 +631,52 @@ function drawVis(root) {
         .attr("r", radius)
         .attr("fill", d => nodeColor(d.type));
 
+      
+
       node
         .append("rect")
         .attr("class", "bar")
         .attr("width", radius / 2)
         .attr("height", d => friends_scale(d.friends_count))
-        .attr("x", -radius / 2)
-        .attr("y", d => -friends_scale(d.friends_count) / 2);
+        .attr("x", -radius / 2 - 2)
+        .attr("y", d => radius/2 - friends_scale(d.friends_count) );
 
       node
         .append("rect")
         .attr("class", "bar")
         .attr("width", radius / 2)
         .attr("height", d => follower_scale(d.followers_count))
-        .attr("x", 0)
+        .attr("x", 2)
         .attr(
-          "y",
-          d =>
-            friends_scale(d.friends_count) / 2 -
-            follower_scale(d.followers_count)
+          "y", d => radius/2 - follower_scale(d.followers_count)
         );
+
+        node
+        .append("rect")
+        .attr("class", "frame")
+        .attr("width", radius / 2)
+        .attr("height", friends_scale.range()[1])
+        .attr("x", -radius / 2 - 2)
+        .attr("y",-radius *0.7 );
+
+      node
+        .append("rect")
+        .attr("class", "frame")
+        .attr("width", radius / 2)
+        .attr("height", follower_scale.range()[1])
+        .attr("x", 2)
+        .attr(
+          "y", -radius*0.7);
+
+
+        // node
+        // .append("rect")
+        // .attr("class", "frame")
+        // .attr("width", radius*1.2)
+        // .attr("height", friends_scale.range()[1])
+        // .attr("x", -radius*0.6)
+        // .attr("y", -radius*0.7 )
+        // .attr('fill',)
 
       node
         .selectAll(".bar")
