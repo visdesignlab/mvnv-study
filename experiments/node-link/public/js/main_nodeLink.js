@@ -308,7 +308,7 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-500))
+    .force("charge", d3.forceManyBody().strength(-700))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collision", d3.forceCollide().radius(radius * 2.5));
 
@@ -656,7 +656,7 @@ function drawVis(root) {
         .attr("x", 2)
         .attr(
           "y", -radius +barPadding/2);
-          
+
 
       node
         .append("rect")
