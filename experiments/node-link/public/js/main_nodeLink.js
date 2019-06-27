@@ -6,6 +6,16 @@
 
 /*global queue, labels*/
 
+//initial state:
+const initCalcState = {
+  count: {
+    count2: {
+      count3: 0,
+      count4: 1
+    }
+  }
+};
+
 ///////////////////////////For Experiment Begin/////////////////////////////
 var userData = {
   condition: "",
@@ -312,145 +322,51 @@ function drawVis(root) {
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collision", d3.forceCollide().radius(radius * 2.5));
 
-  d3.json("../public/twitter_data/Eurovis2019Network.json", function(
-    error,
-    graph
-  ) {
-    let toRemove = [];
 
-    d3.json("../public/twitter_data/Eurovis2019Tweets.json", function(tweets) {
-      // console.log(graph.nodes);
-      graph.links = [];
+    //Helper functions to compute edge arcs
+    let countSiblingLinks = function(graph, source, target) {
+      var count = 0;
+      let links = graph.links;
 
-      let newGraph = { nodes: [], links: [] };
+      for (var i = 0; i < links.length; ++i) {
+        if (
+          (links[i].source.id == source.id &&
+            links[i].target.id == target.id) ||
+          (links[i].source.id == target.id && links[i].target.id == source.id)
+        )
+          count++;
+      }
+      return count;
+    };
 
-      let countSiblingLinks = function(graph, source, target) {
-        var count = 0;
-        let links = graph.links;
+    let getSiblingLinks = function(graph, source, target) {
+      var siblings = [];
+      let links = graph.links;
+      for (var i = 0; i < links.length; ++i) {
+        if (
+          (links[i].source.id == source.id &&
+            links[i].target.id == target.id) ||
+          (links[i].source.id == target.id && links[i].target.id == source.id)
+        )
+          siblings.push(links[i].type);
+      }
+      return siblings;
+    };
 
-        for (var i = 0; i < links.length; ++i) {
-          if (
-            (links[i].source.id == source.id &&
-              links[i].target.id == target.id) ||
-            (links[i].source.id == target.id && links[i].target.id == source.id)
-          )
-            count++;
-        }
-        return count;
-      };
+  d3.json("../public/data/baseState.json", function(config) {
+    console.log("config", config);
 
-      let getSiblingLinks = function(graph, source, target) {
-        var siblings = [];
-        let links = graph.links;
-        for (var i = 0; i < links.length; ++i) {
-          if (
-            (links[i].source.id == source.id &&
-              links[i].target.id == target.id) ||
-            (links[i].source.id == target.id && links[i].target.id == source.id)
-          )
-            siblings.push(links[i].type);
-        }
-        return siblings;
-      };
+    d3.json(config.graph, function(graph) {
+      
 
-      //create edges from tweets.
+      //Create Scales
 
-      tweets = tweets.tweets;
-
-      let createEdge = function(source, target, type) {
-        if (source && target) {
-          let link = {
-            source: source.id,
-            target: target.id,
-            type,
-            count: 1,
-            id: source.id + target.id + type
-          };
-          let existingLink = newGraph.links.find(
-            l =>
-              ((l.source === link.source && l.target === link.target) ||
-                (l.source === link.target && l.target === link.source)) &&
-              l.type === link.type
-          );
-          //either increase the count of an existing link or add a new link
-          if (!existingLink) {
-            link.selected = false;
-            newGraph.links.push(link);
-          } else {
-            existingLink.count = existingLink.count + 1;
-          }
-
-          if (!newGraph.nodes.find(n => n.id === source.id)) {
-            //randomly assign a categorical variable 'type'
-            source.type = Math.random() > 0.6 ? "institution" : "person";
-            if (!existingLink) {
-              source.neighbors = [target.id];
-              source.edges = [link.id];
-            }
-            source.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
-            source.selected = false;
-            newGraph.nodes.push(source);
-          } else {
-            if (!existingLink) {
-              source.neighbors.push(target.id);
-              source.edges.push(link.id);
-            }
-          }
-          if (!newGraph.nodes.find(n => n.id === target.id)) {
-            //randomly assign a categorical variable 'type'
-            target.type = Math.random() > 0.6 ? "institution" : "person";
-            if (!existingLink) {
-              target.neighbors = [source.id];
-              target.edges = [link.id];
-            }
-            target.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
-            target.selected = false;
-            newGraph.nodes.push(target);
-          } else {
-            if (!existingLink) {
-              target.neighbors.push(source.id);
-              target.edges.push(link.id);
-            }
-          }
-        }
-      };
-
-      tweets.map(tweet => {
-        //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
-        tweet.entities.user_mentions.map(mention => {
-          let source = graph.nodes.find(n => n.id === tweet.user.id);
-          let target = graph.nodes.find(n => n.id === mention.id);
-
-          createEdge(source, target, "mentions");
-        });
-
-        //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-        if (tweet.retweeted_status) {
-          let source = graph.nodes.find(n => n.id === tweet.user.id);
-          let target = graph.nodes.find(
-            n => n.id === tweet.retweeted_status.user.id
-          );
-
-          createEdge(source, target, "retweet");
-        }
-
-        //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
-        if (tweet.in_reply_to_user_id_str) {
-          let source = graph.nodes.find(n => n.id === tweet.user.id);
-          let target = graph.nodes.find(
-            n => n.id === tweet.in_reply_to_user_id
-          );
-
-          createEdge(source, target, "reply");
-        }
-      });
-
-      // console.log(JSON.stringify(newGraph))
-      graph = newGraph;
+      //array of colors to iterate through for on-node color encoding, depending on the no. of unique values
+      let nodeColorOptions=['#fe9929','#993404','#bdbdbd']
 
       let nodeColor = d3
         .scaleOrdinal()
-        .domain(d3.extent(graph.nodes.map(n => n.type)))
+        .domain(d3.extent(graph.nodes.map(n => n[config.colorAttr])))
         // .range(['#fe9929','#993404'])
         // .range(["#bdbdbd", "#7A7A7A"]);
         .range(["white", "white"]);
@@ -460,7 +376,7 @@ function drawVis(root) {
         .domain(d3.extent(graph.links.map(l => l.type)))
         // .range(["#9ebcda", "#88419d", "#4d004b"]);
         .range(["#427d9b", "#88419d", "#5c9942"]);
-       
+
       // .range(["#1b9e77", "#d95f02","#666666"]);
 
       let edgeScale = d3
@@ -471,23 +387,20 @@ function drawVis(root) {
       let friendExtent = d3.extent(graph.nodes.map(n => n.friends_count));
       let followerExtent = d3.extent(graph.nodes.map(n => n.followers_count));
 
-      let scaleExtent = d3.extent(friendExtent.concat(followerExtent))
+      let scaleExtent = d3.extent(friendExtent.concat(followerExtent));
 
-      let barPadding = radius*0.3;
+      let barPadding = radius;
       let follower_scale = d3
         .scaleLinear()
-        .domain([0,2000])
-        .range([0, 2*radius-barPadding])
-        .clamp(true)
+        .domain([0, 2000])
+        .range([0, 2 * radius - barPadding])
+        .clamp(true);
 
-      let friends_scale = d3.scaleLinear()
-      .domain([0,2000])
-      .range([0, 2*radius-barPadding])
-      .clamp(true)
-
-
-
-      
+      let friends_scale = d3
+        .scaleLinear()
+        .domain([0, 2000])
+        .range([0, 2 * radius - barPadding])
+        .clamp(true);
 
       //set datalist property for search box:
 
@@ -507,7 +420,6 @@ function drawVis(root) {
       options = optionsEnter.merge(options);
       options.attr("value", d => d.screen_name);
 
-      if (error) throw error;
       var link = svg
         .append("g")
         .attr("class", "links")
@@ -599,7 +511,6 @@ function drawVis(root) {
       //   .append("g")
       //   .attr('class','histogram');
 
-
       //   svg2
       //   .selectAll('rect')
       //   .data(graph.nodes)
@@ -620,7 +531,6 @@ function drawVis(root) {
       //   .attr("y", d => 500 - histScale2(d.followers_count))
       //   .text(d=>d.screen_name)
 
-
       var node = svg
         .append("g")
         .attr("class", "nodes")
@@ -631,22 +541,21 @@ function drawVis(root) {
 
       node
         .append("rect")
-        .attr('class','node')
+        .attr("class", "node")
         // .attr("r", radius)
-        .attr('x',-radius)
-        .attr('y',-radius)
-        .attr('width',radius*2)
-        .attr('height', radius*2)
+        .attr("x", -radius)
+        .attr("y", -radius)
+        .attr("width", radius * 2)
+        .attr("height", radius * 2)
         .attr("fill", d => nodeColor(d.type));
 
-      
-        node
+      node
         .append("rect")
         .attr("class", "frame")
         .attr("width", radius / 2)
         .attr("height", friends_scale.range()[1])
         .attr("x", -radius / 2 - 2)
-        .attr("y",-radius +barPadding/2 );
+        .attr("y", -radius + barPadding / 2);
 
       node
         .append("rect")
@@ -654,9 +563,7 @@ function drawVis(root) {
         .attr("width", radius / 2)
         .attr("height", follower_scale.range()[1])
         .attr("x", 2)
-        .attr(
-          "y", -radius +barPadding/2);
-
+        .attr("y", -radius + barPadding / 2);
 
       node
         .append("rect")
@@ -664,7 +571,10 @@ function drawVis(root) {
         .attr("width", radius / 2)
         .attr("height", d => friends_scale(d.friends_count))
         .attr("x", -radius / 2 - 2)
-        .attr("y", d => radius - barPadding/2  - friends_scale(d.friends_count));
+        .attr(
+          "y",
+          d => radius - barPadding / 2 - friends_scale(d.friends_count)
+        );
 
       node
         .append("rect")
@@ -673,26 +583,22 @@ function drawVis(root) {
         .attr("height", d => follower_scale(d.followers_count))
         .attr("x", 2)
         .attr(
-          "y", d => radius - barPadding/2  - follower_scale(d.followers_count) 
+          "y",
+          d => radius - barPadding / 2 - follower_scale(d.followers_count)
         );
 
- 
+      // node
+      // .append("rect")
+      // .attr("class", "frame")
+      // .attr("width", radius*1.2)
+      // .attr("height", friends_scale.range()[1])
+      // .attr("x", -radius*0.6)
+      // .attr("y", -radius*0.7 )
+      // .attr('fill',)
 
-
-        // node
-        // .append("rect")
-        // .attr("class", "frame")
-        // .attr("width", radius*1.2)
-        // .attr("height", friends_scale.range()[1])
-        // .attr("x", -radius*0.6)
-        // .attr("y", -radius*0.7 )
-        // .attr('fill',)
-
-      node
-        .selectAll(".bar")
-        .style("fill", "#000000")
-        // .style("stroke", d => nodeColor(d.type))
-        // .style("stroke-width", "2px");
+      node.selectAll(".bar").style("fill", "#000000");
+      // .style("stroke", d => nodeColor(d.type))
+      // .style("stroke-width", "2px");
 
       node.append("rect").attr("class", "labelBackground");
 
@@ -745,61 +651,66 @@ function drawVis(root) {
           .on("end", dragended)
       );
 
-      d3.select('#clear-selection').on('click',()=>{
-
-        let clearSelection = function(d){
+      d3.select("#clear-selection").on("click", () => {
+        let clearSelection = function(d) {
           let isNode = d.userSelectedNeighbors !== undefined;
 
           d.selected = false;
-          if (isNode){
-            d.userSelectedNeighbors=[];
+          if (isNode) {
+            d.userSelectedNeighbors = [];
           }
           return true;
-        }
-      
-        d3.selectAll(".node")
-        .classed("clicked", false);
+        };
+
+        d3.selectAll(".node").classed("clicked", false);
 
         d3.select(".nodes")
           .selectAll("g")
           .filter(clearSelection)
-          .classed('muted',false);
+          .classed("muted", false);
 
         d3.select(".links")
           .selectAll("path")
           .filter(clearSelection)
-          .classed('muted',false);
+          .classed("muted", false);
       });
 
       node.on("click", function(currentData) {
         d3.event.stopPropagation();
 
-        let isClicked =  d3.select(this).select('.node').classed('clicked');
-        
+        let isClicked = d3
+          .select(this)
+          .select(".node")
+          .classed("clicked");
+
         d3.select(this)
           .selectAll(".node")
           .classed("clicked", !isClicked);
 
-
         let isNeighbor = function(d) {
-
-          if (d === currentData){
+          if (d === currentData) {
             d.selected = !isClicked;
           }
 
           let isNode = d.userSelectedNeighbors !== undefined;
 
-          let isNeighbor =  d === currentData || currentData.neighbors.find(n => n === d.id) || currentData.edges.find(n => n === d.id);
-          
-          if (isNeighbor && isNode){ //add to list of selected neighbors
-            if (!isClicked){
+          let isNeighbor =
+            d === currentData ||
+            currentData.neighbors.find(n => n === d.id) ||
+            currentData.edges.find(n => n === d.id);
+
+          if (isNeighbor && isNode) {
+            //add to list of selected neighbors
+            if (!isClicked) {
               d.userSelectedNeighbors.push(currentData.id);
             } else {
-              d.userSelectedNeighbors = d.userSelectedNeighbors.filter(n=>n !== currentData.id);
+              d.userSelectedNeighbors = d.userSelectedNeighbors.filter(
+                n => n !== currentData.id
+              );
             }
-          } 
-          
-          if (!isNode && isNeighbor){
+          }
+
+          if (!isNode && isNeighbor) {
             d.selected = d.source.selected || d.target.selected || !d.selected;
           }
 
@@ -807,22 +718,20 @@ function drawVis(root) {
         };
 
         // see if there is at least one node 'clicked'
-        let hasUserSelection = d3.selectAll('.clicked').size()>0;
-
+        let hasUserSelection = d3.selectAll(".clicked").size() > 0;
 
         //set the class of everything to 'muted', except for the selected node and it's neighbors;
         d3.select(".nodes")
           .selectAll("g")
           .filter(isNeighbor)
-          .classed('muted',d=>{
-            return hasUserSelection && d.userSelectedNeighbors.length<1; 
+          .classed("muted", d => {
+            return hasUserSelection && d.userSelectedNeighbors.length < 1;
           });
-          
 
         d3.select(".links")
           .selectAll("path")
           .filter(isNeighbor)
-          .classed('muted',d=> hasUserSelection && !d.selected);
+          .classed("muted", d => hasUserSelection && !d.selected);
 
         // d3.select(".links")
         //   .selectAll(".pathLabel")
@@ -830,8 +739,6 @@ function drawVis(root) {
 
         // console.log('pathData is ',d))
       });
-
-      
 
       node.append("title").text(function(d) {
         return d.screen_name;
@@ -889,11 +796,13 @@ function drawVis(root) {
         );
       }
 
-      function ticked() { updatePos();}
+      function ticked() {
+        updatePos();
+      }
 
       function updatePos() {
         link.attr("d", function(d) {
-          return arcPath(d.source.x < d.target.x, d);
+          return arcPath(d.type === "mentions", d);
         });
 
         node.attr("transform", d => {
@@ -906,10 +815,7 @@ function drawVis(root) {
       updatePos();
 
       function dragstarted(d) {
-        if (!d3.event.active) 
-        simulation
-        .alphaTarget(0.1)
-        .restart();
+        if (!d3.event.active) simulation.alphaTarget(0.1).restart();
         d.fx = d.x;
         d.fy = d.y;
       }
@@ -926,10 +832,8 @@ function drawVis(root) {
         //   d.fx = null;
         //   d.fy = null;
       }
-
     });
   });
- 
 }
 
 function boot(error, data) {
