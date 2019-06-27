@@ -10,6 +10,7 @@
         "scale2":["statuses_count"]
         },
     "showNodeLabels":"always [onHover]",
+    "labelAttr":"screen_name",
     "selectedNodes":"outline [color]"
   },
   "interaction":{
