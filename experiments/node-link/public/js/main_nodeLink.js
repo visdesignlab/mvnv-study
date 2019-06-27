@@ -388,6 +388,7 @@ function drawVis(root) {
               source.edges = [link.id];
             }
             source.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
+            source.selected = false;
             newGraph.nodes.push(source);
           } else {
             if (!existingLink) {
@@ -403,6 +404,7 @@ function drawVis(root) {
               target.edges = [link.id];
             }
             target.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
+            target.selected = false;
             newGraph.nodes.push(target);
           } else {
             if (!existingLink) {
@@ -756,6 +758,10 @@ function drawVis(root) {
 
         let isNeighbor = function(d) {
 
+          if (d === currentData){
+            d.selected = !isClicked;
+          }
+
           let isNode = d.userSelectedNeighbors !== undefined;
 
           let isNeighbor =  d === currentData || currentData.neighbors.find(n => n === d.id) || currentData.edges.find(n => n === d.id);
@@ -769,7 +775,7 @@ function drawVis(root) {
           } 
           
           if (!isNode && isNeighbor){
-            d.selected = !d.selected;
+            d.selected = d.source.selected || d.target.selected || !d.selected;
           }
 
           return true;
