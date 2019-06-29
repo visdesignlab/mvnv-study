@@ -300,6 +300,8 @@ function visitItem(item, data) {
 
 //drawLesMis NodeLink
 function drawVis(root) {
+
+  var dragging = false; //flag to dictate whether to draw simulation updates or not;
   // userData["windowWidth"] = $(window).width();
   // userData["windowHeight"] = $(window).height();
 
@@ -319,9 +321,9 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-700))
+    .force("charge", d3.forceManyBody().strength(-1000))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(radius * 2.5));
+    .force("collision", d3.forceCollide().radius(radius));
 
 
     //Helper functions to compute edge arcs
@@ -484,7 +486,7 @@ function drawVis(root) {
       link.select('textPath')
       .attr('class',d=>d.type)
       .attr('xlink:href',d=>"#" + d.id)
-      .text('➤')
+      .text(config.isDirected ? '➤' : ''); //only add arrows to directed graphs;
       // .style('opacity',1)
 
       // add edge labels
@@ -627,6 +629,7 @@ function drawVis(root) {
         })
         .attr("y", "-42");
 
+
       node.call(
         d3
           .drag()
@@ -654,7 +657,7 @@ function drawVis(root) {
           .classed("muted", false);
 
         d3.select(".links")
-          .selectAll("path")
+          .selectAll("g")
           .filter(clearSelection)
           .classed("muted", false);
       });
@@ -730,8 +733,9 @@ function drawVis(root) {
       simulation.nodes(graph.nodes).on("tick", ticked);
       simulation.force("link").links(graph.links);
 
-      // for (var i = 0; i < 1000; ++i) simulation.tick();
-      // simulation.stop();
+      for (var i = 0; i < 2000; ++i) simulation.tick();
+      simulation.stop();
+      
 
       function arcPath(leftHand, d) {
         var x1 = leftHand ? d.source.x : d.target.x,
@@ -781,7 +785,9 @@ function drawVis(root) {
       }
 
       function ticked() {
-        updatePos();
+        if (dragging){
+          updatePos();
+        }
       }
 
       function updatePos() {
@@ -802,6 +808,7 @@ function drawVis(root) {
         if (!d3.event.active) simulation.alphaTarget(0.1).restart();
         d.fx = d.x;
         d.fy = d.y;
+        dragging = true;
       }
       function dragged(d) {
         d.fx = d3.event.x;
@@ -809,6 +816,7 @@ function drawVis(root) {
         // updatePos();
       }
       function dragended(d) {
+        dragging = false;
         simulation.stop();
         // simulation.velocityDecay(0.9)
         // console.log(simulation.alpha())
