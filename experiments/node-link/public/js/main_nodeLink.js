@@ -354,6 +354,20 @@ function drawVis(root) {
       return siblings;
     };
 
+    //add Arrow marker
+    svg.append("svg:defs").selectAll("marker")
+    .data(["retweet","mentions"])      // Different link/path types can be defined here
+    .enter().append("svg:marker")    // This section adds in the arrows
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 3)
+    .attr("markerHeight", 3)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+    
     //set up svg and groups for nodes/links
     svg
     .append("g")
@@ -436,9 +450,20 @@ function drawVis(root) {
 
       let linkEnter = link
         .enter()
+        .append('g')
+
+        linkEnter
         .append("path")
         .attr("id", d => d.id)
-        .attr("class", "links");
+        .attr("class", "links")
+        // .attr("marker-mid", d=>"url(#" + d.type + ")");
+
+        linkEnter.append('text')
+        .attr('dy',3.5)
+        .append('textPath')
+        .attr('startOffset',"50%")
+        
+
 
       // .append("line")
 
@@ -447,10 +472,19 @@ function drawVis(root) {
       link = linkEnter.merge(link);
 
       link
+       .select('path')
         .style("stroke-width", l => edgeScale(l.count))
         .style("stroke", function(d) {
           return edgeColor(d.type);
-        });
+        })
+        .attr('id',d=>d.id)
+
+
+
+      link.select('textPath')
+      .attr('class',d=>d.type)
+      .attr('xlink:href',d=>"#" + d.id)
+      .text('➤')
       // .style('opacity',1)
 
       // add edge labels
@@ -488,8 +522,6 @@ function drawVis(root) {
         let nodeEnter = node
         .enter()
         .append("g");
-
-
 
       nodeEnter
         .append("rect")
@@ -539,17 +571,22 @@ function drawVis(root) {
 
         node = nodeEnter.merge(node);
 
-        node.select('.node')
-          .attr("fill", d => nodeColor(d.type));
+        // node.select('.node')
+        //   .attr("fill", d => nodeColor(d.type));
+
+          node.select('.node')
+          .attr("fill", 'none');
 
         node.selectAll('.frame')
           .attr("height", friends_scale.range()[1])
 
         node.select('.' + config.layout.barAttrs.scale1[0])
+          .classed('clipped',d=>d[config.layout.barAttrs.scale1[0]]>friends_scale.domain()[1])
           .attr("height", d => friends_scale(d[config.layout.barAttrs.scale1[0]]))
           .attr("y", d => radius - barPadding / 2 - friends_scale(d[config.layout.barAttrs.scale1[0]]));
 
         node.select('.' + config.layout.barAttrs.scale1[1])
+        .classed('clipped',d=>d[config.layout.barAttrs.scale1[1]]>friends_scale.domain()[1])
           .attr("height", d => friends_scale(d[config.layout.barAttrs.scale1[1]]))
           .attr("y", d => radius - barPadding / 2 - friends_scale(d[config.layout.barAttrs.scale1[1]]));
 
@@ -676,7 +713,7 @@ function drawVis(root) {
           });
 
         d3.select(".links")
-          .selectAll("path")
+          .selectAll("g")
           .filter(isNeighbor)
           .classed("muted", d => hasUserSelection && !d.selected);
 
@@ -748,7 +785,7 @@ function drawVis(root) {
       }
 
       function updatePos() {
-        link.attr("d", function(d) {
+        link.select('path').attr("d", function(d) {
           return arcPath(d.type === "mentions", d);
         });
 

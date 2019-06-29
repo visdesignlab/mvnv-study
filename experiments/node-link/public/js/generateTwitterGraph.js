@@ -7,35 +7,6 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
 
       let newGraph = { nodes: [], links: [] };
 
-      let countSiblingLinks = function(graph, source, target) {
-        var count = 0;
-        let links = graph.links;
-
-        for (var i = 0; i < links.length; ++i) {
-          if (
-            (links[i].source.id == source.id &&
-              links[i].target.id == target.id) ||
-            (links[i].source.id == target.id && links[i].target.id == source.id)
-          )
-            count++;
-        }
-        return count;
-      };
-
-      let getSiblingLinks = function(graph, source, target) {
-        var siblings = [];
-        let links = graph.links;
-        for (var i = 0; i < links.length; ++i) {
-          if (
-            (links[i].source.id == source.id &&
-              links[i].target.id == target.id) ||
-            (links[i].source.id == target.id && links[i].target.id == source.id)
-          )
-            siblings.push(links[i].type);
-        }
-        return siblings;
-      };
-
       //create edges from tweets.
 
       tweets = tweets.tweets;
@@ -58,8 +29,9 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
           };
           let existingLink = newGraph.links.find(
             l =>
-              ((l.source === link.source && l.target === link.target) ||
-                (l.source === link.target && l.target === link.source)) &&
+              ((l.source === link.source && l.target === link.target) 
+              // ||(l.source === link.target && l.target === link.source)
+                ) &&
               l.type === link.type
           );
           //either increase the count of an existing link or add a new link
