@@ -321,9 +321,9 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-1000))
+    .force("charge", d3.forceManyBody().strength(-500))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(radius));
+    .force("collision", d3.forceCollide().radius(radius*2));
 
 
     //Helper functions to compute edge arcs
@@ -395,6 +395,13 @@ function drawVis(root) {
     console.log("config", config);
 
     d3.json(config.graph, function(graph) {
+
+      let typeDict = {};
+      graph.nodes.map(n=>{
+        typeDict[n.id]={screen_name:n.screen_name,type:n.type};
+      })
+
+      console.log(JSON.stringify(typeDict))
       
       //Create Scales
 
