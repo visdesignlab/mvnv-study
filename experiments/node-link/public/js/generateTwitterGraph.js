@@ -2,7 +2,9 @@
 d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) {
 
     d3.json("../public/twitter_data/Eurovis2019Tweets.json", function(tweets) {
-      // console.log(graph.nodes);
+
+      d3.json("../public/data/network_types.json", function(nodes) {
+        // console.log(graph.nodes);
       graph.links = [];
 
       let newGraph = { nodes: [], links: [] };
@@ -14,12 +16,6 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
       let createEdge = function(source, target, type) {
         if (source && target) {
 
-          //target is always the one earlier in the alphabet. 
-          // let sortedNodes=[source,target].sort();
-
-          // source = sortedNodes[0];
-          // target = sortedNodes[1];
-
           let link = {
             source: source.id,
             target: target.id,
@@ -30,7 +26,7 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
           let existingLink = newGraph.links.find(
             l =>
               ((l.source === link.source && l.target === link.target) 
-              // ||(l.source === link.target && l.target === link.source)
+              ||(l.source === link.target && l.target === link.source)
                 ) &&
               l.type === link.type
           );
@@ -44,7 +40,8 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
 
           if (!newGraph.nodes.find(n => n.id === source.id)) {
             //randomly assign a categorical variable 'type'
-            source.type = Math.random() > 0.6 ? "institution" : "person";
+            // source.type = Math.random() > 0.6 ? "institution" : "person";
+            source.type = nodes[source.id].type;
             if (!existingLink) {
               source.neighbors = [target.id];
               source.edges = [link.id];
@@ -60,7 +57,8 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
           }
           if (!newGraph.nodes.find(n => n.id === target.id)) {
             //randomly assign a categorical variable 'type'
-            target.type = Math.random() > 0.6 ? "institution" : "person";
+            // target.type = Math.random() > 0.6 ? "institution" : "person";
+            target.type = nodes[target.id].type;
             if (!existingLink) {
               target.neighbors = [source.id];
               target.edges = [link.id];
@@ -74,27 +72,39 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
               target.edges.push(link.id);
             }
           }
-        }
+        } 
+        
+        // else {
+        //   console.log('something went wrong',source? source.screen_name : '',target? target.screen_name : '')
+        // }
+
       };
 
       tweets.map(tweet => {
-        //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
+
+        //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
+        if (tweet.retweeted_status) {
+          let source = graph.nodes.find(n => n.id === tweet.user.id) || graph.nodes.find(n => n.screen_name === tweet.user.screen_name);
+          let target = graph.nodes.find(
+            n => n.id === tweet.retweeted_status.user.id
+          );
+
+          console.log(tweet.retweeted_status.user.id === tweet.entities.user_mentions[0].id);
+
+          createEdge(source, target, "retweet");
+        } else {
+          //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
         tweet.entities.user_mentions.map(mention => {
           let source = graph.nodes.find(n => n.id === tweet.user.id);
           let target = graph.nodes.find(n => n.id === mention.id);
 
           createEdge(source, target, "mentions");
         });
-
-        //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-        if (tweet.retweeted_status) {
-          let source = graph.nodes.find(n => n.id === tweet.user.id);
-          let target = graph.nodes.find(
-            n => n.id === tweet.retweeted_status.user.id
-          );
-
-          createEdge(source, target, "retweet");
         }
+
+        
+
+        
 
         //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
         // if (tweet.in_reply_to_user_id_str) {
@@ -108,6 +118,8 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
       });
 
       console.log(JSON.stringify(newGraph))
+      });
+      
     });
   });
 
