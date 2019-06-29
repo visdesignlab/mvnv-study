@@ -62,8 +62,9 @@ var color = d3
   //.range(["#56ebd3", "#33837f", "#68c3ef", "#1c4585"]) //Colorgorical, blue-ish
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
-
-var size = 1200; //720;
+var height = 800;
+var width = 1800;
+var size = 1800; //720;
 
 var DATASET =
   //"exoplanets"
@@ -130,8 +131,8 @@ function loadBubbleChart(id) {
     svg = d3
       .select("#" + id)
       .append("svg")
-      .attr("width", size + margin.left + margin.right)
-      .attr("height", size + margin.top + margin.bottom);
+      .attr("width", width) //size + margin.left + margin.right)
+      .attr("height", height) //size + margin.top + margin.bottom);
     // .attr("width", userData['windowWidth'])
     //   .attr("height", userData['windowHeight'])
 
@@ -312,6 +313,8 @@ function drawVis(root) {
     height = +svg.attr("height"),
     radius = 20;
 
+    console.log('width',width, 'height', height)
+
   //   var color = d3.scaleOrdinal(d3.schemeCategory20);
   var simulation = d3
     .forceSimulation()
@@ -321,9 +324,9 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-500))
+    .force("charge", d3.forceManyBody().strength(-300))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(radius*2));
+    .force("collision", d3.forceCollide().radius(radius*2.5));
 
 
     //Helper functions to compute edge arcs
@@ -396,12 +399,12 @@ function drawVis(root) {
 
     d3.json(config.graph, function(graph) {
 
-      let typeDict = {};
-      graph.nodes.map(n=>{
-        typeDict[n.id]={screen_name:n.screen_name,type:n.type};
-      })
+      // let typeDict = {};
+      // graph.nodes.map(n=>{
+      //   typeDict[n.id]={screen_name:n.screen_name,type:n.type};
+      // })
 
-      console.log(JSON.stringify(typeDict))
+      // console.log(JSON.stringify(typeDict))
       
       //Create Scales
 
@@ -640,7 +643,7 @@ function drawVis(root) {
             .node()
             .getBBox().width;
         })
-        .attr("height", "2em")
+        .attr("height", "1em")
         .attr("x", function(d) {
           return (
             -d3
