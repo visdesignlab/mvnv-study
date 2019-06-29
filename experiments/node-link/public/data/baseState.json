@@ -1,7 +1,7 @@
  {
   "vis": "NL [AM]/JX])",
-  "graph":"../public/data/network_small.json",
-  "isDirected":true,
+  "graph":"../public/data/network_small_undirected.json",
+  "isDirected":false,
   "layout":{
     "displayEdgeTypes":["mentions","retweets","combined"],
     "colorAttr":"type",
@@ -24,8 +24,8 @@
       "multiEdgeSelection":"true"
   },
   "state":{
-      "selectedNodes":["nodeID, nodeID, nodeID"],
-      "fixedNodes":["nodeID, nodeID, nodeID"]
+      "selectedNodes":[],
+      "fixedNodes":[]
   }
    
 
