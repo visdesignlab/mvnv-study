@@ -82,6 +82,12 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
 
       tweets.map(tweet => {
 
+        // if (tweet.user.screen_name === 'jamesscottbrown'){
+        //   console.log(tweet.text)
+        // }
+
+      
+
         //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
         if (tweet.retweeted_status) {
           let source = graph.nodes.find(n => n.id === tweet.user.id) ;

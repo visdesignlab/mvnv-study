@@ -324,7 +324,7 @@ function drawVis(root) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-300))
+    .force("charge", d3.forceManyBody().strength(-500))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collision", d3.forceCollide().radius(radius*2.5))
     .force('y', d3.forceY().y(0));
@@ -483,9 +483,11 @@ function drawVis(root) {
         // .attr("marker-mid", d=>"url(#" + d.type + ")");
 
         linkEnter.append('text')
-        .attr('dy',6)
+        .attr('class','edgeArrow')
+        .attr('dy',4)
         .append('textPath')
         .attr('startOffset',"50%")
+        
         
 
 
@@ -508,7 +510,7 @@ function drawVis(root) {
       link.select('textPath')
       .attr('class',d=>d.type)
       .attr('xlink:href',d=>"#" + d.id)
-      .text(config.isDirected ? '➤' : ''); //only add arrows to directed graphs;
+      .text(d=>config.isDirected ? (d.type === 'mentions' ? '▶' : '◀' ): ''); //only add arrows to directed graphs;
       // .style('opacity',1)
 
       // add edge labels
@@ -763,7 +765,7 @@ function drawVis(root) {
       for (var i = 0; i < 2000; ++i) simulation.tick();
       simulation.stop();
       
-
+      
       function arcPath(leftHand, d) {
         var x1 = leftHand ? d.source.x : d.target.x,
           y1 = leftHand ? d.source.y : d.target.y,
@@ -831,20 +833,26 @@ function drawVis(root) {
 
       updatePos();
 
+      //set all nodes to fixed positions. 
+      // graph.nodes.map(d=>{d.fx = d.x; d.fy = d.y;});
+
+
       function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.1).restart();
+        // if (!d3.event.active) simulation.alphaTarget(0.1).restart();
         d.fx = d.x;
         d.fy = d.y;
-        dragging = true;
+        // dragging = true;
       }
       function dragged(d) {
         d.fx = d3.event.x;
         d.fy = d3.event.y;
-        // updatePos();
+        d.x = d.fx;
+        d.y = d.fy;
+        updatePos();
       }
       function dragended(d) {
-        dragging = false;
-        simulation.stop();
+        // dragging = false;
+        // simulation.stop();
         // simulation.velocityDecay(0.9)
         // console.log(simulation.alpha())
         //   if (simulation.apha()>3) simulation.alphaTarget(0);
