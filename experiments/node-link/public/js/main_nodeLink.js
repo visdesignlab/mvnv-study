@@ -505,8 +505,6 @@ function drawVis(root) {
         })
         .attr('id',d=>d.id)
 
-
-
       link.select('textPath')
       .attr('class',d=>d.type)
       .attr('xlink:href',d=>"#" + d.id)
@@ -667,6 +665,17 @@ function drawVis(root) {
           .on("end", dragended)
       );
 
+      d3.select("#exportGraph").on("click", () => {
+        
+        let graphCopy = JSON.parse(JSON.stringify(graph));
+
+        graphCopy.links.map(l=>{l.index = undefined; l.source = l.source.id; l.target = l.target.id})
+        graphCopy.nodes.map(n=>{n.index = undefined; n.vx = undefined; n.vy = undefined;} )
+
+        console.log(JSON.stringify(graphCopy));
+        })
+
+
       d3.select("#clear-selection").on("click", () => {
         let clearSelection = function(d) {
           let isNode = d.userSelectedNeighbors !== undefined;
@@ -759,11 +768,28 @@ function drawVis(root) {
       node.append("title").text(function(d) {
         return d.screen_name;
       });
-      simulation.nodes(graph.nodes).on("tick", ticked);
-      simulation.force("link").links(graph.links);
+      
 
-      for (var i = 0; i < 2000; ++i) simulation.tick();
-      simulation.stop();
+      if (config.fixedPositions){
+         //restablish link references to their source and target nodes; 
+         graph.links.map(l=>{
+          l.source = graph.nodes.find(n=>n.id === l.source);
+          l.target = graph.nodes.find(n=>n.id === l.target);
+        })
+      } else {
+        simulation.nodes(graph.nodes).on("tick", ticked);
+        simulation.force("link").links(graph.links);
+
+        graph.nodes.map(n=>{
+          n.x = null;
+          n.y = null;
+          n.vx = null; 
+          n.vy = null
+        });
+        for (var i = 0; i < 2000; ++i) simulation.tick();
+        simulation.stop();
+      }
+     
       
       
       function arcPath(leftHand, d) {
@@ -814,9 +840,7 @@ function drawVis(root) {
       }
 
       function ticked() {
-        if (dragging){
-          updatePos();
-        }
+          // updatePos();
       }
 
       function updatePos() {
@@ -846,8 +870,8 @@ function drawVis(root) {
       function dragged(d) {
         d.fx = d3.event.x;
         d.fy = d3.event.y;
-        d.x = d.fx;
-        d.y = d.fy;
+        d.x = d3.event.x;
+        d.y = d3.event.y;
         updatePos();
       }
       function dragended(d) {
