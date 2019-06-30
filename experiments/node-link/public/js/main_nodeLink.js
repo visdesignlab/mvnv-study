@@ -326,7 +326,8 @@ function drawVis(root) {
     )
     .force("charge", d3.forceManyBody().strength(-300))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(radius*2.5));
+    .force("collision", d3.forceCollide().radius(radius*2.5))
+    .force('y', d3.forceY().y(0));
 
 
     //Helper functions to compute edge arcs
@@ -482,7 +483,7 @@ function drawVis(root) {
         // .attr("marker-mid", d=>"url(#" + d.type + ")");
 
         linkEnter.append('text')
-        .attr('dy',3.5)
+        .attr('dy',6)
         .append('textPath')
         .attr('startOffset',"50%")
         

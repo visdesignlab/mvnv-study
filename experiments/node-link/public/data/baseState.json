@@ -1,7 +1,7 @@
  {
   "vis": "NL [AM]/JX])",
-  "graph":"../public/data/network_small_undirected.json",
-  "isDirected":false,
+  "graph":"../public/data/network_small_directed.json",
+  "isDirected":true,
   "layout":{
     "displayEdgeTypes":["mentions","retweets","combined"],
     "colorAttr":"type",

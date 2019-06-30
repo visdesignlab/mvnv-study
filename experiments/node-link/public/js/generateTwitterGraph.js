@@ -26,7 +26,7 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
           let existingLink = newGraph.links.find(
             l =>
               ((l.source === link.source && l.target === link.target) 
-              ||(l.source === link.target && l.target === link.source)
+              // ||(l.source === link.target && l.target === link.source)
                 ) &&
               l.type === link.type
           );
@@ -84,12 +84,12 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
 
         //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
         if (tweet.retweeted_status) {
-          let source = graph.nodes.find(n => n.id === tweet.user.id) || graph.nodes.find(n => n.screen_name === tweet.user.screen_name);
+          let source = graph.nodes.find(n => n.id === tweet.user.id) ;
           let target = graph.nodes.find(
             n => n.id === tweet.retweeted_status.user.id
           );
 
-          console.log(tweet.retweeted_status.user.id === tweet.entities.user_mentions[0].id);
+          // console.log(tweet.retweeted_status.user.id === tweet.entities.user_mentions[0].id);
 
           createEdge(source, target, "retweet");
         } else {
