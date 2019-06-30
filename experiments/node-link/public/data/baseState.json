@@ -1,32 +1,45 @@
  {
   "vis": "NL [AM]/JX])",
-  "graph":"../public/data/network_small_directed.json",
+  "directedGraph":"../public/data/network_small_directed.json",
+  "undirectedGraph":"../public/data/network_small_undirected.json",
   "isDirected":true,
   "fixedPositions":false,
-  "layout":{
+  "attr":{
     "displayEdgeTypes":["mentions","retweets","combined"],
-    "colorAttr":"type",
-    "sizeAttr":"liked_count",
-    "barAttrs":{
-        "scale1":["followers_count","friends_count"],
-        "scale2":["statuses_count"]
+    "nodeFill":null,
+    "nodeStroke":"type",
+    "nodeSize":"liked_count",
+    "bars":{
+        "scale1":{
+          "domain":[0,2000],
+          "attrs":["followers_count","friends_count"]
         },
+        "scale2":{
+          "domain":null,
+          "attrs":["statuses_count"]
+        }
+      },
     "showNodeLabels":"always [onHover]",
     "labelAttr":"screen_name",
-    "selectedNodes":"outline [color]"
+    "selectedNodes":"outline [color]",
+    "edgeColor":"type",
+    "edgeWidth":"count"
+  },
+  "style":{
+    "nodeColors":["#a88e69", "#68aa73"],
+    "edgeColors":["#427d9b","#427d9b"]
   },
   "interaction":{
       "onNodeClick":"highlightNeighbors [highlightNode]",
-      "onEdgeClick":"null",
+      "onEdgeClick":null,
       "nodeTooltip":false,
       "edgeTooltip":false,
       "draggableNodes":true,
       "multiNodeSelection":true,
-      "multiEdgeSelection":"true"
+      "multiEdgeSelection":null
   },
   "state":{
-      "selectedNodes":[],
-      "fixedNodes":[]
+      "selectedNodes":[]
   }
    
 

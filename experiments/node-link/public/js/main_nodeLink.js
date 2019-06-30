@@ -119,37 +119,21 @@ var mouseOnBubble = false;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
 
 // Single function to put chart into specified target
-function loadBubbleChart(id) {
-  $(function() {
-    userData["windowWidth"] = $(window).width();
-    userData["windowHeight"] = $(window).height();
+function loadVis(id) {
+  svg = d3
+    .select("#" + id)
+    .append("svg")
+    .attr("width", width) //size + margin.left + margin.right)
+    .attr("height", height);
 
-    //instructions
-    if (userData.condition == "control") {
-      d3.selectAll(".foresightTraining").style("display", "none");
-    }
-    svg = d3
-      .select("#" + id)
-      .append("svg")
-      .attr("width", width) //size + margin.left + margin.right)
-      .attr("height", height) //size + margin.top + margin.bottom);
-    // .attr("width", userData['windowWidth'])
-    //   .attr("height", userData['windowHeight'])
+  //set up svg and groups for nodes/links
+  svg.append("g").attr("class", "links");
 
-    //   tooltip = d3
-    //   .select("#" + id)
-    //   .append("div")
-    //   .attr("class", "vis-tooltip")
-    //   .style("position", "relative")
-    //   //.style("transform","translate(0,-"+size+")")
-    //   .style("opacity", "0");
+  svg.append("g").attr("class", "nodes");
 
-    queue()
-      .defer(d3.csv, DATA_FILE, type)
-      //.defer(d3.json, DATA_FILE)
-      // .defer(d3.json, DATA_FILE, type)
-      .await(boot);
-  });
+  radius = 20;
+
+  drawVis();
 }
 
 function type(d) {
@@ -298,24 +282,10 @@ function visitItem(item, data) {
   recordVisit(data.data[NAME_ATTR]);
 }
 
+function setupVis() {}
 
 //drawLesMis NodeLink
-function drawVis(root) {
-
-  var dragging = false; //flag to dictate whether to draw simulation updates or not;
-  // userData["windowWidth"] = $(window).width();
-  // userData["windowHeight"] = $(window).height();
-
-  // d3.select("svg").attr('width',userData.windowWidth);
-
-  var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height"),
-    radius = 20;
-
-    console.log('width',width, 'height', height)
-
-  //   var color = d3.scaleOrdinal(d3.schemeCategory20);
+function drawVis() {
   var simulation = d3
     .forceSimulation()
     .force(
@@ -326,563 +296,547 @@ function drawVis(root) {
     )
     .force("charge", d3.forceManyBody().strength(-500))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(radius*2.5))
-    .force('y', d3.forceY().y(0));
+    .force("collision", d3.forceCollide().radius(radius * 2.5))
+    .force("y", d3.forceY().y(0));
 
+  //Helper functions to compute edge arcs
+  let countSiblingLinks = function(graph, source, target) {
+    var count = 0;
+    let links = graph.links;
 
-    //Helper functions to compute edge arcs
-    let countSiblingLinks = function(graph, source, target) {
-      var count = 0;
-      let links = graph.links;
+    for (var i = 0; i < links.length; ++i) {
+      if (
+        (links[i].source.id == source.id && links[i].target.id == target.id) ||
+        (links[i].source.id == target.id && links[i].target.id == source.id)
+      )
+        count++;
+    }
+    return count;
+  };
 
-      for (var i = 0; i < links.length; ++i) {
-        if (
-          (links[i].source.id == source.id &&
-            links[i].target.id == target.id) ||
-          (links[i].source.id == target.id && links[i].target.id == source.id)
-        )
-          count++;
-      }
-      return count;
-    };
+  let getSiblingLinks = function(graph, source, target) {
+    var siblings = [];
+    let links = graph.links;
+    for (var i = 0; i < links.length; ++i) {
+      if (
+        (links[i].source.id == source.id && links[i].target.id == target.id) ||
+        (links[i].source.id == target.id && links[i].target.id == source.id)
+      )
+        siblings.push(links[i].type);
+    }
+    return siblings;
+  };
 
-    let getSiblingLinks = function(graph, source, target) {
-      var siblings = [];
-      let links = graph.links;
-      for (var i = 0; i < links.length; ++i) {
-        if (
-          (links[i].source.id == source.id &&
-            links[i].target.id == target.id) ||
-          (links[i].source.id == target.id && links[i].target.id == source.id)
-        )
-          siblings.push(links[i].type);
-      }
-      return siblings;
-    };
-
-    //add Arrow marker
-    svg.append("svg:defs").selectAll("marker")
-    .data(["retweet","mentions"])      // Different link/path types can be defined here
-    .enter().append("svg:marker")    // This section adds in the arrows
-    .attr("id", String)
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 15)
-    .attr("refY", -1.5)
-    .attr("markerWidth", 3)
-    .attr("markerHeight", 3)
-    .attr("orient", "auto")
-  .append("svg:path")
-    .attr("d", "M0,-5L10,0L0,5");
-
-    // svg.append("symbol")
-    // .attr('class','svg-icon')
-    // .attr('width','2em')
-    // .attr('heigh','2em')
-    // .attr('id','personIcon')
-    // .attr('viewBox','0 0 20 20')
-    // .append('path')
-    // .attr('d',"M12.075,10.812c1.358-0.853,2.242-2.507,2.242-4.037c0-2.181-1.795-4.618-4.198-4.618S5.921,4.594,5.921,6.775c0,1.53,0.884,3.185,2.242,4.037c-3.222,0.865-5.6,3.807-5.6,7.298c0,0.23,0.189,0.42,0.42,0.42h14.273c0.23,0,0.42-0.189,0.42-0.42C17.676,14.619,15.297,11.677,12.075,10.812 M6.761,6.775c0-2.162,1.773-3.778,3.358-3.778s3.359,1.616,3.359,3.778c0,2.162-1.774,3.778-3.359,3.778S6.761,8.937,6.761,6.775 M3.415,17.69c0.218-3.51,3.142-6.297,6.704-6.297c3.562,0,6.486,2.787,6.705,6.297H3.415z")
-
-
-    
-    //set up svg and groups for nodes/links
-    svg
-    .append("g")
-    .attr("class", "links")
-
-    svg
-    .append("g")
-    .attr("class", "nodes")
-
-
+  //read in configuration file;
   d3.json("../public/data/baseState.json", function(config) {
     console.log("config", config);
 
-    d3.json(config.graph, function(graph) {
+    //load undirected graph specified in configuration file;
+    d3.json(config.undirectedGraph, function(undir_graph) {
+      //load directed graph specified in configuration file;
+      d3.json(config.directedGraph, function(dir_graph) {
+        //choose which graph to render;
+        let graph = config.isDirected ? dir_graph : undir_graph;
 
-      // let typeDict = {};
-      // graph.nodes.map(n=>{
-      //   typeDict[n.id]={screen_name:n.screen_name,type:n.type};
-      // })
+        //set datalist property for search box:
+        {
+          d3.select("#search-input").attr("list", "characters");
+          let inputParent = d3.select("#search-input").node().parentNode;
 
-      // console.log(JSON.stringify(typeDict))
-      
-      //Create Scales
+          let datalist = d3
+            .select(inputParent)
+            .append("datalist")
+            .attr("id", "characters");
 
-      //array of colors to iterate through for on-node color encoding, depending on the no. of unique values
-      let nodeColorOptions=['#fe9929','#993404','#bdbdbd']
+          let options = datalist.selectAll("option").data(graph.nodes);
 
-      let nodeColor = d3
-        .scaleOrdinal()
-        .domain(d3.extent(graph.nodes.map(n => n[config.colorAttr])))
-        // .range(['#fe9929','#993404'])
-        // .range(["#bdbdbd", "#7A7A7A"]);
-        .range(["white", "white"]);
+          let optionsEnter = options.enter().append("option");
+          options.exit().remove();
 
-      let edgeColor = d3
-        .scaleOrdinal()
-        .domain(d3.extent(graph.links.map(l => l.type)))
-        // .range(["#9ebcda", "#88419d", "#4d004b"]);
-        .range(["#427d9b", "#88419d", "#5c9942"]);
+          options = optionsEnter.merge(options);
+          options.attr("value", d => d.screen_name);
+        }
 
-      // .range(["#1b9e77", "#d95f02","#666666"]);
+        //Create Scales
 
-      let edgeScale = d3
-        .scaleLinear()
-        .domain(d3.extent(graph.links.map(l => l.count)))
-        .range([2, 10]);
+        let nodeFillScale = d3
+          .scaleOrdinal()
+          .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeFill])))
+          .range(config.style.nodeColors);
 
-      let friendExtent = d3.extent(graph.nodes.map(n => n.friends_count));
-      let followerExtent = d3.extent(graph.nodes.map(n => n.followers_count));
+        let nodeStrokeScale = d3
+          .scaleOrdinal()
+          .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeStroke])))
+          .range(config.style.nodeColors);
 
-      let scaleExtent = d3.extent(friendExtent.concat(followerExtent));
+        let edgeColorScale = d3
+          .scaleOrdinal()
+          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeColor])))
+          .range(config.style.edgeColors);
 
-      let barPadding = radius;
-      let follower_scale = d3
-        .scaleLinear()
-        .domain([0, 2000])
-        .range([0, 2 * radius - barPadding])
-        .clamp(true);
+        let edgeWidthScale = d3
+          .scaleLinear()
+          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeWidth])))
+          .range([2, 10]);
 
-      let friends_scale = d3
-        .scaleLinear()
-        .domain([0, 2000])
-        .range([0, 2 * radius - barPadding])
-        .clamp(true);
+        let nodeFill = function(node) {
+          let value = config.attr.nodeFill
+            ? nodeFillScale(node[config.attr.nodeFill])
+            : "white";
+          return value;
+        };
 
-      //set datalist property for search box:
+        let nodeStroke = function(node) {
+          let value = config.attr.nodeStroke
+            ? nodeStrokeScale(node[config.attr.nodeStroke])
+            : "white";
+          return value;
+        };
 
-      d3.select("#search-input").attr("list", "characters");
-      let inputParent = d3.select("#search-input").node().parentNode;
+        let edgeColor = function(edge) {
+          let value = config.attr.edgeColor
+            ? edgeColorScale(edge[config.attr.edgeColor])
+            : "#474747";
+          return value;
+        };
 
-      let datalist = d3
-        .select(inputParent)
-        .append("datalist")
-        .attr("id", "characters");
+        let edgeWidth = function(edge) {
+          let value = config.attr.edgeWidth
+            ? edgeWidthScale(edge[config.attr.edgeWidth])
+            : "#474747";
+          return value;
+        };
 
-      let options = datalist.selectAll("option").data(graph.nodes);
+        //create scales for bars;
+        let scaleConfig = config.attr.bars;
+        let scaleKeys = Object.keys(config.attr.bars);
 
-      let optionsEnter = options.enter().append("option");
-      options.exit().remove();
+        //object to store scales as a function of attr name;
+        let scales = {};
+        let barPadding = radius;
 
-      options = optionsEnter.merge(options);
-      options.attr("value", d => d.screen_name);
+        scaleKeys.map(s => {
+          //find autoExtent from data;
+          let dataExtent = scaleConfig[s].attrs.reduce(
+            (extent, attr) => {
+              return d3.extent(extent.concat(graph.nodes.map(n => n[attr])));
+            },
+            [0]
+          );
 
-      let link = d3.select('.links')
-        .selectAll("path")
-        .data(graph.links);
+          let scale = d3
+            .scaleLinear()
+            .domain(scaleConfig[s].domain ? scaleConfig[s].domain : dataExtent)
+            .range([0, 2 * radius - barPadding])
+            .clamp(true);
 
-      let linkEnter = link
-        .enter()
-        .append('g')
-
-        linkEnter
-        .append("path")
-        .attr("id", d => d.id)
-        .attr("class", "links")
-        // .attr("marker-mid", d=>"url(#" + d.type + ")");
-
-        linkEnter.append('text')
-        .attr('class','edgeArrow')
-        .attr('dy',4)
-        .append('textPath')
-        .attr('startOffset',"50%")
-        
-        
-
-
-      // .append("line")
-
-      link.exit().remove();
-
-      link = linkEnter.merge(link);
-
-      link
-       .select('path')
-        .style("stroke-width", l => edgeScale(l.count))
-        .style("stroke", function(d) {
-          return edgeColor(d.type);
-        })
-        .attr('id',d=>d.id)
-
-      link.select('textPath')
-      .attr('class',d=>d.type)
-      .attr('xlink:href',d=>"#" + d.id)
-      .text(d=>config.isDirected ? (d.type === 'mentions' ? '▶' : '◀' ): ''); //only add arrows to directed graphs;
-      // .style('opacity',1)
-
-      // add edge labels
-      var edgeLabels = d3
-        .select(".links")
-        .selectAll(".pathLabel")
-        .data(graph.links);
-
-      let edgeLabelsEnter = edgeLabels
-        .enter()
-        .append("text")
-        .attr("class", "pathLabel hideLabel")
-        .append("textPath")
-        .attr("startOffset", "50%")
-        .attr("text-anchor", "middle");
-
-      edgeLabels.exit().remove();
-
-      edgeLabels = edgeLabelsEnter.merge(edgeLabels);
-
-      edgeLabels
-        .attr("xlink:href", function(d) {
-          return "#" + d.id;
-        })
-        .text(function(d) {
-          return d.type;
+          //save scale to use with that attribute
+          scaleConfig[s].attrs.map(a => {
+            scales[a] = scale;
+          });
         });
 
-    
-      var node = d3.select('.nodes')
-        .selectAll("g")
-        .data(graph.nodes);
+        //Draw Links
+        let link = d3
+          .select(".links")
+          .selectAll("path")
+          .data(graph.links);
 
+        let linkEnter = link.enter().append("g");
 
-        let nodeEnter = node
-        .enter()
-        .append("g");
+        linkEnter
+          .append("path")
+          .attr("id", d => d.id)
+          .attr("class", "links");
 
-      nodeEnter
-        .append("rect")
-        .attr("class", "node")
-        .attr("x", -radius)
-        .attr("y", -radius)
-        .attr("width", radius * 2)
-        .attr("height", radius * 2);
+        linkEnter
+          .append("text")
+          .attr("class", "edgeArrow")
+          .attr("dy", 4)
+          .append("textPath")
+          .attr("startOffset", "50%");
 
-      nodeEnter
-        .append("rect")
-        .attr("class", "frame")
-        .attr("width", radius / 2)
-        .attr("x", -radius / 2 - 2)
-        .attr("y", -radius + barPadding / 2);
+        // .append("line")
 
-      nodeEnter
-        .append("rect")
-        .attr("class", "frame")
-        .attr("width", radius / 2)
-        .attr("x", 2)
-        .attr("y", -radius + barPadding / 2);
+        link.exit().remove();
 
-      nodeEnter
-        .append("rect")
-        .attr("class", "bar " + config.layout.barAttrs.scale1[0])
-        .attr("width", radius / 2)
-        .attr("x", -radius / 2 - 2)
+        link = linkEnter.merge(link);
 
-      nodeEnter
-        .append("rect")
-        .attr("class", "bar " + config.layout.barAttrs.scale1[1])
-        .attr("width", radius / 2)
-        .attr("x", 2)
+        link
+          .select("path")
+          .style("stroke-width", edgeWidth)
+          .style("stroke", edgeColor)
+          .attr("id", d => d.id);
 
+        // TO DO , set ARROW DIRECTION DYNAMICALLY
+        link
+          .select("textPath")
+          .attr("xlink:href", d => "#" + d.id)
+          .text(d =>
+            config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""
+          );
 
-      nodeEnter.append("rect").attr("class", "labelBackground");
+        //draw Nodes
+        var node = d3
+          .select(".nodes")
+          .selectAll("g")
+          .data(graph.nodes);
 
+        let nodeEnter = node.enter().append("g");
 
         nodeEnter
-        .append("text")
-        .attr("dy", "-2em")
-        .classed("label", true)
+          .append("rect")
+          .attr("class", "node")
+          .attr("x", -radius)
+          .attr("y", -radius)
+          .attr("width", radius * 2)
+          .attr("height", radius * 2);
 
-        // nodeEnter
-        // .append('use')
-        // .attr('xlink:href', "#personIcon")
+        nodeEnter.append("rect").attr("class", "labelBackground");
 
+        nodeEnter
+          .append("text")
+          .attr("dy", "-2em")
+          .classed("label", true);
 
-        
         node.exit().remove();
 
         node = nodeEnter.merge(node);
 
-        // node.select('.node')
-        //   .attr("fill", d => nodeColor(d.type));
+        node
+          .select(".node")
+          .style("fill", nodeFill);
+        node
+          .select(".node")
+          .style("stroke", nodeStroke);
 
-          node.select('.node')
-          .attr('class',d=>'node ' + d.type)
+        node
+          .select("text")
+          .text(function(d) {
+            return d[config.attr.labelAttr];
+          })
+          .attr("dx", function(d) {
+            return (
+              -d3
+                .select(this)
+                .node()
+                .getBBox().width / 2
+            );
+          });
 
-        node.selectAll('.frame')
-          .attr("height", friends_scale.range()[1])
-
-        node.select('.' + config.layout.barAttrs.scale1[0])
-          .classed('clipped',d=>d[config.layout.barAttrs.scale1[0]]>friends_scale.domain()[1])
-          .attr("height", d => friends_scale(d[config.layout.barAttrs.scale1[0]]))
-          .attr("y", d => radius - barPadding / 2 - friends_scale(d[config.layout.barAttrs.scale1[0]]));
-
-        node.select('.' + config.layout.barAttrs.scale1[1])
-        .classed('clipped',d=>d[config.layout.barAttrs.scale1[1]]>friends_scale.domain()[1])
-          .attr("height", d => friends_scale(d[config.layout.barAttrs.scale1[1]]))
-          .attr("y", d => radius - barPadding / 2 - friends_scale(d[config.layout.barAttrs.scale1[1]]));
-
-
-      node.select('text')
-        .text(function(d) {
-          return d[config.layout.labelAttr];
-        })
-        .attr("dx", function(d) {
-        return (
-          -d3
-            .select(this)
-            .node()
-            .getBBox().width / 2
-        );
-      });
-
-      node
-        .select(".labelBackground")
-        .style("fill", "white")
-        .style("opacity", 0.7)
-        .attr("width", function(d) {
-          return d3
-            .select(d3.select(this).node().parentNode)
-            .select("text")
-            .node()
-            .getBBox().width;
-        })
-        .attr("height", "1em")
-        .attr("x", function(d) {
-          return (
-            -d3
+        node
+          .select(".labelBackground")
+          .style("fill", "white")
+          .style("opacity", 0.7)
+          .attr("width", function(d) {
+            return d3
               .select(d3.select(this).node().parentNode)
               .select("text")
               .node()
-              .getBBox().width / 2
-          );
-        })
-        .attr("y", "-42");
+              .getBBox().width;
+          })
+          .attr("height", "1em")
+          .attr("x", function(d) {
+            return (
+              -d3
+                .select(d3.select(this).node().parentNode)
+                .select("text")
+                .node()
+                .getBBox().width / 2
+            );
+          })
+          .attr("y", "-42");
 
+        node.call(
+          d3
+            .drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended)
+        );
 
-      node.call(
-        d3
-          .drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended)
-      );
+        // //  Separate enter/exit/update for bars so as to bind to the correct data;
+        // nodeEnter
+        //   .append("rect")
+        //   .attr("class", "frame")
+        //   .attr("width", radius / 2)
+        //   .attr("x", -radius / 2 - 2)
+        //   .attr("y", -radius + barPadding / 2);
 
-      d3.select("#exportGraph").on("click", () => {
-        
-        let graphCopy = JSON.parse(JSON.stringify(graph));
+        // nodeEnter
+        //   .append("rect")
+        //   .attr("class", "frame")
+        //   .attr("width", radius / 2)
+        //   .attr("x", 2)
+        //   .attr("y", -radius + barPadding / 2);
 
-        graphCopy.links.map(l=>{l.index = undefined; l.source = l.source.id; l.target = l.target.id})
-        graphCopy.nodes.map(n=>{n.index = undefined; n.vx = undefined; n.vy = undefined;} )
+        // nodeEnter
+        //   .append("rect")
+        //   .attr("class", "bar " + config.attr.bars.scale1[0])
+        //   .attr("width", radius / 2)
+        //   .attr("x", -radius / 2 - 2);
 
-        console.log(JSON.stringify(graphCopy));
-        })
+        // nodeEnter
+        //   .append("rect")
+        //   .attr("class", "bar " + config.attr.bars.scale1[1])
+        //   .attr("width", radius / 2)
+        //   .attr("x", 2);
 
+        // node.selectAll(".frame").attr("height", friends_scale.range()[1]);
 
-      d3.select("#clear-selection").on("click", () => {
-        let clearSelection = function(d) {
-          let isNode = d.userSelectedNeighbors !== undefined;
+        // node
+        //   .select("." + config.attr.bars.scale1[0])
+        //   .classed(
+        //     "clipped",
+        //     d => d[config.attr.bars.scale1[0]] > friends_scale.domain()[1]
+        //   )
+        //   .attr("height", d => friends_scale(d[config.attr.bars.scale1[0]]))
+        //   .attr(
+        //     "y",
+        //     d =>
+        //       radius -
+        //       barPadding / 2 -
+        //       friends_scale(d[config.attr.bars.scale1[0]])
+        //   );
 
-          d.selected = false;
-          if (isNode) {
-            d.userSelectedNeighbors = [];
-          }
-          return true;
-        };
+        // node
+        //   .select("." + config.attr.bars.scale1[1])
+        //   .classed(
+        //     "clipped",
+        //     d => d[config.attr.bars.scale1[1]] > friends_scale.domain()[1]
+        //   )
+        //   .attr("height", d => friends_scale(d[config.attr.bars.scale1[1]]))
+        //   .attr(
+        //     "y",
+        //     d =>
+        //       radius -
+        //       barPadding / 2 -
+        //       friends_scale(d[config.attr.bars.scale1[1]])
+        //   );
 
-        d3.selectAll(".node").classed("clicked", false);
+        d3.select("#exportGraph").on("click", () => {
+          let graphCopy = JSON.parse(JSON.stringify(graph));
 
-        d3.select(".nodes")
-          .selectAll("g")
-          .filter(clearSelection)
-          .classed("muted", false);
-
-        d3.select(".links")
-          .selectAll("g")
-          .filter(clearSelection)
-          .classed("muted", false);
-      });
-
-      node.on("click", function(currentData) {
-        d3.event.stopPropagation();
-
-        let isClicked = d3
-          .select(this)
-          .select(".node")
-          .classed("clicked");
-
-        d3.select(this)
-          .selectAll(".node")
-          .classed("clicked", !isClicked);
-
-        let isNeighbor = function(d) {
-          if (d === currentData) {
-            d.selected = !isClicked;
-          }
-
-          let isNode = d.userSelectedNeighbors !== undefined;
-
-          let isNeighbor =
-            d === currentData ||
-            currentData.neighbors.find(n => n === d.id) ||
-            currentData.edges.find(n => n === d.id);
-
-          if (isNeighbor && isNode) {
-            //add to list of selected neighbors
-            if (!isClicked) {
-              d.userSelectedNeighbors.push(currentData.id);
-            } else {
-              d.userSelectedNeighbors = d.userSelectedNeighbors.filter(
-                n => n !== currentData.id
-              );
-            }
-          }
-
-          if (!isNode && isNeighbor) {
-            d.selected = d.source.selected || d.target.selected || !d.selected;
-          }
-
-          return true;
-        };
-
-        // see if there is at least one node 'clicked'
-        let hasUserSelection = d3.selectAll(".clicked").size() > 0;
-
-        //set the class of everything to 'muted', except for the selected node and it's neighbors;
-        d3.select(".nodes")
-          .selectAll("g")
-          .filter(isNeighbor)
-          .classed("muted", d => {
-            return hasUserSelection && d.userSelectedNeighbors.length < 1;
+          graphCopy.links.map(l => {
+            l.index = undefined;
+            l.source = l.source.id;
+            l.target = l.target.id;
+          });
+          graphCopy.nodes.map(n => {
+            n.index = undefined;
+            n.vx = undefined;
+            n.vy = undefined;
           });
 
-        d3.select(".links")
-          .selectAll("g")
-          .filter(isNeighbor)
-          .classed("muted", d => hasUserSelection && !d.selected);
-
-        // d3.select(".links")
-        //   .selectAll(".pathLabel")
-        //   .classed("hideLabel", d => !currentData.edges.find(n => n === d.id));
-
-        // console.log('pathData is ',d))
-      });
-
-      node.append("title").text(function(d) {
-        return d.screen_name;
-      });
-      
-
-      if (config.fixedPositions){
-         //restablish link references to their source and target nodes; 
-         graph.links.map(l=>{
-          l.source = graph.nodes.find(n=>n.id === l.source);
-          l.target = graph.nodes.find(n=>n.id === l.target);
-        })
-      } else {
-        simulation.nodes(graph.nodes).on("tick", ticked);
-        simulation.force("link").links(graph.links);
-
-        graph.nodes.map(n=>{
-          n.x = null;
-          n.y = null;
-          n.vx = null; 
-          n.vy = null
+          console.log(JSON.stringify(graphCopy));
         });
-        for (var i = 0; i < 2000; ++i) simulation.tick();
-        simulation.stop();
-      }
-     
-      
-      
-      function arcPath(leftHand, d) {
-        var x1 = leftHand ? d.source.x : d.target.x,
-          y1 = leftHand ? d.source.y : d.target.y,
-          x2 = leftHand ? d.target.x : d.source.x,
-          y2 = leftHand ? d.target.y : d.source.y,
-          dx = x2 - x1,
-          dy = y2 - y1,
-          dr = Math.sqrt(dx * dx + dy * dy),
-          drx = dr,
-          dry = dr,
-          sweep = leftHand ? 0 : 1;
-        siblingCount = countSiblingLinks(graph, d.source, d.target);
-        (xRotation = 0), (largeArc = 0);
 
-        if (siblingCount > 1) {
-          var siblings = getSiblingLinks(graph, d.source, d.target);
-          var arcScale = d3
-            .scaleOrdinal()
-            .domain(siblings)
-            .range([1, siblingCount]);
+        d3.select("#clear-selection").on("click", () => {
+          let clearSelection = function(d) {
+            let isNode = d.userSelectedNeighbors !== undefined;
 
-          drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
-          dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+            d.selected = false;
+            if (isNode) {
+              d.userSelectedNeighbors = [];
+            }
+            return true;
+          };
+
+          d3.selectAll(".node").classed("clicked", false);
+
+          d3.select(".nodes")
+            .selectAll("g")
+            .filter(clearSelection)
+            .classed("muted", false);
+
+          d3.select(".links")
+            .selectAll("g")
+            .filter(clearSelection)
+            .classed("muted", false);
+        });
+
+        node.on("click", function(currentData) {
+          d3.event.stopPropagation();
+
+          let isClicked = d3
+            .select(this)
+            .select(".node")
+            .classed("clicked");
+
+          d3.select(this)
+            .selectAll(".node")
+            .classed("clicked", !isClicked);
+
+          let isNeighbor = function(d) {
+            if (d === currentData) {
+              d.selected = !isClicked;
+            }
+
+            let isNode = d.userSelectedNeighbors !== undefined;
+
+            let isNeighbor =
+              d === currentData ||
+              currentData.neighbors.find(n => n === d.id) ||
+              currentData.edges.find(n => n === d.id);
+
+            if (isNeighbor && isNode) {
+              //add to list of selected neighbors
+              if (!isClicked) {
+                d.userSelectedNeighbors.push(currentData.id);
+              } else {
+                d.userSelectedNeighbors = d.userSelectedNeighbors.filter(
+                  n => n !== currentData.id
+                );
+              }
+            }
+
+            if (!isNode && isNeighbor) {
+              d.selected =
+                d.source.selected || d.target.selected || !d.selected;
+            }
+
+            return true;
+          };
+
+          // see if there is at least one node 'clicked'
+          let hasUserSelection = d3.selectAll(".clicked").size() > 0;
+
+          //set the class of everything to 'muted', except for the selected node and it's neighbors;
+          d3.select(".nodes")
+            .selectAll("g")
+            .filter(isNeighbor)
+            .classed("muted", d => {
+              return hasUserSelection && d.userSelectedNeighbors.length < 1;
+            });
+
+          d3.select(".links")
+            .selectAll("g")
+            .filter(isNeighbor)
+            .classed("muted", d => hasUserSelection && !d.selected);
+
+          // d3.select(".links")
+          //   .selectAll(".pathLabel")
+          //   .classed("hideLabel", d => !currentData.edges.find(n => n === d.id));
+
+          // console.log('pathData is ',d))
+        });
+
+        node.append("title").text(function(d) {
+          return d.screen_name;
+        });
+
+        if (config.fixedPositions) {
+          //restablish link references to their source and target nodes;
+          graph.links.map(l => {
+            l.source = graph.nodes.find(n => n.id === l.source);
+            l.target = graph.nodes.find(n => n.id === l.target);
+          });
+        } else {
+          graph.nodes.map(n => {
+            n.x = null;
+            n.y = null;
+            n.vx = null;
+            n.vy = null;
+          });
+
+          simulation.nodes(graph.nodes).on("tick", ticked);
+          simulation.force("link").links(graph.links);
+
+          for (var i = 0; i < 2000; ++i) simulation.tick();
+          simulation.stop();
         }
 
-        return (
-          "M" +
-          x1 +
-          "," +
-          y1 +
-          "A" +
-          drx +
-          ", " +
-          dry +
-          " " +
-          xRotation +
-          ", " +
-          largeArc +
-          ", " +
-          sweep +
-          " " +
-          x2 +
-          "," +
-          y2
-        );
-      }
+        function arcPath(leftHand, d) {
+          var x1 = leftHand ? d.source.x : d.target.x,
+            y1 = leftHand ? d.source.y : d.target.y,
+            x2 = leftHand ? d.target.x : d.source.x,
+            y2 = leftHand ? d.target.y : d.source.y,
+            dx = x2 - x1,
+            dy = y2 - y1,
+            dr = Math.sqrt(dx * dx + dy * dy),
+            drx = dr,
+            dry = dr,
+            sweep = leftHand ? 0 : 1;
+          siblingCount = countSiblingLinks(graph, d.source, d.target);
+          (xRotation = 0), (largeArc = 0);
 
-      function ticked() {
+          if (siblingCount > 1) {
+            var siblings = getSiblingLinks(graph, d.source, d.target);
+            var arcScale = d3
+              .scaleOrdinal()
+              .domain(siblings)
+              .range([1, siblingCount]);
+
+            drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+            dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+          }
+
+          return (
+            "M" +
+            x1 +
+            "," +
+            y1 +
+            "A" +
+            drx +
+            ", " +
+            dry +
+            " " +
+            xRotation +
+            ", " +
+            largeArc +
+            ", " +
+            sweep +
+            " " +
+            x2 +
+            "," +
+            y2
+          );
+        }
+
+        function ticked() {
           // updatePos();
-      }
+        }
 
-      function updatePos() {
-        link.select('path').attr("d", function(d) {
-          return arcPath(d.type === "mentions", d);
-        });
+        function updatePos() {
+          link.select("path").attr("d", function(d) {
+            return arcPath(d.type === "mentions", d);
+          });
 
-        node.attr("transform", d => {
-          d.x = Math.max(radius, Math.min(width - radius, d.x));
-          d.y = Math.max(radius, Math.min(height - radius, d.y));
-          return "translate(" + d.x + "," + d.y + ")";
-        });
-      }
+          node.attr("transform", d => {
+            d.x = Math.max(radius, Math.min(width - radius, d.x));
+            d.y = Math.max(radius, Math.min(height - radius, d.y));
+            return "translate(" + d.x + "," + d.y + ")";
+          });
+        }
 
-      updatePos();
-
-      //set all nodes to fixed positions. 
-      // graph.nodes.map(d=>{d.fx = d.x; d.fy = d.y;});
-
-
-      function dragstarted(d) {
-        // if (!d3.event.active) simulation.alphaTarget(0.1).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-        // dragging = true;
-      }
-      function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-        d.x = d3.event.x;
-        d.y = d3.event.y;
         updatePos();
-      }
-      function dragended(d) {
-        // dragging = false;
-        // simulation.stop();
-        // simulation.velocityDecay(0.9)
-        // console.log(simulation.alpha())
-        //   if (simulation.apha()>3) simulation.alphaTarget(0);
-        //   d.fx = null;
-        //   d.fy = null;
-      }
+
+        //set all nodes to fixed positions.
+        // graph.nodes.map(d=>{d.fx = d.x; d.fy = d.y;});
+
+        function dragstarted(d) {
+          // if (!d3.event.active) simulation.alphaTarget(0.1).restart();
+          d.fx = d.x;
+          d.fy = d.y;
+          // dragging = true;
+        }
+        function dragged(d) {
+          d.fx = d3.event.x;
+          d.fy = d3.event.y;
+          d.x = d3.event.x;
+          d.y = d3.event.y;
+          updatePos();
+        }
+        function dragended(d) {
+          // dragging = false;
+          // simulation.stop();
+          // simulation.velocityDecay(0.9)
+          // console.log(simulation.alpha())
+          //   if (simulation.apha()>3) simulation.alphaTarget(0);
+          //   d.fx = null;
+          //   d.fy = null;
+        }
+      });
     });
   });
 }
@@ -910,7 +864,7 @@ function boot(error, data) {
 
   //var root = loadExoplanetStructure(data);
   var root = LOAD_FUNC(data);
-  drawVis(root);
+  drawVis();
   loadSearchBox();
 }
 
