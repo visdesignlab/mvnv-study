@@ -23,3 +23,10 @@ edgeLabels
 .text(function(d) {
   return d.type;
 });
+
+
+          // d3.select(".links")
+          //   .selectAll(".pathLabel")
+          //   .classed("hideLabel", d => !currentData.edges.find(n => n === d.id));
+
+          // console.log('pathData is ',d))

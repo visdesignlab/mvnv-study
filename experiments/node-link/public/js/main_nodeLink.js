@@ -380,16 +380,42 @@ function drawVis() {
           .range([2, 10]);
 
         let nodeFill = function(node) {
-          let value = config.attr.nodeFill
+
+          let value; 
+          let selectedNodeEncoding =  config.attr.selectedNodes === 'fill';
+
+          if (node.selected && selectedNodeEncoding){
+            if (!config.attr.selectedColor){
+              value = nodeFillScale(node[config.attr.nodeFill])
+            }else{
+              value = undefined;
+            }
+            
+          } else {
+            value = (config.attr.nodeFill && !selectedNodeEncoding)
             ? nodeFillScale(node[config.attr.nodeFill])
-            : "white";
+            : undefined;
+          } 
           return value;
         };
 
         let nodeStroke = function(node) {
-          let value = config.attr.nodeStroke
+          let value; 
+          let selectedNodeEncoding = config.attr.selectedNodes === 'stroke';
+          
+          if (node.selected && selectedNodeEncoding){
+            if (!config.attr.selectedColor){
+              value = nodeStrokeScale(node[config.attr.nodeStroke])
+            }else{
+              value = undefined;
+            }
+          }else {
+            value = (config.attr.nodeStroke && !selectedNodeEncoding)
             ? nodeStrokeScale(node[config.attr.nodeStroke])
-            : "white";
+            : undefined;
+          }
+
+          
           return value;
         };
 
@@ -407,13 +433,33 @@ function drawVis() {
           return value;
         };
 
+
+        //set css values for 'clicked' nodes;
+        //set fill or stroke of selected node;
+
+        //find the appropriate style sheet
+        var sheet = Object.values(document.styleSheets).find(s=>s.href.includes('node-link.css'));
+        // var rules = sheet.cssRules || sheet.rules;
+        
+        // rules.clicked ={"fill":"red"};
+
+        // if user selected a 'constant selected color', add css rule for '.clicked'
+        
+        if (config.attr.selectedColor !== undefined){
+          let ruleString = config.attr['selectedNodes'] + ":" + config.attr.selectedColor;
+
+          sheet.addRule(".node.clicked", ruleString , 1);
+        }
+      
+
         //create scales for bars;
         let scaleConfig = config.attr.bars;
         let scaleKeys = Object.keys(config.attr.bars);
 
         //object to store scales as a function of attr name;
         let scales = {};
-        let barPadding = radius;
+
+        let barPadding = radius*0.2;
 
         scaleKeys.map(s => {
           //find autoExtent from data;
@@ -427,7 +473,7 @@ function drawVis() {
           let scale = d3
             .scaleLinear()
             .domain(scaleConfig[s].domain ? scaleConfig[s].domain : dataExtent)
-            .range([0, 2 * radius - barPadding])
+            .range([0,2*radius-2*barPadding])
             .clamp(true);
 
           //save scale to use with that attribute
@@ -442,7 +488,7 @@ function drawVis() {
           .selectAll("path")
           .data(graph.links);
 
-        let linkEnter = link.enter().append("g");
+        let linkEnter = link.enter().append("g").attr('class','linkGroup');
 
         linkEnter
           .append("path")
@@ -474,7 +520,11 @@ function drawVis() {
           .attr("xlink:href", d => "#" + d.id)
           .text(d =>
             config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""
-          );
+          )
+          .style("fill", edgeColor)
+          .style("stroke", edgeColor)
+
+
 
         //draw Nodes
         var node = d3
@@ -482,7 +532,7 @@ function drawVis() {
           .selectAll("g")
           .data(graph.nodes);
 
-        let nodeEnter = node.enter().append("g");
+        let nodeEnter = node.enter().append("g").attr('class','nodeGroup');
 
         nodeEnter
           .append("rect")
@@ -505,16 +555,12 @@ function drawVis() {
 
         node
           .select(".node")
-          .style("fill", nodeFill);
-        node
-          .select(".node")
+          .style("fill", nodeFill)
           .style("stroke", nodeStroke);
 
         node
           .select("text")
-          .text(function(d) {
-            return d[config.attr.labelAttr];
-          })
+          .text((d)=> d[config.attr.labelAttr])
           .attr("dx", function(d) {
             return (
               -d3
@@ -556,63 +602,61 @@ function drawVis() {
         );
 
         // //  Separate enter/exit/update for bars so as to bind to the correct data;
-        // nodeEnter
-        //   .append("rect")
-        //   .attr("class", "frame")
-        //   .attr("width", radius / 2)
-        //   .attr("x", -radius / 2 - 2)
-        //   .attr("y", -radius + barPadding / 2);
+       
+        let barAttrs = Object.keys(scales);
+        let numBars = barAttrs.length
+        let nodeWidth = radius*2 - barPadding;
+        let barWidth = (nodeWidth/ numBars)-(barPadding);
 
-        // nodeEnter
-        //   .append("rect")
-        //   .attr("class", "frame")
-        //   .attr("width", radius / 2)
-        //   .attr("x", 2)
-        //   .attr("y", -radius + barPadding / 2);
+        let scaleStart = -radius + barPadding;
+        let scaleEnd = scaleStart + (numBars-1) * (barWidth+barPadding);
 
-        // nodeEnter
-        //   .append("rect")
-        //   .attr("class", "bar " + config.attr.bars.scale1[0])
-        //   .attr("width", radius / 2)
-        //   .attr("x", -radius / 2 - 2);
+        let barXScale = d3.scaleLinear().domain([0,numBars-1]).range([scaleStart,scaleEnd])
+        
+ 
+        let bars = node.selectAll('.bars')
+        //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
+        .data(d=>barAttrs.map(b=>{return {data:d[b],attr:b};}));
 
-        // nodeEnter
-        //   .append("rect")
-        //   .attr("class", "bar " + config.attr.bars.scale1[1])
-        //   .attr("width", radius / 2)
-        //   .attr("x", 2);
+        let barsEnter = bars.enter().append('g').attr('class','bars');
 
-        // node.selectAll(".frame").attr("height", friends_scale.range()[1]);
+        barsEnter
+          .append("rect")
+          .attr("class", "frame")
+          .attr("width", barWidth)
 
-        // node
-        //   .select("." + config.attr.bars.scale1[0])
-        //   .classed(
-        //     "clipped",
-        //     d => d[config.attr.bars.scale1[0]] > friends_scale.domain()[1]
-        //   )
-        //   .attr("height", d => friends_scale(d[config.attr.bars.scale1[0]]))
-        //   .attr(
-        //     "y",
-        //     d =>
-        //       radius -
-        //       barPadding / 2 -
-        //       friends_scale(d[config.attr.bars.scale1[0]])
-        //   );
+    
+        barsEnter
+          .append("rect")
+          .attr('class','bar')
+          .attr("width", barWidth)
 
-        // node
-        //   .select("." + config.attr.bars.scale1[1])
-        //   .classed(
-        //     "clipped",
-        //     d => d[config.attr.bars.scale1[1]] > friends_scale.domain()[1]
-        //   )
-        //   .attr("height", d => friends_scale(d[config.attr.bars.scale1[1]]))
-        //   .attr(
-        //     "y",
-        //     d =>
-        //       radius -
-        //       barPadding / 2 -
-        //       friends_scale(d[config.attr.bars.scale1[1]])
-        //   );
+        bars.exit().remove();
+
+        bars = barsEnter.merge(bars);
+
+        bars.attr('transform',(d,i)=> 'translate(' + barXScale(i) + ',0)');
+     
+
+        bars
+          .select(".frame")
+          .attr("height",d=>scales[d.attr].range()[1])
+          .attr("y",d=>-scales[d.attr].range()[1]/2)
+
+
+        bars
+          .select(".bar")
+          .classed(
+            "clipped",
+            d => d.data > scales[d.attr].domain()[1]
+          )
+          .attr("height", d => scales[d.attr](d.data))
+          .attr(
+            "y",
+            d =>
+              radius - barPadding -
+              scales[d.attr](d.data)
+          );
 
         d3.select("#exportGraph").on("click", () => {
           let graphCopy = JSON.parse(JSON.stringify(graph));
@@ -645,18 +689,22 @@ function drawVis() {
           d3.selectAll(".node").classed("clicked", false);
 
           d3.select(".nodes")
-            .selectAll("g")
+            .selectAll(".nodeGroup")
             .filter(clearSelection)
             .classed("muted", false);
 
           d3.select(".links")
-            .selectAll("g")
+            .selectAll(".linkGroup")
             .filter(clearSelection)
             .classed("muted", false);
+
+            node
+          .select(".node")
+          .style("fill", nodeFill)
+          .style("stroke", nodeStroke);
         });
 
         node.on("click", function(currentData) {
-          d3.event.stopPropagation();
 
           let isClicked = d3
             .select(this)
@@ -703,22 +751,21 @@ function drawVis() {
 
           //set the class of everything to 'muted', except for the selected node and it's neighbors;
           d3.select(".nodes")
-            .selectAll("g")
+            .selectAll(".nodeGroup")
             .filter(isNeighbor)
             .classed("muted", d => {
               return hasUserSelection && d.userSelectedNeighbors.length < 1;
             });
 
           d3.select(".links")
-            .selectAll("g")
+            .selectAll(".linkGroup")
             .filter(isNeighbor)
             .classed("muted", d => hasUserSelection && !d.selected);
 
-          // d3.select(".links")
-          //   .selectAll(".pathLabel")
-          //   .classed("hideLabel", d => !currentData.edges.find(n => n === d.id));
-
-          // console.log('pathData is ',d))
+           node
+            .select(".node")
+            .style("fill", nodeFill)
+            .style("stroke", nodeStroke);
         });
 
         node.append("title").text(function(d) {

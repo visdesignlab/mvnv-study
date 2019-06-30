@@ -6,7 +6,7 @@
   "fixedPositions":false,
   "attr":{
     "displayEdgeTypes":["mentions","retweets","combined"],
-    "nodeFill":null,
+    "nodeFill":"type",
     "nodeStroke":"type",
     "nodeSize":"liked_count",
     "bars":{
@@ -17,17 +17,22 @@
         "scale2":{
           "domain":null,
           "attrs":["statuses_count"]
+        },
+        "scale3":{
+          "domain":null,
+          "attrs":["favourites_count"]
         }
       },
     "showNodeLabels":"always [onHover]",
     "labelAttr":"screen_name",
-    "selectedNodes":"outline [color]",
+    "selectedNodes":"stroke",
+    "selectedColor":"#ff5b00",
     "edgeColor":"type",
     "edgeWidth":"count"
   },
   "style":{
     "nodeColors":["#a88e69", "#68aa73"],
-    "edgeColors":["#427d9b","#427d9b"]
+    "edgeColors":["#427d9b","#88419d"]
   },
   "interaction":{
       "onNodeClick":"highlightNeighbors [highlightNode]",
