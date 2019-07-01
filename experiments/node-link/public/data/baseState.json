@@ -1,14 +1,20 @@
  {
   "vis": "NL [AM]/JX])",
-  "directedGraph":"../public/data/network_small_directed.json",
+  "directedGraph":"../public/data/network_small_directed_layout3.json",
   "undirectedGraph":"../public/data/network_small_undirected.json",
   "isDirected":true,
-  "fixedPositions":false,
+  "fixedPositions":true,
   "attr":{
-    "displayEdgeTypes":["mentions","retweets","combined"],
+    "displayEdgeTypes":["mentions","retweets"],
     "nodeFill":"type",
     "nodeStroke":"type",
-    "nodeSize":"liked_count",
+    "nodeSize":null,
+    "nodeSizeScale":{
+        "domain":[0,2000],
+        "clamp":true
+    },
+    "drawBars":true,
+    "barColors":["#2d2d2d","#d67205","#777777","#706842"],
     "bars":{
         "scale1":{
           "domain":[0,2000],
@@ -25,12 +31,16 @@
       },
     "showNodeLabels":"always [onHover]",
     "labelAttr":"screen_name",
-    "selectedNodes":"stroke",
-    "selectedColor":"#ff5b00",
+    "selectedNodes":"fill",
+    "selectedColor":null,
+    "noNodeColor":"white",
     "edgeColor":"type",
-    "edgeWidth":"count"
+    "edgeWidth":"count",
+    "noEdgeColor":"#474747"
+
   },
   "style":{
+    "nodeIsRect":false,
     "nodeColors":["#a88e69", "#68aa73"],
     "edgeColors":["#427d9b","#88419d"]
   },

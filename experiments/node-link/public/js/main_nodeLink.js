@@ -131,8 +131,6 @@ function loadVis(id) {
 
   svg.append("g").attr("class", "nodes");
 
-  radius = 20;
-
   drawVis();
 }
 
@@ -286,18 +284,6 @@ function setupVis() {}
 
 //drawLesMis NodeLink
 function drawVis() {
-  var simulation = d3
-    .forceSimulation()
-    .force(
-      "link",
-      d3.forceLink().id(function(d) {
-        return d.id;
-      })
-    )
-    .force("charge", d3.forceManyBody().strength(-500))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(radius * 2.5))
-    .force("y", d3.forceY().y(0));
 
   //Helper functions to compute edge arcs
   let countSiblingLinks = function(graph, source, target) {
@@ -330,13 +316,27 @@ function drawVis() {
   //read in configuration file;
   d3.json("../public/data/baseState.json", function(config) {
     console.log("config", config);
-
     //load undirected graph specified in configuration file;
     d3.json(config.undirectedGraph, function(undir_graph) {
       //load directed graph specified in configuration file;
       d3.json(config.directedGraph, function(dir_graph) {
         //choose which graph to render;
         let graph = config.isDirected ? dir_graph : undir_graph;
+
+        let nodeMarkerSize = 40;
+
+        var simulation = d3
+          .forceSimulation()
+          .force(
+            "link",
+            d3.forceLink().id(function(d) {
+              return d.id;
+            })
+          )
+          .force("charge", d3.forceManyBody().strength(-500))
+          .force("center", d3.forceCenter(width / 2, height / 2))
+          .force("y", d3.forceY().y(0));
+
 
         //set datalist property for search box:
         {
@@ -359,79 +359,95 @@ function drawVis() {
 
         //Create Scales
 
-        let nodeFillScale = d3
+        let nodeSize = function(node){
+
+          let nodeSizeScale = d3.scaleLinear()
+          .domain(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.domain : 
+            d3.extent(graph.nodes.map(n => n[config.attr.nodeSize])))
+          .range([nodeMarkerSize,nodeMarkerSize*2])
+          .clamp(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.clamp : true)
+
+          let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerSize;
+          return config.style.nodeIsRect ? value : value *1.3 
+        }
+
+        let nodeFill = function(node) {
+
+          let nodeFillScale = d3
           .scaleOrdinal()
           .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeFill])))
           .range(config.style.nodeColors);
 
-        let nodeStrokeScale = d3
-          .scaleOrdinal()
-          .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeStroke])))
-          .range(config.style.nodeColors);
-
-        let edgeColorScale = d3
-          .scaleOrdinal()
-          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeColor])))
-          .range(config.style.edgeColors);
-
-        let edgeWidthScale = d3
-          .scaleLinear()
-          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeWidth])))
-          .range([2, 10]);
-
-        let nodeFill = function(node) {
 
           let value; 
           let selectedNodeEncoding =  config.attr.selectedNodes === 'fill';
 
           if (node.selected && selectedNodeEncoding){
-            if (!config.attr.selectedColor){
-              value = nodeFillScale(node[config.attr.nodeFill])
-            }else{
-              value = undefined;
-            }
-            
+            value = config.attr.selectedColor ? config.attr.selectedColor 
+            : nodeFillScale(node[config.attr.nodeFill])
           } else {
             value = (config.attr.nodeFill && !selectedNodeEncoding)
             ? nodeFillScale(node[config.attr.nodeFill])
-            : undefined;
+            : config.attr.noNodeColor;;
           } 
+
+          if (value === undefined){
+            console.log('fail',node,nodeFillScale(node[config.attr.nodeFill]))
+          }
+
+
           return value;
         };
 
         let nodeStroke = function(node) {
+
+          let nodeStrokeScale = d3
+          .scaleOrdinal()
+          .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeStroke])))
+          .range(config.style.nodeColors);
+
           let value; 
           let selectedNodeEncoding = config.attr.selectedNodes === 'stroke';
           
           if (node.selected && selectedNodeEncoding){
-            if (!config.attr.selectedColor){
-              value = nodeStrokeScale(node[config.attr.nodeStroke])
-            }else{
-              value = undefined;
-            }
+            value = config.attr.selectedColor;
           }else {
             value = (config.attr.nodeStroke && !selectedNodeEncoding)
             ? nodeStrokeScale(node[config.attr.nodeStroke])
-            : undefined;
+            : config.attr.noNodeColor;
           }
 
-          
           return value;
         };
 
         let edgeColor = function(edge) {
+
+          let edgeColorScale = d3
+          .scaleOrdinal()
+          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeColor])))
+          .range(config.style.edgeColors);
+
           let value = config.attr.edgeColor
             ? edgeColorScale(edge[config.attr.edgeColor])
-            : "#474747";
+            : config.attr.noEdgeColor;
           return value;
         };
 
         let edgeWidth = function(edge) {
+
+          let edgeWidthScale = d3
+          .scaleLinear()
+          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeWidth])))
+          .range([2, 10]);
           let value = config.attr.edgeWidth
             ? edgeWidthScale(edge[config.attr.edgeWidth])
-            : "#474747";
+            : config.attr.noEdgeColor;
           return value;
         };
+
+        //add a collision force that is proportional to the radius of the nodes;
+
+        simulation.force("collision", d3.forceCollide().radius(d=>nodeSize(d)*1.3))
 
 
         //set css values for 'clicked' nodes;
@@ -439,12 +455,10 @@ function drawVis() {
 
         //find the appropriate style sheet
         var sheet = Object.values(document.styleSheets).find(s=>s.href.includes('node-link.css'));
-        // var rules = sheet.cssRules || sheet.rules;
-        
-        // rules.clicked ={"fill":"red"};
 
-        // if user selected a 'constant selected color', add css rule for '.clicked'
-        
+        // let nodeIsRect = config.style.nodeShape === 'rect';
+        // sheet.addRule(".node", (nodeIsRect? 'rx: 2; ry:2'  : 'rx:20; ry:20' ) , 1);
+
         if (config.attr.selectedColor !== undefined){
           let ruleString = config.attr['selectedNodes'] + ":" + config.attr.selectedColor;
 
@@ -459,9 +473,10 @@ function drawVis() {
         //object to store scales as a function of attr name;
         let scales = {};
 
-        let barPadding = radius*0.2;
+        let barPadding = nodeMarkerSize*0.1;
+        let nodePadding = nodeMarkerSize*0.2;
 
-        scaleKeys.map(s => {
+        scaleKeys.map((s,i) => {
           //find autoExtent from data;
           let dataExtent = scaleConfig[s].attrs.reduce(
             (extent, attr) => {
@@ -473,12 +488,12 @@ function drawVis() {
           let scale = d3
             .scaleLinear()
             .domain(scaleConfig[s].domain ? scaleConfig[s].domain : dataExtent)
-            .range([0,2*radius-2*barPadding])
+            .range([0,nodeMarkerSize-2*nodePadding])
             .clamp(true);
 
-          //save scale to use with that attribute
-          scaleConfig[s].attrs.map(a => {
-            scales[a] = scale;
+          //save scale and color to use with that attribute bar
+          scaleConfig[s].attrs.map((attr,ii) => {
+            scales[attr] = {scale,'fill':config.attr.barColors[i], "position":ii};
           });
         });
 
@@ -537,30 +552,34 @@ function drawVis() {
         nodeEnter
           .append("rect")
           .attr("class", "node")
-          .attr("x", -radius)
-          .attr("y", -radius)
-          .attr("width", radius * 2)
-          .attr("height", radius * 2);
+
 
         nodeEnter.append("rect").attr("class", "labelBackground");
 
         nodeEnter
           .append("text")
-          .attr("dy", "-2em")
           .classed("label", true);
 
         node.exit().remove();
 
         node = nodeEnter.merge(node);
 
+
         node
           .select(".node")
+          .attr("x", d=> -nodeSize(d)/2)
+          .attr("y", d=> -nodeSize(d)/2)
+          .attr("width", nodeSize)
+          .attr("height", nodeSize)
           .style("fill", nodeFill)
-          .style("stroke", nodeStroke);
+          .style("stroke", nodeStroke)
+          .style("rx",d=> config.style.nodeIsRect ? nodeSize(d)/20 : nodeSize(d)/2 )
+          .style("ry",d=> config.style.nodeIsRect ? nodeSize(d)/20 : nodeSize(d)/2 )
 
         node
           .select("text")
           .text((d)=> d[config.attr.labelAttr])
+          .attr("y", d=>config.attr.drawBars ? -nodeSize(d)*0.7 : ".5em")
           .attr("dx", function(d) {
             return (
               -d3
@@ -572,26 +591,29 @@ function drawVis() {
 
         node
           .select(".labelBackground")
-          .style("fill", "white")
-          .style("opacity", 0.7)
           .attr("width", function(d) {
-            return d3
+            let textWidth =  d3
               .select(d3.select(this).node().parentNode)
               .select("text")
               .node()
               .getBBox().width;
+
+              //make sure label box spans the width of the node
+            return d3.max([textWidth,nodeSize(d)+4])
           })
           .attr("height", "1em")
           .attr("x", function(d) {
-            return (
-              -d3
+            let textWidth = 
+              d3
                 .select(d3.select(this).node().parentNode)
                 .select("text")
                 .node()
-                .getBBox().width / 2
-            );
+                .getBBox().width;
+
+              //make sure label box spans the width of the node
+              return d3.min([-textWidth/2,-nodeSize(d)/2-2])
           })
-          .attr("y", "-42");
+          .attr("y", d=>config.attr.drawBars ? -nodeSize(d)*0.7 -12 : "-.5em");
 
         node.call(
           d3
@@ -603,12 +625,14 @@ function drawVis() {
 
         // //  Separate enter/exit/update for bars so as to bind to the correct data;
        
-        let barAttrs = Object.keys(scales);
+        let barAttrs = config.attr.drawBars ? Object.keys(scales) : [];
         let numBars = barAttrs.length
-        let nodeWidth = radius*2 - barPadding;
+        let nodeWidth = nodeMarkerSize - barPadding;
         let barWidth = (nodeWidth/ numBars)-(barPadding);
 
-        let scaleStart = -radius + barPadding;
+        let groupingFactor = 2;
+
+        let scaleStart = -nodeMarkerSize/2 + barPadding;
         let scaleEnd = scaleStart + (numBars-1) * (barWidth+barPadding);
 
         let barXScale = d3.scaleLinear().domain([0,numBars-1]).range([scaleStart,scaleEnd])
@@ -635,28 +659,36 @@ function drawVis() {
 
         bars = barsEnter.merge(bars);
 
-        bars.attr('transform',(d,i)=> 'translate(' + barXScale(i) + ',0)');
+        bars.attr('transform',(d,i)=> {
+          let offset = scales[d.attr].position === 0 ? barXScale(i) : barXScale(i) -scales[d.attr].position*groupingFactor;
+         
+          return 'translate(' + offset + ',0)'
+        
+        });
      
 
         bars
           .select(".frame")
-          .attr("height",d=>scales[d.attr].range()[1])
-          .attr("y",d=>-scales[d.attr].range()[1]/2)
+          .attr("height",d=>scales[d.attr].scale.range()[1])
+          .attr("y",d=>-scales[d.attr].scale.range()[1]/2)
+          .style('stroke',d=>scales[d.attr].fill);
+
 
 
         bars
           .select(".bar")
           .classed(
             "clipped",
-            d => d.data > scales[d.attr].domain()[1]
+            d => d.data > scales[d.attr].scale.domain()[1]
           )
-          .attr("height", d => scales[d.attr](d.data))
+          .attr("height", d => scales[d.attr].scale(d.data))
           .attr(
             "y",
             d =>
-              radius - barPadding -
-              scales[d.attr](d.data)
-          );
+            nodeMarkerSize/2 -nodePadding -
+              scales[d.attr].scale(d.data)
+          )
+          .style('fill',d=>scales[d.attr].fill);
 
         d3.select("#exportGraph").on("click", () => {
           let graphCopy = JSON.parse(JSON.stringify(graph));
@@ -848,6 +880,8 @@ function drawVis() {
           link.select("path").attr("d", function(d) {
             return arcPath(d.type === "mentions", d);
           });
+
+          let radius = nodeMarkerSize/2;
 
           node.attr("transform", d => {
             d.x = Math.max(radius, Math.min(width - radius, d.x));

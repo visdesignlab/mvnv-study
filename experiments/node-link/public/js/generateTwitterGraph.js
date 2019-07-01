@@ -26,7 +26,7 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
           let existingLink = newGraph.links.find(
             l =>
               ((l.source === link.source && l.target === link.target) 
-              // ||(l.source === link.target && l.target === link.source)
+              ||(l.source === link.target && l.target === link.source)
                 ) &&
               l.type === link.type
           );
