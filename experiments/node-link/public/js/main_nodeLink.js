@@ -553,6 +553,9 @@ function drawVis() {
           .append("rect")
           .attr("class", "node")
 
+      // nodeEnter
+      //   .append("title")
+
 
         nodeEnter.append("rect").attr("class", "labelBackground");
 
@@ -564,6 +567,10 @@ function drawVis() {
 
         node = nodeEnter.merge(node);
 
+        // node.select('title')
+        // .text(function(d) {
+        //   return d.screen_name;
+        // });
 
         node
           .select(".node")
@@ -654,10 +661,15 @@ function drawVis() {
           .append("rect")
           .attr('class','bar')
           .attr("width", barWidth)
+          .append('title')
 
         bars.exit().remove();
 
         bars = barsEnter.merge(bars);
+
+        bars.select('title').text(function(d) {
+          return d.attr + ' : '  + d.data;
+        });
 
         bars.attr('transform',(d,i)=> {
           let offset = scales[d.attr].position === 0 ? barXScale(i) : barXScale(i) -scales[d.attr].position*groupingFactor;
@@ -800,9 +812,7 @@ function drawVis() {
             .style("stroke", nodeStroke);
         });
 
-        node.append("title").text(function(d) {
-          return d.screen_name;
-        });
+        
 
         if (config.fixedPositions) {
           //restablish link references to their source and target nodes;
