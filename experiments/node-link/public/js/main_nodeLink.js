@@ -323,7 +323,8 @@ function drawVis() {
         //choose which graph to render;
         let graph = config.isDirected ? dir_graph : undir_graph;
 
-        let nodeMarkerSize = 40;
+        let nodeMarkerLength = 40;
+        let nodeMarkerHeight = 25;
 
         var simulation = d3
           .forceSimulation()
@@ -359,17 +360,30 @@ function drawVis() {
 
         //Create Scales
 
-        let nodeSize = function(node){
+        let nodeLength = function(node){
 
           let nodeSizeScale = d3.scaleLinear()
           .domain(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.domain : 
             d3.extent(graph.nodes.map(n => n[config.attr.nodeSize])))
-          .range([nodeMarkerSize,nodeMarkerSize*2])
+          .range([nodeMarkerLength,nodeMarkerLength*2])
           .clamp(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.clamp : true)
 
-          let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerSize;
+          let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerLength;
           return config.style.nodeIsRect ? value : value *1.3 
         }
+
+        let nodeHeight = function(node){
+
+          let nodeSizeScale = d3.scaleLinear()
+          .domain(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.domain : 
+            d3.extent(graph.nodes.map(n => n[config.attr.nodeSize])))
+          .range([nodeMarkerHeight,nodeMarkerHeight*2])
+          .clamp(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.clamp : true)
+
+          let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerHeight;
+          return config.style.nodeIsRect ? value : value *1.3 
+        }
+
 
         let nodeFill = function(node) {
 
@@ -388,7 +402,7 @@ function drawVis() {
           } else {
             value = (config.attr.nodeFill && !selectedNodeEncoding)
             ? nodeFillScale(node[config.attr.nodeFill])
-            : config.attr.noNodeColor;;
+            : config.attr.noNodeFill;;
           } 
 
           if (value === undefined){
@@ -414,7 +428,7 @@ function drawVis() {
           }else {
             value = (config.attr.nodeStroke && !selectedNodeEncoding)
             ? nodeStrokeScale(node[config.attr.nodeStroke])
-            : config.attr.noNodeColor;
+            : config.attr.noNodeStroke;
           }
 
           return value;
@@ -473,8 +487,7 @@ function drawVis() {
         //object to store scales as a function of attr name;
         let scales = {};
 
-        let barPadding = nodeMarkerSize*0.1;
-        let nodePadding = nodeMarkerSize*0.2;
+        let barPadding = nodeMarkerLength*0.1;
 
         scaleKeys.map((s,i) => {
           //find autoExtent from data;
@@ -488,7 +501,7 @@ function drawVis() {
           let scale = d3
             .scaleLinear()
             .domain(scaleConfig[s].domain ? scaleConfig[s].domain : dataExtent)
-            .range([0,nodeMarkerSize-2*nodePadding])
+            .range([0,nodeMarkerHeight-(2*barPadding)])
             .clamp(true);
 
           //save scale and color to use with that attribute bar
@@ -574,19 +587,19 @@ function drawVis() {
 
         node
           .select(".node")
-          .attr("x", d=> -nodeSize(d)/2)
-          .attr("y", d=> -nodeSize(d)/2)
-          .attr("width", nodeSize)
-          .attr("height", nodeSize)
+          .attr("x", d=> -nodeLength(d)/2)
+          .attr("y", d=> -nodeHeight(d)/2)
+          .attr("width", nodeLength)
+          .attr("height", d=>nodeHeight(d))
           .style("fill", nodeFill)
           .style("stroke", nodeStroke)
-          .style("rx",d=> config.style.nodeIsRect ? nodeSize(d)/20 : nodeSize(d)/2 )
-          .style("ry",d=> config.style.nodeIsRect ? nodeSize(d)/20 : nodeSize(d)/2 )
+          .style("rx",d=> config.style.nodeIsRect ? nodeLength(d)/20 : nodeLength(d)/2 )
+          .style("ry",d=> config.style.nodeIsRect ? nodeHeight(d)/20 : nodeHeight(d)/2 )
 
         node
           .select("text")
           .text((d)=> d[config.attr.labelAttr])
-          .attr("y", d=>config.attr.drawBars ? -nodeSize(d)*0.7 : ".5em")
+          .attr("y", d=>config.attr.drawBars ? -nodeHeight(d)*0.5-4 : ".5em")
           .attr("dx", function(d) {
             return (
               -d3
@@ -606,7 +619,7 @@ function drawVis() {
               .getBBox().width;
 
               //make sure label box spans the width of the node
-            return d3.max([textWidth,nodeSize(d)+4])
+            return d3.max([textWidth,nodeLength(d)+4])
           })
           .attr("height", "1em")
           .attr("x", function(d) {
@@ -618,9 +631,9 @@ function drawVis() {
                 .getBBox().width;
 
               //make sure label box spans the width of the node
-              return d3.min([-textWidth/2,-nodeSize(d)/2-2])
+              return d3.min([-textWidth/2,-nodeHeight(d)/2-2])
           })
-          .attr("y", d=>config.attr.drawBars ? -nodeSize(d)*0.7 -12 : "-.5em");
+          .attr("y", d=>config.attr.drawBars ? -nodeHeight(d)*0.5 -16 : "-.5em");
 
         node.call(
           d3
@@ -634,12 +647,12 @@ function drawVis() {
        
         let barAttrs = config.attr.drawBars ? Object.keys(scales) : [];
         let numBars = barAttrs.length
-        let nodeWidth = nodeMarkerSize - barPadding;
+        let nodeWidth = nodeMarkerLength - barPadding;
         let barWidth = (nodeWidth/ numBars)-(barPadding);
 
         let groupingFactor = 2;
 
-        let scaleStart = -nodeMarkerSize/2 + barPadding;
+        let scaleStart = -nodeMarkerLength/2 + barPadding;
         let scaleEnd = scaleStart + (numBars-1) * (barWidth+barPadding);
 
         let barXScale = d3.scaleLinear().domain([0,numBars-1]).range([scaleStart,scaleEnd])
@@ -655,8 +668,8 @@ function drawVis() {
           .append("rect")
           .attr("class", "frame")
           .attr("width", barWidth)
+          .append('title')
 
-    
         barsEnter
           .append("rect")
           .attr('class','bar')
@@ -667,7 +680,7 @@ function drawVis() {
 
         bars = barsEnter.merge(bars);
 
-        bars.select('title').text(function(d) {
+        bars.selectAll('title').text(function(d) {
           return d.attr + ' : '  + d.data;
         });
 
@@ -675,7 +688,7 @@ function drawVis() {
           let offset = scales[d.attr].position === 0 ? barXScale(i) : barXScale(i) -scales[d.attr].position*groupingFactor;
          
           return 'translate(' + offset + ',0)'
-        
+ 
         });
      
 
@@ -697,7 +710,7 @@ function drawVis() {
           .attr(
             "y",
             d =>
-            nodeMarkerSize/2 -nodePadding -
+            nodeMarkerHeight/2 -barPadding -
               scales[d.attr].scale(d.data)
           )
           .style('fill',d=>scales[d.attr].fill);
@@ -891,7 +904,7 @@ function drawVis() {
             return arcPath(d.type === "mentions", d);
           });
 
-          let radius = nodeMarkerSize/2;
+          let radius = nodeMarkerLength/2;
 
           node.attr("transform", d => {
             d.x = Math.max(radius, Math.min(width - radius, d.x));

@@ -6,7 +6,7 @@
   "fixedPositions":true,
   "attr":{
     "displayEdgeTypes":["mentions","retweets"],
-    "nodeFill":"type",
+    "nodeFill":null,
     "nodeStroke":"type",
     "nodeSize":null,
     "nodeSizeScale":{
@@ -31,16 +31,17 @@
       },
     "showNodeLabels":"always [onHover]",
     "labelAttr":"screen_name",
-    "selectedNodes":"fill",
-    "selectedColor":null,
-    "noNodeColor":"white",
+    "selectedNodes":"stroke",
+    "selectedColor":"red",
+    "noNodeFill":"white",
+    "noNodeStroke":"white",
     "edgeColor":"type",
     "edgeWidth":"count",
-    "noEdgeColor":"#474747"
+    "noEdgeColor":"white"
 
   },
   "style":{
-    "nodeIsRect":false,
+    "nodeIsRect":true,
     "nodeColors":["#a88e69", "#68aa73"],
     "edgeColors":["#427d9b","#88419d"]
   },
