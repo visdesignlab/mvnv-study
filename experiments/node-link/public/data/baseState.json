@@ -3,10 +3,10 @@
   "directedGraph":"../public/data/network_small_directed_layout3.json",
   "undirectedGraph":"../public/data/network_small_undirected.json",
   "isDirected":true,
-  "fixedPositions":true,
+  "fixedPositions":false,
   "attr":{
     "displayEdgeTypes":["mentions","retweets"],
-    "nodeFill":null,
+    "nodeFill":"type",
     "nodeStroke":"type",
     "nodeSize":null,
     "nodeSizeScale":{
@@ -29,10 +29,17 @@
           "attrs":["favourites_count"]
         }
       },
+    "circles":[{
+          "colors":["#a88e69", "#68aa73"],
+          "attr":"type"
+        },{
+          "colors":["#a88e69", "#68aa73"],
+          "attr":"type"
+        }],
     "showNodeLabels":"always [onHover]",
     "labelAttr":"screen_name",
     "selectedNodes":"stroke",
-    "selectedColor":"red",
+    "selectedColor":"#ea9b0f",
     "noNodeFill":"white",
     "noNodeStroke":"white",
     "edgeColor":"type",
@@ -41,6 +48,8 @@
 
   },
   "style":{
+    "nodeHeight":30,
+    "nodeWidth":50,
     "nodeIsRect":true,
     "nodeColors":["#a88e69", "#68aa73"],
     "edgeColors":["#427d9b","#88419d"]
