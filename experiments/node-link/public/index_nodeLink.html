@@ -41,85 +41,111 @@
         </div>
     </div> -->
 
-    <div class="columns" >
+    <div class="columns">
         <div class="column is-narrow">
             <aside class="menu">
-            
                 <p class="menu-label">
-                    Layout Settings
+                    Graph Settings
                 </p>
                 <ul class="menu-list">
-                    <li><a>Selected Nodes</a></li>
                     <li>
-                        <a>Display Edge Types</a>
+                        <!-- Set config.isDirected to true/false -->
+                        <a>Graph Type</a>
                         <ul>
-                                <div class="select is-multiple">
-                                        <select multiple size="2">
-                                          <option value="retweet">Retweet</option>
-                                          <option value="mention">Mention</option>
-                                        </select>
-                                      </div>
-                            
+                            <div class="control">
+                                    <label class="radio">
+                                      <input type="radio" name="isDirected" value="true">
+                                      Directed
+                                    </label>
+
+                                    <br/>
+                                    <label class="radio">
+                                      <input type="radio" name="isDirected" value="false">
+                                      Undirected
+                                    </label>
+                                  </div>
+
                         </ul>
+
+                        
                     </li>
 
-                    <li>
+
+                    <p class="menu-label">
+                        Layout Settings
+                    </p>
+                    <ul class="menu-list">
+                        <li><a>Selected Nodes</a></li>
+                        <li>
+                            <a>Display Edge Types</a>
+                            <ul>
+                                <div class="select is-multiple">
+                                    <select multiple size="2">
+                                        <option value="retweet">Retweet</option>
+                                        <option value="mention">Mention</option>
+                                    </select>
+                                </div>
+
+                            </ul>
+                        </li>
+
+                        <li>
                             <a>Color Attribute</a>
                             <ul>
-                                    <div class="select is-multiple">
-                                            <select multiple size="1">
-                                              <option value="retweet">Node Type</option>
-                                            </select>
-                                          </div>
-                                
+                                <div class="select is-multiple">
+                                    <select multiple size="1">
+                                        <option value="retweet">Node Type</option>
+                                    </select>
+                                </div>
+
                             </ul>
                         </li>
 
 
-                    <li><a>Size Attribute</a>
-                    <ul>
-                            <div class="select is-multiple">
+                        <li><a>Size Attribute</a>
+                            <ul>
+                                <div class="select is-multiple">
                                     <select multiple size="4">
-                                            <option value="retweet">Followers</option>
-                                            <option value="mention">Followed by</option>
-                                            <option value="mention">Status Count</option>
-                                            <option value="mention">Likes Count</option>
+                                        <option value="retweet">Followers</option>
+                                        <option value="mention">Followed by</option>
+                                        <option value="mention">Status Count</option>
+                                        <option value="mention">Likes Count</option>
                                     </select>
-                                  </div>
-                        
-                    </ul>
-                </li>
-                    <li><a>Bar Attributes</a>
-                    <ul>
-                            <div class="select is-multiple">
+                                </div>
+
+                            </ul>
+                        </li>
+                        <li><a>Bar Attributes</a>
+                            <ul>
+                                <div class="select is-multiple">
                                     <select multiple size="4">
-                                      <option value="retweet">Followers</option>
-                                      <option value="mention">Followed by</option>
-                                      <option value="mention">Status Count</option>
-                                      <option value="mention">Likes Count</option>
+                                        <option value="retweet">Followers</option>
+                                        <option value="mention">Followed by</option>
+                                        <option value="mention">Status Count</option>
+                                        <option value="mention">Likes Count</option>
                                     </select>
-                                  </div>
-                        
+                                </div>
+
+                            </ul>
+                        </li>
                     </ul>
-                </li>
-                </ul>
-                <p class="menu-label">
-                    Interaction Settings
-                </p>
-                <ul class="menu-list">
-                    <li><a>On Node Click</a>
-                    <ul>
-                            <div class="select is-multiple">
+                    <p class="menu-label">
+                        Interaction Settings
+                    </p>
+                    <ul class="menu-list">
+                        <li><a>On Node Click</a>
+                            <ul>
+                                <div class="select is-multiple">
                                     <select multiple size="2">
-                                      <option value="retweet">Highlight Neighbors</option>
-                                      <option value="mention">Highlight Node Only</option>
+                                        <option value="retweet">Highlight Neighbors</option>
+                                        <option value="mention">Highlight Node Only</option>
                                     </select>
-                                  </div>
-                        
+                                </div>
+
+                            </ul>
+                        </li>
+                        <li><a>On Edge Click</a></li>
                     </ul>
-                </li>
-                    <li><a>On Edge Click</a></li>
-                </ul>
             </aside>
         </div>
 
@@ -135,7 +161,7 @@
                 <button id="search-reset">Reset Search</button>
 
                 <figure class="image is-pulled-right">
-                        <img  src="img/legend.png" style = "width:200px">
+                    <img src="img/legend.png" style="width:200px">
                 </figure>
 
                 <!-- <img src="img/legend.png" alt="legend" height="150" ALIGN='right'> -->
@@ -147,8 +173,8 @@
             </div>
 
             <div style="padding-top: 10px">
-                    <button id="exportGraph">Export Graph to Console</button>
-                </div>
+                <button id="exportGraph">Export Graph to Console</button>
+            </div>
 
             <div id="vis"></div>
 
@@ -216,7 +242,7 @@
 
 
 
-      
+
 
     </div>
     <!--! end of #container -->
