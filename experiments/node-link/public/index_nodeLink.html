@@ -44,57 +44,110 @@
     <div class="columns">
         <div class="column is-narrow">
             <aside class="menu">
-                <p class="menu-label">
+                <!-- <p class="menu-label">
                     Graph Settings
-                </p>
+                </p> -->
                 <ul class="menu-list">
                     <li>
                         <!-- Set config.isDirected to true/false -->
                         <a>Graph Type</a>
                         <ul>
                             <div class="control">
-                                    <label class="radio">
-                                      <input type="radio" name="isDirected" value="true">
-                                      Directed
-                                    </label>
+                                <label class="radio">
+                                    <input type="radio" name="isDirected" value="true">
+                                    Directed
+                                </label>
 
-                                    <br/>
-                                    <label class="radio">
-                                      <input type="radio" name="isDirected" value="false">
-                                      Undirected
-                                    </label>
-                                  </div>
+                                <br />
+                                <label class="radio">
+                                    <input type="radio" name="isDirected" value="false">
+                                    Undirected
+                                </label>
+                            </div>
 
                         </ul>
 
-                        
+
                     </li>
 
 
-                    <p class="menu-label">
+                    <!-- <p class="menu-label">
                         Layout Settings
-                    </p>
+                    </p> -->
                     <ul class="menu-list">
-                        <li><a>Selected Nodes</a></li>
-                        <li>
-                            <a>Display Edge Types</a>
-                            <ul>
-                                <div class="select is-multiple">
-                                    <select multiple size="2">
-                                        <option value="retweet">Retweet</option>
-                                        <option value="mention">Mention</option>
-                                    </select>
-                                </div>
-
-                            </ul>
-                        </li>
 
                         <li>
-                            <a>Color Attribute</a>
+                            <!-- Set config.isDirected to true/false -->
+                            <a>Positions</a>
                             <ul>
-                                <div class="select is-multiple">
-                                    <select multiple size="1">
-                                        <option value="retweet">Node Type</option>
+                                <div class="control">
+                                    <label class="radio">
+                                        <input type="radio" name="fixedPositions" value="true">
+                                        Fixed
+                                    </label>
+
+                                    <br />
+                                    <label class="radio">
+                                        <input type="radio" name="fixedPositions" value="false">
+                                        Force Directed
+                                    </label>
+                                </div>
+
+                            </ul>
+
+
+                        </li>
+
+
+                        <li id="nodeFillSelect">
+                            <a>Attribute for Node Fill</a>
+                            <ul>
+                                <div class="select" >
+                                    <select>
+                                    </select>
+                                </div>
+
+                            </ul>
+                        </li>
+
+                        <li id="nodeStrokeSelect">
+                            <a>Attribute for Node Stroke</a>
+                            <ul>
+                                <div class="select" >
+                                    <select>
+                                    </select>
+                                </div>
+
+                            </ul>
+                        </li>
+
+                        <li id="nodeSizeSelect">
+                            <a>Attribute for Node Size</a>
+                            <ul>
+                                <div class="select">
+                                    <select>
+                                    </select>
+                                </div>
+
+                            </ul>
+                        </li>
+
+                        <li id="edgeStrokeSelect">
+                            <a>Attribute for Edge Stroke</a>
+                            <ul>
+                                <div class="select" >
+                                    <select>
+                                    </select>
+                                </div>
+
+                            </ul>
+                        </li>
+
+                        <li id="edgeWidthSelect">
+                            <a>Attribute for Edge Width</a>
+                            <ul>
+                                <div class="select" >
+                                    <select>
                                     </select>
                                 </div>
 
@@ -102,50 +155,36 @@
                         </li>
 
 
-                        <li><a>Size Attribute</a>
+                        <li id="nodeBarsSelect">
+                            <a>Attribute for Nested Quant Attributes (Bars)</a>
                             <ul>
-                                <div class="select is-multiple">
-                                    <select multiple size="4">
-                                        <option value="retweet">Followers</option>
-                                        <option value="mention">Followed by</option>
-                                        <option value="mention">Status Count</option>
-                                        <option value="mention">Likes Count</option>
+                                <div class="select is-multiple" >
+                                    <select multiple size="">
+
                                     </select>
                                 </div>
 
                             </ul>
                         </li>
-                        <li><a>Bar Attributes</a>
+
+                        <li id="nodeCirclesSelect">
+                            <a>Attribute for Nested Categorical Attrs (Circles)</a>
                             <ul>
-                                <div class="select is-multiple">
-                                    <select multiple size="4">
-                                        <option value="retweet">Followers</option>
-                                        <option value="mention">Followed by</option>
-                                        <option value="mention">Status Count</option>
-                                        <option value="mention">Likes Count</option>
+                                <div class="select is-multiple" >
+                                    <select multiple size="2" >
+
                                     </select>
                                 </div>
 
                             </ul>
                         </li>
-                    </ul>
-                    <p class="menu-label">
-                        Interaction Settings
-                    </p>
-                    <ul class="menu-list">
-                        <li><a>On Node Click</a>
-                            <ul>
-                                <div class="select is-multiple">
-                                    <select multiple size="2">
-                                        <option value="retweet">Highlight Neighbors</option>
-                                        <option value="mention">Highlight Node Only</option>
-                                    </select>
-                                </div>
 
-                            </ul>
-                        </li>
-                        <li><a>On Edge Click</a></li>
-                    </ul>
+
+
+
+
+                        <a class="button is-light">Update Node-Link Diagram</a>
+
             </aside>
         </div>
 
