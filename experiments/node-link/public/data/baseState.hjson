@@ -31,11 +31,8 @@
     ]
     //Dictionary of scales to be used for bars - (make sure there is at least one color in 'barColors' above for each scale in this dict) 
     bars:
-    {
-      scale1:
-      {
-        //List of attributes that will use this scale
-        attrs:
+    [//List of attributes that will use this scale
+        {attrs:
         [
           followers_count
           friends_count
@@ -47,7 +44,6 @@
           2000
         ]
       }
-      scale2:
       {
         attrs:
         [
@@ -55,15 +51,13 @@
         ]
         domain: null
       }
-      scale3:
       {
         attrs:
         [
           favourites_count
         ]
         domain: null
-      }
-    }
+      }]
     // Array of attribute/color combination for categorical attributes to be encoded with circles in the embedded node visualizations.
     circles:
     [

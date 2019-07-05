@@ -6,8 +6,7 @@
       "#777777",
       "#706842"
     ],
-    "bars": {
-      "scale1": {
+    "bars": [{
         "attrs": [
           "followers_count",
           "friends_count"
@@ -16,20 +15,17 @@
           0,
           2000
         ]
-      },
-      "scale2": {
+      },{
         "attrs": [
           "statuses_count"
         ],
         "domain": null
-      },
-      "scale3": {
+      }, {
         "attrs": [
           "favourites_count"
         ],
         "domain": null
-      }
-    },
+    }],
     "circles": [
       {
         "attr": "type",
@@ -50,7 +46,7 @@
       "mentions",
       "retweets"
     ],
-    "drawBars": false,
+    "drawBars": true,
     "edgeColor": "type",
     "edgeWidth": "count",
     "labelAttr": "screen_name",
