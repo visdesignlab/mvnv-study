@@ -140,6 +140,11 @@ function loadVis(id) {
 
   drawVis();
 
+  //Set up 'selected values' for ui elements; 
+
+
+
+
   //Set up callbacks for the config panel on the left. 
         d3.selectAll("input[name='isDirected']").on("change", function(){
           console.log('selected', this.value)
@@ -298,6 +303,202 @@ function visitItem(item, data) {
   recordVisit(data.data[NAME_ATTR]);
 }
 
+function setPanelValuesFromFile(config,graph){
+   //set Panel Values
+
+   d3.selectAll("input[name='isDirected']")
+   .filter(function(){return d3.select(this).property('value') === config.isDirected.toString()})
+   .attr('checked','checked');
+
+   d3.selectAll("input[name='fixedPositions']")
+   .filter(function(){return d3.select(this).property('value') === config.fixedPositions.toString()})
+   .attr('checked','checked');
+
+   let ignoreAttr = ['edges','fx','fy','x','y','neighbors','profile_image_url','selected','userSelectedNeighbors','original','utc_offset'];
+   //set all possible attribute values for node fill/stroke/size and edge fill/stroke
+   let allNodeAttributes = Object.keys(graph.nodes[0]).filter(k=>!ignoreAttr.includes(k))
+   let allEdgeAttributes = Object.keys(graph.links[0]).filter(k=>!ignoreAttr.includes(k))
+
+
+   let menuItems = [
+     {'name':'nodeFillSelect','type':typeof('string'),'configAttr':'attr.nodeFill'},
+     {'name':'nodeStrokeSelect','type':typeof('string'),'configAttr':'attr.nodeStroke'},
+     {'name':'nodeSizeSelect','type':typeof(2),'configAttr':'attr.nodeSize'},
+     {'name':'edgeStrokeSelect','type':typeof('string'),'configAttr':'attr.edgeColor'},
+     {'name':'edgeWidthSelect','type':typeof(2),'configAttr':'attr.edgeWidth'},
+     {'name':'nodeBarsSelect','type':typeof(2),'configAttr':'attr.bars'},
+     {'name':'nodeCirclesSelect','type':typeof('string'),'configAttr':'attr.circles'}]
+     
+     menuItems.map(m=>{
+
+
+    let item = d3.select('#'+m.name);
+
+    let isNode = m.name.includes('node');
+    let allAttributes = isNode ? allNodeAttributes : allEdgeAttributes;
+
+    let possibleValues = allAttributes.filter(attr=>{
+      let type = typeof(graph.nodes[0][attr]);
+      return type === m.type && (m.type === typeof(2) || graph.nodes.filter(n=>n[attr] === graph.nodes[0][attr]).length>1 )  
+     })
+    
+    // item.select('select').attr('size',possibleValues.length)
+
+    item.select('select').selectAll('option')
+    .data(possibleValues)
+    .enter()
+    .append('option')
+    .attr('value',d=>d)
+    .text(d=>d) 
+
+    let attr = possibleValues[0];
+    let type = typeof(graph.nodes[0][attr]);
+ 
+    if (type === typeof(2)){
+     let newSvg = item.append('svg')
+   .attr('id',attr + '_histogram')
+ 
+   createHist(attr,newSvg,graph)
+   }
+    
+
+   })
+
+  
+
+
+
+
+
+   
+  //  console.log(graph.nodes[0])
+}
+
+function createHist(attrName,svgSelection,graph){
+
+  var margin = {top:20, right:10, bottom:50, left:20},
+  width = 300 - margin.left - margin.right,
+  height = 200 - margin.top - margin.bottom;
+
+  let histHeight = height
+
+
+   // x scale for time
+var x = d3.scaleLinear()
+.domain(d3.extent(graph.nodes,n=>n[attrName]))
+.range([0, width])
+.clamp(true);
+
+// y scale for histogram
+var y = d3.scaleLinear()
+.range([histHeight, 0]);
+
+   var colours = d3.scaleOrdinal()
+   .range(['#ffc388','#ffb269','#ffa15e','#fd8f5b','#f97d5a','#f26c58','#e95b56','#e04b51','#d53a4b','#c92c42','#bb1d36','#ac0f29','#9c0418','#8b0000']);
+
+// set parameters for histogram
+var histogram = d3.histogram()
+.value(function(d) { return d[attrName]; })
+.domain(x.domain())
+.thresholds(x.ticks(12));
+
+
+var svg = svgSelection
+.attr("width", width + margin.left + margin.right)
+.attr("height", height + margin.top + margin.bottom);
+
+var hist = svg.selectAll('.histogram').data([0]).enter().append("g")
+.attr("class", "histogram")
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+////////// load data //////////
+
+// group data for bars
+var bins = histogram(graph.nodes);
+
+// y domain based on binned data
+y.domain([0, d3.max(bins, function(d) { return d.length; })]);
+
+colours.domain(bins.map(b=>b.length).sort())
+
+var bar = hist.selectAll(".bar")
+ .data(bins);
+
+ barEnter = bar
+ .enter()
+ .append("g")
+ .attr("class", "bar")
+ 
+barEnter.append("rect")
+ .attr("class", "bar")
+ .attr("x", 1)
+
+ barEnter.append("text")
+ .attr("dy", "-.1em")
+ // .attr("y", "0")
+ .attr("text-anchor", "middle")
+ .style("fill", "black");
+
+ bar.exit().remove();
+
+ bar = barEnter.merge(bar);
+
+ bar
+ .attr("transform", function(d) {
+   return "translate(" + x(d.x0) + "," + y(d.length) + ")";
+ })
+
+ bar.select('rect')
+ .attr("width", function(d) { return x(d.x1) - x(d.x0) - 1; })
+ .attr("height", function(d) { return histHeight - y(d.length); })
+ .attr("fill", function(d) { return colours(d.length); });
+
+bar.select("text")
+ .attr("x", function(d) { return (x(d.x1) - x(d.x0))/2; })
+ .text(d=> d.length > 0 ? d.length : '')
+
+ ////////// slider //////////
+
+var currentValue = 0;
+
+var slider = svg.append("g")
+   .attr("class", "slider")
+   .attr("transform", "translate(" + margin.left + "," + (margin.top+histHeight+15) + ")");
+
+slider.append("line")
+   .attr("class", "track")
+   .attr("x1", x.range()[0])
+   .attr("x2", x.range()[1])
+ .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+   .attr("class", "track-inset")
+ .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+   .attr("class", "track-overlay")
+   .call(d3.drag()
+       .on("start.interrupt", function() { slider.interrupt(); })
+       .on("start drag", function() {
+         currentValue = d3.event.x;
+         update(x.invert(currentValue)); 
+       })
+   );
+
+slider.insert("g", ".track-overlay")
+   .attr("class", "ticks")
+   .attr("transform", "translate(0," + 18 + ")")
+ .selectAll("text")
+   .data(x.ticks(10))
+   .enter()
+   .append("text")
+   .attr("x", x)
+   .attr("y", 10)
+   .attr("text-anchor", "middle")
+   .text(function(d) { return d });
+
+var handle = slider.insert("circle", ".track-overlay")
+   .attr("class", "handle")
+   .attr("r", 9);
+}
 function updateVis() {
 
   //Helper functions to compute edge arcs
@@ -565,11 +766,7 @@ function updateVis() {
    link
      .select("textPath")
      .attr("xlink:href", d => "#" + d.id)
-     .text(d =>{ console.log(config.isDirected)
-      return config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""
-
-     }
-     )
+     .text(d =>config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : "")
      .style("fill", edgeColor)
      .style("stroke", edgeColor)
 
@@ -578,7 +775,7 @@ function updateVis() {
    //draw Nodes
    var node = d3
      .select(".nodes")
-     .selectAll("g")
+     .selectAll(".nodeGroup")
      .data(graph.nodes);
 
    let nodeEnter = node.enter().append("g").attr('class','nodeGroup');
@@ -899,31 +1096,40 @@ function updateVis() {
      });
    } else {
      graph.nodes.map(n => {
-       n.x = null;
-       n.y = null;
+       n.x = 0;
+       n.y = 0;
        n.vx = null;
        n.vy = null;
+       n.fx = null;
+       n.fy = null;
      });
 
-     console.log('should be here')
 
+     if (!config.fixedPositions){
+      simulation.force("collision", d3.forceCollide().radius(d=>nodeLength(d)))
+     }
+     
      simulation.nodes(graph.nodes).on("tick", ticked);
      simulation.force("link").links(graph.links);
 
-     for (var i = 0; i < 2000; ++i) simulation.tick();
+     if (config.fixedPositions){
+        for (var i = 0; i < 200; ++i) simulation.tick();
      simulation.stop();
 
-     //add a collision force that is proportional to the radius of the nodes;
-   simulation.force("collision", d3.forceCollide().radius(d=>nodeLength(d)))
+    //  add a collision force that is proportional to the radius of the nodes;
 
-   simulation.alphaTarget(0.1).restart()
-   for (var i = 0; i < 1000; ++i) simulation.tick();
-     simulation.stop();
-
+    if (config.fixedPositions){
+      simulation.alphaTarget(0.1).restart()
+      for (var i = 0; i < 1000; ++i) simulation.tick();
+        simulation.stop();
+        }
+    }
+  
+   
    }
 
 
-   
+   console.log('fixed positions are ', config.fixedPositions)
 
    function arcPath(leftHand, d) {
      var x1 = leftHand ? d.source.x : d.target.x,
@@ -973,12 +1179,19 @@ function updateVis() {
    }
 
    function ticked() {
-     // updatePos();
+     if (!config.fixedPositions){
+      updatePos();
+     }
    }
 
    function updatePos() {
      link.select("path").attr("d", function(d) {
-       return arcPath(d.type === "mentions", d);
+       
+       let path =  arcPath(d.type === "mentions", d);
+        if (path.includes('null')){
+          console.log('bad path')
+        }
+       return path; 
      });
 
      let radius = nodeMarkerLength/2;
@@ -990,7 +1203,9 @@ function updateVis() {
      });
    }
 
-   updatePos();
+  if (config.fixedPositions){
+    updatePos();
+  }  
 
    //set all nodes to fixed positions.
    // graph.nodes.map(d=>{d.fx = d.x; d.fy = d.y;});
@@ -1037,6 +1252,9 @@ function drawVis() {
         undir_graph = undir_graph_from_file;
 
         updateVis();
+
+       setPanelValuesFromFile(config,dir_graph || undir_graph);
+
       });
     });
   });
