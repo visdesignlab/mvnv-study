@@ -1,71 +1,104 @@
- {
-  "vis": "NL [AM]/JX])",
-  "directedGraph":"../public/data/network_small_directed_layout3.json",
-  "undirectedGraph":"../public/data/network_small_undirected.json",
-  "isDirected":true,
-  "fixedPositions":false,
-  "attr":{
-    "displayEdgeTypes":["mentions","retweets"],
-    "nodeFill":"type",
-    "nodeStroke":"type",
-    "nodeSize":null,
-    "nodeSizeScale":{
-        "domain":[0,2000],
-        "clamp":true
-    },
-    "drawBars":true,
-    "barColors":["#2d2d2d","#d67205","#777777","#706842"],
-    "bars":{
-        "scale1":{
-          "domain":[0,2000],
-          "attrs":["followers_count","friends_count"]
-        },
-        "scale2":{
-          "domain":null,
-          "attrs":["statuses_count"]
-        },
-        "scale3":{
-          "domain":null,
-          "attrs":["favourites_count"]
-        }
+{
+  "attr": {
+    "barColors": [
+      "#2d2d2d",
+      "#d67205",
+      "#777777",
+      "#706842"
+    ],
+    "bars": {
+      "scale1": {
+        "attrs": [
+          "followers_count",
+          "friends_count"
+        ],
+        "domain": [
+          0,
+          2000
+        ]
       },
-    "circles":[{
-          "colors":["#a88e69", "#68aa73"],
-          "attr":"type"
-        },{
-          "colors":["#a88e69", "#68aa73"],
-          "attr":"type"
-        }],
-    "showNodeLabels":"always [onHover]",
-    "labelAttr":"screen_name",
-    "selectedNodes":"stroke",
-    "selectedColor":"#ea9b0f",
-    "noNodeFill":"white",
-    "noNodeStroke":"white",
-    "edgeColor":"type",
-    "edgeWidth":"count",
-    "noEdgeColor":"white"
-
+      "scale2": {
+        "attrs": [
+          "statuses_count"
+        ],
+        "domain": null
+      },
+      "scale3": {
+        "attrs": [
+          "favourites_count"
+        ],
+        "domain": null
+      }
+    },
+    "circles": [
+      {
+        "attr": "type",
+        "colors": [
+          "#a88e69",
+          "#68aa73"
+        ]
+      },
+      {
+        "attr": "type",
+        "colors": [
+          "#a88e69",
+          "#68aa73"
+        ]
+      }
+    ],
+    "displayEdgeTypes": [
+      "mentions",
+      "retweets"
+    ],
+    "drawBars": false,
+    "edgeColor": "type",
+    "edgeWidth": "count",
+    "labelAttr": "screen_name",
+    "noEdgeColor": "white",
+    "noNodeFill": "white",
+    "noNodeStroke": "white",
+    "nodeFill": "type",
+    "nodeSize": null,
+    "nodeSizeScale": {
+      "clamp": true,
+      "domain": [
+        0,
+        2000
+      ]
+    },
+    "nodeStroke": "type",
+    "selectedColor": "#ea9b0f",
+    "selectedNodes": "stroke",
+    "showNodeLabels": "always"
   },
-  "style":{
-    "nodeHeight":30,
-    "nodeWidth":50,
-    "nodeIsRect":true,
-    "nodeColors":["#a88e69", "#68aa73"],
-    "edgeColors":["#427d9b","#88419d"]
+  "directedGraph": "../public/data/network_small_directed_layout3.json",
+  "fixedPositions": true,
+  "interaction": {
+    "draggableNodes": true,
+    "edgeTooltip": false,
+    "multiEdgeSelection": false,
+    "multiNodeSelection": true,
+    "nodeTooltip": false,
+    "onEdgeClick": null,
+    "onNodeClick": "highlightNeighbors"
   },
-  "interaction":{
-      "onNodeClick":"highlightNeighbors [highlightNode]",
-      "onEdgeClick":null,
-      "nodeTooltip":false,
-      "edgeTooltip":false,
-      "draggableNodes":true,
-      "multiNodeSelection":true,
-      "multiEdgeSelection":null
+  "isDirected": false,
+  "state": {
+    "selectedNodes": []
   },
-  "state":{
-      "selectedNodes":[]
-  }
-   
-
+  "style": {
+    "edgeColors": [
+      "#427d9b",
+      "#88419d"
+    ],
+    "nodeColors": [
+      "#a88e69",
+      "#68aa73"
+    ],
+    "nodeHeight": 30,
+    "nodeIsRect": true,
+    "nodeWidth": 50
+  },
+  "undirectedGraph": "../public/data/network_small_undirected.json",
+  "vis": "NL"
 }

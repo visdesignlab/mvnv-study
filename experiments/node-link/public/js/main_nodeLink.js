@@ -16,6 +16,13 @@ const initCalcState = {
   }
 };
 
+//Global config and graph variables; 
+//Config is set up in input file and the potentially modified  by user changes to the panel. 
+//dir and undir graphs store refs to the two flavors of a graph and that can be toggled by the user in the panel 
+var config;
+var dir_graph; 
+var undir_graph; 
+
 ///////////////////////////For Experiment Begin/////////////////////////////
 var userData = {
   condition: "",
@@ -132,6 +139,17 @@ function loadVis(id) {
   svg.append("g").attr("class", "nodes");
 
   drawVis();
+
+  //Set up callbacks for the config panel on the left. 
+        d3.selectAll("input[name='isDirected']").on("change", function(){
+          console.log('selected', this.value)
+
+          config.isDirected = eval(this.value);
+
+          console.log('config is ', config)
+          updateVis();
+        });
+
 }
 
 function type(d) {
@@ -280,10 +298,7 @@ function visitItem(item, data) {
   recordVisit(data.data[NAME_ATTR]);
 }
 
-function setupVis() {}
-
-//drawLesMis NodeLink
-function drawVis() {
+function updateVis() {
 
   //Helper functions to compute edge arcs
   let countSiblingLinks = function(graph, source, target) {
@@ -313,633 +328,715 @@ function drawVis() {
     return siblings;
   };
 
-  //read in configuration file;
-  d3.json("../public/data/baseState.json", function(config) {
-    console.log("config", config);
-    //load undirected graph specified in configuration file;
-    d3.json(config.undirectedGraph, function(undir_graph) {
-      //load directed graph specified in configuration file;
-      d3.json(config.directedGraph, function(dir_graph) {
-        //choose which graph to render;
-        let graph = config.isDirected ? dir_graph : undir_graph;
-
-        let nodeMarkerLength = 40;
-        let nodeMarkerHeight = 25;
-
-        var simulation = d3
-          .forceSimulation()
-          .force(
-            "link",
-            d3.forceLink().id(function(d) {
-              return d.id;
-            })
-          )
-          .force("charge", d3.forceManyBody().strength(-500))
-          .force("center", d3.forceCenter(width / 2, height / 2))
-          .force("y", d3.forceY().y(0));
-
-
-        //set datalist property for search box:
-        {
-          d3.select("#search-input").attr("list", "characters");
-          let inputParent = d3.select("#search-input").node().parentNode;
-
-          let datalist = d3
-            .select(inputParent)
-            .append("datalist")
-            .attr("id", "characters");
-
-          let options = datalist.selectAll("option").data(graph.nodes);
-
-          let optionsEnter = options.enter().append("option");
-          options.exit().remove();
-
-          options = optionsEnter.merge(options);
-          options.attr("value", d => d.screen_name);
-        }
-
-        //Create Scales
-
-        let nodeLength = function(node){
-
-          let nodeSizeScale = d3.scaleLinear()
-          .domain(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.domain : 
-            d3.extent(graph.nodes.map(n => n[config.attr.nodeSize])))
-          .range([nodeMarkerLength,nodeMarkerLength*2])
-          .clamp(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.clamp : true)
-
-          let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerLength;
-          return config.style.nodeIsRect ? value : value *1.3 
-        }
-
-        let nodeHeight = function(node){
+   //choose which graph to render;
+   let graph = config.isDirected ? dir_graph : undir_graph;
+
+   console.log(graph.links[0])
 
-          let nodeSizeScale = d3.scaleLinear()
-          .domain(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.domain : 
-            d3.extent(graph.nodes.map(n => n[config.attr.nodeSize])))
-          .range([nodeMarkerHeight,nodeMarkerHeight*2])
-          .clamp(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.clamp : true)
-
-          let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerHeight;
-          return config.style.nodeIsRect ? value : value *1.3 
-        }
-
+   console.log('rendering ' + (config.isDirected ? 'directed' : 'undirected' ) + ' graph')
 
-        let nodeFill = function(node) {
-
-          let nodeFillScale = d3
-          .scaleOrdinal()
-          .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeFill])))
-          .range(config.style.nodeColors);
+   console.log( 'network size is ', graph.nodes.length , graph.links.length);
+   // let nodeMarkerLength = 60;
+   // let nodeMarkerHeight = 35;
 
+   let nodeMarkerLength = config.style.nodeWidth || 60
+   let nodeMarkerHeight = config.style.nodeHeight || 35;
 
-          let value; 
-          let selectedNodeEncoding =  config.attr.selectedNodes === 'fill';
-
-          if (node.selected && selectedNodeEncoding){
-            value = config.attr.selectedColor ? config.attr.selectedColor 
-            : nodeFillScale(node[config.attr.nodeFill])
-          } else {
-            value = (config.attr.nodeFill && !selectedNodeEncoding)
-            ? nodeFillScale(node[config.attr.nodeFill])
-            : config.attr.noNodeFill;;
-          } 
-
-          if (value === undefined){
-            console.log('fail',node,nodeFillScale(node[config.attr.nodeFill]))
-          }
-
-
-          return value;
-        };
-
-        let nodeStroke = function(node) {
-
-          let nodeStrokeScale = d3
-          .scaleOrdinal()
-          .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeStroke])))
-          .range(config.style.nodeColors);
-
-          let value; 
-          let selectedNodeEncoding = config.attr.selectedNodes === 'stroke';
-          
-          if (node.selected && selectedNodeEncoding){
-            value = config.attr.selectedColor;
-          }else {
-            value = (config.attr.nodeStroke && !selectedNodeEncoding)
-            ? nodeStrokeScale(node[config.attr.nodeStroke])
-            : config.attr.noNodeStroke;
-          }
-
-          return value;
-        };
-
-        let edgeColor = function(edge) {
-
-          let edgeColorScale = d3
-          .scaleOrdinal()
-          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeColor])))
-          .range(config.style.edgeColors);
-
-          let value = config.attr.edgeColor
-            ? edgeColorScale(edge[config.attr.edgeColor])
-            : config.attr.noEdgeColor;
-          return value;
-        };
-
-        let edgeWidth = function(edge) {
-
-          let edgeWidthScale = d3
-          .scaleLinear()
-          .domain(d3.extent(graph.links.map(l => l[config.attr.edgeWidth])))
-          .range([2, 10]);
-          let value = config.attr.edgeWidth
-            ? edgeWidthScale(edge[config.attr.edgeWidth])
-            : config.attr.noEdgeColor;
-          return value;
-        };
-
-        //add a collision force that is proportional to the radius of the nodes;
-
-        simulation.force("collision", d3.forceCollide().radius(d=>nodeSize(d)*1.3))
-
-
-        //set css values for 'clicked' nodes;
-        //set fill or stroke of selected node;
-
-        //find the appropriate style sheet
-        var sheet = Object.values(document.styleSheets).find(s=>s.href.includes('node-link.css'));
-
-        // let nodeIsRect = config.style.nodeShape === 'rect';
-        // sheet.addRule(".node", (nodeIsRect? 'rx: 2; ry:2'  : 'rx:20; ry:20' ) , 1);
+   //If you're not drawing bars, make nodes circles/ovals, 
+   if (!config.attr.drawBars){
+     config.style.nodeIsRect = false;
+   } else {
+     // If you are drawing bars, don't fill in the nodes
+     config.attr.nodeFill = undefined;
+   }
+
+   var simulation = d3
+     .forceSimulation()
+     .force(
+       "link",
+       d3.forceLink().id(function(d) {
+         return d.id;
+       })
+     )
+     .force("charge", d3.forceManyBody().strength(-800))
+     .force("center", d3.forceCenter(width / 2, height / 2))
+     .force("y", d3.forceY().y(0));
+
+
+   //set datalist property for search box:
+   {
+     d3.select("#search-input").attr("list", "characters");
+     let inputParent = d3.select("#search-input").node().parentNode;
+
+     let datalist = d3
+       .select(inputParent)
+       .append("datalist")
+       .attr("id", "characters");
 
-        if (config.attr.selectedColor !== undefined){
-          let ruleString = config.attr['selectedNodes'] + ":" + config.attr.selectedColor;
-
-          sheet.addRule(".node.clicked", ruleString , 1);
-        }
-      
+     let options = datalist.selectAll("option").data(graph.nodes);
+
+     let optionsEnter = options.enter().append("option");
+     options.exit().remove();
+
+     options = optionsEnter.merge(options);
+     options.attr("value", d => d.screen_name);
+   }
+
+   //Create Scales
 
-        //create scales for bars;
-        let scaleConfig = config.attr.bars;
-        let scaleKeys = Object.keys(config.attr.bars);
+   let nodeLength = function(node){
+
+     let nodeSizeScale = d3.scaleLinear()
+     .domain(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.domain : 
+       d3.extent(graph.nodes.map(n => n[config.attr.nodeSize])))
+     .range([nodeMarkerLength,nodeMarkerLength*2])
+     .clamp(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.clamp : true)
 
-        //object to store scales as a function of attr name;
-        let scales = {};
+     let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerLength;
+     return config.style.nodeIsRect ? value : value *1.3 
+   }
 
-        let barPadding = nodeMarkerLength*0.1;
+   let nodeHeight = function(node){
 
-        scaleKeys.map((s,i) => {
-          //find autoExtent from data;
-          let dataExtent = scaleConfig[s].attrs.reduce(
-            (extent, attr) => {
-              return d3.extent(extent.concat(graph.nodes.map(n => n[attr])));
-            },
-            [0]
-          );
-
-          let scale = d3
-            .scaleLinear()
-            .domain(scaleConfig[s].domain ? scaleConfig[s].domain : dataExtent)
-            .range([0,nodeMarkerHeight-(2*barPadding)])
-            .clamp(true);
-
-          //save scale and color to use with that attribute bar
-          scaleConfig[s].attrs.map((attr,ii) => {
-            scales[attr] = {scale,'fill':config.attr.barColors[i], "position":ii};
-          });
-        });
-
-        //Draw Links
-        let link = d3
-          .select(".links")
-          .selectAll("path")
-          .data(graph.links);
-
-        let linkEnter = link.enter().append("g").attr('class','linkGroup');
-
-        linkEnter
-          .append("path")
-          .attr("id", d => d.id)
-          .attr("class", "links");
-
-        linkEnter
-          .append("text")
-          .attr("class", "edgeArrow")
-          .attr("dy", 4)
-          .append("textPath")
-          .attr("startOffset", "50%");
-
-        // .append("line")
-
-        link.exit().remove();
-
-        link = linkEnter.merge(link);
-
-        link
-          .select("path")
-          .style("stroke-width", edgeWidth)
-          .style("stroke", edgeColor)
-          .attr("id", d => d.id);
-
-        // TO DO , set ARROW DIRECTION DYNAMICALLY
-        link
-          .select("textPath")
-          .attr("xlink:href", d => "#" + d.id)
-          .text(d =>
-            config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""
-          )
-          .style("fill", edgeColor)
-          .style("stroke", edgeColor)
-
-
-
-        //draw Nodes
-        var node = d3
-          .select(".nodes")
-          .selectAll("g")
-          .data(graph.nodes);
-
-        let nodeEnter = node.enter().append("g").attr('class','nodeGroup');
-
-        nodeEnter
-          .append("rect")
-          .attr("class", "node")
-
-      // nodeEnter
-      //   .append("title")
-
-
-        nodeEnter.append("rect").attr("class", "labelBackground");
-
-        nodeEnter
-          .append("text")
-          .classed("label", true);
-
-        node.exit().remove();
-
-        node = nodeEnter.merge(node);
-
-        // node.select('title')
-        // .text(function(d) {
-        //   return d.screen_name;
-        // });
-
-        node
-          .select(".node")
-          .attr("x", d=> -nodeLength(d)/2)
-          .attr("y", d=> -nodeHeight(d)/2)
-          .attr("width", nodeLength)
-          .attr("height", d=>nodeHeight(d))
-          .style("fill", nodeFill)
-          .style("stroke", nodeStroke)
-          .style("rx",d=> config.style.nodeIsRect ? nodeLength(d)/20 : nodeLength(d)/2 )
-          .style("ry",d=> config.style.nodeIsRect ? nodeHeight(d)/20 : nodeHeight(d)/2 )
-
-        node
-          .select("text")
-          .text((d)=> d[config.attr.labelAttr])
-          .attr("y", d=>config.attr.drawBars ? -nodeHeight(d)*0.5-4 : ".5em")
-          .attr("dx", function(d) {
-            return (
-              -d3
-                .select(this)
-                .node()
-                .getBBox().width / 2
-            );
-          });
-
-        node
-          .select(".labelBackground")
-          .attr("width", function(d) {
-            let textWidth =  d3
-              .select(d3.select(this).node().parentNode)
-              .select("text")
-              .node()
-              .getBBox().width;
-
-              //make sure label box spans the width of the node
-            return d3.max([textWidth,nodeLength(d)+4])
-          })
-          .attr("height", "1em")
-          .attr("x", function(d) {
-            let textWidth = 
-              d3
-                .select(d3.select(this).node().parentNode)
-                .select("text")
-                .node()
-                .getBBox().width;
-
-              //make sure label box spans the width of the node
-              return d3.min([-textWidth/2,-nodeHeight(d)/2-2])
-          })
-          .attr("y", d=>config.attr.drawBars ? -nodeHeight(d)*0.5 -16 : "-.5em");
-
-        node.call(
-          d3
-            .drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended)
-        );
-
-        // //  Separate enter/exit/update for bars so as to bind to the correct data;
+     let nodeSizeScale = d3.scaleLinear()
+     .domain(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.domain : 
+       d3.extent(graph.nodes.map(n => n[config.attr.nodeSize])))
+     .range([nodeMarkerHeight,nodeMarkerHeight*2])
+     .clamp(config.attr.nodeSizeScale ? config.attr.nodeSizeScale.clamp : true)
+
+     let value = config.attr.nodeSize ? nodeSizeScale(node[config.attr.nodeSize]): nodeMarkerHeight;
+     return config.style.nodeIsRect ? value : value *1.3 
+   }
+
+   let nodeFill = function(node) {
+
+     let nodeFillScale = d3
+     .scaleOrdinal()
+     .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeFill])))
+     .range(config.style.nodeColors);
+
+
+     let value; 
+     let selectedNodeEncoding =  config.attr.selectedNodes === 'fill';
+
+     if (node.selected && selectedNodeEncoding){
+       value = config.attr.selectedColor || nodeFillScale(node[config.attr.nodeFill])
+     } else {
+       value = (config.attr.nodeFill && !selectedNodeEncoding)
+       ? nodeFillScale(node[config.attr.nodeFill])
+       : config.attr.noNodeFill;;
+     } 
+
+     if (value === undefined){
+       console.log('fail',node,nodeFillScale(node[config.attr.nodeFill]))
+     }
+
+
+     return value;
+   };
+
+   let nodeStroke = function(node) {
+
+     let nodeStrokeScale = d3
+     .scaleOrdinal()
+     .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeStroke])))
+     .range(config.style.nodeColors);
+
+     let value; 
+     let selectedNodeEncoding = config.attr.selectedNodes === 'stroke';
+     
+     if (node.selected && selectedNodeEncoding){
+       value = config.attr.selectedColor;
+     }else {
+       value = (config.attr.nodeStroke && !selectedNodeEncoding)
+       ? nodeStrokeScale(node[config.attr.nodeStroke])
+       : config.attr.noNodeStroke;
+     }
+
+     return value;
+   };
+
+   let edgeColor = function(edge) {
+
+     let edgeColorScale = d3
+     .scaleOrdinal()
+     .domain(d3.extent(graph.links.map(l => l[config.attr.edgeColor])))
+     .range(config.style.edgeColors);
+
+     let value = config.attr.edgeColor
+       ? edgeColorScale(edge[config.attr.edgeColor])
+       : config.attr.noEdgeColor;
+     return value;
+   };
+
+   let edgeWidth = function(edge) {
+
+     let edgeWidthScale = d3
+     .scaleLinear()
+     .domain(d3.extent(graph.links.map(l => l[config.attr.edgeWidth])))
+     .range([2, 10]);
+     let value = config.attr.edgeWidth
+       ? edgeWidthScale(edge[config.attr.edgeWidth])
+       : config.attr.noEdgeColor;
+     return value;
+   };
+
+
+
+   //set css values for 'clicked' nodes;
+   //set fill or stroke of selected node;
+
+   //find the appropriate style sheet
+   var sheet = Object.values(document.styleSheets).find(s=>s.href.includes('node-link.css'));
+
+   // let nodeIsRect = config.style.nodeShape === 'rect';
+   // sheet.addRule(".node", (nodeIsRect? 'rx: 2; ry:2'  : 'rx:20; ry:20' ) , 1);
+
+   if (config.attr.selectedColor !== undefined){
+     let ruleString = config.attr['selectedNodes'] + ":" + config.attr.selectedColor;
+
+     sheet.addRule(".node.clicked", ruleString , 1);
+   }
+ 
+
+   //create scales for bars;
+   let scaleConfig = config.attr.bars;
+   let scaleKeys = Object.keys(config.attr.bars);
+
+   //object to store scales as a function of attr name;
+   let scales = {};
+
+   let barPadding = nodeMarkerLength*0.1;
+
+   scaleKeys.map((s,i) => {
+     //find autoExtent from data;
+     let dataExtent = scaleConfig[s].attrs.reduce(
+       (extent, attr) => {
+         return d3.extent(extent.concat(graph.nodes.map(n => n[attr])));
+       },
+       [0]
+     );
+
+     let scale = d3
+       .scaleLinear()
+       .domain(scaleConfig[s].domain || dataExtent)
+       .range([0,nodeMarkerHeight-(2*barPadding)])
+       .clamp(true);
+
+     //save scale and color to use with that attribute bar
+     scaleConfig[s].attrs.map((attr,ii) => {
+       scales[attr] = {scale,'fill':config.attr.barColors[i], "position":ii};
+     });
+   });
+
+   //Draw Links
+   let link = d3
+     .select(".links")
+     .selectAll(".linkGroup")
+     .data(graph.links);
+
+   let linkEnter = link.enter().append("g").attr('class','linkGroup');
+
+   linkEnter
+     .append("path")
+     .attr("class", "links");
+
+   linkEnter
+     .append("text")
+     .attr("class", "edgeArrow")
+     .attr("dy", 4)
+     .append("textPath")
+     .attr("startOffset", "50%");
+
+   // .append("line")
+
+   link.exit().remove();
+
+   link = linkEnter.merge(link);
+
+   console.log('link elements: ' , d3.select('.links').selectAll('path').size())
+   link
+     .select("path")
+     .style("stroke-width", edgeWidth)
+     .style("stroke", edgeColor)
+     .attr("id", d => d.id);
+
+   // TO DO , set ARROW DIRECTION DYNAMICALLY
+   link
+     .select("textPath")
+     .attr("xlink:href", d => "#" + d.id)
+     .text(d =>{ console.log(config.isDirected)
+      return config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""
+
+     }
+     )
+     .style("fill", edgeColor)
+     .style("stroke", edgeColor)
+
+
+
+   //draw Nodes
+   var node = d3
+     .select(".nodes")
+     .selectAll("g")
+     .data(graph.nodes);
+
+   let nodeEnter = node.enter().append("g").attr('class','nodeGroup');
+
+   nodeEnter
+     .append("rect")
+     .attr("class", "node")
+
+ // nodeEnter
+ //   .append("title")
+
+
+   nodeEnter.append("rect").attr("class", "labelBackground");
+
+   nodeEnter
+     .append("text")
+     .classed("label", true);
+
+   node.exit().remove();
+
+   node = nodeEnter.merge(node);
+
+   // node.select('title')
+   // .text(function(d) {
+   //   return d.screen_name;
+   // });
+
+   node
+     .select(".node")
+     .attr("x", d=> -nodeLength(d)/2)
+     .attr("y", d=> -nodeHeight(d)/2)
+     .attr("width", nodeLength)
+     .attr("height", d=>nodeHeight(d))
+     .style("fill", nodeFill)
+     .style("stroke", nodeStroke)
+     .attr("rx",d=> config.style.nodeIsRect ? nodeLength(d)/20 : nodeLength(d)/2 )
+     .attr("ry",d=> config.style.nodeIsRect ? nodeHeight(d)/20 : nodeHeight(d)/2 )
+
+   node
+     .select("text")
+     .text((d)=> d[config.attr.labelAttr])
+     .attr("y", d=>config.attr.drawBars ? -nodeHeight(d)*0.5-4 : ".5em")
+     .attr("dx", function(d) {
+       return (
+         -d3
+           .select(this)
+           .node()
+           .getBBox().width / 2
+       );
+     });
+
+   node
+     .select(".labelBackground")
+     .attr("width", function(d) {
+       let textWidth =  d3
+         .select(d3.select(this).node().parentNode)
+         .select("text")
+         .node()
+         .getBBox().width;
+
+         //make sure label box spans the width of the node
+       return d3.max([textWidth,nodeLength(d)+4])
+     })
+     .attr("height", "1em")
+     .attr("x", function(d) {
+       let textWidth = 
+         d3
+           .select(d3.select(this).node().parentNode)
+           .select("text")
+           .node()
+           .getBBox().width;
+
+         //make sure label box spans the width of the node
+         return d3.min([-textWidth/2,-nodeLength(d)/2-2])
+     })
+     .attr("y", d=>config.attr.drawBars ? -nodeHeight(d)*0.5 -16 : "-.5em");
+
+   node.call(
+     d3
+       .drag()
+       .on("start", dragstarted)
+       .on("drag", dragged)
+       .on("end", dragended)
+   );
+
+   // //  Separate enter/exit/update for bars so as to bind to the correct data;
+  
+   let drawCircles = Object.keys(config.attr.circles).length>0;
+   let circleRegion = drawCircles ? nodeMarkerLength*0.4 : 0
+   let circleRadius = drawCircles ? nodeMarkerHeight*0.1 : 0;
+   let circlePadding = drawCircles ? 5 : 0;
+   
+   let barAttrs = config.attr.drawBars ? Object.keys(scales) : [];
+   let numBars = barAttrs.length
+   let nodeWidth = nodeMarkerLength - barPadding - circleRadius - circlePadding;
+   let barWidth = (nodeWidth/ numBars)-(barPadding);
+
+   let groupingFactor = 2;
+
+   
+   let scaleStart = -nodeMarkerLength/2 + barPadding;
+   let scaleEnd = scaleStart + (numBars-1) * (barWidth+barPadding);
+
+   let barXScale = d3.scaleLinear().domain([0,numBars-1]).range([scaleStart,scaleEnd])
+
+
+   let bars = node.selectAll('.bars')
+   //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
+   .data(d=>barAttrs.map(b=>{return {data:d[b],attr:b};}));
+
+
+   let barsEnter = bars.enter().append('g').attr('class','bars');
+
+   barsEnter
+     .append("rect")
+     .attr("class", "frame")
+     .attr("width", barWidth)
+     .append('title')
+
+   barsEnter
+     .append("rect")
+     .attr('class','bar')
+     .attr("width", barWidth)
+     .append('title')
+
+   bars.exit().remove();
+
+   bars = barsEnter.merge(bars);
+
+   bars.selectAll('title').text(function(d) {
+     return d.attr + ' : '  + d.data;
+   });
+
+   bars.attr('transform',(d,i)=> {
+     let offset = scales[d.attr].position === 0 ? barXScale(i) : barXScale(i) -scales[d.attr].position*groupingFactor;
+    
+     return 'translate(' + offset + ',0)'
+
+   });
+
+
+   bars
+     .select(".frame")
+     .attr("height",d=>scales[d.attr].scale.range()[1])
+     .attr("y",d=>-scales[d.attr].scale.range()[1]/2)
+     .style('stroke',d=>scales[d.attr].fill);
+
+
+
+   bars
+     .select(".bar")
+     .classed(
+       "clipped",
+       d => d.data > scales[d.attr].scale.domain()[1]
+     )
+     .attr("height", d => scales[d.attr].scale(d.data))
+     .attr(
+       "y",
+       d =>
+       nodeMarkerHeight/2 -barPadding -
+         scales[d.attr].scale(d.data)
+     )
+     .style('fill',d=>scales[d.attr].fill);
+
+
+             
+   let circleAttrs = config.attr.drawBars ? config.attr.circles : [];
+
+   let circleYScale = d3.scaleLinear().domain([0,circleAttrs.length-1]).range([-nodeMarkerHeight*.2,nodeMarkerHeight*.2])
+   
+
+     let circles = node.selectAll('.categorical')
+     //for each circle associate the relevant data from the parent node
+     .data(d=>circleAttrs.map(obj=>{
+       //compute color scale for this attr from config file
+       let colorFillScale = d3
+       .scaleOrdinal()
+       .domain(d3.extent(graph.nodes.map(n => n[obj.attr])))
+       .range(obj.colors);
+
        
-        let barAttrs = config.attr.drawBars ? Object.keys(scales) : [];
-        let numBars = barAttrs.length
-        let nodeWidth = nodeMarkerLength - barPadding;
-        let barWidth = (nodeWidth/ numBars)-(barPadding);
+       return {data:d[obj.attr],attr:obj.attr, scale:colorFillScale};}));
 
-        let groupingFactor = 2;
-
-        let scaleStart = -nodeMarkerLength/2 + barPadding;
-        let scaleEnd = scaleStart + (numBars-1) * (barWidth+barPadding);
-
-        let barXScale = d3.scaleLinear().domain([0,numBars-1]).range([scaleStart,scaleEnd])
-        
- 
-        let bars = node.selectAll('.bars')
-        //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
-        .data(d=>barAttrs.map(b=>{return {data:d[b],attr:b};}));
-
-        let barsEnter = bars.enter().append('g').attr('class','bars');
-
-        barsEnter
-          .append("rect")
-          .attr("class", "frame")
-          .attr("width", barWidth)
-          .append('title')
-
-        barsEnter
-          .append("rect")
-          .attr('class','bar')
-          .attr("width", barWidth)
-          .append('title')
-
-        bars.exit().remove();
-
-        bars = barsEnter.merge(bars);
-
-        bars.selectAll('title').text(function(d) {
-          return d.attr + ' : '  + d.data;
-        });
-
-        bars.attr('transform',(d,i)=> {
-          let offset = scales[d.attr].position === 0 ? barXScale(i) : barXScale(i) -scales[d.attr].position*groupingFactor;
-         
-          return 'translate(' + offset + ',0)'
- 
-        });
+     let circleEnter = circles
+     .enter()
+     .append('circle')
+     .attr('class','categorical')
+     .attr('r',circleRadius)
+     .attr('cx',circleRegion)
      
 
-        bars
-          .select(".frame")
-          .attr("height",d=>scales[d.attr].scale.range()[1])
-          .attr("y",d=>-scales[d.attr].scale.range()[1]/2)
-          .style('stroke',d=>scales[d.attr].fill);
+     circles.exit().remove();
+
+     circles = circleEnter.merge(circles);
+
+     circles
+     .attr('cy',(d,i)=>circleYScale(i))
+     .style('fill',d=>d.scale(d.data))
+     
+
+   d3.select("#exportGraph").on("click", () => {
+     let graphCopy = JSON.parse(JSON.stringify(graph));
+
+     graphCopy.links.map(l => {
+       l.index = undefined;
+       l.source = l.source.id;
+       l.target = l.target.id;
+     });
+     graphCopy.nodes.map(n => {
+       n.index = undefined;
+       n.vx = undefined;
+       n.vy = undefined;
+     });
+
+     console.log(JSON.stringify(graphCopy));
+   });
+
+   d3.select("#clear-selection").on("click", () => {
+     let clearSelection = function(d) {
+       let isNode = d.userSelectedNeighbors !== undefined;
+
+       d.selected = false;
+       if (isNode) {
+         d.userSelectedNeighbors = [];
+       }
+       return true;
+     };
+
+     d3.selectAll(".node").classed("clicked", false);
+
+     d3.select(".nodes")
+       .selectAll(".nodeGroup")
+       .filter(clearSelection)
+       .classed("muted", false);
+
+     d3.select(".links")
+       .selectAll(".linkGroup")
+       .filter(clearSelection)
+       .classed("muted", false);
+
+       node
+     .select(".node")
+     .style("fill", nodeFill)
+     .style("stroke", nodeStroke);
+   });
+
+   node.on("click", function(currentData) {
+
+     let isClicked = d3
+       .select(this)
+       .select(".node")
+       .classed("clicked");
+
+     d3.select(this)
+       .selectAll(".node")
+       .classed("clicked", !isClicked);
+
+     let isNeighbor = function(d) {
+       if (d === currentData) {
+         d.selected = !isClicked;
+       }
+
+       let isNode = d.userSelectedNeighbors !== undefined;
+
+       let isNeighbor =
+         d === currentData ||
+         currentData.neighbors.find(n => n === d.id) ||
+         currentData.edges.find(n => n === d.id);
+
+       if (isNeighbor && isNode) {
+         //add to list of selected neighbors
+         if (!isClicked) {
+           d.userSelectedNeighbors.push(currentData.id);
+         } else {
+           d.userSelectedNeighbors = d.userSelectedNeighbors.filter(
+             n => n !== currentData.id
+           );
+         }
+       }
+
+       if (!isNode && isNeighbor) {
+         d.selected =
+           d.source.selected || d.target.selected || !d.selected;
+       }
+
+       return true;
+     };
+
+     // see if there is at least one node 'clicked'
+     let hasUserSelection = d3.selectAll(".clicked").size() > 0;
+
+     //set the class of everything to 'muted', except for the selected node and it's neighbors;
+     d3.select(".nodes")
+       .selectAll(".nodeGroup")
+       .filter(isNeighbor)
+       .classed("muted", d => {
+         return hasUserSelection && d.userSelectedNeighbors.length < 1;
+       });
+
+     d3.select(".links")
+       .selectAll(".linkGroup")
+       .filter(isNeighbor)
+       .classed("muted", d => hasUserSelection && !d.selected);
+
+      node
+       .select(".node")
+       .style("fill", nodeFill)
+       .style("stroke", nodeStroke);
+   });
+
+   
+
+   if (config.fixedPositions) {
+     //restablish link references to their source and target nodes;
+     graph.links.map(l => {
+       l.source = graph.nodes.find(n => n.id === l.source) || l.source;
+       l.target = graph.nodes.find(n => n.id === l.target) || l.target;
+     });
+   } else {
+     graph.nodes.map(n => {
+       n.x = null;
+       n.y = null;
+       n.vx = null;
+       n.vy = null;
+     });
+
+     console.log('should be here')
+
+     simulation.nodes(graph.nodes).on("tick", ticked);
+     simulation.force("link").links(graph.links);
+
+     for (var i = 0; i < 2000; ++i) simulation.tick();
+     simulation.stop();
+
+     //add a collision force that is proportional to the radius of the nodes;
+   simulation.force("collision", d3.forceCollide().radius(d=>nodeLength(d)))
+
+   simulation.alphaTarget(0.1).restart()
+   for (var i = 0; i < 1000; ++i) simulation.tick();
+     simulation.stop();
+
+   }
 
 
+   
 
-        bars
-          .select(".bar")
-          .classed(
-            "clipped",
-            d => d.data > scales[d.attr].scale.domain()[1]
-          )
-          .attr("height", d => scales[d.attr].scale(d.data))
-          .attr(
-            "y",
-            d =>
-            nodeMarkerHeight/2 -barPadding -
-              scales[d.attr].scale(d.data)
-          )
-          .style('fill',d=>scales[d.attr].fill);
+   function arcPath(leftHand, d) {
+     var x1 = leftHand ? d.source.x : d.target.x,
+       y1 = leftHand ? d.source.y : d.target.y,
+       x2 = leftHand ? d.target.x : d.source.x,
+       y2 = leftHand ? d.target.y : d.source.y,
+       dx = x2 - x1,
+       dy = y2 - y1,
+       dr = Math.sqrt(dx * dx + dy * dy),
+       drx = dr,
+       dry = dr,
+       sweep = leftHand ? 0 : 1;
+     siblingCount = countSiblingLinks(graph, d.source, d.target);
+     (xRotation = 0), (largeArc = 0);
 
-        d3.select("#exportGraph").on("click", () => {
-          let graphCopy = JSON.parse(JSON.stringify(graph));
+     if (siblingCount > 1) {
+       var siblings = getSiblingLinks(graph, d.source, d.target);
+       var arcScale = d3
+         .scaleOrdinal()
+         .domain(siblings)
+         .range([1, siblingCount]);
 
-          graphCopy.links.map(l => {
-            l.index = undefined;
-            l.source = l.source.id;
-            l.target = l.target.id;
-          });
-          graphCopy.nodes.map(n => {
-            n.index = undefined;
-            n.vx = undefined;
-            n.vy = undefined;
-          });
+       drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+       dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+     }
 
-          console.log(JSON.stringify(graphCopy));
-        });
+     return (
+       "M" +
+       x1 +
+       "," +
+       y1 +
+       "A" +
+       drx +
+       ", " +
+       dry +
+       " " +
+       xRotation +
+       ", " +
+       largeArc +
+       ", " +
+       sweep +
+       " " +
+       x2 +
+       "," +
+       y2
+     );
+   }
 
-        d3.select("#clear-selection").on("click", () => {
-          let clearSelection = function(d) {
-            let isNode = d.userSelectedNeighbors !== undefined;
+   function ticked() {
+     // updatePos();
+   }
 
-            d.selected = false;
-            if (isNode) {
-              d.userSelectedNeighbors = [];
-            }
-            return true;
-          };
+   function updatePos() {
+     link.select("path").attr("d", function(d) {
+       return arcPath(d.type === "mentions", d);
+     });
 
-          d3.selectAll(".node").classed("clicked", false);
+     let radius = nodeMarkerLength/2;
 
-          d3.select(".nodes")
-            .selectAll(".nodeGroup")
-            .filter(clearSelection)
-            .classed("muted", false);
+     node.attr("transform", d => {
+       d.x = Math.max(radius, Math.min(width - radius, d.x));
+       d.y = Math.max(radius, Math.min(height - radius, d.y));
+       return "translate(" + d.x + "," + d.y + ")";
+     });
+   }
 
-          d3.select(".links")
-            .selectAll(".linkGroup")
-            .filter(clearSelection)
-            .classed("muted", false);
+   updatePos();
 
-            node
-          .select(".node")
-          .style("fill", nodeFill)
-          .style("stroke", nodeStroke);
-        });
+   //set all nodes to fixed positions.
+   // graph.nodes.map(d=>{d.fx = d.x; d.fy = d.y;});
 
-        node.on("click", function(currentData) {
+   function dragstarted(d) {
+     // if (!d3.event.active) simulation.alphaTarget(0.1).restart();
+     d.fx = d.x;
+     d.fy = d.y;
+     // dragging = true;
+   }
+   function dragged(d) {
+     d.fx = d3.event.x;
+     d.fy = d3.event.y;
+     d.x = d3.event.x;
+     d.y = d3.event.y;
+     updatePos();
+   }
+   function dragended(d) {
+     // dragging = false;
+     // simulation.stop();
+     // simulation.velocityDecay(0.9)
+     // console.log(simulation.alpha())
+     //   if (simulation.apha()>3) simulation.alphaTarget(0);
+     //   d.fx = null;
+     //   d.fy = null;
+   }
 
-          let isClicked = d3
-            .select(this)
-            .select(".node")
-            .classed("clicked");
 
-          d3.select(this)
-            .selectAll(".node")
-            .classed("clicked", !isClicked);
+}
 
-          let isNeighbor = function(d) {
-            if (d === currentData) {
-              d.selected = !isClicked;
-            }
 
-            let isNode = d.userSelectedNeighbors !== undefined;
+//drawLesMis NodeLink
+function drawVis() {
+  
+  //read in configuration file;
+  d3.json("../public/data/baseState.json", function(fileConfig) {
+    config = fileConfig;
+    //load undirected graph specified in configuration file;
+    d3.json(config.undirectedGraph, function(undir_graph_from_file) {
+      //load directed graph specified in configuration file;
+      d3.json(config.directedGraph, function(dir_graph_from_file) {
 
-            let isNeighbor =
-              d === currentData ||
-              currentData.neighbors.find(n => n === d.id) ||
-              currentData.edges.find(n => n === d.id);
+        dir_graph = dir_graph_from_file;
+        undir_graph = undir_graph_from_file;
 
-            if (isNeighbor && isNode) {
-              //add to list of selected neighbors
-              if (!isClicked) {
-                d.userSelectedNeighbors.push(currentData.id);
-              } else {
-                d.userSelectedNeighbors = d.userSelectedNeighbors.filter(
-                  n => n !== currentData.id
-                );
-              }
-            }
-
-            if (!isNode && isNeighbor) {
-              d.selected =
-                d.source.selected || d.target.selected || !d.selected;
-            }
-
-            return true;
-          };
-
-          // see if there is at least one node 'clicked'
-          let hasUserSelection = d3.selectAll(".clicked").size() > 0;
-
-          //set the class of everything to 'muted', except for the selected node and it's neighbors;
-          d3.select(".nodes")
-            .selectAll(".nodeGroup")
-            .filter(isNeighbor)
-            .classed("muted", d => {
-              return hasUserSelection && d.userSelectedNeighbors.length < 1;
-            });
-
-          d3.select(".links")
-            .selectAll(".linkGroup")
-            .filter(isNeighbor)
-            .classed("muted", d => hasUserSelection && !d.selected);
-
-           node
-            .select(".node")
-            .style("fill", nodeFill)
-            .style("stroke", nodeStroke);
-        });
-
-        
-
-        if (config.fixedPositions) {
-          //restablish link references to their source and target nodes;
-          graph.links.map(l => {
-            l.source = graph.nodes.find(n => n.id === l.source);
-            l.target = graph.nodes.find(n => n.id === l.target);
-          });
-        } else {
-          graph.nodes.map(n => {
-            n.x = null;
-            n.y = null;
-            n.vx = null;
-            n.vy = null;
-          });
-
-          simulation.nodes(graph.nodes).on("tick", ticked);
-          simulation.force("link").links(graph.links);
-
-          for (var i = 0; i < 2000; ++i) simulation.tick();
-          simulation.stop();
-        }
-
-        function arcPath(leftHand, d) {
-          var x1 = leftHand ? d.source.x : d.target.x,
-            y1 = leftHand ? d.source.y : d.target.y,
-            x2 = leftHand ? d.target.x : d.source.x,
-            y2 = leftHand ? d.target.y : d.source.y,
-            dx = x2 - x1,
-            dy = y2 - y1,
-            dr = Math.sqrt(dx * dx + dy * dy),
-            drx = dr,
-            dry = dr,
-            sweep = leftHand ? 0 : 1;
-          siblingCount = countSiblingLinks(graph, d.source, d.target);
-          (xRotation = 0), (largeArc = 0);
-
-          if (siblingCount > 1) {
-            var siblings = getSiblingLinks(graph, d.source, d.target);
-            var arcScale = d3
-              .scaleOrdinal()
-              .domain(siblings)
-              .range([1, siblingCount]);
-
-            drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
-            dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
-          }
-
-          return (
-            "M" +
-            x1 +
-            "," +
-            y1 +
-            "A" +
-            drx +
-            ", " +
-            dry +
-            " " +
-            xRotation +
-            ", " +
-            largeArc +
-            ", " +
-            sweep +
-            " " +
-            x2 +
-            "," +
-            y2
-          );
-        }
-
-        function ticked() {
-          // updatePos();
-        }
-
-        function updatePos() {
-          link.select("path").attr("d", function(d) {
-            return arcPath(d.type === "mentions", d);
-          });
-
-          let radius = nodeMarkerLength/2;
-
-          node.attr("transform", d => {
-            d.x = Math.max(radius, Math.min(width - radius, d.x));
-            d.y = Math.max(radius, Math.min(height - radius, d.y));
-            return "translate(" + d.x + "," + d.y + ")";
-          });
-        }
-
-        updatePos();
-
-        //set all nodes to fixed positions.
-        // graph.nodes.map(d=>{d.fx = d.x; d.fy = d.y;});
-
-        function dragstarted(d) {
-          // if (!d3.event.active) simulation.alphaTarget(0.1).restart();
-          d.fx = d.x;
-          d.fy = d.y;
-          // dragging = true;
-        }
-        function dragged(d) {
-          d.fx = d3.event.x;
-          d.fy = d3.event.y;
-          d.x = d3.event.x;
-          d.y = d3.event.y;
-          updatePos();
-        }
-        function dragended(d) {
-          // dragging = false;
-          // simulation.stop();
-          // simulation.velocityDecay(0.9)
-          // console.log(simulation.alpha())
-          //   if (simulation.apha()>3) simulation.alphaTarget(0);
-          //   d.fx = null;
-          //   d.fy = null;
-        }
+        updateVis();
       });
     });
   });

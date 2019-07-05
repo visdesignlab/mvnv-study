@@ -1,0 +1,21 @@
+// This config file specifies a task and any attributes from baseState.json that should be updated/changed from their default configurations for this trial. 
+
+
+{ 
+  // Type of visualization - can be node-link [NL], adjacency matrix [AM] or juxtaposed [JX]
+  vis: NL 
+
+//specify the task including expected number of answers
+task: {
+  prompt:Select the node that has the highest number of followers. 
+  booleanAnswer:false
+  multipleNodes:false
+}
+  
+  //Specify only attributes that have changed from baseState.json
+config:
+{
+isDirected:false
+}
+
+}

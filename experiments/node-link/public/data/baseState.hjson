@@ -95,7 +95,7 @@
     //Boolean flag that determines whether nested bar charts + categorical circles are rendered. 
     // If set to true, any attribute assigned to nodeFill is removed and node fills default to the noNodeFill color defined below.
     // If set to false, nodes are drawn as circles (i.e nodeIsRect is set to false)
-    drawBars: true
+    drawBars: false
 
     // Which attribute to encode on edge color
     edgeColor: type
@@ -198,7 +198,7 @@
   
     //Node width in pixels;
     nodeWidth: 50
-    
+
     //If set to true, rect rx and ry are set to 2 for slightly rounded corners, if set to false, they are set to the radius of 
     // the marker in order to emulate a circle; 
     nodeIsRect: true
