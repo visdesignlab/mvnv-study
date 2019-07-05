@@ -1,0 +1,125 @@
+{
+  attr:
+  {
+    barColors:
+    [
+      "#2d2d2d"
+      "#d67205"
+      "#777777"
+      "#706842"
+    ]
+    bars:
+    {
+      scale1:
+      {
+        attrs:
+        [
+          followers_count
+          friends_count
+        ]
+        domain:
+        [
+          0
+          2000
+        ]
+      }
+      scale2:
+      {
+        attrs:
+        [
+          statuses_count
+        ]
+        domain: null
+      }
+      scale3:
+      {
+        attrs:
+        [
+          favourites_count
+        ]
+        domain: null
+      }
+    }
+    circles:
+    [
+      {
+        attr: type
+        colors:
+        [
+          "#a88e69"
+          "#68aa73"
+        ]
+      }
+      {
+        attr: type
+        colors:
+        [
+          "#a88e69"
+          "#68aa73"
+        ]
+      }
+    ]
+    displayEdgeTypes:
+    [
+      mentions
+      retweets
+    ]
+    drawBars: true
+    edgeColor: type
+    edgeWidth: count
+    labelAttr: screen_name
+    noEdgeColor: white
+    noNodeFill: white
+    noNodeStroke: white
+    nodeFill: type
+    nodeSize: null
+    nodeSizeScale:
+    {
+      clamp: true
+      domain:
+      [
+        0
+        2000
+      ]
+    }
+    nodeStroke: type
+    selectedColor: "#ea9b0f"
+    selectedNodes: stroke
+    showNodeLabels: always [onHover]
+  }
+  directedGraph: ../public/data/network_small_directed_layout3.json
+  fixedPositions: false
+  interaction:
+  {
+    draggableNodes: true
+    edgeTooltip: false
+    multiEdgeSelection: null
+    multiNodeSelection: true
+    nodeTooltip: false
+    onEdgeClick: null
+    onNodeClick: highlightNeighbors [highlightNode]
+  }
+  isDirected: true
+  state:
+  {
+    selectedNodes: []
+  }
+  style:
+  {
+    edgeColors:
+    [
+      "#427d9b"
+      "#88419d"
+    ]
+    nodeColors:
+    [
+      "#a88e69"
+      "#68aa73"
+    ]
+    nodeHeight: 30
+    nodeIsRect: true
+    nodeWidth: 50
+  }
+  undirectedGraph: ../public/data/network_small_undirected.json
+  vis: NL [AM]/JX])
+}
