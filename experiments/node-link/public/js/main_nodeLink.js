@@ -314,20 +314,20 @@ function setPanelValuesFromFile(config,graph){
    .filter(function(){return d3.select(this).property('value') === config.fixedPositions.toString()})
    .attr('checked','checked');
 
-   let ignoreAttr = ['edges','fx','fy','x','y','neighbors','profile_image_url','selected','userSelectedNeighbors','original','utc_offset'];
+   let ignoreAttr = ['edges','id', 'source', 'target','fx','fy','x','y','neighbors','profile_image_url','selected','userSelectedNeighbors','original','utc_offset'];
    //set all possible attribute values for node fill/stroke/size and edge fill/stroke
    let allNodeAttributes = Object.keys(graph.nodes[0]).filter(k=>!ignoreAttr.includes(k))
    let allEdgeAttributes = Object.keys(graph.links[0]).filter(k=>!ignoreAttr.includes(k))
 
 
    let menuItems = [
-     {'name':'nodeFillSelect','type':typeof('string'),'configAttr':'attr.nodeFill'},
-     {'name':'nodeStrokeSelect','type':typeof('string'),'configAttr':'attr.nodeStroke'},
-     {'name':'nodeSizeSelect','type':typeof(2),'configAttr':'attr.nodeSize'},
-     {'name':'edgeStrokeSelect','type':typeof('string'),'configAttr':'attr.edgeColor'},
-     {'name':'edgeWidthSelect','type':typeof(2),'configAttr':'attr.edgeWidth'},
-     {'name':'nodeBarsSelect','type':typeof(2),'configAttr':'attr.bars'},
-     {'name':'nodeCirclesSelect','type':typeof('string'),'configAttr':'attr.circles'}]
+     {'name':'nodeFillSelect','type':typeof('string'),'configAttr':'nodeFill'},
+     {'name':'nodeStrokeSelect','type':typeof('string'),'configAttr':'nodeStroke'},
+     {'name':'nodeSizeSelect','type':typeof(2),'configAttr':'nodeSize'},
+     {'name':'edgeStrokeSelect','type':typeof('string'),'configAttr':'edgeColor'},
+     {'name':'edgeWidthSelect','type':typeof(2),'configAttr':'edgeWidth'},
+     {'name':'nodeBarsSelect','type':typeof(2),'configAttr':'bars'},
+     {'name':'nodeCirclesSelect','type':typeof('string'),'configAttr':'circles'}]
      
      menuItems.map(m=>{
 
@@ -338,45 +338,58 @@ function setPanelValuesFromFile(config,graph){
     let allAttributes = isNode ? allNodeAttributes : allEdgeAttributes;
 
     let possibleValues = allAttributes.filter(attr=>{
-      let type = typeof(graph.nodes[0][attr]);
+      let type = isNode ? typeof(graph.nodes[0][attr]) : typeof(graph.links[0][attr]);
       return type === m.type && (m.type === typeof(2) || graph.nodes.filter(n=>n[attr] === graph.nodes[0][attr]).length>1 )  
      })
     
     // item.select('select').attr('size',possibleValues.length)
 
-    item.select('select').selectAll('option')
+    let selectMenu = item.select('select');
+    
+    selectMenu.selectAll('option')
     .data(possibleValues)
     .enter()
     .append('option')
     .attr('value',d=>d)
     .text(d=>d) 
+    
+     item.selectAll('option').filter(opt=>{       
+       return config.attr[m.configAttr] ===  opt})
+     .property('selected',true)
 
-    let attr = possibleValues[0];
-    let type = typeof(graph.nodes[0][attr]);
- 
-    if (type === typeof(2)){
+
+     //  //Set up callbacks for the config panel on the left. 
+     selectMenu.on("change", function(){
+      console.log('dropdown value is', this.value)
+
+      createHist(this.value,d3.select('#' + m.name + '_histogram'),isNode ? graph.nodes : graph.links)
+
+
+      // config.isDirected = eval(this.value);
+
+      // console.log('config is ', config)
+      // updateVis();
+    });
+
+    //set selected element according to config file; 
+
+    if (m.type === typeof(2) && m.configAttr !== 'bars'){
      let newSvg = item.append('svg')
-   .attr('id',attr + '_histogram')
+   .attr('id',m.name + '_histogram')
  
-   createHist(attr,newSvg,graph)
+    let attr = config.attr[m.configAttr];
+   createHist(attr,newSvg,isNode ? graph.nodes : graph.links)
    }
     
 
    })
 
-  
 
-
-
-
-
-   
-  //  console.log(graph.nodes[0])
 }
 
-function createHist(attrName,svgSelection,graph){
+function createHist(attrName,svgSelection,data){
 
-  var margin = {top:20, right:10, bottom:50, left:20},
+  let margin = {top:20, right:10, bottom:50, left:20},
   width = 300 - margin.left - margin.right,
   height = 200 - margin.top - margin.bottom;
 
@@ -385,7 +398,7 @@ function createHist(attrName,svgSelection,graph){
 
    // x scale for time
 var x = d3.scaleLinear()
-.domain(d3.extent(graph.nodes,n=>n[attrName]))
+.domain(d3.extent(data,n=>n[attrName]))
 .range([0, width])
 .clamp(true);
 
@@ -400,36 +413,42 @@ var y = d3.scaleLinear()
 var histogram = d3.histogram()
 .value(function(d) { return d[attrName]; })
 .domain(x.domain())
-.thresholds(x.ticks(12));
+.thresholds(x.ticks(9));
 
 
 var svg = svgSelection
 .attr("width", width + margin.left + margin.right)
 .attr("height", height + margin.top + margin.bottom);
 
-var hist = svg.selectAll('.histogram').data([0]).enter().append("g")
+var hist = svg.selectAll('.histogram').data([0]);
+
+let histEnter = hist.enter().append("g")
 .attr("class", "histogram")
 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+hist = histEnter.merge(hist);
 
 
 
 ////////// load data //////////
 
 // group data for bars
-var bins = histogram(graph.nodes);
+var bins = histogram(data);
+
+console.log('bins', bins)
 
 // y domain based on binned data
 y.domain([0, d3.max(bins, function(d) { return d.length; })]);
 
 colours.domain(bins.map(b=>b.length).sort())
 
-var bar = hist.selectAll(".bar")
- .data(bins);
+var bar = hist.selectAll(".barGroup")
+ .data(bins,d=>d.x0);
 
  barEnter = bar
  .enter()
  .append("g")
- .attr("class", "bar")
+ .attr("class", "barGroup")
  
 barEnter.append("rect")
  .attr("class", "bar")
@@ -463,12 +482,22 @@ bar.select("text")
 
 var currentValue = 0;
 
-var slider = svg.append("g")
+var slider = svg.selectAll('.slider').data([0]);
+
+let sliderEnter = slider.enter().append("g")
    .attr("class", "slider")
    .attr("transform", "translate(" + margin.left + "," + (margin.top+histHeight+15) + ")");
 
-slider.append("line")
-   .attr("class", "track")
+   sliderEnter.insert("g", ".track-overlay")
+   .attr("class", "ticks")
+   .attr("transform", "translate(0," + 18 + ")")
+
+   sliderEnter.append("line")
+   .attr("class", "track");;
+
+   slider = sliderEnter.merge(slider);
+
+   slider.select('.track')
    .attr("x1", x.range()[0])
    .attr("x2", x.range()[1])
  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
@@ -483,16 +512,20 @@ slider.append("line")
        })
    );
 
-slider.insert("g", ".track-overlay")
-   .attr("class", "ticks")
-   .attr("transform", "translate(0," + 18 + ")")
+let text = slider.select('.ticks')
  .selectAll("text")
-   .data(x.ticks(10))
+   .data(x.ticks(10));
+
+   let textEnter = text
    .enter()
    .append("text")
    .attr("x", x)
    .attr("y", 10)
-   .attr("text-anchor", "middle")
+   .attr("text-anchor", "middle");
+
+   text = textEnter.merge(text); 
+
+   text
    .text(function(d) { return d });
 
 var handle = slider.insert("circle", ".track-overlay")
@@ -702,16 +735,16 @@ function updateVis() {
 
    //create scales for bars;
    let scaleConfig = config.attr.bars;
-   let scaleKeys = Object.keys(config.attr.bars);
+   let scaleObjects = config.attr.bars;
 
    //object to store scales as a function of attr name;
    let scales = {};
 
    let barPadding = nodeMarkerLength*0.1;
 
-   scaleKeys.map((s,i) => {
+   scaleObjects.map((s,i) => {
      //find autoExtent from data;
-     let dataExtent = scaleConfig[s].attrs.reduce(
+     let dataExtent = s.attrs.reduce(
        (extent, attr) => {
          return d3.extent(extent.concat(graph.nodes.map(n => n[attr])));
        },
@@ -720,12 +753,12 @@ function updateVis() {
 
      let scale = d3
        .scaleLinear()
-       .domain(scaleConfig[s].domain || dataExtent)
+       .domain(s.domain || dataExtent)
        .range([0,nodeMarkerHeight-(2*barPadding)])
        .clamp(true);
 
      //save scale and color to use with that attribute bar
-     scaleConfig[s].attrs.map((attr,ii) => {
+     s.attrs.map((attr,ii) => {
        scales[attr] = {scale,'fill':config.attr.barColors[i], "position":ii};
      });
    });

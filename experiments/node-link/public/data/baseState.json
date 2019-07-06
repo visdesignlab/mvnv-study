@@ -54,7 +54,7 @@
     "noNodeFill": "white",
     "noNodeStroke": "white",
     "nodeFill": "type",
-    "nodeSize": null,
+    "nodeSize": "friends_count",
     "nodeSizeScale": {
       "clamp": true,
       "domain": [
