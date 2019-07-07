@@ -48,26 +48,19 @@
     ],
     "drawBars": true,
     "edgeColor": "type",
-    "edgeWidth": "count",
+    "edgeWidth": {"attr":"count","domain":[1,3]},
     "labelAttr": "screen_name",
     "noEdgeColor": "white",
     "noNodeFill": "white",
     "noNodeStroke": "white",
     "nodeFill": "type",
-    "nodeSize": "friends_count",
-    "nodeSizeScale": {
-      "clamp": true,
-      "domain": [
-        0,
-        2000
-      ]
-    },
+    "nodeSize": {"attr":"friends_count","domain":[0,2000]},
     "nodeStroke": "type",
     "selectedColor": "#ea9b0f",
     "selectedNodes": "stroke",
     "showNodeLabels": "always"
   },
-  "directedGraph": "../public/data/network_small_directed_layout3.json",
+  "directedGraph": "../public/data/network_small_directed_layout1.json",
   "fixedPositions": true,
   "interaction": {
     "draggableNodes": true,
@@ -78,7 +71,7 @@
     "onEdgeClick": null,
     "onNodeClick": "highlightNeighbors"
   },
-  "isDirected": false,
+  "isDirected": true,
   "state": {
     "selectedNodes": []
   },

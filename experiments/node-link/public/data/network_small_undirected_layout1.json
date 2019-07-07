@@ -17,10 +17,15 @@
         "location": "Bogotá, Colombia",
         "memberFor_days": 3517,
         "type": "person",
+        "continent": "South America",
         "neighbors": [208312922, 208312922, 81658145, 16112517, 1873322353, 743468486756868100],
         "edges": ["91169926_208312922_retweet", "208312922_91169926_mentions", "91169926_81658145_retweet", "91169926_16112517_retweet", "91169926_1873322353_retweet", "743468486756868100_91169926_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 827.3851097514757,
+        "y": 501.9358536951564,
+        "fx": 827.3851097514757,
+        "fy": 501.9358536951564
     }, {
         "followers_count": 540,
         "query_tweet_count": 9,
@@ -39,10 +44,15 @@
         "location": "DC",
         "memberFor_days": 3175,
         "type": "person",
+        "continent": "North America",
         "neighbors": [91169926, 91169926, 191257554, 1085199426837188600, 318046158, 18406335, 1085199426837188600, 1006945298, 227831457, 84043985, 29700681, 4597853354, 247943631, 403626099, 2873695769, 889998600],
         "edges": ["91169926_208312922_retweet", "208312922_91169926_mentions", "191257554_208312922_retweet", "208312922_1085199426837188600_mentions", "318046158_208312922_retweet", "18406335_208312922_retweet", "1085199426837188600_208312922_retweet", "1006945298_208312922_retweet", "227831457_208312922_retweet", "84043985_208312922_retweet", "29700681_208312922_retweet", "208312922_4597853354_mentions", "208312922_247943631_retweet", "403626099_208312922_retweet", "2873695769_208312922_retweet", "889998600_208312922_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 821.1962074014764,
+        "y": 752.1962962498017,
+        "fx": 821.1962074014764,
+        "fy": 752.1962962498017
     }, {
         "followers_count": 610,
         "query_tweet_count": 34,
@@ -61,10 +71,15 @@
         "location": "",
         "memberFor_days": 3819,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [1667081238, 247943631, 14249829, 2873695769, 40219508, 270431596, 16112517, 16112517, 2889052877, 43953969, 19283433, 1085199426837188600, 81658145, 1085199426837188600, 909697437694087200],
         "edges": ["19299318_1667081238_mentions", "19299318_247943631_mentions", "19299318_14249829_mentions", "2873695769_19299318_retweet", "19299318_40219508_mentions", "19299318_270431596_mentions", "16112517_19299318_retweet", "19299318_16112517_mentions", "2889052877_19299318_retweet", "43953969_19299318_retweet", "19283433_19299318_retweet", "1085199426837188600_19299318_retweet", "19299318_81658145_mentions", "19299318_1085199426837188600_mentions", "19299318_909697437694087200_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1339.6650988531367,
+        "y": 146.78181846515272,
+        "fx": 1339.6650988531367,
+        "fy": 146.78181846515272
     }, {
         "followers_count": 334,
         "query_tweet_count": 3,
@@ -83,10 +98,15 @@
         "location": "London, UK",
         "memberFor_days": 2154,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [19299318, 19283433, 19283433, 188046229, 247943631],
         "edges": ["19299318_1667081238_mentions", "1667081238_19283433_retweet", "19283433_1667081238_mentions", "188046229_1667081238_mentions", "1667081238_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 913.5781100118093,
+        "y": 141.98289416105544,
+        "fx": 913.5781100118093,
+        "fy": 141.98289416105544
     }, {
         "followers_count": 204,
         "query_tweet_count": 5,
@@ -105,10 +125,15 @@
         "location": "Norrköping, Sverige",
         "memberFor_days": 1670,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [1055379531731796000, 1055379531731796000, 82713840, 40219508],
         "edges": ["2924711485_1055379531731796000_retweet", "1055379531731796000_2924711485_mentions", "2924711485_82713840_retweet", "2924711485_40219508_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 516.8027954185907,
+        "y": 25,
+        "fx": 516.8027954185907,
+        "fy": 25
     }, {
         "followers_count": 7,
         "query_tweet_count": 5,
@@ -127,10 +152,15 @@
         "location": "Ile-de-France, France",
         "memberFor_days": 255,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [2924711485, 2924711485, 78865306, 78865306],
         "edges": ["2924711485_1055379531731796000_retweet", "1055379531731796000_2924711485_mentions", "1055379531731796000_78865306_retweet", "78865306_1055379531731796000_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 857.5817737508988,
+        "y": 25,
+        "fx": 857.5817737508988,
+        "fy": 25
     }, {
         "followers_count": 10215,
         "query_tweet_count": 2,
@@ -149,10 +179,15 @@
         "location": "Seattle, WA",
         "memberFor_days": 3073,
         "type": "person",
+        "continent": "North America",
         "neighbors": [19299318, 1873322353, 16112517, 78865306, 79908341, 4893004803, 2889052877, 1035496563743842300, 14905766, 318046158, 824684769543741400, 49457800, 711885257549680600, 1556132462, 18704160, 1652270612, 31638712, 9527212, 16557883, 208312922, 136400506, 82890309, 1667081238, 2527017636, 44195788, 10414152, 31638712, 2873695769],
         "edges": ["19299318_247943631_mentions", "247943631_1873322353_retweet", "16112517_247943631_mentions", "78865306_247943631_mentions", "79908341_247943631_retweet", "4893004803_247943631_retweet", "2889052877_247943631_retweet", "1035496563743842300_247943631_retweet", "14905766_247943631_retweet", "318046158_247943631_retweet", "824684769543741400_247943631_retweet", "49457800_247943631_retweet", "711885257549680600_247943631_retweet", "1556132462_247943631_retweet", "18704160_247943631_retweet", "1652270612_247943631_retweet", "31638712_247943631_retweet", "9527212_247943631_retweet", "16557883_247943631_retweet", "208312922_247943631_retweet", "136400506_247943631_retweet", "82890309_247943631_retweet", "1667081238_247943631_retweet", "2527017636_247943631_retweet", "44195788_247943631_retweet", "10414152_247943631_mentions", "31638712_247943631_mentions", "2873695769_247943631_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1456.6151656466782,
+        "y": 599.1460546300185,
+        "fx": 1456.6151656466782,
+        "fy": 599.1460546300185
     }, {
         "followers_count": 288,
         "query_tweet_count": 3,
@@ -171,10 +206,15 @@
         "location": "Cambridge, MA",
         "memberFor_days": 3089,
         "type": "person",
+        "continent": "North America",
         "neighbors": [82713840, 81658145, 395853499],
         "edges": ["241173920_82713840_retweet", "241173920_81658145_retweet", "241173920_395853499_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 319.9118432297778,
+        "y": 519.9799321212273,
+        "fx": 319.9118432297778,
+        "fy": 519.9799321212273
     }, {
         "followers_count": 822,
         "query_tweet_count": 1,
@@ -191,12 +231,17 @@
         "original": false,
         "memberSince": "2009-10-15T21:11:31.000Z",
         "location": "Paris, France",
-        "memberFor_days": 3551,
+        "memberFor_days": 3552,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [241173920, 2924711485],
         "edges": ["241173920_82713840_retweet", "2924711485_82713840_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 210.4595479276549,
+        "y": 393.83155081360405,
+        "fx": 210.4595479276549,
+        "fy": 393.83155081360405
     }, {
         "followers_count": 148,
         "query_tweet_count": 1,
@@ -215,10 +260,15 @@
         "location": "Tucson, AZ",
         "memberFor_days": 2664,
         "type": "person",
+        "continent": "North America",
         "neighbors": [10414152],
         "edges": ["531855716_10414152_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 289.62186347416105,
+        "y": 775,
+        "fx": 289.62186347416105,
+        "fy": 775
     }, {
         "followers_count": 1519,
         "query_tweet_count": 2,
@@ -237,10 +287,15 @@
         "location": "Worcester, MA",
         "memberFor_days": 4247,
         "type": "person",
+        "continent": "North America",
         "neighbors": [531855716, 81658145, 191257554, 84043985, 1652270612, 36853217, 15208867, 11493602, 14148549, 247943631],
         "edges": ["531855716_10414152_retweet", "81658145_10414152_retweet", "191257554_10414152_retweet", "84043985_10414152_retweet", "1652270612_10414152_retweet", "36853217_10414152_retweet", "15208867_10414152_retweet", "11493602_10414152_retweet", "14148549_10414152_retweet", "10414152_247943631_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 629.2350616737905,
+        "y": 661.6086104366084,
+        "fx": 629.2350616737905,
+        "fy": 661.6086104366084
     }, {
         "followers_count": 38,
         "query_tweet_count": 4,
@@ -259,10 +314,15 @@
         "location": "",
         "memberFor_days": 2750,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [2527017636, 2527017636, 40219508, 81658145],
         "edges": ["446672281_2527017636_retweet", "2527017636_446672281_mentions", "446672281_40219508_retweet", "446672281_81658145_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 480.0561753080875,
+        "y": 220.31861017598246,
+        "fx": 480.0561753080875,
+        "fy": 220.31861017598246
     }, {
         "followers_count": 171,
         "query_tweet_count": 8,
@@ -281,10 +341,15 @@
         "location": "Delft, Nederland",
         "memberFor_days": 1867,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [446672281, 40219508, 92951551, 1085199426837188600, 1085199426837188600, 446672281, 92951551, 158685605, 247943631, 81658145],
         "edges": ["446672281_2527017636_retweet", "40219508_2527017636_retweet", "92951551_2527017636_retweet", "1085199426837188600_2527017636_retweet", "2527017636_1085199426837188600_mentions", "2527017636_446672281_mentions", "2527017636_92951551_mentions", "2527017636_158685605_mentions", "2527017636_247943631_retweet", "2527017636_81658145_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 631.4822336251048,
+        "y": 25,
+        "fx": 631.4822336251048,
+        "fy": 25
     }, {
         "followers_count": 407,
         "query_tweet_count": 5,
@@ -303,10 +368,15 @@
         "location": "Geneva, Switzerland",
         "memberFor_days": 3216,
         "type": "institution",
+        "continent": "Europe",
         "neighbors": [208312922, 81658145, 10414152],
         "edges": ["191257554_208312922_retweet", "191257554_81658145_retweet", "191257554_10414152_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 496.4404282730802,
+        "y": 657.0080392014972,
+        "fx": 496.4404282730802,
+        "fy": 657.0080392014972
     }, {
         "followers_count": 124,
         "query_tweet_count": 19,
@@ -325,10 +395,15 @@
         "location": "Oporto, Portugal",
         "memberFor_days": 173,
         "type": "institution",
+        "continent": "Europe",
         "neighbors": [208312922, 4058687172, 201277609, 40219508, 201277609, 19283433, 19283433, 40219508, 2527017636, 2527017636, 208312922, 30009655, 30009655, 19299318, 1035496563743842300, 1035496563743842300, 19299318, 81658145],
         "edges": ["208312922_1085199426837188600_mentions", "4058687172_1085199426837188600_retweet", "201277609_1085199426837188600_mentions", "40219508_1085199426837188600_retweet", "1085199426837188600_201277609_retweet", "1085199426837188600_19283433_retweet", "19283433_1085199426837188600_mentions", "40219508_1085199426837188600_mentions", "1085199426837188600_2527017636_retweet", "2527017636_1085199426837188600_mentions", "1085199426837188600_208312922_retweet", "1085199426837188600_30009655_retweet", "30009655_1085199426837188600_mentions", "1085199426837188600_19299318_retweet", "1085199426837188600_1035496563743842300_retweet", "1035496563743842300_1085199426837188600_mentions", "19299318_1085199426837188600_mentions", "81658145_1085199426837188600_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 696.3150658387289,
+        "y": 105.49408541733486,
+        "fx": 696.3150658387289,
+        "fy": 105.49408541733486
     }, {
         "followers_count": 1820,
         "query_tweet_count": 3,
@@ -347,10 +422,15 @@
         "location": "Paris, France",
         "memberFor_days": 4117,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [19299318, 16112517],
         "edges": ["19299318_14249829_mentions", "14249829_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1406.115760601541,
+        "y": 235.0278027560506,
+        "fx": 1406.115760601541,
+        "fy": 235.0278027560506
     }, {
         "followers_count": 21,
         "query_tweet_count": 4,
@@ -369,10 +449,15 @@
         "location": "",
         "memberFor_days": 1347,
         "type": "person",
+        "continent": "Asia",
         "neighbors": [1085199426837188600],
         "edges": ["4058687172_1085199426837188600_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 756.0476098164422,
+        "y": 25,
+        "fx": 756.0476098164422,
+        "fy": 25
     }, {
         "followers_count": 317,
         "query_tweet_count": 3,
@@ -389,12 +474,17 @@
         "original": true,
         "memberSince": "2016-02-09T20:58:40.000Z",
         "location": "Toulouse, France",
-        "memberFor_days": 1243,
+        "memberFor_days": 1244,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [81658145, 40219508, 247943631],
         "edges": ["4893004803_81658145_retweet", "4893004803_40219508_retweet", "4893004803_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 833.1958289739298,
+        "y": 384.23548425787675,
+        "fx": 833.1958289739298,
+        "fy": 384.23548425787675
     }, {
         "followers_count": 1048,
         "query_tweet_count": 17,
@@ -413,10 +503,15 @@
         "location": "Salt Lake City, UT",
         "memberFor_days": 3556,
         "type": "person",
+        "continent": "North America",
         "neighbors": [4893004803, 411546549, 318046158, 227831457, 91169926, 10414152, 30009655, 241173920, 84043985, 191257554, 16557883, 6146692, 201277609, 395853499, 85844572, 395853499, 270431596, 16112517, 1652270612, 446672281, 2527017636, 19299318, 1085199426837188600, 909697437694087200, 92951551, 701375574],
         "edges": ["4893004803_81658145_retweet", "411546549_81658145_retweet", "318046158_81658145_retweet", "227831457_81658145_retweet", "91169926_81658145_retweet", "81658145_10414152_retweet", "30009655_81658145_mentions", "241173920_81658145_retweet", "84043985_81658145_retweet", "191257554_81658145_retweet", "16557883_81658145_retweet", "6146692_81658145_retweet", "201277609_81658145_retweet", "395853499_81658145_retweet", "81658145_85844572_mentions", "81658145_395853499_mentions", "81658145_270431596_mentions", "81658145_16112517_retweet", "1652270612_81658145_retweet", "446672281_81658145_retweet", "2527017636_81658145_retweet", "19299318_81658145_mentions", "81658145_1085199426837188600_mentions", "81658145_909697437694087200_mentions", "92951551_81658145_retweet", "701375574_81658145_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 433.64475441717906,
+        "y": 425.7636717734499,
+        "fx": 433.64475441717906,
+        "fy": 425.7636717734499
     }, {
         "followers_count": 1460,
         "query_tweet_count": 1,
@@ -435,10 +530,15 @@
         "location": "Seattle",
         "memberFor_days": 2876,
         "type": "person",
+        "continent": "North America",
         "neighbors": [16112517],
         "edges": ["359650922_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 863.9392228686693,
+        "y": 264.6510421181971,
+        "fx": 863.9392228686693,
+        "fy": 264.6510421181971
     }, {
         "followers_count": 21097,
         "query_tweet_count": 28,
@@ -457,10 +557,15 @@
         "location": "Seattle, WA",
         "memberFor_days": 3959,
         "type": "person",
+        "continent": "North America",
         "neighbors": [359650922, 14249829, 14000542, 201277609, 78865306, 1314101, 247943631, 1873322353, 40219508, 270431596, 19299318, 19299318, 944216617268973600, 395853499, 1325316703, 18406335, 270431596, 81658145, 40219508, 30009655, 84043985, 18704160, 1652270612, 318046158, 91169926, 1556132462, 22766040, 6146692, 21084111, 1068137549355515900, 19283433, 136400506, 1873322353, 31638712],
         "edges": ["359650922_16112517_retweet", "14249829_16112517_retweet", "16112517_14000542_retweet", "201277609_16112517_retweet", "16112517_78865306_retweet", "16112517_1314101_mentions", "16112517_247943631_mentions", "16112517_1873322353_mentions", "16112517_40219508_mentions", "16112517_270431596_mentions", "16112517_19299318_retweet", "19299318_16112517_mentions", "944216617268973600_16112517_retweet", "395853499_16112517_mentions", "16112517_1325316703_retweet", "18406335_16112517_retweet", "270431596_16112517_retweet", "81658145_16112517_retweet", "16112517_40219508_retweet", "30009655_16112517_mentions", "84043985_16112517_retweet", "18704160_16112517_retweet", "1652270612_16112517_retweet", "318046158_16112517_retweet", "91169926_16112517_retweet", "1556132462_16112517_retweet", "22766040_16112517_retweet", "6146692_16112517_retweet", "21084111_16112517_retweet", "16112517_1068137549355515900_mentions", "19283433_16112517_retweet", "136400506_16112517_retweet", "1873322353_16112517_retweet", "31638712_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 952.2201738183975,
+        "y": 402.3757842194563,
+        "fx": 952.2201738183975,
+        "fy": 402.3757842194563
     }, {
         "followers_count": 383,
         "query_tweet_count": 1,
@@ -479,10 +584,15 @@
         "location": "Manhattan, NY",
         "memberFor_days": 2793,
         "type": "person",
+        "continent": "North America",
         "neighbors": [81658145],
         "edges": ["411546549_81658145_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 416.92947124559,
+        "y": 305.70101482306995,
+        "fx": 416.92947124559,
+        "fy": 305.70101482306995
     }, {
         "followers_count": 2888,
         "query_tweet_count": 5,
@@ -499,12 +609,17 @@
         "original": true,
         "memberSince": "2011-06-15T21:45:20.000Z",
         "location": "From Bangkok, now in SF",
-        "memberFor_days": 2943,
+        "memberFor_days": 2944,
         "type": "person",
+        "continent": "Asia",
         "neighbors": [81658145, 208312922, 247943631, 16112517],
         "edges": ["318046158_81658145_retweet", "318046158_208312922_retweet", "318046158_247943631_retweet", "318046158_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 961.3627244173756,
+        "y": 545.5499159266561,
+        "fx": 961.3627244173756,
+        "fy": 545.5499159266561
     }, {
         "followers_count": 544,
         "query_tweet_count": 2,
@@ -523,10 +638,15 @@
         "location": "San Francisco, California",
         "memberFor_days": 3123,
         "type": "person",
+        "continent": "North America",
         "neighbors": [81658145, 208312922],
         "edges": ["227831457_81658145_retweet", "227831457_208312922_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 433.3240480243825,
+        "y": 552.9494251631774,
+        "fx": 433.3240480243825,
+        "fy": 552.9494251631774
     }, {
         "followers_count": 311,
         "query_tweet_count": 3,
@@ -545,10 +665,15 @@
         "location": "Bangor, Wales",
         "memberFor_days": 1833,
         "type": "institution",
+        "continent": "Europe",
         "neighbors": [201277609, 30009655],
         "edges": ["2596138699_201277609_retweet", "30009655_2596138699_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 304.3430373737366,
+        "y": 300.2022115727325,
+        "fx": 304.3430373737366,
+        "fy": 300.2022115727325
     }, {
         "followers_count": 509,
         "query_tweet_count": 8,
@@ -567,10 +692,15 @@
         "location": "United Kingdom",
         "memberFor_days": 3191,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [2596138699, 1085199426837188600, 78865306, 16112517, 1085199426837188600, 81658145, 30009655, 711885257549680600],
         "edges": ["2596138699_201277609_retweet", "201277609_1085199426837188600_mentions", "201277609_78865306_retweet", "201277609_16112517_retweet", "1085199426837188600_201277609_retweet", "201277609_81658145_retweet", "30009655_201277609_mentions", "711885257549680600_201277609_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 575.9291852236742,
+        "y": 136.09221806781656,
+        "fx": 575.9291852236742,
+        "fy": 136.09221806781656
     }, {
         "followers_count": 2533,
         "query_tweet_count": 2,
@@ -589,10 +719,15 @@
         "location": "Leuven, Belgium",
         "memberFor_days": 4149,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [16112517],
         "edges": ["16112517_14000542_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1283.419860880806,
+        "y": 282.2988135186485,
+        "fx": 1283.419860880806,
+        "fy": 282.2988135186485
     }, {
         "followers_count": 552,
         "query_tweet_count": 14,
@@ -611,10 +746,15 @@
         "location": "Bergen, Norway",
         "memberFor_days": 3705,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [30009655, 270431596, 1085199426837188600, 19299318, 16112517, 270431596, 2924711485, 395853499, 78865306, 78865306, 16112517, 1085199426837188600, 395853499, 2527017636, 4893004803, 446672281],
         "edges": ["40219508_30009655_mentions", "40219508_270431596_retweet", "40219508_1085199426837188600_retweet", "19299318_40219508_mentions", "16112517_40219508_mentions", "40219508_270431596_mentions", "2924711485_40219508_retweet", "40219508_395853499_retweet", "78865306_40219508_retweet", "40219508_78865306_mentions", "16112517_40219508_retweet", "40219508_1085199426837188600_mentions", "40219508_395853499_mentions", "40219508_2527017636_retweet", "4893004803_40219508_retweet", "446672281_40219508_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 739.094665150332,
+        "y": 210.63513974502183,
+        "fx": 739.094665150332,
+        "fy": 210.63513974502183
     }, {
         "followers_count": 141,
         "query_tweet_count": 3,
@@ -633,10 +773,15 @@
         "location": "",
         "memberFor_days": 3741,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [40219508, 1176519156, 395853499, 883747950085656600, 81658145, 1085199426837188600, 201277609, 1085199426837188600, 2596138699, 18325271, 16112517, 3230388598, 1652270612],
         "edges": ["40219508_30009655_mentions", "30009655_1176519156_mentions", "30009655_395853499_mentions", "30009655_883747950085656600_mentions", "30009655_81658145_mentions", "1085199426837188600_30009655_retweet", "30009655_201277609_mentions", "30009655_1085199426837188600_mentions", "30009655_2596138699_mentions", "30009655_18325271_mentions", "30009655_16112517_mentions", "3230388598_30009655_retweet", "1652270612_30009655_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 369.74759678060855,
+        "y": 203.91156458699444,
+        "fx": 369.74759678060855,
+        "fy": 203.91156458699444
     }, {
         "followers_count": 1130,
         "query_tweet_count": 7,
@@ -655,10 +800,15 @@
         "location": "Berlin",
         "memberFor_days": 3566,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [201277609, 16112517, 247943631, 1055379531731796000, 1055379531731796000, 40219508, 40219508],
         "edges": ["201277609_78865306_retweet", "16112517_78865306_retweet", "78865306_247943631_mentions", "1055379531731796000_78865306_retweet", "78865306_1055379531731796000_mentions", "78865306_40219508_retweet", "40219508_78865306_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1185.9911631957318,
+        "y": 25,
+        "fx": 1185.9911631957318,
+        "fy": 25
     }, {
         "followers_count": 5506,
         "query_tweet_count": 5,
@@ -677,10 +827,15 @@
         "location": "Seattle, WA",
         "memberFor_days": 2119,
         "type": "institution",
+        "continent": "North America",
         "neighbors": [247943631, 16112517, 91169926, 136400506, 16112517, 136400506],
         "edges": ["247943631_1873322353_retweet", "16112517_1873322353_mentions", "91169926_1873322353_retweet", "136400506_1873322353_retweet", "1873322353_16112517_retweet", "1873322353_136400506_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1255.0252316872966,
+        "y": 696.2793235928689,
+        "fx": 1255.0252316872966,
+        "fy": 696.2793235928689
     }, {
         "followers_count": 1885,
         "query_tweet_count": 0,
@@ -697,12 +852,17 @@
         "original": false,
         "memberSince": "2007-03-16T21:25:12.000Z",
         "location": "",
-        "memberFor_days": 4495,
+        "memberFor_days": 4496,
         "type": "person",
+        "continent": "North America",
         "neighbors": [16112517],
         "edges": ["16112517_1314101_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1134.296561357586,
+        "y": 244.775315588401,
+        "fx": 1134.296561357586,
+        "fy": 244.775315588401
     }, {
         "followers_count": 2630,
         "query_tweet_count": 4,
@@ -721,10 +881,15 @@
         "location": "Boston, MA, USA",
         "memberFor_days": 3930,
         "type": "person",
+        "continent": "United States",
         "neighbors": [270431596, 81658145, 247943631],
         "edges": ["16557883_270431596_retweet", "16557883_81658145_retweet", "16557883_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1310.5223808627038,
+        "y": 420.3316702039412,
+        "fx": 1310.5223808627038,
+        "fy": 420.3316702039412
     }, {
         "followers_count": 12,
         "query_tweet_count": 3,
@@ -746,7 +911,11 @@
         "neighbors": [16557883, 40219508, 19299318, 16112517, 40219508, 81658145, 16112517],
         "edges": ["16557883_270431596_retweet", "40219508_270431596_retweet", "19299318_270431596_mentions", "16112517_270431596_mentions", "40219508_270431596_mentions", "81658145_270431596_mentions", "270431596_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1238.9848750737558,
+        "y": 166.79920615031736,
+        "fx": 1238.9848750737558,
+        "fy": 166.79920615031736
     }, {
         "followers_count": 2484,
         "query_tweet_count": 0,
@@ -765,10 +934,15 @@
         "location": "Nashville, TN",
         "memberFor_days": 2335,
         "type": "person",
+        "continent": "North America",
         "neighbors": [30009655],
         "edges": ["30009655_1176519156_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 270.77508631476394,
+        "y": 145.0219829340402,
+        "fx": 270.77508631476394,
+        "fy": 145.0219829340402
     }, {
         "followers_count": 554,
         "query_tweet_count": 5,
@@ -787,10 +961,15 @@
         "location": "Linz, Austria",
         "memberFor_days": 2815,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [30009655, 40219508, 241173920, 81658145, 81658145, 18406335, 16112517, 79908341, 40219508],
         "edges": ["30009655_395853499_mentions", "40219508_395853499_retweet", "241173920_395853499_retweet", "395853499_81658145_retweet", "81658145_395853499_mentions", "18406335_395853499_retweet", "395853499_16112517_mentions", "79908341_395853499_mentions", "40219508_395853499_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 725.5129107935495,
+        "y": 429.7994497119288,
+        "fx": 725.5129107935495,
+        "fy": 429.7994497119288
     }, {
         "followers_count": 996,
         "query_tweet_count": 0,
@@ -809,10 +988,15 @@
         "location": "Salt Lake City, UT",
         "memberFor_days": 729,
         "type": "person",
+        "continent": "North America",
         "neighbors": [30009655],
         "edges": ["30009655_883747950085656600_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 271.1897280266172,
+        "y": 32.714692599921705,
+        "fx": 271.1897280266172,
+        "fy": 32.714692599921705
     }, {
         "followers_count": 47,
         "query_tweet_count": 4,
@@ -831,10 +1015,15 @@
         "location": "Eindhoven, Nederland",
         "memberFor_days": 1698,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [19299318, 208312922, 247943631],
         "edges": ["2873695769_19299318_retweet", "2873695769_208312922_retweet", "2873695769_247943631_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1345.1471751924114,
+        "y": 635.5091686508605,
+        "fx": 1345.1471751924114,
+        "fy": 635.5091686508605
     }, {
         "followers_count": 83,
         "query_tweet_count": 4,
@@ -853,10 +1042,15 @@
         "location": "London",
         "memberFor_days": 1687,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [19299318, 19283433, 19283433, 247943631],
         "edges": ["2889052877_19299318_retweet", "19283433_2889052877_mentions", "2889052877_19283433_retweet", "2889052877_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1443.965726285139,
+        "y": 122.66162862636213,
+        "fx": 1443.965726285139,
+        "fy": 122.66162862636213
     }, {
         "followers_count": 1028,
         "query_tweet_count": 1,
@@ -875,10 +1069,15 @@
         "location": "London",
         "memberFor_days": 3688,
         "type": "institution",
+        "continent": "Europe",
         "neighbors": [19299318],
         "edges": ["43953969_19299318_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1523.4288023922575,
+        "y": 208.26449353380883,
+        "fx": 1523.4288023922575,
+        "fy": 208.26449353380883
     }, {
         "followers_count": 4721,
         "query_tweet_count": 4,
@@ -897,10 +1096,15 @@
         "location": "Silicon Valley",
         "memberFor_days": 3546,
         "type": "person",
+        "continent": "North America",
         "neighbors": [81658145, 208312922, 10414152, 16112517],
         "edges": ["84043985_81658145_retweet", "84043985_208312922_retweet", "84043985_10414152_retweet", "84043985_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 583.1508736365394,
+        "y": 503.86107273537334,
+        "fx": 583.1508736365394,
+        "fy": 503.86107273537334
     }, {
         "followers_count": 558,
         "query_tweet_count": 22,
@@ -919,10 +1123,15 @@
         "location": "London",
         "memberFor_days": 3819,
         "type": "institution",
+        "continent": "Europe",
         "neighbors": [19283433, 19283433, 1667081238, 2889052877, 2889052877, 1667081238, 19299318, 188046229, 188046229, 1085199426837188600, 1658560038, 190726679, 1085199426837188600, 19283433, 19283433, 16112517],
         "edges": ["19283433_19283433_mentions", "19283433_19283433_mentions", "1667081238_19283433_retweet", "19283433_2889052877_mentions", "2889052877_19283433_retweet", "19283433_1667081238_mentions", "19283433_19299318_retweet", "188046229_19283433_mentions", "188046229_19283433_retweet", "1085199426837188600_19283433_retweet", "1658560038_19283433_retweet", "19283433_190726679_mentions", "19283433_1085199426837188600_mentions", "19283433_19283433_retweet", "19283433_19283433_retweet", "19283433_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1086.5837920131892,
+        "y": 129.96027801061078,
+        "fx": 1086.5837920131892,
+        "fy": 129.96027801061078
     }, {
         "followers_count": 11943,
         "query_tweet_count": 3,
@@ -939,12 +1148,17 @@
         "original": true,
         "memberSince": "2007-05-18T20:32:44.000Z",
         "location": "Lyon, France",
-        "memberFor_days": 4432,
+        "memberFor_days": 4433,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [81658145, 16112517],
         "edges": ["6146692_81658145_retweet", "6146692_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 605.9191831757771,
+        "y": 305.2737799555858,
+        "fx": 605.9191831757771,
+        "fy": 305.2737799555858
     }, {
         "followers_count": 47,
         "query_tweet_count": 8,
@@ -963,10 +1177,15 @@
         "location": "Doha, Qatar  ",
         "memberFor_days": 562,
         "type": "person",
+        "continent": "Asia",
         "neighbors": [16112517],
         "edges": ["944216617268973600_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1006.1982072355077,
+        "y": 189.457656167772,
+        "fx": 1006.1982072355077,
+        "fy": 189.457656167772
     }, {
         "followers_count": 1746,
         "query_tweet_count": 2,
@@ -983,12 +1202,17 @@
         "original": false,
         "memberSince": "2010-09-07T20:11:04.000Z",
         "location": "Edinburgh, Scotland",
-        "memberFor_days": 3224,
+        "memberFor_days": 3225,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [19283433, 1667081238, 19283433],
         "edges": ["188046229_19283433_mentions", "188046229_1667081238_mentions", "188046229_19283433_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1355.0605092376022,
+        "y": 27.4137910457978,
+        "fx": 1355.0605092376022,
+        "fy": 27.4137910457978
     }, {
         "followers_count": 84,
         "query_tweet_count": 5,
@@ -1005,12 +1229,17 @@
         "original": true,
         "memberSince": "2013-08-09T20:51:50.000Z",
         "location": "London, England",
-        "memberFor_days": 2157,
+        "memberFor_days": 2158,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [19283433],
         "edges": ["1658560038_19283433_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 808.0757736706786,
+        "y": 115.46131531372546,
+        "fx": 808.0757736706786,
+        "fy": 115.46131531372546
     }, {
         "followers_count": 354,
         "query_tweet_count": 29,
@@ -1029,10 +1258,15 @@
         "location": "",
         "memberFor_days": 3218,
         "type": "institution",
+        "continent": "Europe",
         "neighbors": [19283433],
         "edges": ["19283433_190726679_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 995.9934896723705,
+        "y": 25,
+        "fx": 995.9934896723705,
+        "fy": 25
     }, {
         "followers_count": 130,
         "query_tweet_count": 0,
@@ -1051,10 +1285,15 @@
         "location": "Linz, Austria",
         "memberFor_days": 3539,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [81658145],
         "edges": ["81658145_85844572_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 203.20219696184128,
+        "y": 506.0629362738057,
+        "fx": 203.20219696184128,
+        "fy": 506.0629362738057
     }, {
         "followers_count": 3264,
         "query_tweet_count": 4,
@@ -1073,10 +1312,15 @@
         "location": "Athens/Brussels",
         "memberFor_days": 3844,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [395853499, 16112517, 208312922],
         "edges": ["18406335_395853499_retweet", "18406335_16112517_retweet", "18406335_208312922_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1112.6361403494936,
+        "y": 634.7011484120694,
+        "fx": 1112.6361403494936,
+        "fy": 634.7011484120694
     }, {
         "followers_count": 33,
         "query_tweet_count": 3,
@@ -1095,10 +1339,15 @@
         "location": "Essen, Germany",
         "memberFor_days": 3562,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [395853499, 247943631],
         "edges": ["79908341_395853499_mentions", "79908341_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1350.448119609482,
+        "y": 534.2915747678798,
+        "fx": 1350.448119609482,
+        "fy": 534.2915747678798
     }, {
         "followers_count": 889,
         "query_tweet_count": 1,
@@ -1117,10 +1366,15 @@
         "location": "The Web",
         "memberFor_days": 2286,
         "type": "institution",
+        "continent": "North America",
         "neighbors": [16112517],
         "edges": ["16112517_1325316703_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 978.1279753580715,
+        "y": 286.8948666496475,
+        "fx": 978.1279753580715,
+        "fy": 286.8948666496475
     }, {
         "followers_count": 579,
         "query_tweet_count": 2,
@@ -1139,10 +1393,15 @@
         "location": "Eindhoven, Nederland",
         "memberFor_days": 3509,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [2527017636, 2527017636, 81658145],
         "edges": ["92951551_2527017636_retweet", "2527017636_92951551_mentions", "92951551_81658145_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 445.85533460648975,
+        "y": 113.63742618877937,
+        "fx": 445.85533460648975,
+        "fy": 113.63742618877937
     }, {
         "followers_count": 204,
         "query_tweet_count": 0,
@@ -1161,10 +1420,15 @@
         "location": "Bergen, Norway",
         "memberFor_days": 3301,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [2527017636],
         "edges": ["2527017636_158685605_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 378.4093188970888,
+        "y": 25,
+        "fx": 378.4093188970888,
+        "fy": 25
     }, {
         "followers_count": 11211,
         "query_tweet_count": 1,
@@ -1183,10 +1447,15 @@
         "location": "Montreal",
         "memberFor_days": 2398,
         "type": "institution",
+        "continent": "North America",
         "neighbors": [208312922],
         "edges": ["1006945298_208312922_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 933.569589884488,
+        "y": 775,
+        "fx": 933.569589884488,
+        "fy": 775
     }, {
         "followers_count": 224,
         "query_tweet_count": 1,
@@ -1205,10 +1474,15 @@
         "location": "",
         "memberFor_days": 3742,
         "type": "person",
+        "continent": "North America",
         "neighbors": [208312922],
         "edges": ["29700681_208312922_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1174.9898446653162,
+        "y": 775,
+        "fx": 1174.9898446653162,
+        "fy": 775
     }, {
         "followers_count": 11222,
         "query_tweet_count": 0,
@@ -1227,10 +1501,15 @@
         "location": "San Francisco, CA",
         "memberFor_days": 1296,
         "type": "institution",
+        "continent": "North America",
         "neighbors": [208312922],
         "edges": ["208312922_4597853354_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 745.9824145682544,
+        "y": 676.1550508786052,
+        "fx": 745.9824145682544,
+        "fy": 676.1550508786052
     }, {
         "followers_count": 23,
         "query_tweet_count": 5,
@@ -1249,10 +1528,15 @@
         "location": "Dresden, Germany",
         "memberFor_days": 310,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [1085199426837188600, 247943631, 711885257549680600, 1085199426837188600],
         "edges": ["1085199426837188600_1035496563743842300_retweet", "1035496563743842300_247943631_retweet", "711885257549680600_1035496563743842300_retweet", "1035496563743842300_1085199426837188600_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1207.0643948499815,
+        "y": 487.86650260089414,
+        "fx": 1207.0643948499815,
+        "fy": 487.86650260089414
     }, {
         "followers_count": 1719,
         "query_tweet_count": 1,
@@ -1271,10 +1555,15 @@
         "location": "Paris, France",
         "memberFor_days": 4059,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [247943631],
         "edges": ["14905766_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1696.4881235719574,
+        "y": 472.33429988602495,
+        "fx": 1696.4881235719574,
+        "fy": 472.33429988602495
     }, {
         "followers_count": 1414,
         "query_tweet_count": 2,
@@ -1293,10 +1582,15 @@
         "location": "Merced, CA",
         "memberFor_days": 892,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631],
         "edges": ["824684769543741400_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1697.9540878087162,
+        "y": 732.038857074756,
+        "fx": 1697.9540878087162,
+        "fy": 732.038857074756
     }, {
         "followers_count": 340,
         "query_tweet_count": 1,
@@ -1315,10 +1609,15 @@
         "location": "Cambridge, MA",
         "memberFor_days": 3667,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631],
         "edges": ["49457800_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1743.3815292513043,
+        "y": 620.7168555451325,
+        "fx": 1743.3815292513043,
+        "fy": 620.7168555451325
     }, {
         "followers_count": 54,
         "query_tweet_count": 3,
@@ -1337,10 +1636,15 @@
         "location": "",
         "memberFor_days": 1203,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [247943631, 201277609, 1035496563743842300],
         "edges": ["711885257549680600_247943631_retweet", "711885257549680600_201277609_retweet", "711885257549680600_1035496563743842300_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1256.2773870435176,
+        "y": 581.8290872763826,
+        "fx": 1256.2773870435176,
+        "fy": 581.8290872763826
     }, {
         "followers_count": 534,
         "query_tweet_count": 0,
@@ -1359,10 +1663,15 @@
         "location": "Seattle, WA",
         "memberFor_days": 3848,
         "type": "person",
+        "continent": "North America",
         "neighbors": [30009655],
         "edges": ["30009655_18325271_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 165.76226958202454,
+        "y": 89.37027370223547,
+        "fx": 165.76226958202454,
+        "fy": 89.37027370223547
     }, {
         "followers_count": 2239,
         "query_tweet_count": 2,
@@ -1381,10 +1690,15 @@
         "location": "Chicago, IL",
         "memberFor_days": 2199,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631, 16112517],
         "edges": ["1556132462_247943631_retweet", "1556132462_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1433.7229528437804,
+        "y": 462.4856057777924,
+        "fx": 1433.7229528437804,
+        "fy": 462.4856057777924
     }, {
         "followers_count": 974,
         "query_tweet_count": 2,
@@ -1403,10 +1717,15 @@
         "location": "Mississippi",
         "memberFor_days": 3833,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631, 16112517],
         "edges": ["18704160_247943631_retweet", "18704160_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1413.8149992352348,
+        "y": 350.01622530699365,
+        "fx": 1413.8149992352348,
+        "fy": 350.01622530699365
     }, {
         "followers_count": 5155,
         "query_tweet_count": 11,
@@ -1425,10 +1744,15 @@
         "location": "Vancouver, Canada",
         "memberFor_days": 2160,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631, 10414152, 16112517, 30009655, 81658145],
         "edges": ["1652270612_247943631_retweet", "1652270612_10414152_retweet", "1652270612_16112517_retweet", "1652270612_30009655_retweet", "1652270612_81658145_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 724.973363726785,
+        "y": 571.6884981593474,
+        "fx": 724.973363726785,
+        "fy": 571.6884981593474
     }, {
         "followers_count": 216,
         "query_tweet_count": 3,
@@ -1447,10 +1771,15 @@
         "location": "Charlotte, NC",
         "memberFor_days": 3734,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631, 247943631, 16112517],
         "edges": ["31638712_247943631_retweet", "31638712_247943631_mentions", "31638712_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1529.192921580536,
+        "y": 383.3334677742571,
+        "fx": 1529.192921580536,
+        "fy": 383.3334677742571
     }, {
         "followers_count": 3238,
         "query_tweet_count": 1,
@@ -1469,10 +1798,15 @@
         "location": "Boston, MA",
         "memberFor_days": 4280,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631],
         "edges": ["9527212_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1561.9763544046436,
+        "y": 737.4466472300085,
+        "fx": 1561.9763544046436,
+        "fy": 737.4466472300085
     }, {
         "followers_count": 3621,
         "query_tweet_count": 3,
@@ -1489,12 +1823,17 @@
         "original": true,
         "memberSince": "2010-04-23T21:12:19.000Z",
         "location": "Los Angeles, CA",
-        "memberFor_days": 3361,
+        "memberFor_days": 3362,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631, 16112517, 1873322353, 1873322353],
         "edges": ["136400506_247943631_retweet", "136400506_16112517_retweet", "136400506_1873322353_retweet", "1873322353_136400506_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1388.4861562402264,
+        "y": 775,
+        "fx": 1388.4861562402264,
+        "fy": 775
     }, {
         "followers_count": 1396,
         "query_tweet_count": 1,
@@ -1513,10 +1852,15 @@
         "location": "Seattle",
         "memberFor_days": 3551,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631],
         "edges": ["82890309_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1619.1252010583667,
+        "y": 608.6601492748471,
+        "fx": 1619.1252010583667,
+        "fy": 608.6601492748471
     }, {
         "followers_count": 2118,
         "query_tweet_count": 1,
@@ -1533,12 +1877,17 @@
         "original": false,
         "memberSince": "2009-06-02T20:09:53.000Z",
         "location": "Tucson, AZ",
-        "memberFor_days": 3686,
+        "memberFor_days": 3687,
         "type": "person",
+        "continent": "North America",
         "neighbors": [247943631],
         "edges": ["44195788_247943631_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1545.6781828625894,
+        "y": 507.8850344752845,
+        "fx": 1545.6781828625894,
+        "fy": 507.8850344752845
     }, {
         "followers_count": 37881,
         "query_tweet_count": 1,
@@ -1557,10 +1906,15 @@
         "location": "Massachusetts",
         "memberFor_days": 1526,
         "type": "institution",
+        "continent": "North America",
         "neighbors": [30009655],
         "edges": ["3230388598_30009655_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 153.87250520596697,
+        "y": 250.28159909296323,
+        "fx": 153.87250520596697,
+        "fy": 250.28159909296323
     }, {
         "followers_count": 3439,
         "query_tweet_count": 1,
@@ -1579,10 +1933,15 @@
         "location": "Mannheim/Berlin",
         "memberFor_days": 3719,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [10414152],
         "edges": ["36853217_10414152_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 343.4129429473199,
+        "y": 653.2441869377957,
+        "fx": 343.4129429473199,
+        "fy": 653.2441869377957
     }, {
         "followers_count": 264,
         "query_tweet_count": 1,
@@ -1601,10 +1960,15 @@
         "location": "Eindhoven, Nederland",
         "memberFor_days": 2804,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [208312922],
         "edges": ["403626099_208312922_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1052.1721149662237,
+        "y": 775,
+        "fx": 1052.1721149662237,
+        "fy": 775
     }, {
         "followers_count": 1072,
         "query_tweet_count": 1,
@@ -1623,10 +1987,15 @@
         "location": "Aarhus, Denmark",
         "memberFor_days": 4031,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [10414152],
         "edges": ["15208867_10414152_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 696.9362835204765,
+        "y": 775,
+        "fx": 696.9362835204765,
+        "fy": 775
     }, {
         "followers_count": 385,
         "query_tweet_count": 1,
@@ -1645,10 +2014,15 @@
         "location": "Chapel Hill, NC",
         "memberFor_days": 2452,
         "type": "person",
+        "continent": "North America",
         "neighbors": [208312922],
         "edges": ["889998600_208312922_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 965.4558206686145,
+        "y": 673.1049385209851,
+        "fx": 965.4558206686145,
+        "fy": 673.1049385209851
     }, {
         "followers_count": 1772,
         "query_tweet_count": 1,
@@ -1667,10 +2041,15 @@
         "location": "Lewisburg, PA",
         "memberFor_days": 4212,
         "type": "person",
+        "continent": "North America",
         "neighbors": [10414152],
         "edges": ["11493602_10414152_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 553.3465158028919,
+        "y": 775,
+        "fx": 553.3465158028919,
+        "fy": 775
     }, {
         "followers_count": 757,
         "query_tweet_count": 1,
@@ -1689,10 +2068,15 @@
         "location": "Oldwick",
         "memberFor_days": 4132,
         "type": "person",
+        "continent": "North America",
         "neighbors": [10414152],
         "edges": ["14148549_10414152_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 414.7086972880419,
+        "y": 775,
+        "fx": 414.7086972880419,
+        "fy": 775
     }, {
         "followers_count": 92,
         "query_tweet_count": 0,
@@ -1711,10 +2095,15 @@
         "location": "",
         "memberFor_days": 657,
         "type": "institution",
+        "continent": "Europe",
         "neighbors": [19299318, 81658145],
         "edges": ["19299318_909697437694087200_mentions", "81658145_909697437694087200_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 756.0283241538679,
+        "y": 324.6137860981969,
+        "fx": 756.0283241538679,
+        "fy": 324.6137860981969
     }, {
         "followers_count": 238,
         "query_tweet_count": 3,
@@ -1733,10 +2122,15 @@
         "location": "Rastatt, Germany",
         "memberFor_days": 3777,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [16112517],
         "edges": ["22766040_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1185.3328199092466,
+        "y": 373.47403911360936,
+        "fx": 1185.3328199092466,
+        "fy": 373.47403911360936
     }, {
         "followers_count": 12181,
         "query_tweet_count": 1,
@@ -1755,10 +2149,15 @@
         "location": "The Hague, The Netherlands",
         "memberFor_days": 3792,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [16112517],
         "edges": ["21084111_16112517_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1083.0746650706194,
+        "y": 465.7353288137465,
+        "fx": 1083.0746650706194,
+        "fy": 465.7353288137465
     }, {
         "followers_count": 1134,
         "query_tweet_count": 0,
@@ -1777,10 +2176,15 @@
         "location": "",
         "memberFor_days": 220,
         "type": "institution",
+        "continent": "North America",
         "neighbors": [16112517],
         "edges": ["16112517_1068137549355515900_mentions"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 1058.6689211512687,
+        "y": 344.84936910791714,
+        "fx": 1058.6689211512687,
+        "fy": 344.84936910791714
     }, {
         "followers_count": 208,
         "query_tweet_count": 2,
@@ -1799,10 +2203,15 @@
         "location": "",
         "memberFor_days": 1116,
         "type": "person",
+        "continent": "Europe",
         "neighbors": [91169926],
         "edges": ["743468486756868100_91169926_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 849.7713312728492,
+        "y": 630.9521615274667,
+        "fx": 849.7713312728492,
+        "fy": 630.9521615274667
     }, {
         "followers_count": 273,
         "query_tweet_count": 3,
@@ -1821,10 +2230,15 @@
         "location": "Salt Lake City, UT",
         "memberFor_days": 2546,
         "type": "institution",
+        "continent": "North America",
         "neighbors": [81658145],
         "edges": ["701375574_81658145_retweet"],
         "userSelectedNeighbors": [],
-        "selected": false
+        "selected": false,
+        "x": 314.91410355961546,
+        "y": 409.7297954552652,
+        "fx": 314.91410355961546,
+        "fy": 409.7297954552652
     }],
     "links": [{
         "source": 91169926,
