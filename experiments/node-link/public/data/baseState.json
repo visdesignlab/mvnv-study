@@ -7,13 +7,13 @@
       "#706842"
     ],
     "bars": [{
-        "attr":"friends_count",
+        "attr":"followers_count",
         "domain": [
           0,
           2000
         ]
       },{
-        "attr":"followers_count",
+        "attr":"friends_count",
         "domain": [
           0,
           2000

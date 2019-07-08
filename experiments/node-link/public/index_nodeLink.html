@@ -55,22 +55,40 @@
                 </p> -->
                 <ul class="menu-list">
 
-                    <li id="graphSize">
-                        <ul>
-                            <label>Graph Size</label>
-
-                            <div class="control is-inline-flex">
-                                <input class="slider" id="sizeSlider" step="10" min="10" max="80" value="50"
-                                    type="range">
-                                <output id="sliderValue">50</output>
-                            </div>
-
-                        </ul>
-                    </li>
+                        <li id="graphSize">
+                                <label>Graph Size</label>
+    
+                            <ul>
+    
+                                <!-- <div class="control is-inline-flex">
+                                    <input class="slider" id="sizeSlider" step="10" min="10" max="80" value="50"
+                                        type="range">
+                                    <output id="sliderValue">50</output>
+                                </div> -->
+                                        <div class="control">
+                                            <label class="radio">
+                                                <input type="radio" name="graphSize" value="true">
+                                                Small [30]
+                                            </label>
+    
+                                            <label class="radio">
+                                                    <input type="radio" name="graphSize" value="false">
+                                                    Medium [50]
+                                             </label>
+            
+                                            <label class="radio">
+                                                <input type="radio" name="graphSize" value="false">
+                                                Large [80]
+                                            </label>
+                                        </div>
+    
+                            </ul>
+                        </li>
 
                     <li id="labelSize">
+                            <label>Node Label Font Size</label>
                         <ul>
-                            <label>Label Size</label>
+                           
                             <div class="control is-inline-flex">
                                 <input class="slider" id="fontSlider" step="1" min="10" max="30" value="14"
                                     type="range">
@@ -79,8 +97,9 @@
                     </li>
 
                     <li id="nodeMarkerSize">
+                            <label>Node Size [width,height]</label>
                         <ul>
-                            <label>Node Size</label>
+                            
 
                             <div class="control is-inline-flex">
                                 <input width="50%" id="markerSize" class="input" type="text" placeholder="width/height">
@@ -88,6 +107,8 @@
 
                         </ul>
                     </li>
+
+                    
 
 
                     <li>
@@ -278,12 +299,21 @@
             </div>
 
             <div style="padding-top: 50px">
-                <button id="clear-selection">Clear Selections</button>
+
+                <button id="stop-simulation">Stop Simulation</button>
+                <button id="start-simulation">Restart Simulation</button>
+                <button id="release-nodes">Release Pinned Nodes</button>
+
+
             </div>
 
-            <div style="padding-top: 10px">
-                <button id="exportGraph">Export Graph to Console</button>
-            </div>
+           
+
+                    <div style="padding-top: 10px">
+                            <button id="clear-selection">Clear Selections</button>
+                            <button id="exportGraph">Export Graph to Console</button>
+
+                        </div>
 
             <div id="vis"></div>
 

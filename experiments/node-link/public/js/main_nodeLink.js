@@ -6,14 +6,12 @@
 
 /*global queue, labels*/
 
-
 //Global config and graph variables;
 //Config is set up in input file and the potentially modified  by user changes to the panel.
 //dir and undir graphs store refs to the two flavors of a graph and that can be toggled by the user in the panel
 var config;
 var dir_graph;
 var undir_graph;
-
 
 ///////////////////////////For Experiment End/////////////////////////////
 var colorRange = ["#5e3c99", "#b2abd2", "#fdb863", "#e66101"];
@@ -26,7 +24,6 @@ var color = d3
 var height = 800;
 var width = 1800;
 var size = 1800; //720;
-
 
 var svg;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
@@ -50,21 +47,17 @@ function loadVis(id) {
 
   //Set up callbacks for the config panel on the left.
   d3.selectAll("input[name='isDirected']").on("change", function() {
-
     config.isDirected = eval(this.value);
     updateVis();
   });
 
   d3.selectAll("input[name='fixedPositions']").on("change", function() {
-
     config.fixedPositions = eval(this.value);
     updateVis();
   });
 }
 
 function setPanelValuesFromFile(config, graph) {
-
-
   // set callback for changes in the size slider;
   d3.select("#sizeSlider").on("input", function() {
     d3.select("#sliderValue").text(this.value);
@@ -78,28 +71,23 @@ function setPanelValuesFromFile(config, graph) {
     d3.select("#fontSliderValue").text(this.value);
 
     config.style.labelSize = eval(this.value);
-
   });
 
   d3.select("#fontSlider").on("change", function() {
-    updateVis()
+    updateVis();
   });
 
-  d3.select('#markerSize')
-  .property('value',config.style.nodeWidth + ',' + config.style.nodeHeight); 
+  d3.select("#markerSize").property(
+    "value",
+    config.style.nodeWidth + "," + config.style.nodeHeight
+  );
 
   d3.select("#markerSize").on("change", function() {
-    let markerSize = this.value.split(',');
-    config.style.nodeWidth =eval(markerSize[0]);
+    let markerSize = this.value.split(",");
+    config.style.nodeWidth = eval(markerSize[0]);
     config.style.nodeHeight = eval(markerSize[1]);
-    updateVis(); 
+    updateVis();
   });
-
- 
-
-
-
-
 
   //set Panel Values
 
@@ -158,24 +146,24 @@ function setPanelValuesFromFile(config, graph) {
       type: typeof "string",
       configAttr: "edgeColor"
     },
-    { 
-      name: "edgeWidthSelect", 
-      type: typeof 2, 
-      configAttr: "edgeWidth" 
+    {
+      name: "edgeWidthSelect",
+      type: typeof 2,
+      configAttr: "edgeWidth"
     },
-     {
-       name:'nodeBarsSelect',
-       type:typeof(2),
-       configAttr:'bars'
-      },
-    { 
+    {
+      name: "nodeBarsSelect",
+      type: typeof 2,
+      configAttr: "bars"
+    },
+    {
       name: "nodeCirclesSelect",
-       type: typeof "string", 
-       configAttr: "circles"
-       },
-    { 
+      type: typeof "string",
+      configAttr: "circles"
+    },
+    {
       name: "nodeQuantAttributes",
-      type: typeof(2), 
+      type: typeof 2,
       configAttr: undefined
     }
   ];
@@ -197,174 +185,218 @@ function setPanelValuesFromFile(config, graph) {
       );
     });
 
-    let barAttrs = config.attr.bars.map(b=>b.attr)
+    let barAttrs = config.attr.bars.map(b => b.attr);
 
-    if (m.configAttr === 'bars'){
-
+    if (m.configAttr === "bars") {
       let list = item.select("ul");
 
-    let fields = list
-      .selectAll(".field")
-      .data(possibleValues);
+      let fields = list.selectAll(".field").data(possibleValues);
 
+      let fieldsEnter = fields
+        .enter()
+        .append("div")
+        .attr("class", "field");
 
-     let fieldsEnter = fields .enter()
-      .append("div")
-      .attr('class','field')
+      fieldsEnter
+        .append("input")
+        .attr("class", "is-checkradio")
+        .attr("type", "checkbox");
 
+      fieldsEnter.append("label");
 
-      fieldsEnter.append('input')
-      .attr('class','is-checkradio')
-      .attr('type','checkbox')
-
-      fieldsEnter.append('label')
-
-      fieldsEnter.append('div')
-      .attr('class','control is-inline-flex')
-      .append('input')
-      .attr('class','input domain')
-      .attr('type','text')
-      .attr('placeholder','[min,max]')
-      .property('value',d=>{ 
-
-        let findAttr = config.attr.bars.find(obj=>obj.attr === d)
-        return findAttr ? (findAttr.domain ?  
-          '[' + findAttr.domain + ']' :
-           '[ ' + d3.extent(graph.nodes, n => n[d]).join(',') + ']') : ''
-      })
+      fieldsEnter
+        .append("div")
+        .attr("class", "control is-inline-flex")
+        .append("input")
+        .attr("class", "input domain")
+        .attr("type", "text")
+        .attr("placeholder", "[min,max]")
+        .property("value", d => {
+          let findAttr = config.attr.bars.find(obj => obj.attr === d);
+          return findAttr
+            ? findAttr.domain
+              ? "[" + findAttr.domain + "]"
+              : "[ " + d3.extent(graph.nodes, n => n[d]).join(",") + "]"
+            : "";
+        });
 
       fields.exit().remove();
 
       fields = fieldsEnter.merge(fields);
 
-      fields.select('.is-checkradio')
-      .attr('id',d=>d+'-checkbox')
-      .attr('name',d=>d+'-checkbox')
-      .property('checked',d=>{
-        return barAttrs.includes(d) ? 'checked' : false
-      })
-      .on("change",function(d){
-        
-        let includeAttr = d3.select(this).property('checked');
-        let existingBarAttrs = config.attr.bars;
-        if (includeAttr){
-          
-            let newDomain = '[ ' + d3.extent(graph.nodes, n => n[d]).join(',') + ']'
-            d3.select('#' + d+'-domain').property('value',newDomain);
+      fields
+        .select(".is-checkradio")
+        .attr("id", d => d + "-checkbox")
+        .attr("name", d => d + "-checkbox")
+        .property("checked", d => {
+          return barAttrs.includes(d) ? "checked" : false;
+        })
+        .on("change", function(d) {
+          let includeAttr = d3.select(this).property("checked");
+          if (includeAttr) {
+            let newDomain =
+              "[ " + d3.extent(graph.nodes, n => n[d]).join(",") + "]";
+            d3.select("#" + d + "-domain").property("value", newDomain);
 
-            let newAttr = {attr:d,domain:eval(newDomain)};
+            let newAttr = { attr: d, domain: eval(newDomain) };
             config.attr.bars.push(newAttr);
+          
+            //call createHist for that attribute
+            d3.select("#nodeQuantAttributes")
+              .selectAll("option")
+              .filter((opt, i) => {
+                return d === opt;
+              })
+              .property("selected", true);
+
+            createHist(
+              d,
+              d3.select("#nodeQuantAttributes_histogram"),
+              graph.nodes
+            );
             updateVis();
 
-            let attrDomain = eval(d3.select('#' + d+'-domain').property('value'));
-          
-        } else {
-          config.attr.bars=config.attr.bars.filter(el=>el.attr !== d);
-          updateVis();
-        }
-      })
-
-      fields.select('label')
-      .attr('id',d=>d+'-label')
-      .attr('for',d=>d+'-checkbox')
-      .text(d=>d)
+          } else {
+            config.attr.bars = config.attr.bars.filter(el => el.attr !== d);
+            updateVis();
+          }
+        });
 
       fields
-      .select('.domain')
-      .attr('id',d=>d+'-domain');
+        .select("label")
+        .attr("id", d => d + "-label")
+        .attr("for", d => d + "-checkbox")
+        .text(d => d);
 
+      fields
+        .select(".domain")
+        .attr("id", d => d + "-domain")
+        .on("change", function(d) {
+          let newDomain = eval(this.value);
+
+          let activeAttr = config.attr.bars.find(bar => bar.attr === d);
+
+          if (activeAttr) {
+            //if no domain has been defined, compute auto Domain
+            if (newDomain === undefined) {
+              newDomain = d3.extent(graph.nodes, n => n[d]);
+              d3.select("#" + d + "-domain").property(
+                "value",
+                "[" + newDomain + "]"
+              );
+            }
+            activeAttr.domain = newDomain;
+          }
+          updateVis();
+
+          //call createHist for that attribute
+          d3.select("#nodeQuantAttributes")
+            .selectAll("option")
+            .filter((opt, i) => {
+              return d === opt;
+            })
+            .property("selected", true);
+
+          createHist(
+            d,
+            d3.select("#nodeQuantAttributes_histogram"),
+            graph.nodes
+          );
+        });
     } else {
-
-      d3.select('#' + m.name)
-      .select('input')
-      .property('value',()=>{
-        return config.attr[m.configAttr].domain ? '[' +config.attr[m.configAttr].domain  + ']' : '[ ' + d3.extent(graph.nodes, n => n[config.attr[m.configAttr].attr]).join(',') + ']'
-      })
+      d3.select("#" + m.name)
+        .select("input")
+        .property("value", () => {
+          return config.attr[m.configAttr].domain
+            ? "[" + config.attr[m.configAttr].domain + "]"
+            : "[ " +
+                d3
+                  .extent(graph.nodes, n => n[config.attr[m.configAttr].attr])
+                  .join(",") +
+                "]";
+        });
 
       let selectMenu = item.select("select");
 
-    selectMenu
-      .selectAll("option")
-      .data(possibleValues)
-      .enter()
-      .append("option")
-      .attr("value", d => d)
-      .text(d => d);
+      selectMenu
+        .selectAll("option")
+        .data(possibleValues)
+        .enter()
+        .append("option")
+        .attr("value", d => d)
+        .text(d => d);
 
-    item
-      .selectAll("option")
-      .filter((opt,i) => {
-        return m.configAttr == undefined && i === 0 || config.attr[m.configAttr] === opt;
-      })
-      .property("selected", true);
+      item
+        .selectAll("option")
+        .filter((opt, i) => {
+          return (
+            (m.configAttr == undefined && i === 2) ||
+            config.attr[m.configAttr] === opt
+          );
+        })
+        .property("selected", true);
 
-    //  //Set up callbacks for the config panel on the left.
-    selectMenu.on("change", function() {
-      createHist(
-        this.value,
-        d3.select("#" + m.name + "_histogram"),
-        isNode ? graph.nodes : graph.links
-      )
-    });
+      //  //Set up callbacks for the config panel on the left.
+      selectMenu.on("change", function() {
+        createHist(
+          this.value,
+          d3.select("#" + m.name + "_histogram"),
+          isNode ? graph.nodes : graph.links
+        );
+      });
 
-    //set selected element according to config file;
+      //set selected element according to config file;
 
-    if (m.type !== typeof "string" && m.configAttr !== "bars") {
-      let newSvg = item.append("svg").attr("id", m.name + "_histogram");
+      if (m.type !== typeof "string" && m.configAttr !== "bars") {
+        let newSvg = item.append("svg").attr("id", m.name + "_histogram");
 
-      let attr = m.configAttr ? config.attr[m.configAttr].attr : config.attr.bars[0].attr ;
-      createHist(attr, newSvg, isNode ? graph.nodes : graph.links);
+        let attr = m.configAttr
+          ? config.attr[m.configAttr].attr
+          : config.attr.bars[0].attr;
+        createHist(attr, newSvg, isNode ? graph.nodes : graph.links);
+      }
     }
-
-
-    }
-    
   });
 
+  d3.select("#nodeFillSelect")
+    .select("select")
+    .on("change", function() {
+      config.attr.nodeFill = this.value;
+      config.attr.drawBars = false;
 
-  d3.select('#nodeFillSelect')
-  .select("select")
-  .on('change',function(){
-    config.attr.nodeFill = this.value;
-    config.attr.drawBars = false;
+      d3.select("#renderBarsCheckbox").property("checked", false);
+      updateVis();
+    });
 
-    d3.select('#renderBarsCheckbox').property('checked', false)
+  d3.select("#nodeStrokeSelect")
+    .select("select")
+    .on("change", function() {
+      config.attr.nodeStroke = this.value;
+      // config.attr.drawBars = false;
+
+      // d3.select('#renderBarsCheckbox').property('checked', false)
+      updateVis();
+    });
+
+  d3.select("#renderBarsCheckbox").on("input", function() {
+    config.attr.drawBars = d3.select(this).property("checked");
+
     updateVis();
-  })
+  });
 
-  d3.select('#nodeStrokeSelect')
-  .select("select")
-  .on('change',function(){
-    config.attr.nodeStroke = this.value;
-    // config.attr.drawBars = false;
+  d3.select("#edgeWidthScale").on("change", function() {
+    config.attr.edgeWidth.domain = eval(this.value);
 
-    // d3.select('#renderBarsCheckbox').property('checked', false)
     updateVis();
-  })
+  });
 
-  d3.select('#renderBarsCheckbox')
-  .on("input",function(){
-    config.attr.drawBars = d3.select(this).property('checked');
-  
-  updateVis();
-})
+  d3.select("#edgeWidthScale").on("change", function() {
+    config.attr.edgeWidth.domain = eval(this.value);
 
-d3.select('#edgeWidthScale')
-.on("change",function(){
-  config.attr.edgeWidth.domain = eval(this.value);
-
-  updateVis();
-})
-
-d3.select('#edgeWidthScale')
-.on("change",function(){
-  config.attr.edgeWidth.domain = eval(this.value);
-
-  updateVis();
-})
+    updateVis();
+  });
 
   //create nested quant attribute scales
- 
 }
 
 function createHist(attrName, svgSelection, data, categorical = false) {
@@ -377,10 +409,17 @@ function createHist(attrName, svgSelection, data, categorical = false) {
   let histHeight = height;
 
   // x scale for time
+
+  // check to see if a domain has been hard coded;
+  let scale = config.attr.bars.find(bar => bar.attr === attrName && bar.domain);
+
+  domain = scale ? scale.domain : d3.extent(data, n => n[attrName]);
+
   var x = d3
     .scaleLinear()
-    .domain(d3.extent(data, n => n[attrName]))
+    .domain(domain)
     .range([0, width])
+    .clamp(true)
     .nice(nBins);
 
   // if (categorical){
@@ -534,14 +573,19 @@ function createHist(attrName, svgSelection, data, categorical = false) {
   let textEnter = text
     .enter()
     .append("text")
-    .attr("y", 10)
     .attr("text-anchor", "middle");
 
   text.exit().remove();
 
   text = textEnter.merge(text);
 
-  text.attr("x", x).text(d3.format("2.0s"));
+
+
+  text.attr("transform", d=>'translate(' + x(d) + ',10) rotate(-30)').text(d => {
+    let format = d < 1000 ? d3.format("2.0s") : d3.format(".2s");
+
+    return format(d);
+  });
 }
 function updateVis() {
   //Helper functions to compute edge arcs
@@ -574,7 +618,6 @@ function updateVis() {
 
   //choose which graph to render;
   let graph = config.isDirected ? dir_graph : undir_graph;
-
 
   // console.log(
   //   "rendering " + (config.isDirected ? "directed" : "undirected") + " graph"
@@ -633,9 +676,10 @@ function updateVis() {
       .range([nodeMarkerLength, nodeMarkerLength * 2])
       .clamp(true);
 
-    let value = config.attr.nodeSize.attr && !config.attr.drawBars
-      ? nodeSizeScale(node[config.attr.nodeSize.attr])
-      : nodeMarkerLength;
+    let value =
+      config.attr.nodeSize.attr && !config.attr.drawBars
+        ? nodeSizeScale(node[config.attr.nodeSize.attr])
+        : nodeMarkerLength;
     return config.style.nodeIsRect ? value : value * 1.3;
   };
 
@@ -650,20 +694,24 @@ function updateVis() {
       .range([nodeMarkerHeight, nodeMarkerHeight * 2])
       .clamp(true);
 
-    let value = config.attr.nodeSize.attr && !config.attr.drawBars
-      ? nodeSizeScale(node[config.attr.nodeSize.attr])
-      : nodeMarkerHeight;
+    let value =
+      config.attr.nodeSize.attr && !config.attr.drawBars
+        ? nodeSizeScale(node[config.attr.nodeSize.attr])
+        : nodeMarkerHeight;
     return config.style.nodeIsRect ? value : value * 1.3;
   };
 
   let nodeFill = function(node) {
-
     let nodeFillScale = d3
       .scaleOrdinal()
-      .domain(graph.nodes.map(n => n[config.attr.nodeFill]).filter((value,index,self)=>self.indexOf(value)=== index))
+      .domain(
+        graph.nodes
+          .map(n => n[config.attr.nodeFill])
+          .filter((value, index, self) => self.indexOf(value) === index)
+      )
       .range(config.style.nodeColors);
 
-      let value;
+    let value;
     let selectedNodeEncoding = config.attr.selectedNodes === "fill";
 
     if (node.selected && selectedNodeEncoding) {
@@ -717,7 +765,9 @@ function updateVis() {
   };
 
   let edgeWidth = function(edge) {
-    let domain = config.attr.edgeWidth.domain || d3.extent(graph.links.map(l => l[config.attr.edgeWidth.attr]));
+    let domain =
+      config.attr.edgeWidth.domain ||
+      d3.extent(graph.links.map(l => l[config.attr.edgeWidth.attr]));
 
     // console.log('domain is', domain)
     let edgeWidthScale = d3
@@ -751,25 +801,36 @@ function updateVis() {
   }
 
   //create scales for bars;
-    let scaleObjects = config.attr.bars;
+  let scaleObjects = config.attr.bars;
 
   //object to store scales as a function of attr name;
   let scales = {};
+  let scaleColors = {}
 
   let barPadding = 3;
 
   scaleObjects.map((s, i) => {
 
+    let attrDomain = s.domain || d3.extent(graph.nodes.map(n => n[s.attr]))
     let scale = d3
       .scaleLinear()
-      .domain(s.domain || d3.extent(graph.nodes.map(n => n[s.attr])))
+      .domain(attrDomain)
       .range([0, nodeMarkerHeight - 2 * barPadding])
       .clamp(true);
 
-    //save scale and color to use with that attribute bar
-    scales[s.attr] = { scale, fill: config.attr.barColors[i], position:0 };
+      let domainKey = attrDomain.join('-')
+      scaleColors[domainKey]='';
 
+      console.log('domainKey is ', domainKey)
+
+    //save scale and color to use with that attribute bar
+    scales[s.attr] = { scale, domainKey, position: 0 };
   });
+
+  //Assign one color per unique domain;
+  Object.keys(scaleColors).map((domainKey,i)=>{scaleColors[domainKey] = config.attr.barColors[i]});
+
+  Object.keys(scales).map(s=>scales[s].fill = scaleColors[scales[s].domainKey]);
 
   //Draw Links
   let link = d3
@@ -864,7 +925,7 @@ function updateVis() {
 
   node
     .select("text")
-    .style('font-size',config.style.labelSize)
+    .style("font-size", config.style.labelSize)
     .text(d => d[config.attr.labelAttr])
     .attr("y", d => (config.attr.drawBars ? -nodeHeight(d) * 0.5 - 4 : ".5em"))
     .attr("dx", function(d) {
@@ -874,7 +935,7 @@ function updateVis() {
           .node()
           .getBBox().width / 2
       );
-    })
+    });
 
   node
     .select(".labelBackground")
@@ -961,9 +1022,7 @@ function updateVis() {
 
   bars = barsEnter.merge(bars);
 
-  bars.selectAll('rect')
-  .attr("width", barWidth)
-
+  bars.selectAll("rect").attr("width", barWidth);
 
   bars.selectAll("title").text(function(d) {
     return d.attr + " : " + d.data;
@@ -994,16 +1053,17 @@ function updateVis() {
     )
     .style("fill", d => scales[d.attr].fill);
 
-    d3.select('#nodeBarsSelect').selectAll('label')
-    .style('color','#a6a6a6')
-    .style('font-weight','regular');
+  d3.select("#nodeBarsSelect")
+    .selectAll("label")
+    .style("color", "#a6a6a6")
+    .style("font-weight", "normal");
 
-    //color the text from the panel accordingly 
-    barAttrs.map(attr=>{
-      d3.select('#' + attr+'-label')
-      .style('color',scales[attr].fill)
-      .style('font-weight','bold');
-    })
+  //color the text from the panel accordingly
+  barAttrs.map(attr => {
+    d3.select("#" + attr + "-label")
+      .style("color", scales[attr].fill)
+      .style("font-weight", "bold");
+  });
 
   let circleAttrs = config.attr.drawBars ? config.attr.circles : [];
 
@@ -1020,7 +1080,11 @@ function updateVis() {
         //compute color scale for this attr from config file
         let colorFillScale = d3
           .scaleOrdinal()
-          .domain(graph.nodes.map(n => n[obj.attr]).filter((value,index,self)=>self.indexOf(value)=== index))
+          .domain(
+            graph.nodes
+              .map(n => n[obj.attr])
+              .filter((value, index, self) => self.indexOf(value) === index)
+          )
           .range(obj.colors);
 
         return { data: d[obj.attr], attr: obj.attr, scale: colorFillScale };
@@ -1031,14 +1095,14 @@ function updateVis() {
     .enter()
     .append("circle")
     .attr("class", "categorical")
-    .attr("r", circleRadius)
+    .attr("r", circleRadius);
 
   circles.exit().remove();
 
   circles = circleEnter.merge(circles);
 
   circles
-  .attr("cx", circleRegion)
+    .attr("cx", circleRegion)
     .attr("cy", (d, i) => circleYScale(i))
     .style("fill", d => d.scale(d.data));
 
@@ -1060,6 +1124,8 @@ function updateVis() {
 
     console.log(JSON.stringify(graphCopy));
   });
+
+
 
   d3.select("#clear-selection").on("click", () => {
     let clearSelection = function(d) {
@@ -1159,12 +1225,12 @@ function updateVis() {
       l.target = graph.nodes.find(n => n.id === l.target) || l.target;
     });
 
-    graph.nodes.map(n=>{
+    graph.nodes.map(n => {
       n.fx = n.savedX;
       n.fy = n.savedY;
       n.x = n.savedX;
       n.y = n.savedY;
-    })
+    });
   } else {
     graph.nodes.map(n => {
       n.x = 0;
@@ -1176,15 +1242,30 @@ function updateVis() {
     });
 
     // if (!config.fixedPositions) {
-     
+
     // }
 
-   
-   
-    if (!config.fixedPositions) {
+    simulation.nodes(graph.nodes).on("tick", ticked);
+    simulation.force("link").links(graph.links);
 
-      simulation.nodes(graph.nodes).on("tick", ticked);
-      simulation.force("link").links(graph.links);
+
+    d3.select("#stop-simulation").on("click", () => {
+      simulation.stop();
+    })
+
+    d3.select("#start-simulation").on("click", () => {
+      simulation.alphaTarget(0.1).restart();
+    })
+
+    d3.select("#release-nodes").on("click", () => {
+      graph.nodes.map(n=>{n.fx = null; n.fy = null})
+      simulation.alphaTarget(0.1).restart();
+    })
+
+
+
+
+    if (!config.fixedPositions) {
 
       for (var i = 0; i < 2000; ++i) simulation.tick();
       simulation.stop();
@@ -1198,14 +1279,12 @@ function updateVis() {
         d3.forceCollide().radius(d => nodeLength(d))
       );
 
-  
-
-        simulation.alphaTarget(0.1).restart();
-        // for (var i = 0; i < 1000; ++i) simulation.tick();
-        // simulation.stop();
+      simulation.alphaTarget(0.1).restart();
+      // for (var i = 0; i < 1000; ++i) simulation.tick();
+      // simulation.stop();
 
       // if (config.fixedPositions) {
-  
+
       // }
     }
   }
@@ -1260,7 +1339,7 @@ function updateVis() {
   }
 
   function ticked() {
-      updatePos();
+    updatePos();
   }
 
   function updatePos() {
@@ -1325,13 +1404,16 @@ function drawVis() {
         undir_graph = undir_graph_from_file;
 
         //save positions to revert to later if needed;
-        dir_graph.nodes.map(n=>{n.savedX = n.fx, n.savedY = n.fy})
-        undir_graph.nodes.map(n=>{n.savedX = n.fx, n.savedY = n.fy})
+        dir_graph.nodes.map(n => {
+          (n.savedX = n.fx), (n.savedY = n.fy);
+        });
+        undir_graph.nodes.map(n => {
+          (n.savedX = n.fx), (n.savedY = n.fy);
+        });
 
         setPanelValuesFromFile(config, dir_graph || undir_graph);
 
         updateVis();
-
       });
     });
   });
