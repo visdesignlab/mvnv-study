@@ -7,23 +7,22 @@
       "#706842"
     ],
     "bars": [{
-        "attrs": [
-          "followers_count",
-          "friends_count"
-        ],
+        "attr":"friends_count",
         "domain": [
           0,
           2000
         ]
       },{
-        "attrs": [
-          "statuses_count"
-        ],
+        "attr":"followers_count",
+        "domain": [
+          0,
+          2000
+        ]
+      },{
+        "attr":"statuses_count",
         "domain": null
       }, {
-        "attrs": [
-          "favourites_count"
-        ],
+        "attr":"favourites_count",
         "domain": null
     }],
     "circles": [
@@ -35,10 +34,12 @@
         ]
       },
       {
-        "attr": "type",
+        "attr": "continent",
         "colors": [
-          "#a88e69",
-          "#68aa73"
+          "#1b9e77",
+          "#d95f02",
+          "#7570b3",
+          "#e7298a"    
         ]
       }
     ],

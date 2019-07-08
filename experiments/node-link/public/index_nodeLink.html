@@ -138,6 +138,33 @@
 
                         </li>
 
+                        <br/>
+
+                        <div class="field">
+                                <input class="is-checkradio is-circle" id="renderBarsCheckbox"
+                                    type="checkbox" name="renderBarsCheckbox" checked="checked">
+                                <label for="renderBarsCheckbox">Render Nested Charts</label>
+                            </div>
+    
+    
+                            <li id="nodeBarsSelect">
+                                <a>Attribute for Nested Quant Attributes (Bars)</a>
+                                <ul>
+                                </ul>
+                            </li>
+    
+    
+                            <li id="nodeQuantAttributes">
+                                    <a>Node Attribute Inspector</a>
+                                    <ul>
+                                        <div class="select ">
+                                            <select>
+                                            </select>
+                                        </div>
+        
+                                    </ul>
+                                </li>
+
 
                         <li id="nodeFillSelect">
                             <a>Attribute for Node Fill</a>
@@ -197,27 +224,16 @@
                                 </div>
 
                                 <div class="control is-inline-flex">
-                                    <input class="input" type="text" placeholder="[min,max]">
+                                    <input class="input" id="edgeWidthScale" type="text" placeholder="[min,max]">
                                 </div>
 
                             </ul>
                         </li>
 
                         <br />
-                        <div class="field">
-                            <input class="is-checkradio is-circle" id="renderBarsCheckbox"
-                                type="checkbox" name="renderBarsCheckbox" checked="checked">
-                            <label for="renderBarsCheckbox">Render Nested Charts</label>
-                        </div>
+                        
 
-
-                        <li id="nodeBarsSelect">
-                            <a>Attribute for Nested Quant Attributes (Bars)</a>
-                            <ul>
-                            </ul>
-                        </li>
-
-                        <li id="nodeCirclesSelect">
+                        <!-- <li id="nodeCirclesSelect">
                             <a>Attribute for Nested Categorical Attrs (Circles)</a>
                             <ul>
                                 <div class="select is-multiple">
@@ -227,14 +243,14 @@
                                 </div>
 
                             </ul>
-                        </li>
+                        </li> -->
 
 
 
 
 
 
-                        <a class="button is-light" id="refreshVis">Update Node-Link Diagram</a>
+                        <!-- <a class="button is-light" id="refreshVis">Update Node-Link Diagram</a> -->
                         <br />
 
                         <a class="button is-light" id="exportConfig">Export Configuration to Console</a>
