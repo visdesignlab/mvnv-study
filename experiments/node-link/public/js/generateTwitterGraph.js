@@ -7,10 +7,10 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
 
         d3.json("../public/data/userInfo.json", function(users) {
 
-          let generateDirectedNetwork = true;
+          let generateDirectedNetwork = false;
 
           let numNodes = 0;
-          let graphSize = 30;
+          let graphSize = 83;
 
           let graphDone = false;
 
@@ -20,7 +20,7 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
 
             if (moreInfo){
               node.memberSince = new Date(moreInfo.created_at);
-              node.name = moreInfo.name.neighbors;
+              node.name = moreInfo.name;
               node.location = moreInfo.location;
 
               let today = new Date().getTime();

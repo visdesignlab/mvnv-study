@@ -6,15 +6,6 @@
 
 /*global queue, labels*/
 
-//initial state:
-const initCalcState = {
-  count: {
-    count2: {
-      count3: 0,
-      count4: 1
-    }
-  }
-};
 
 //Global config and graph variables;
 //Config is set up in input file and the potentially modified  by user changes to the panel.
@@ -23,43 +14,6 @@ var config;
 var dir_graph;
 var undir_graph;
 
-///////////////////////////For Experiment Begin/////////////////////////////
-var userData = {
-  condition: "",
-  searchLog: [],
-  visitLog: [] //visited data table (JSON Array)
-};
-var currentVisit = null;
-var currentSearch = null;
-
-// Set the condition
-let rand = Math.random();
-if (rand > 0) {
-  userData.condition = "foresight";
-} else {
-  userData.condition = "control";
-}
-
-console.log("condition = " + userData.condition);
-
-function recordVisit(item) {
-  // record previous
-  if (currentVisit && currentVisit["chartCode"] !== item) {
-    currentVisit["end"] = Date.now();
-    currentVisit["duration"] = currentVisit["end"] - currentVisit["start"];
-    userData["visitLog"].push(currentVisit);
-    currentVisit = null;
-    //console.log(userData['visitLog'])
-  }
-  // start a new visit
-  if (!currentVisit && item) {
-    //console.log(item)
-    currentVisit = {};
-    currentVisit["start"] = Date.now();
-    currentVisit["chartCode"] = item;
-    currentVisit["searchId"] = currentSearch ? currentSearch["id"] : -1;
-  }
-}
 
 ///////////////////////////For Experiment End/////////////////////////////
 var colorRange = ["#5e3c99", "#b2abd2", "#fdb863", "#e66101"];
@@ -73,56 +27,8 @@ var height = 800;
 var width = 1800;
 var size = 1800; //720;
 
-var DATASET =
-  //"exoplanets"
-  "college";
-//"college-all"
-
-var DATA_FILE, RADIUS_ATTR, COLOR_ATTR, NAME_ATTR, DISTANCE_ATTR, LOAD_FUNC;
-var detailMap = {};
-var MAX_DATA_NUM = 300;
-//var COLOR_DIVIDER = 1/38000
-var COLOR_DIVIDER = 1 / 18000;
-
-if (DATASET === "exoplanets") {
-  // Exoplanets
-  DATA_FILE = "data/exoplanets.json";
-  RADIUS_ATTR = "P_Radius_EU";
-  DISTANCE_ATTR = "S_Distance_pc";
-  COLOR_ATTR = "P_Teq_Mean_K";
-  NAME_ATTR = "P_Name";
-  LOAD_FUNC = loadExoplanetStructure;
-} else if (DATASET === "college") {
-  // Education
-  DATA_FILE = "data/college.csv";
-  RADIUS_ATTR = "COSTT4_A";
-  COLOR_ATTR = "MD_EARN_WNE_P10";
-  DISTANCE_ATTR = "ADM_RATE";
-  NAME_ATTR = "INSTNM";
-  LOAD_FUNC = loadCollegeStructure;
-  //detail map
-  detailMap[RADIUS_ATTR] = "Annual Cost";
-  detailMap[DISTANCE_ATTR] = "Admission Rate";
-  detailMap[COLOR_ATTR] = "Median of Earnings";
-}
-/*
-"MD_EARN_WNE_P10"
-"COSTT4_A"
-"ADM_RATE"
-"PCIP14" //too many 0%
-"PCTPELL"
-*/
-
-var pack = d3
-  .pack()
-  .size([size, size])
-  .padding(5);
 
 var svg;
-var bubbles;
-var tooltip;
-
-var mouseOnBubble = false;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
 
 // Single function to put chart into specified target
@@ -144,166 +50,55 @@ function loadVis(id) {
 
   //Set up callbacks for the config panel on the left.
   d3.selectAll("input[name='isDirected']").on("change", function() {
-    console.log("selected", this.value);
 
     config.isDirected = eval(this.value);
+    updateVis();
+  });
 
-    console.log("config is ", config);
+  d3.selectAll("input[name='fixedPositions']").on("change", function() {
+
+    config.fixedPositions = eval(this.value);
     updateVis();
   });
 }
 
-function type(d) {
-  // d[RADIUS_ATTR] = +d[RADIUS_ATTR];
-  // d[COLOR_ATTR] = +d[COLOR_ATTR];
-  // d[DISTANCE_ATTR] = d[DISTANCE_ATTR] ? +d[DISTANCE_ATTR] : NaN;
-  d[RADIUS_ATTR] = parseFloat(d[RADIUS_ATTR]);
-  d[COLOR_ATTR] = parseFloat(d[COLOR_ATTR]);
-  d[DISTANCE_ATTR] = parseFloat(d[DISTANCE_ATTR]);
-  return d;
-}
-
-function showDetail(d) {
-  d3.select(this).attr("stroke", "black");
-}
-
-function loadSearchBox() {
-  // Load the searchbox if foresight condition
-  if (userData.condition !== "control") {
-    d3.select("#hit")
-      .select("#search-box")
-      .style("display", "inline");
-    //enableSearch();
-  }
-}
-
-var searchData;
-
-function loadExoplanetStructure(data) {
-  var planets = data.filter(function(d) {
-      return d[DISTANCE_ATTR] === 0;
-    }),
-    exoplanets = data.filter(function(d, i) {
-      return !isNaN(d[DISTANCE_ATTR]) && d[DISTANCE_ATTR] !== 0 && i < 300;
-    });
-  //exoplanets = data.filter(function(d, i) { return !isNaN(d[DISTANCE_ATTR]) && d[DISTANCE_ATTR] !== 0; });
-  searchData = planets.concat(exoplanets);
-
-  var root;
-  root = d3
-    .hierarchy({ children: [{ children: planets }].concat(exoplanets) })
-    //d3.hierarchy({children: exoplanets})
-    .sum(function(d) {
-      return d[RADIUS_ATTR] * d[RADIUS_ATTR];
-    })
-    .sort(function(a, b) {
-      return (
-        !a.children - !b.children ||
-        isNaN(a.data[DISTANCE_ATTR]) - isNaN(b.data[DISTANCE_ATTR]) ||
-        a.data[DISTANCE_ATTR] - b.data[DISTANCE_ATTR]
-      );
-    });
-
-  pack(root);
-
-  return root;
-}
-
-function loadCollegeStructure(data) {
-  var bfl = data.length;
-  //filter
-  data = data.filter(function(d) {
-    return !(
-      isNaN(d[RADIUS_ATTR]) ||
-      isNaN(d[COLOR_ATTR]) ||
-      isNaN(d[DISTANCE_ATTR]) ||
-      d[DISTANCE_ATTR] === 0
-    );
-  });
-  //sort
-  data = data.sort(function(a, b) {
-    return a[DISTANCE_ATTR] - b[DISTANCE_ATTR];
-  });
-  //data = data.sort(function(a, b){return b[COLOR_ATTR] - a[COLOR_ATTR]})
-  //then filter
-  data = data.filter(function(d, i) {
-    return i < MAX_DATA_NUM;
-  });
-  console.log("filtered=" + (bfl - data.length));
-
-  searchData = data;
-
-  //extract top 10
-  // var top10 = data.splice(0, 10)
-  // console.log("top 10")
-  // console.log(top10)
-  // searchData = data.concat(top10);
-  console.log("searchData.length=" + searchData.length);
-
-  var root;
-  //root = d3.hierarchy({children: [{children: top10}].concat(data)})
-  root = d3
-    .hierarchy({ children: data })
-    .sum(function(d) {
-      return d[RADIUS_ATTR];
-    })
-    .sort(function(a, b) {
-      return (
-        !a.children - !b.children ||
-        //|| b.data[DISTANCE_ATTR] - a.data[DISTANCE_ATTR];
-        a.data[DISTANCE_ATTR] - b.data[DISTANCE_ATTR]
-      );
-    });
-  pack(root);
-  //console.log(root)
-
-  return root;
-}
-
-function showTooltip(d) {
-  tooltips
-    .style("top", d.y + d.r - size + "px")
-    .style("left", d.x + 5 + "px")
-    .transition()
-    .duration(0)
-    .style("opacity", 1);
-
-  tooltip.html(function() {
-    var percent = Math.round(d.data[DISTANCE_ATTR] * 10000) / 100;
-    return (
-      d.data[NAME_ATTR] +
-      "<br/>" +
-      detailMap[DISTANCE_ATTR] +
-      ": " +
-      percent +
-      "%<br>" +
-      detailMap[RADIUS_ATTR] +
-      ": $" +
-      d.data[RADIUS_ATTR] +
-      "<br/>" +
-      detailMap[COLOR_ATTR] +
-      ": $" +
-      d.data[COLOR_ATTR]
-    );
-  });
-}
-
-function visitItem(item, data) {
-  //item: circle, data: object
-  d3.select(item).classed("expVisited", true);
-
-  //visit and search log
-  userData["visited"]++;
-  //console.log("visited=")
-  //console.log(userData['visited'])
-  recordVisit(data.data[NAME_ATTR]);
-}
-
 function setPanelValuesFromFile(config, graph) {
+
+
   // set callback for changes in the size slider;
   d3.select("#sizeSlider").on("input", function() {
     d3.select("#sliderValue").text(this.value);
   });
+
+  d3.select("#sizeSlider").on("change", function() {
+    //subsample graph and call updateVis();
+  });
+
+  d3.select("#fontSlider").on("input", function() {
+    d3.select("#fontSliderValue").text(this.value);
+
+    config.style.labelSize = this.value;
+    d3.selectAll('.label')
+    .style('font-size', this.value);
+
+  });
+
+  d3.select('#markerSize')
+  .property('value',config.style.nodeWidth + ',' + config.style.nodeHeight); 
+
+  d3.select("#markerSize").on("change", function() {
+    let markerSize = this.value.split(',');
+    config.style.nodeWidth =markerSize[0];
+    config.style.nodeHeight = markerSize[1];
+    updateVis(); 
+  });
+
+ 
+
+
+
+
+
   //set Panel Values
 
   d3.selectAll("input[name='isDirected']")
@@ -329,6 +124,8 @@ function setPanelValuesFromFile(config, graph) {
     "fy",
     "x",
     "y",
+    "savedX",
+    "savedY",
     "neighbors",
     "profile_image_url",
     "selected",
@@ -389,17 +186,9 @@ function setPanelValuesFromFile(config, graph) {
       return (
         type === m.type &&
         (m.type === typeof 2 ||
-          graph.nodes.filter(n => n[attr] === graph.nodes[10][attr]).length > 1)
+          graph.nodes.filter(n => n[attr] === graph.nodes[10][attr]).length > 3)
       );
     });
-
-    //fill out scale min/max for node Size and Edge Width
-
-    d3.select('#edgeWidthSelect')
-    .select('input')
-    .property('value',()=>{
-      return config.attr.edgeWidth.domain ? '[' +config.attr.edgeWidth.domain  + ']' : '[ ' + d3.extent(graph.nodes, n => n[config.attr.edgeWidth.attr]).join(',') + ']'
-    })
 
     if (m.configAttr === 'bars'){
 
@@ -454,6 +243,13 @@ function setPanelValuesFromFile(config, graph) {
       .attr('for',d=>d+'_checkbox')
       .text(d=>d)
     } else {
+
+      d3.select('#' + m.name)
+      .select('input')
+      .property('value',()=>{
+        return config.attr[m.configAttr].domain ? '[' +config.attr[m.configAttr].domain  + ']' : '[ ' + d3.extent(graph.nodes, n => n[config.attr[m.configAttr].attr]).join(',') + ']'
+      })
+
       let selectMenu = item.select("select");
 
     selectMenu
@@ -493,6 +289,33 @@ function setPanelValuesFromFile(config, graph) {
     }
     
   });
+
+  d3.select('#nodeFillSelect')
+  .select("select")
+  .on('change',function(){
+    config.attr.nodeFill = this.value;
+    config.attr.drawBars = false;
+
+    d3.select('#renderBarsCheckbox').property('checked', false)
+    updateVis();
+  })
+
+  d3.select('#nodeStrokeSelect')
+  .select("select")
+  .on('change',function(){
+    config.attr.nodeStroke = this.value;
+    // config.attr.drawBars = false;
+
+    // d3.select('#renderBarsCheckbox').property('checked', false)
+    updateVis();
+  })
+
+  d3.select('#renderBarsCheckbox')
+  .on("input",function(){
+    config.attr.drawBars = d3.select(this).property('checked');
+  
+  updateVis();
+})
 
   //create nested quant attribute scales
  
@@ -706,25 +529,6 @@ function updateVis() {
   //choose which graph to render;
   let graph = config.isDirected ? dir_graph : undir_graph;
 
-  //  let geocoder = new google.maps.Geocoder();
-
-  //  let locationInfo = {}
-  // //  dir_graph.nodes.map((n,i)=>{
-  // //    if (n.location && i==0){
-
-  // //    }
-  // //  })
-
-  //  geocoder.geocode( { 'address': graph.nodes[0].location}, function(results, status) {
-  //   if (status == 'OK') {
-  //     locationInfo.n.screen_name = results[0].address_components;
-  //     console.log(results,status)
-  //   } else {
-  //     alert('Geocode was not successful for the following reason: ' + status);
-  //   }
-  // });
-
-  //  console.log(JSON.stringify(locationInfo))
 
   console.log(
     "rendering " + (config.isDirected ? "directed" : "undirected") + " graph"
@@ -737,13 +541,7 @@ function updateVis() {
   let nodeMarkerLength = config.style.nodeWidth || 60;
   let nodeMarkerHeight = config.style.nodeHeight || 35;
 
-  //If you're not drawing bars, make nodes circles/ovals,
-  if (!config.attr.drawBars) {
-    config.style.nodeIsRect = false;
-  } else {
-    // If you are drawing bars, don't fill in the nodes
-    config.attr.nodeFill = undefined;
-  }
+  config.style.nodeIsRect = config.attr.drawBars;
 
   var simulation = d3
     .forceSimulation()
@@ -789,7 +587,7 @@ function updateVis() {
       .range([nodeMarkerLength, nodeMarkerLength * 2])
       .clamp(true);
 
-    let value = config.attr.nodeSize.attr
+    let value = config.attr.nodeSize.attr && !config.attr.drawBars
       ? nodeSizeScale(node[config.attr.nodeSize.attr])
       : nodeMarkerLength;
     return config.style.nodeIsRect ? value : value * 1.3;
@@ -806,19 +604,20 @@ function updateVis() {
       .range([nodeMarkerHeight, nodeMarkerHeight * 2])
       .clamp(true);
 
-    let value = config.attr.nodeSize.attr
+    let value = config.attr.nodeSize.attr && !config.attr.drawBars
       ? nodeSizeScale(node[config.attr.nodeSize.attr])
       : nodeMarkerHeight;
     return config.style.nodeIsRect ? value : value * 1.3;
   };
 
   let nodeFill = function(node) {
+
     let nodeFillScale = d3
       .scaleOrdinal()
-      .domain(d3.extent(graph.nodes.map(n => n[config.attr.nodeFill])))
+      .domain(graph.nodes.map(n => n[config.attr.nodeFill]).filter((value,index,self)=>self.indexOf(value)=== index))
       .range(config.style.nodeColors);
 
-    let value;
+      let value;
     let selectedNodeEncoding = config.attr.selectedNodes === "fill";
 
     if (node.selected && selectedNodeEncoding) {
@@ -826,7 +625,7 @@ function updateVis() {
         config.attr.selectedColor || nodeFillScale(node[config.attr.nodeFill]);
     } else {
       value =
-        config.attr.nodeFill && !selectedNodeEncoding
+        config.attr.nodeFill && !selectedNodeEncoding && !config.attr.drawBars
           ? nodeFillScale(node[config.attr.nodeFill])
           : config.attr.noNodeFill;
     }
@@ -906,8 +705,7 @@ function updateVis() {
   }
 
   //create scales for bars;
-  let scaleConfig = config.attr.bars;
-  let scaleObjects = config.attr.bars;
+    let scaleObjects = config.attr.bars;
 
   //object to store scales as a function of attr name;
   let scales = {};
@@ -1037,7 +835,8 @@ function updateVis() {
           .node()
           .getBBox().width / 2
       );
-    });
+    })
+    .style('font-size',config.style.labelSize)
 
   node
     .select(".labelBackground")
@@ -1308,6 +1107,13 @@ function updateVis() {
       l.source = graph.nodes.find(n => n.id === l.source) || l.source;
       l.target = graph.nodes.find(n => n.id === l.target) || l.target;
     });
+
+    graph.nodes.map(n=>{
+      n.fx = n.savedX;
+      n.fy = n.savedY;
+      n.x = n.savedX;
+      n.y = n.savedY;
+    })
   } else {
     graph.nodes.map(n => {
       n.x = 0;
@@ -1318,31 +1124,42 @@ function updateVis() {
       n.fy = null;
     });
 
+    // if (!config.fixedPositions) {
+     
+    // }
+
+   
+   
     if (!config.fixedPositions) {
+
+      simulation.nodes(graph.nodes).on("tick", ticked);
+      simulation.force("link").links(graph.links);
+
+      for (var i = 0; i < 2000; ++i) simulation.tick();
+      simulation.stop();
+
+      // updatePos()
+
+      //  add a collision force that is proportional to the radius of the nodes;
+
       simulation.force(
         "collision",
         d3.forceCollide().radius(d => nodeLength(d))
       );
-    }
 
-    simulation.nodes(graph.nodes).on("tick", ticked);
-    simulation.force("link").links(graph.links);
+  
 
-    if (config.fixedPositions) {
-      for (var i = 0; i < 200; ++i) simulation.tick();
-      simulation.stop();
-
-      //  add a collision force that is proportional to the radius of the nodes;
-
-      if (config.fixedPositions) {
         simulation.alphaTarget(0.1).restart();
-        for (var i = 0; i < 1000; ++i) simulation.tick();
-        simulation.stop();
-      }
+        // for (var i = 0; i < 1000; ++i) simulation.tick();
+        // simulation.stop();
+
+      // if (config.fixedPositions) {
+  
+      // }
     }
   }
 
-  console.log("fixed positions are ", config.fixedPositions);
+  // console.log("fixed positions are ", config.fixedPositions);
 
   function arcPath(leftHand, d) {
     var x1 = leftHand ? d.source.x : d.target.x,
@@ -1392,9 +1209,7 @@ function updateVis() {
   }
 
   function ticked() {
-    if (!config.fixedPositions) {
       updatePos();
-    }
   }
 
   function updatePos() {
@@ -1458,174 +1273,15 @@ function drawVis() {
         dir_graph = dir_graph_from_file;
         undir_graph = undir_graph_from_file;
 
+        //save positions to revert to later if needed;
+        dir_graph.nodes.map(n=>{n.savedX = n.fx, n.savedY = n.fy})
+        undir_graph.nodes.map(n=>{n.savedX = n.fx, n.savedY = n.fy})
+
+
         updateVis();
 
         setPanelValuesFromFile(config, dir_graph || undir_graph);
       });
     });
   });
-}
-
-function boot(error, data) {
-  //console.log(data)
-  if (DATASET === "exoplanets") {
-    data = data.children;
-  }
-
-  data.forEach(type);
-  color.domain(
-    d3.extent(data, function(d) {
-      return d[COLOR_ATTR] / COLOR_DIVIDER;
-    })
-  );
-  color.domain([Math.pow(13000, 2), Math.pow(65000, 2)]);
-
-  // console.log(
-  //   d3.extent(data, function(d) {
-  //     return Math.sqrt(d[COLOR_ATTR] / COLOR_DIVIDER);
-  //   })
-  // );
-  //console.log(d3.extent(data, function(d) { return d[RADIUS_ATTR]; }))
-
-  //var root = loadExoplanetStructure(data);
-  var root = LOAD_FUNC(data);
-  drawVis();
-  loadSearchBox();
-}
-
-// Search box
-function enableSearch() {
-  //$(document).ready(function () {
-
-  var searchInput = $("#search-input");
-
-  // Get options for auto complete
-  function getSearchOptions(data) {
-    var optionsData = [];
-    if (data && data.length > 0) {
-      for (var i = 0; i < data.length; i++) {
-        optionsData.push(data[i][NAME_ATTR]);
-      }
-      console.log(optionsData.length);
-    }
-    initSearchBox(optionsData);
-  }
-  getSearchOptions(searchData);
-
-  // Init search box with auto complete
-  function initSearchBox(options) {
-    // Invoke auto complete for search box
-    var searchOptions = {
-      data: options,
-      list: {
-        maxNumberOfElments: 0,
-        match: { enabled: true },
-        onChooseEvent: function() {
-          searchChooseItem();
-        }
-      }
-    };
-    searchInput.easyAutocomplete(searchOptions);
-
-    // Start searching when typing in search box
-    searchInput.on("input", function(e) {
-      e.preventDefault();
-      searchChooseItem();
-    });
-  }
-
-  // Search choosen item
-  function searchChooseItem() {
-    searchFilter(searchInput.val().toLowerCase());
-  }
-
-  function recordPreviousSearch() {
-    if (currentSearch != null) {
-      currentSearch.end = Date.now();
-      currentSearch.duration = currentSearch.end - currentSearch.start;
-      userData.searchLog.push(currentSearch);
-      currentSearch = null;
-
-      //debug log
-      //console.log("searchLog=")
-      //console.log(userData.searchLog)
-    }
-  }
-
-  function searchFilter(value) {
-    // Record user data for search
-    // Record the previous search if any, before reset
-    recordPreviousSearch();
-
-    // Reset and return if empty
-    if (value === "") {
-      resetSearch();
-      return;
-    }
-
-    // Init the current search, after reset
-    currentSearch = {
-      id: userData.searchLog.length, // index for the next
-      content: value,
-      start: Date.now(),
-      visited: 0
-    };
-
-    // Start Filtering
-    // Fade all lines and boxes
-    d3.selectAll(".bubbles").classed("search-selected", false);
-    $("#vis").addClass("search-active");
-
-    // Make contains case-insensitive
-    $.expr[":"].contains = $.expr.createPseudo(function(arg) {
-      return function(elem) {
-        return (
-          $(elem)
-            .text()
-            .toUpperCase()
-            .indexOf(arg.toUpperCase()) >= 0
-        );
-      };
-    });
-
-    // Unfade selected elements
-    //console.log(value)
-    var filteredBubbles = d3.selectAll(".bubbles").filter(function(d) {
-      return (
-        d.data[NAME_ATTR] && d.data[NAME_ATTR].toLowerCase().includes(value)
-      );
-    });
-
-    if (value && filteredBubbles) {
-      // Unfade
-      filteredBubbles.classed("search-selected", true);
-      // Record current search
-      currentSearch.selectedCharts = filteredBubbles.size();
-      //console.log(filteredBubbles)
-      //console.log("searching for: "+currentSearch.content+" #="+currentSearch.selectedCharts)
-    }
-  }
-
-  // Click button to reset
-  $("#search-reset").click(function() {
-    resetSearch();
-  });
-
-  // Press ESC to reset
-  $(document).keydown(function(e) {
-    if (e.which === 27)
-      //ESC
-      resetSearch();
-  });
-
-  function resetSearch() {
-    // Reset faded elemnets
-    $("#vis").removeClass("search-active");
-    $(".bubbles").removeClass("search-selected");
-    // Reset search
-    recordPreviousSearch();
-    currentSearch = null;
-    // Clear search input box
-    searchInput.val("");
-  }
 }
