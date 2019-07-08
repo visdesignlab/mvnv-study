@@ -77,10 +77,12 @@ function setPanelValuesFromFile(config, graph) {
   d3.select("#fontSlider").on("input", function() {
     d3.select("#fontSliderValue").text(this.value);
 
-    config.style.labelSize = this.value;
-    d3.selectAll('.label')
-    .style('font-size', this.value);
+    config.style.labelSize = eval(this.value);
 
+  });
+
+  d3.select("#fontSlider").on("change", function() {
+    updateVis()
   });
 
   d3.select('#markerSize')
@@ -88,8 +90,8 @@ function setPanelValuesFromFile(config, graph) {
 
   d3.select("#markerSize").on("change", function() {
     let markerSize = this.value.split(',');
-    config.style.nodeWidth =markerSize[0];
-    config.style.nodeHeight = markerSize[1];
+    config.style.nodeWidth =eval(markerSize[0]);
+    config.style.nodeHeight = eval(markerSize[1]);
     updateVis(); 
   });
 
@@ -162,15 +164,20 @@ function setPanelValuesFromFile(config, graph) {
       configAttr: "edgeWidth" 
     },
      {
-       'name':'nodeBarsSelect',
-       'type':typeof(2),
-       'configAttr':'bars'
+       name:'nodeBarsSelect',
+       type:typeof(2),
+       configAttr:'bars'
       },
     { 
       name: "nodeCirclesSelect",
        type: typeof "string", 
        configAttr: "circles"
-       }
+       },
+    { 
+      name: "nodeQuantAttributes",
+      type: typeof(2), 
+      configAttr: undefined
+    }
   ];
 
   menuItems.map(m => {
@@ -190,14 +197,9 @@ function setPanelValuesFromFile(config, graph) {
       );
     });
 
-    if (m.configAttr === 'bars'){
+    let barAttrs = config.attr.bars.map(b=>b.attr)
 
-      let barAttrs = {};
-      
-      config.attr[m.configAttr].map(s=>{
-        s.attrs.map(a=>
-          barAttrs[a] = s.domain)
-      });
+    if (m.configAttr === 'bars'){
 
       let list = item.select("ul");
 
@@ -220,12 +222,15 @@ function setPanelValuesFromFile(config, graph) {
       fieldsEnter.append('div')
       .attr('class','control is-inline-flex')
       .append('input')
-      .attr('class','input')
+      .attr('class','input domain')
       .attr('type','text')
       .attr('placeholder','[min,max]')
-      .property('value',d=>{
-        
-        return Object.keys(barAttrs).includes(d) ? (barAttrs[d]? '[' + barAttrs[d] + ']' : '[ ' + d3.extent(graph.nodes, n => n[d]).join(',') + ']') : ''
+      .property('value',d=>{ 
+
+        let findAttr = config.attr.bars.find(obj=>obj.attr === d)
+        return findAttr ? (findAttr.domain ?  
+          '[' + findAttr.domain + ']' :
+           '[ ' + d3.extent(graph.nodes, n => n[d]).join(',') + ']') : ''
       })
 
       fields.exit().remove();
@@ -233,15 +238,41 @@ function setPanelValuesFromFile(config, graph) {
       fields = fieldsEnter.merge(fields);
 
       fields.select('.is-checkradio')
-      .attr('id',d=>d+'_checkbox')
-      .attr('name',d=>d+'_checkbox')
+      .attr('id',d=>d+'-checkbox')
+      .attr('name',d=>d+'-checkbox')
       .property('checked',d=>{
-        return Object.keys(barAttrs).includes(d) ? 'checked' : false
+        return barAttrs.includes(d) ? 'checked' : false
+      })
+      .on("change",function(d){
+        
+        let includeAttr = d3.select(this).property('checked');
+        let existingBarAttrs = config.attr.bars;
+        if (includeAttr){
+          
+            let newDomain = '[ ' + d3.extent(graph.nodes, n => n[d]).join(',') + ']'
+            d3.select('#' + d+'-domain').property('value',newDomain);
+
+            let newAttr = {attr:d,domain:eval(newDomain)};
+            config.attr.bars.push(newAttr);
+            updateVis();
+
+            let attrDomain = eval(d3.select('#' + d+'-domain').property('value'));
+          
+        } else {
+          config.attr.bars=config.attr.bars.filter(el=>el.attr !== d);
+          updateVis();
+        }
       })
 
       fields.select('label')
-      .attr('for',d=>d+'_checkbox')
+      .attr('id',d=>d+'-label')
+      .attr('for',d=>d+'-checkbox')
       .text(d=>d)
+
+      fields
+      .select('.domain')
+      .attr('id',d=>d+'-domain');
+
     } else {
 
       d3.select('#' + m.name)
@@ -262,8 +293,8 @@ function setPanelValuesFromFile(config, graph) {
 
     item
       .selectAll("option")
-      .filter(opt => {
-        return config.attr[m.configAttr] === opt;
+      .filter((opt,i) => {
+        return m.configAttr == undefined && i === 0 || config.attr[m.configAttr] === opt;
       })
       .property("selected", true);
 
@@ -281,7 +312,7 @@ function setPanelValuesFromFile(config, graph) {
     if (m.type !== typeof "string" && m.configAttr !== "bars") {
       let newSvg = item.append("svg").attr("id", m.name + "_histogram");
 
-      let attr = config.attr[m.configAttr].attr ;
+      let attr = m.configAttr ? config.attr[m.configAttr].attr : config.attr.bars[0].attr ;
       createHist(attr, newSvg, isNode ? graph.nodes : graph.links);
     }
 
@@ -289,6 +320,7 @@ function setPanelValuesFromFile(config, graph) {
     }
     
   });
+
 
   d3.select('#nodeFillSelect')
   .select("select")
@@ -314,6 +346,20 @@ function setPanelValuesFromFile(config, graph) {
   .on("input",function(){
     config.attr.drawBars = d3.select(this).property('checked');
   
+  updateVis();
+})
+
+d3.select('#edgeWidthScale')
+.on("change",function(){
+  config.attr.edgeWidth.domain = eval(this.value);
+
+  updateVis();
+})
+
+d3.select('#edgeWidthScale')
+.on("change",function(){
+  config.attr.edgeWidth.domain = eval(this.value);
+
   updateVis();
 })
 
@@ -495,7 +541,7 @@ function createHist(attrName, svgSelection, data, categorical = false) {
 
   text = textEnter.merge(text);
 
-  text.attr("x", x).text(d3.format(".2s"));
+  text.attr("x", x).text(d3.format("2.0s"));
 }
 function updateVis() {
   //Helper functions to compute edge arcs
@@ -530,9 +576,9 @@ function updateVis() {
   let graph = config.isDirected ? dir_graph : undir_graph;
 
 
-  console.log(
-    "rendering " + (config.isDirected ? "directed" : "undirected") + " graph"
-  );
+  // console.log(
+  //   "rendering " + (config.isDirected ? "directed" : "undirected") + " graph"
+  // );
 
   console.log("network size is ", graph.nodes.length, graph.links.length);
   // let nodeMarkerLength = 60;
@@ -710,27 +756,19 @@ function updateVis() {
   //object to store scales as a function of attr name;
   let scales = {};
 
-  let barPadding = nodeMarkerLength * 0.1;
+  let barPadding = 3;
 
   scaleObjects.map((s, i) => {
-    //find autoExtent from data;
-    let dataExtent = s.attrs.reduce(
-      (extent, attr) => {
-        return d3.extent(extent.concat(graph.nodes.map(n => n[attr])));
-      },
-      [0]
-    );
 
     let scale = d3
       .scaleLinear()
-      .domain(s.domain || dataExtent)
+      .domain(s.domain || d3.extent(graph.nodes.map(n => n[s.attr])))
       .range([0, nodeMarkerHeight - 2 * barPadding])
       .clamp(true);
 
     //save scale and color to use with that attribute bar
-    s.attrs.map((attr, ii) => {
-      scales[attr] = { scale, fill: config.attr.barColors[i], position: ii };
-    });
+    scales[s.attr] = { scale, fill: config.attr.barColors[i], position:0 };
+
   });
 
   //Draw Links
@@ -759,13 +797,13 @@ function updateVis() {
 
   link = linkEnter.merge(link);
 
-  console.log(
-    "link elements: ",
-    d3
-      .select(".links")
-      .selectAll("path")
-      .size()
-  );
+  // console.log(
+  //   "link elements: ",
+  //   d3
+  //     .select(".links")
+  //     .selectAll("path")
+  //     .size()
+  // );
   link
     .select("path")
     .style("stroke-width", edgeWidth)
@@ -826,6 +864,7 @@ function updateVis() {
 
   node
     .select("text")
+    .style('font-size',config.style.labelSize)
     .text(d => d[config.attr.labelAttr])
     .attr("y", d => (config.attr.drawBars ? -nodeHeight(d) * 0.5 - 4 : ".5em"))
     .attr("dx", function(d) {
@@ -836,14 +875,13 @@ function updateVis() {
           .getBBox().width / 2
       );
     })
-    .style('font-size',config.style.labelSize)
 
   node
     .select(".labelBackground")
     .attr("width", function(d) {
       let textWidth = d3
         .select(d3.select(this).node().parentNode)
-        .select("text")
+        .select(".label")
         .node()
         .getBBox().width;
 
@@ -877,7 +915,7 @@ function updateVis() {
 
   let drawCircles = Object.keys(config.attr.circles).length > 0;
   let circleRegion = drawCircles ? nodeMarkerLength * 0.4 : 0;
-  let circleRadius = drawCircles ? nodeMarkerHeight * 0.1 : 0;
+  let circleRadius = drawCircles ? nodeMarkerHeight * 0.2 : 0;
   let circlePadding = drawCircles ? 5 : 0;
 
   let barAttrs = config.attr.drawBars ? Object.keys(scales) : [];
@@ -912,18 +950,20 @@ function updateVis() {
   barsEnter
     .append("rect")
     .attr("class", "frame")
-    .attr("width", barWidth)
     .append("title");
 
   barsEnter
     .append("rect")
     .attr("class", "bar")
-    .attr("width", barWidth)
     .append("title");
 
   bars.exit().remove();
 
   bars = barsEnter.merge(bars);
+
+  bars.selectAll('rect')
+  .attr("width", barWidth)
+
 
   bars.selectAll("title").text(function(d) {
     return d.attr + " : " + d.data;
@@ -954,6 +994,17 @@ function updateVis() {
     )
     .style("fill", d => scales[d.attr].fill);
 
+    d3.select('#nodeBarsSelect').selectAll('label')
+    .style('color','#a6a6a6')
+    .style('font-weight','regular');
+
+    //color the text from the panel accordingly 
+    barAttrs.map(attr=>{
+      d3.select('#' + attr+'-label')
+      .style('color',scales[attr].fill)
+      .style('font-weight','bold');
+    })
+
   let circleAttrs = config.attr.drawBars ? config.attr.circles : [];
 
   let circleYScale = d3
@@ -969,7 +1020,7 @@ function updateVis() {
         //compute color scale for this attr from config file
         let colorFillScale = d3
           .scaleOrdinal()
-          .domain(d3.extent(graph.nodes.map(n => n[obj.attr])))
+          .domain(graph.nodes.map(n => n[obj.attr]).filter((value,index,self)=>self.indexOf(value)=== index))
           .range(obj.colors);
 
         return { data: d[obj.attr], attr: obj.attr, scale: colorFillScale };
@@ -981,13 +1032,13 @@ function updateVis() {
     .append("circle")
     .attr("class", "categorical")
     .attr("r", circleRadius)
-    .attr("cx", circleRegion);
 
   circles.exit().remove();
 
   circles = circleEnter.merge(circles);
 
   circles
+  .attr("cx", circleRegion)
     .attr("cy", (d, i) => circleYScale(i))
     .style("fill", d => d.scale(d.data));
 
@@ -1277,10 +1328,10 @@ function drawVis() {
         dir_graph.nodes.map(n=>{n.savedX = n.fx, n.savedY = n.fy})
         undir_graph.nodes.map(n=>{n.savedX = n.fx, n.savedY = n.fy})
 
+        setPanelValuesFromFile(config, dir_graph || undir_graph);
 
         updateVis();
 
-        setPanelValuesFromFile(config, dir_graph || undir_graph);
       });
     });
   });
