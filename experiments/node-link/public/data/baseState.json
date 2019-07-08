@@ -49,7 +49,7 @@
     "drawBars": true,
     "edgeColor": "type",
     "edgeWidth": {"attr":"count","domain":[1,3]},
-    "labelAttr": "screen_name",
+    "labelAttr": "name",
     "noEdgeColor": "white",
     "noNodeFill": "white",
     "noNodeStroke": "white",
@@ -81,13 +81,16 @@
       "#88419d"
     ],
     "nodeColors": [
-      "#a88e69",
-      "#68aa73"
+      "#1b9e77",
+      "#d95f02",
+      "#7570b3",
+      "#e7298a"    
     ],
     "nodeHeight": 30,
     "nodeIsRect": true,
-    "nodeWidth": 50
+    "nodeWidth": 50,
+    "labelSize":14
   },
-  "undirectedGraph": "../public/data/network_small_undirected.json",
+  "undirectedGraph": "../public/data/network_small_undirected_layout1.json",
   "vis": "NL"
 }

@@ -57,7 +57,7 @@
     "16557883": {
         "screen_name": "ngehlenborg",
         "type": "person",
-        "continent":"United States"
+        "continent":"North America"
     },
     "18325271": {
         "screen_name": "yelperalp",
@@ -231,7 +231,8 @@
     },
     "270431596": {
         "screen_name": "klaus_lml",
-        "type": "person"
+        "type": "person",
+        "continent":"Europe"
     },
     "318046158": {
         "screen_name": "kristw",
