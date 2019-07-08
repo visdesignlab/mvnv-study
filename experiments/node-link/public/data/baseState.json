@@ -61,7 +61,11 @@
     "selectedNodes": "stroke",
     "showNodeLabels": "always"
   },
-  "directedGraph": "../public/data/network_small_directed_layout1.json",
+  "graph":{
+    "small":"../public/data/network_small",
+    "medium":"../public/data/network_medium",
+    "large":"../public/data/network_large"
+  } ,
   "fixedPositions": true,
   "interaction": {
     "draggableNodes": true,
@@ -92,6 +96,5 @@
     "nodeWidth": 50,
     "labelSize":14
   },
-  "undirectedGraph": "../public/data/network_small_undirected_layout1.json",
-  "vis": "NL"
+    "vis": "NL"
 }
