@@ -51,6 +51,14 @@ function loadVis(id) {
     updateVis();
   });
 
+    //Set up callbacks for the config panel on the left.
+    d3.selectAll("input[name='graphSize']").on("change", function() {
+      loadGraphs(this.value);
+    });
+
+  
+
+
   d3.selectAll("input[name='fixedPositions']").on("change", function() {
     config.fixedPositions = eval(this.value);
     updateVis();
@@ -348,7 +356,16 @@ function setPanelValuesFromFile(config, graph) {
       //set selected element according to config file;
 
       if (m.type !== typeof "string" && m.configAttr !== "bars") {
-        let newSvg = item.append("svg").attr("id", m.name + "_histogram");
+        let newSvg = item.selectAll('svg').data([0]);
+        
+        let svgEnter = newSvg.enter().append("svg");
+        
+        newSvg = svgEnter.merge(newSvg);
+
+        console.log('grabbed', newSvg.attr('id'));
+        newSvg.attr("id", m.name + "_histogram");
+
+       console.log('set to', newSvg.attr('id'));
 
         let attr = m.configAttr
           ? config.attr[m.configAttr].attr
@@ -821,7 +838,7 @@ function updateVis() {
       let domainKey = attrDomain.join('-')
       scaleColors[domainKey]='';
 
-      console.log('domainKey is ', domainKey)
+      // console.log('domainKey is ', domainKey)
 
     //save scale and color to use with that attribute bar
     scales[s.attr] = { scale, domainKey, position: 0 };
@@ -1245,8 +1262,6 @@ function updateVis() {
 
     // }
 
-    simulation.nodes(graph.nodes).on("tick", ticked);
-    simulation.force("link").links(graph.links);
 
 
     d3.select("#stop-simulation").on("click", () => {
@@ -1266,6 +1281,10 @@ function updateVis() {
 
 
     if (!config.fixedPositions) {
+
+      simulation.nodes(graph.nodes).on("tick", ticked);
+      simulation.force("link").links(graph.links);
+  
 
       for (var i = 0; i < 2000; ++i) simulation.tick();
       simulation.stop();
@@ -1396,25 +1415,31 @@ function drawVis() {
   //read in configuration file;
   d3.json("../public/data/baseState.json", function(fileConfig) {
     config = fileConfig;
-    //load undirected graph specified in configuration file;
-    d3.json(config.undirectedGraph, function(undir_graph_from_file) {
-      //load directed graph specified in configuration file;
-      d3.json(config.directedGraph, function(dir_graph_from_file) {
-        dir_graph = dir_graph_from_file;
-        undir_graph = undir_graph_from_file;
-
-        //save positions to revert to later if needed;
-        dir_graph.nodes.map(n => {
-          (n.savedX = n.fx), (n.savedY = n.fy);
-        });
-        undir_graph.nodes.map(n => {
-          (n.savedX = n.fx), (n.savedY = n.fy);
-        });
-
-        setPanelValuesFromFile(config, dir_graph || undir_graph);
-
-        updateVis();
-      });
-    });
+    loadGraphs('large');
   });
+}
+
+function loadGraphs(size){
+
+      //load undirected graph specified in configuration file;
+      d3.json(config.graph[size] + '_undirected.json', function(undir_graph_from_file) {
+        //load directed graph specified in configuration file;
+        d3.json(config.graph[size] + '_directed.json', function(dir_graph_from_file) {
+          dir_graph = dir_graph_from_file;
+          undir_graph = undir_graph_from_file;
+  
+          //save positions to revert to later if needed;
+          dir_graph.nodes.map(n => {
+            (n.savedX = n.fx), (n.savedY = n.fy);
+          });
+          undir_graph.nodes.map(n => {
+            (n.savedX = n.fx), (n.savedY = n.fy);
+          });
+  
+          setPanelValuesFromFile(config, dir_graph || undir_graph);
+  
+          updateVis();
+        });
+      });
+
 }

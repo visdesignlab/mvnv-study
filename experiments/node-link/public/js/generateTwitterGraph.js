@@ -7,10 +7,10 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) 
 
         d3.json("../public/data/userInfo.json", function(users) {
 
-          let generateDirectedNetwork = false;
+          let generateDirectedNetwork = true;
 
           let numNodes = 0;
-          let graphSize = 83;
+          let graphSize = 80;
 
           let graphDone = false;
 
