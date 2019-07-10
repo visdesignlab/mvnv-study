@@ -28,6 +28,7 @@
 <script src="js/libs/queue.min.js" type="text/javascript"></script>
 <script src="js/libs/underscore-min.js" type="text/javascript"></script>
 <script src="js/libs/extData.js" type="text/javascript"></script>
+
 <!-- <script src="js/generateTwitterGraph.js" type="text/javascript"></script> -->
 <script src="js/main_nodeLink.js" type="text/javascript"></script>
 <!-- Libs for autocomplete -->
@@ -42,6 +43,9 @@
             Task Instructions go here
         </div>
     </div> -->
+
+    <div id="hit">
+
 
     <div class="columns">
         <div class="column is-narrow">
@@ -137,9 +141,9 @@
                         Layout Settings
                     </p> -->
                     <ul class="menu-list">
-
-                        <li>
-                            <!-- Set config.isDirected to true/false -->
+                        <!-- Set config.isDirected to true/false -->
+                        <!-- <li>
+                            
                             <a>Positions</a>
                             <ul>
                                 <div class="control">
@@ -157,7 +161,7 @@
                             </ul>
 
 
-                        </li>
+                        </li> -->
 
                         <br/>
 
@@ -274,17 +278,37 @@
                         <!-- <a class="button is-light" id="refreshVis">Update Node-Link Diagram</a> -->
                         <br />
 
-                        <a class="button is-light" id="exportConfig">Export Configuration to Console</a>
+                        <a class="button is-light" id="exportConfig">Export Config</a>
 
             </aside>
         </div>
 
         <div class="column">
 
-            <div>
-                Task Instructions go here
-            </div>
-
+            <div id="taskArea">
+                    <div class="card">
+                            <header class="card-header">
+                              <p class="card-header-title">
+                                Select the person with the highest number of followers.
+                              </p>
+                              <a href="#" class="card-header-icon" aria-label="more options">
+                                <span class="icon">
+                                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                </span>
+                              </a>
+                            </header>
+                            <div class="card-content">
+                              <div class="content">
+                                More detailed Task Instructions.
+                                Click the 'Submit Answer' button below once you are satisfied with your answer
+                              </div>
+                            </div>
+                            <footer class="card-footer">
+                              <a href="#" id ="clear-selection" class="card-footer-item">Clear Selections</a>
+                              <a href="#" id = "finished" class="card-footer-item">Submit Answer</a>
+                            </footer>
+                          </div>            </div>
+<!-- 
             <div id="search-box">
                 <span><strong>Search: </strong></span>
                 <input id="search-input" type="text" placeholder="Search for person..." value="" style="width:300px">
@@ -294,26 +318,16 @@
                     <img src="img/legend.png" style="width:200px">
                 </figure>
 
-                <!-- <img src="img/legend.png" alt="legend" height="150" ALIGN='right'> -->
+            </div> -->
 
-            </div>
-
-            <div style="padding-top: 50px">
+            <div style="padding-top: 30px; padding-bottom: 10px">
 
                 <button id="stop-simulation">Stop Simulation</button>
                 <button id="start-simulation">Restart Simulation</button>
                 <button id="release-nodes">Release Pinned Nodes</button>
-
-
+                <button id="exportGraph">Export Graph to Console</button>
             </div>
 
-           
-
-                    <div style="padding-top: 10px">
-                            <button id="clear-selection">Clear Selections</button>
-                            <button id="exportGraph">Export Graph to Console</button>
-
-                        </div>
 
             <div id="vis"></div>
 
@@ -326,63 +340,6 @@
         </div>
 
     </div>
-
-
-
-
-    <div id="hit" class="container">
-
-        <!-- <h2 style="padding-left: 20px">Single Node Tasks </h2>
-
-        <h3 style="padding-left: 20px">
-            Find the node with the twitter handle '@dataviz'
-         </h3>
-
-         <h3 style="padding-left: 20px">
-            Find all nodes that represent people in this network 
-         </h3>
-
-         <h3 style="padding-left: 20px">
-            Find all nodes that have more friends (people they follow) than followers.
-         </h3>
-
-         <h3 style="padding-left: 20px">
-            Have @dataviz and @eagereyes ever retweeted each other?
-         </h3>
-
-         <h3 style="padding-left: 20px">
-            Find all edges in this network of type 'mentions'  [with count > 10]
-         </h3>
-
-         <h3 style="padding-left: 20px">
-            How many followers does @eagereyes have? 
-         </h3>
-
-         <h3 style="padding-left: 20px">
-            How many times have @dataviz and @eagereyes retweeted each other 
-         </h3> -->
-
-        <!-- <div id="lead" style="padding-left: 20px">
-
-
-            <p id='taskDescription'></p>
-
-            <p><strong>How to Interact:</strong></p>
-            <p>>> Mouseover nodes to see people's names</p>
-            <p>>> Click on a person to select your answer (you can change your answer as needed before submitting this task)</p>
-            <div class="foresightTraining">
-                <p>>> Use the search box to find and highlight a person.</p>
-            </div>
-
-        </div> -->
-
-        </br>
-
-
-
-
-
-
     </div>
     <!--! end of #container -->
 

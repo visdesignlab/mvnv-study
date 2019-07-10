@@ -7,9 +7,9 @@
 
 //specify the task including expected number of answers
 task: {
-  prompt:Select the node that has the highest number of followers. 
+  prompt:Find 3 nodes that are people and folow more people than follow them. 
   booleanAnswer:false
-  multipleNodes:false
+  multipleNodes:true
 }
   
   //Specify only attributes that have changed from baseState.json

@@ -78,6 +78,7 @@
     "onNodeClick": "highlightNeighbors"
   },
   "isDirected": true,
+  "multiEdgeTypes": false,
   "state": {
     "selectedNodes": []
   },
