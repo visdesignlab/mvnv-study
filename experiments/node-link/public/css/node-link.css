@@ -144,7 +144,7 @@
         stroke-width: 6px;
     }
 
-    #finished{
+    #finished, #next, #previous{
         margin:50px 0px 0px 0px;
         padding:10px;
         background-color:rgb(3, 93, 158);
@@ -152,6 +152,9 @@
         font-size:20px;
         font-weight:bold;
     }
+
+    .button.clicked{
+        color:rgb(217, 99, 3) !important;    }
 
     .button.condition{
         margin:0px 0px 0px 10px;

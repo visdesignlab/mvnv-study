@@ -9,11 +9,15 @@
 //Global config and graph variables;
 //Config is set up in input file and the potentially modified  by user changes to the panel.
 //dir and undir graphs store refs to the two flavors of a graph and that can be toggled by the user in the panel
-var config;
-var taskConfigs={};
+
 var dir_graph;
 var undir_graph;
 var graph;
+
+var taskNum = 0;
+var config;
+var allTaskConfigs;
+var taskConfigs={};
 
 ///////////////////////////For Experiment End/////////////////////////////
 var colorRange = ["#5e3c99", "#b2abd2", "#fdb863", "#e66101"];
@@ -320,19 +324,21 @@ function setPanelValuesFromFile(config, graph) {
           .append("input")
           .attr("class", "input domain")
           .attr("type", "text")
-          .attr("placeholder", "[min,max]")
-          .property("value", d => {
-            let findAttr = config.attr.bars.find(obj => obj.attr === d);
-            return findAttr
-              ? findAttr.domain
-                ? "[" + findAttr.domain + "]"
-                : "[ " + d3.extent(graph.nodes, n => n[d]).join(",") + "]"
-              : "";
-          });
+          .attr("placeholder", "[min,max]");
+          
   
         fields.exit().remove();
   
         fields = fieldsEnter.merge(fields);
+
+        fields.select('.domain').property("value", d => {
+          let findAttr = config.attr.bars.find(obj => obj.attr === d);
+          return findAttr
+            ? findAttr.domain
+              ? "[" + findAttr.domain + "]"
+              : "[ " + d3.extent(graph.nodes, n => n[d]).join(",") + "]"
+            : "";
+        });
   
         fields
           .select(".is-checkradio")
@@ -1266,7 +1272,7 @@ node.call(
     };
 
     // see if there is at least one node 'clicked'
-    let hasUserSelection = d3.selectAll(".clicked").size() > 0;
+    let hasUserSelection = d3.selectAll(".node.clicked").size() > 0;
 
     //set the class of everything to 'muted', except for the selected node and it's neighbors;
     d3.select(".nodes")
@@ -1491,11 +1497,19 @@ function drawVis() {
   //read in configuration file;
   d3.json("../public/data/task_config.json", function(taskConfig) {
     //load in the three configs first; 
-    let task = taskConfig.tasks[0];
+    allTaskConfigs = taskConfig;
+
+    let task = allTaskConfigs.tasks[taskNum];
+
+    console.log(taskNum,task)
+
+    d3.select('#taskArea').select('.card-header-title').text(task.prompt);
     
     d3.json("../public/task_configs/"+ task.id + "_config1.json", function(
       config1
     ) {
+      console.log('loaded in config1', config1);
+
       taskConfigs.config1=config1;
 
       d3.json("../public/task_configs/"+ task.id + "_config2.json", function(
@@ -1510,28 +1524,34 @@ function drawVis() {
           config = JSON.parse(JSON.stringify(taskConfigs.config1));
           loadGraphs(config.graphSize,config.multiEdgeTypes);
 
-          d3.select("#config1").on("click",()=>{
-            config = JSON.parse(JSON.stringify(taskConfigs.config1));
-            updateVis();
-            setPanelValuesFromFile(config,graph)
+          d3.select("#config1").on("click",()=>applyConfig('config1'));
 
-          })
         
-          d3.select("#config2").on("click",()=>{
-            config = JSON.parse(JSON.stringify(taskConfigs.config2));
-            updateVis();
-            setPanelValuesFromFile(config,graph)
+          d3.select("#config2").on("click",()=>applyConfig('config2'));
 
-          })
         
-          d3.select("#config3").on("click",()=>{
-            config = JSON.parse(JSON.stringify(taskConfigs.config3));
+          d3.select("#config3").on("click",()=>applyConfig('config3'));
+
+          let applyConfig = function(configNo){
+            d3.select('#taskArea').selectAll('.button').classed('clicked',false) 
+            d3.select('#' + configNo).classed('clicked',true)
+            config = JSON.parse(JSON.stringify(taskConfigs[configNo]));
             updateVis();
             setPanelValuesFromFile(config,graph)
+          }
 
+          d3.select("#next").on("click",()=>{
+
+            taskNum = d3.min([taskNum+1, 2]);
+            drawVis();
+            applyConfig('config1');
           })
-    
-          // load in config 2
+
+          d3.select("#previous").on("click",()=>{
+            taskNum = d3.max([taskNum-1, 0]);
+            drawVis();
+            applyConfig('config1');
+          })
   
   
         })

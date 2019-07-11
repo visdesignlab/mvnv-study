@@ -10,6 +10,11 @@
       "conditions": "config1,config2,config3",
       "id": "task2",
       "prompt": "Find 3 nodes that are people and folow more people than follow them."
+    },
+    {
+      "conditions": "config1,config2,config3",
+      "id": "task3",
+      "prompt": "Which of the people who has interacted with R.Kosara has tweeted the most?"
     }
   ]
 }
