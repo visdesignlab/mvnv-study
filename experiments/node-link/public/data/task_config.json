@@ -15,6 +15,11 @@
       "conditions": "config1,config2,config3",
       "id": "task3",
       "prompt": "Which of the people who has interacted with R.Kosara has tweeted the most?"
+    },
+    {
+      "conditions": "config1,config2,config3",
+      "id": "task4",
+      "prompt": "What is the approximate combined # of followers of all the people who have interacted/retweeted  Alex Lex?"
     }
   ]
 }

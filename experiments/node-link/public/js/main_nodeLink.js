@@ -1508,7 +1508,7 @@ function drawVis() {
     d3.json("../public/task_configs/"+ task.id + "_config1.json", function(
       config1
     ) {
-      console.log('loaded in config1', config1);
+      // console.log('loaded in config1', config1);
 
       taskConfigs.config1=config1;
 
@@ -1542,7 +1542,7 @@ function drawVis() {
 
           d3.select("#next").on("click",()=>{
 
-            taskNum = d3.min([taskNum+1, 2]);
+            taskNum = d3.min([taskNum+1, allTaskConfigs.tasks.length-1]);
             drawVis();
             applyConfig('config1');
           })
