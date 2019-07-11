@@ -10,6 +10,7 @@
 //Config is set up in input file and the potentially modified  by user changes to the panel.
 //dir and undir graphs store refs to the two flavors of a graph and that can be toggled by the user in the panel
 var config;
+var taskConfigs={};
 var dir_graph;
 var undir_graph;
 
@@ -155,6 +156,10 @@ function loadVis(id) {
     console.log('saving to file')
     saveToFile(config,'config.json')
   });
+
+
+
+
 }
 
 function setPanelValuesFromFile(config, graph) {
@@ -482,6 +487,37 @@ function setPanelValuesFromFile(config, graph) {
       // d3.select('#renderBarsCheckbox').property('checked', false)
       updateVis();
     });
+
+    d3.select("#nodeSizeSelect")
+    .select("select")
+    .on("change", function() {
+      config.attr.nodeSize.attr = this.value;
+      let newDomain = d3.extent(graph.nodes, n => n[config.attr.nodeSize.attr]);
+
+      config.attr.nodeSize.domain = newDomain;
+
+      createHist(
+        this.value,d3.select("#nodeSizeSelect_histogram"), graph.nodes
+      );
+
+      d3.select("#nodeSizeSelect")
+      .select("input")
+      .property("value", () => {
+        return config.attr.nodeSize.domain
+          ? "[" + config.attr.nodeSize.domain + "]"
+          : "[ " +
+              d3
+                .extent(graph.nodes, n => n[config.attr.nodeSize.attr])
+                .join(",") +
+              "]";
+      });
+
+      // config.attr.drawBars = false;
+
+      // d3.select('#renderBarsCheckbox').property('checked', false)
+      updateVis();
+    });
+
 
   d3.select("#renderBarsCheckbox").on("input", function() {
     config.attr.drawBars = d3.select(this).property("checked");
@@ -1191,25 +1227,32 @@ node.call(
 
       let isNode = d.userSelectedNeighbors !== undefined;
 
-      let isNeighbor =
+      //isNeighbor only if config.interaction.selectNeighbors is set to true.
+      let isNeighbor = 
         d === currentData ||
         currentData.neighbors.find(n => n === d.id) ||
-        currentData.edges.find(n => n === d.id);
-
-      if (isNeighbor && isNode) {
-        //add to list of selected neighbors
-        if (!isClicked) {
-          d.userSelectedNeighbors.push(currentData.id);
-        } else {
-          d.userSelectedNeighbors = d.userSelectedNeighbors.filter(
-            n => n !== currentData.id
-          );
+        currentData.edges.find(n => n === d.id)
+      ;
+       
+      if (config.interaction.selectNeighbors){
+        if (isNeighbor && isNode) {
+          //add to list of selected neighbors
+          if (!isClicked) {
+            d.userSelectedNeighbors.push(currentData.id);
+          } else {
+            d.userSelectedNeighbors = d.userSelectedNeighbors.filter(
+              n => n !== currentData.id
+            );
+          }
         }
-      }
+  
+        if (!isNode && isNeighbor) {
+          d.selected = d.source.selected || d.target.selected || !d.selected;
+        }
 
-      if (!isNode && isNeighbor) {
-        d.selected = d.source.selected || d.target.selected || !d.selected;
+
       }
+     
 
       return true;
     };
@@ -1222,13 +1265,13 @@ node.call(
       .selectAll(".nodeGroup")
       .filter(isNeighbor)
       .classed("muted", d => {
-        return hasUserSelection && d.userSelectedNeighbors.length < 1;
+        return config.interaction.selectNeighbors && hasUserSelection && d.userSelectedNeighbors.length < 1;
       });
 
     d3.select(".links")
       .selectAll(".linkGroup")
       .filter(isNeighbor)
-      .classed("muted", d => hasUserSelection && !d.selected);
+      .classed("muted", d => config.interaction.selectNeighbors && hasUserSelection && !d.selected);
 
     node
       .select(".node")
@@ -1438,9 +1481,53 @@ node.call(
 
 function drawVis() {
   //read in configuration file;
-  d3.json("../public/data/baseState.json", function(fileConfig) {
-    config = fileConfig;
-    loadGraphs(config.graphSize,config.multiEdgeTypes);
+  d3.json("../public/data/task_config.json", function(taskConfig) {
+    //load in the three configs first; 
+    let task = taskConfig.tasks[0];
+    
+    d3.json("../public/task_configs/"+ task.id + "_config1.json", function(
+      config1
+    ) {
+      taskConfigs.config1=config1;
+      d3.json("../public/task_configs/"+ task.id + "_config2.json", function(
+        config2
+      ) {
+        taskConfigs.config2=config2;
+
+        d3.json("../public/task_configs/"+ task.id + "_config3.json", function(
+          config3
+        ) {
+          taskConfigs.config3=config3;
+          config = taskConfigs.config1;
+          loadGraphs(config.graphSize,config.multiEdgeTypes);
+
+          d3.select("#config1").on("click",()=>{
+            config = taskConfigs.config1;
+            updateVis();
+          })
+        
+          d3.select("#config2").on("click",()=>{
+            config = taskConfigs.config2;
+
+            updateVis();
+          })
+        
+          d3.select("#config3").on("click",()=>{
+            config = taskConfigs.config3;
+            updateVis();
+          })
+    
+          // load in config 2
+  
+  
+        })
+
+
+      })
+
+     
+    })
+  
   });
 }
 

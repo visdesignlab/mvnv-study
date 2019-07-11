@@ -1,21 +1,17 @@
-// This config file specifies a task and any attributes from baseState.json that should be updated/changed from their default configurations for this trial. 
-
-
-{ 
-  // Type of visualization - can be node-link [NL], adjacency matrix [AM] or juxtaposed [JX]
-  vis: NL 
-
-//specify the task including expected number of answers
-task: {
-  prompt:Find 3 nodes that are people and folow more people than follow them. 
-  booleanAnswer:false
-  multipleNodes:true
-}
-  
-  //Specify only attributes that have changed from baseState.json
-config:
 {
-isDirected:false
-}
-
+  showNotes:true //flag to show notes for us as we develop these
+  tasks:
+  [
+    
+      {
+        conditions: config1,config2,config3
+        id: task1
+        prompt: Select the person with the highest number of followers. 
+      }
+      {
+        conditions: config1,config2,config3
+        id: task2
+        prompt: Find 3 nodes that are people and folow more people than follow them.
+      }
+  ]
 }

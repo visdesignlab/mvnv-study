@@ -75,7 +75,7 @@
     "multiNodeSelection": true,
     "nodeTooltip": false,
     "onEdgeClick": null,
-    "onNodeClick": "highlightNeighbors"
+    "selectNeighbors": false
   },
   "isDirected": false,
   "multiEdgeTypes": false,
