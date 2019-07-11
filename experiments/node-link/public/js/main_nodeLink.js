@@ -22,7 +22,7 @@ var color = d3
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
 var height = 800;
-var width = 1600;
+var width = 1200;
 var size = 1800; //720;
 
 var svg;
@@ -100,9 +100,16 @@ function getSiblingLinks(graph, source, target) {
 
 // Single function to put chart into specified target
 function loadVis(id) {
-  svg = d3
+
+  d3.select("#panelControl").on("click",()=>{
+  let panel = d3.select("#panelDiv");
+  let isVisible = panel.style('display') === 'block';
+    panel.style('display', isVisible ? 'none' : 'block' )
+  }); 
+    svg = d3
     .select("#" + id)
     .append("svg")
+    .attr('id','node-link-svg')
     .attr("width", width) //size + margin.left + margin.right)
     .attr("height", height);
 
@@ -119,8 +126,9 @@ function loadVis(id) {
         return d.id;
       })
     )
-    .force("charge", d3.forceManyBody().strength(-800))
+    .force("charge", d3.forceManyBody()) //.strength(-800))
     .force("center", d3.forceCenter(width / 2, height / 2))
+    
     // .force("y", d3.forceY().y(0));
 
   drawVis();
@@ -1231,6 +1239,10 @@ node.call(
   //set up simulation
   simulation.nodes(graph.nodes).on("tick", ticked);
   simulation.force("link").links(graph.links);
+  simulation.force(
+    "collision",
+    d3.forceCollide().radius(d => nodeLength(d))
+  );
 
 
   if (config.fixedPositions) {
@@ -1246,18 +1258,21 @@ node.call(
       //check to see if there are already saved positions in the file, if not
       //run simulation to get fixed positions; 
 
+      //remove collision force
+      // simulation.force('collision',null);
+
       if(graph.nodes[0].fx === undefined){
         for (var i = 0; i < 2000; ++i) simulation.tick();
         simulation.stop();
 
-              //  add a collision force that is proportional to the radius of the nodes;
-      simulation.force(
-        "collision",
-        d3.forceCollide().radius(d => nodeLength(d))
-      );
+      // //put the collision force back in
+      // simulation.force(
+      //   "collision",
+      //   d3.forceCollide().radius(d => nodeLength(d))
+      // );
 
-      for (var i = 0; i < 1000; ++i) simulation.tick();
-        simulation.stop();
+      // for (var i = 0; i < 1000; ++i) simulation.tick();
+      //   simulation.stop();
 
 
         graph.nodes.map(n => {
@@ -1304,6 +1319,10 @@ node.call(
 
   d3.select("#stop-simulation").on("click", () => {
     simulation.stop();
+    graph.nodes.map(n => {
+      n.savedX = n.x;
+      n.savedY = n.y;
+    });
   });
 
   d3.select("#start-simulation").on("click", () => {

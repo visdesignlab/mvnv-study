@@ -48,7 +48,10 @@
 
 
     <div class="columns">
-        <div class="column is-narrow">
+
+            
+        <div class="column is-narrow" id="panelDiv">
+                
             <aside class="menu">
 
 
@@ -99,6 +102,7 @@
                                 <output id="fontSliderValue">14</output> </div>
                         </ul>
                     </li>
+
 
                     <li id="nodeMarkerSize">
                             <label>Node Size [width,height]</label>
@@ -163,7 +167,23 @@
 
                         </li> -->
 
-                        <br/>
+                        <div style="padding-top: 30px; padding-bottom: 10px">
+
+                              <!-- Force Layout Strength
+                                        <div class="control is-inline-flex">
+                                            <input class="slider" id="fontSlider" step=""50 min="-1000" max="0" value="0"
+                                                type="range">
+                                            <output id="forceLayoutLabel">0</output> </div>
+                             -->
+
+                                <a class="button" id="stop-simulation">Stop Simulation</a>
+                                <a class="button" id="start-simulation">Restart Simulation</a>
+                                <a class="button" id="release-nodes">Release Pinned Nodes</a>
+                                <a class="button" id="exportGraph">Export Graph to Console</a>
+                            </div>
+
+                            
+                            <br/>
 
                         <div class="field">
                                 <input class="is-checkradio is-circle" id="renderBarsCheckbox"
@@ -286,28 +306,29 @@
         <div class="column">
 
             <div id="taskArea">
+
+                    <a class="button" id="panelControl">Hide/Show Control Panel</a>
+                    <a class="button condition is-pulled-right" id="config3">Condition 3</a>
+                    <a class="button condition is-pulled-right" id="config2">Condition 2</a>
+                    <a class="button condition is-pulled-right" id="config1">Condition 1</a>
                     <div class="card">
                             <header class="card-header">
                               <p class="card-header-title">
                                 Select the person with the highest number of followers.
                               </p>
+
+                             
+
                               <a href="#" class="card-header-icon" aria-label="more options">
                                 <span class="icon">
                                   <i class="fas fa-angle-down" aria-hidden="true"></i>
                                 </span>
                               </a>
                             </header>
-                            <div class="card-content">
-                              <div class="content">
-                                More detailed Task Instructions.
-                                Click the 'Submit Answer' button below once you are satisfied with your answer
-                              </div>
-                            </div>
-                            <footer class="card-footer">
-                              <a href="#" id ="clear-selection" class="card-footer-item">Clear Selections</a>
-                              <a href="#" id = "finished" class="card-footer-item">Submit Answer</a>
-                            </footer>
                           </div>            </div>
+
+                          <a class="button is-pulled-right" id="clear-selection">Clear Selected Nodes</a>
+
 <!-- 
             <div id="search-box">
                 <span><strong>Search: </strong></span>
@@ -320,16 +341,14 @@
 
             </div> -->
 
-            <div style="padding-top: 30px; padding-bottom: 10px">
-
-                <button id="stop-simulation">Stop Simulation</button>
-                <button id="start-simulation">Restart Simulation</button>
-                <button id="release-nodes">Release Pinned Nodes</button>
-                <button id="exportGraph">Export Graph to Console</button>
-            </div>
-
+           
 
             <div id="vis"></div>
+
+            <a href="#" id = "finished" class="button is-pulled-right">Submit Answer</a>        
+                
+                
+                </div>
 
             <!-- <div style="display:inline; padding-left: 20px;">
                     <span><strong> Click the following button only once you are satisfied with your answer -> </strong></span>
