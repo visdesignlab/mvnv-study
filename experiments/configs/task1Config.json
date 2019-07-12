@@ -13,7 +13,6 @@
         "selectNeighbors": false,            
         "nodeHeight": 30,
         "nodeWidth": 60,
-        "nodeIsRect": true,
         "labelSize": 14,
         "labelAttr": "shortName",
         "nodeFillAttr": "type",

@@ -162,21 +162,27 @@ function loadVis(id) {
 
 function setPanelValuesFromFile() {
 
-  console.log('graph in svfp are ', graph)
-  //Create domain values from data extent for attribute scales if any are missing; 
-  Object.keys(config.attributeScales.node).map(attr=>{
-    if (!config.attributeScales.node[attr].domain){
-      config.attributeScales.node[attr].domain = d3
-        .extent(graph.nodes, n => n[attr])
-    }
-  });
+   //create internal dictionary of defaultDomains for each attribute;
+  let defaultDomains = {};
 
-  Object.keys(config.attributeScales.edge).map(attr=>{
-    if (!config.attributeScales.edge[attr].domain){
-      config.attributeScales.edge[attr].domain = d3
-        .extent(graph.nodes, n => n[attr])
-    }
-  });
+  [['node','nodes'],['edge','links']].map(node_edge=>{
+    Object.keys(config.attributeScales[node_edge[0]]).map(attr=>{
+      let graphElements = graph[node_edge[1]]
+      //use d3.extent for quantitative attributes
+        if (typeof graphElements[0][attr] === typeof 2){
+          defaultDomains[attr] = d3.extent(graphElements, n => n[attr])
+        } else {
+          //use .filter to find unique categorical values
+          defaultDomains[attr] = graphElements
+            .map(n => n[attr])
+            .filter((value, index, self) => self.indexOf(value) === index)
+        } 
+        
+      //set domainValues in config.attributeScales if there are none
+      config.attributeScales[node_edge[0]][attr].domain =  config.attributeScales[node_edge[0]][attr].domain || defaultDomains[attr] 
+      console.log('domain for ', attr , ' is ', config.attributeScales[node_edge[0]][attr].domain)
+    });
+  })
 
 
   d3.select("#fontSlider").on("input", function() {
@@ -302,7 +308,8 @@ function setPanelValuesFromFile() {
         .property("selected", true);
 
       //  //Set up callbacks for the config panel on the left.
-      selectMenu.on("change", function() {
+      item.select("select").on("change", function() {
+        console.log('value is ', this.value)
         createHist(
           this.value,
           d3.select("#" + m.name + "_histogram"),
@@ -411,22 +418,21 @@ function setPanelValuesFromFile() {
     .select(".domain")
     .attr("id", d => d.attr + "-domain")
     .on("change", function(d) {
-      let newDomain = eval(this.value);
-
-      let activeAttr = config.quantAttrs.find(attr => attr === d.attr);
-
-      if (activeAttr) {
-       config.attrScales.node[d.attr].domain = newDomain;
-      }
+       if (this.value){
+        config.attributeScales.node[d.attr].domain = eval(this.value);
+       } else {
+        // if value is empty, calculate 'default ranges';
+         this.value = [0,2]
+       }
       
+
       updateVis();
 
       //call createHist for that attribute
       d3.select("#nodeQuantAttributes")
         .selectAll("option")
         .filter((opt, i) => {
-          console.log('opt',opt, 'd',d)
-          return d.attr === opt;
+          return d.attr === opt.attr;
         })
         .property("selected", true);
 
@@ -703,8 +709,6 @@ function createHist(attrName, svgSelection, data, categorical = false) {
 }
 function updateVis() {
   //choose which graph to render;
-
-  return
 
   let nodeMarkerLength = config.nodeWidth || 60;
   let nodeMarkerHeight = config.nodeHeight || 35;

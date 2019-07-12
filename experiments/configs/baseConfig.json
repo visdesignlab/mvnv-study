@@ -51,8 +51,8 @@
                 "domain": [1, 11]
             },
             "type": {
-                "domain": ["mentions", "retweets"],
-                "range": ["#427d9b", "#88419d"]
+                "domain": ["mentions", "retweets","combined"],
+                "range": ["#427d9b", "#88419d","rgb(163, 161, 161)"]
             }
         }
     },
