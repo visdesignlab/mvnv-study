@@ -1565,7 +1565,7 @@ class Controller {
 
 
   constructor() {
-    this.configuration = d3.json("config.json");
+    this.configuration = d3.json("configs/config.json");
     this.configuration.then(data => {
       this.configuration = data;
     })
