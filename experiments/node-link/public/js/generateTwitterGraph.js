@@ -1,133 +1,205 @@
+d3.json("../public/twitter_data/Eurovis2019Network.json", function(
+  error,
+  graph
+) {
+  d3.json("../public/twitter_data/Eurovis2019Tweets.json", function(tweets) {
+    tweets = tweets.tweets;
 
-d3.json("../public/twitter_data/Eurovis2019Network.json", function(error,graph) {
+    d3.json("../public/data/network_types.json", function(nodes) {
 
-    d3.json("../public/twitter_data/Eurovis2019Tweets.json", function(tweets) {
+      d3.json("../public/data/userInfo.json", function(users) {
 
-      d3.json("../public/data/network_types.json", function(nodes) {
-        // console.log(graph.nodes);
-      graph.links = [];
+        console.log('calling this?')
+        //iterate through all graph nodes and add more information:
+        graph.nodes.map(node => {
+          let moreInfo = users.find(n => n.screen_name === node.screen_name);
 
-      let newGraph = { nodes: [], links: [] };
+          if (moreInfo) {
+            node.memberSince = new Date(moreInfo.created_at);
+            node.name = moreInfo.name;
+            node.location = moreInfo.location;
 
-      //create edges from tweets.
-
-      tweets = tweets.tweets;
-
-      let createEdge = function(source, target, type) {
-        if (source && target) {
-
-          let link = {
-            source: source.id,
-            target: target.id,
-            type,
-            count: 1,
-            id: source.id + '_' + target.id + '_' + type
-          };
-          let existingLink = newGraph.links.find(
-            l =>
-              ((l.source === link.source && l.target === link.target) 
-              ||(l.source === link.target && l.target === link.source)
-                ) &&
-              l.type === link.type
-          );
-          //either increase the count of an existing link or add a new link
-          if (!existingLink) {
-            link.selected = false;
-            newGraph.links.push(link);
-          } else {
-            existingLink.count = existingLink.count + 1;
+            let today = new Date().getTime();
+            let memberStart = new Date(node.memberSince).getTime();
+            node.memberFor_days = Math.ceil(
+              Math.abs(today - memberStart) / (1000 * 60 * 60 * 24)
+            );
           }
-
-          if (!newGraph.nodes.find(n => n.id === source.id)) {
-            //randomly assign a categorical variable 'type'
-            // source.type = Math.random() > 0.6 ? "institution" : "person";
-            source.type = nodes[source.id].type;
-            if (!existingLink) {
-              source.neighbors = [target.id];
-              source.edges = [link.id];
-            }
-            source.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
-            source.selected = false;
-            newGraph.nodes.push(source);
-          } else {
-            if (!existingLink) {
-              source.neighbors.push(target.id);
-              source.edges.push(link.id);
-            }
-          }
-          if (!newGraph.nodes.find(n => n.id === target.id)) {
-            //randomly assign a categorical variable 'type'
-            // target.type = Math.random() > 0.6 ? "institution" : "person";
-            target.type = nodes[target.id].type;
-            if (!existingLink) {
-              target.neighbors = [source.id];
-              target.edges = [link.id];
-            }
-            target.userSelectedNeighbors=[]; //Keep track of when users have selected it's neighbors to keep it highlighted.
-            target.selected = false;
-            newGraph.nodes.push(target);
-          } else {
-            if (!existingLink) {
-              target.neighbors.push(source.id);
-              target.edges.push(link.id);
-            }
-          }
-        } 
-        
-        // else {
-        //   console.log('something went wrong',source? source.screen_name : '',target? target.screen_name : '')
-        // }
-
-      };
-
-      tweets.map(tweet => {
-
-        // if (tweet.user.screen_name === 'jamesscottbrown'){
-        //   console.log(tweet.text)
-        // }
-
-      
-
-        //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-        if (tweet.retweeted_status) {
-          let source = graph.nodes.find(n => n.id === tweet.user.id) ;
-          let target = graph.nodes.find(
-            n => n.id === tweet.retweeted_status.user.id
-          );
-
-          // console.log(tweet.retweeted_status.user.id === tweet.entities.user_mentions[0].id);
-
-          createEdge(source, target, "retweet");
-        } else {
-          //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
-        tweet.entities.user_mentions.map(mention => {
-          let source = graph.nodes.find(n => n.id === tweet.user.id);
-          let target = graph.nodes.find(n => n.id === mention.id);
-
-          createEdge(source, target, "mentions");
         });
-        }
 
-        
+        let graphSizes = { small: 30, medium: 50, large: 80 };
+        let isDirected;
+        let hasEdgeTypes;
 
-        
+        let graphSize;
+        let graphDone = false; //flag to stop adding to graph
+        let newGraph; 
 
-        //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
-        // if (tweet.in_reply_to_user_id_str) {
-        //   let source = graph.nodes.find(n => n.id === tweet.user.id);
-        //   let target = graph.nodes.find(
-        //     n => n.id === tweet.in_reply_to_user_id
-        //   );
+        // console.log(JSON.stringify(graph.nodes.filter(n=>n.memberSince)[0]));
+        let createEdge = function(source, target, type) {
+          
+          // console.log('calling createEdge')
+          //stop adding edges if reached desired size of graph
+          if (newGraph.nodes.length >= graphSize) {
+            graphDone = true;
+            return;
+          }
 
-        //   createEdge(source, target, "reply");
-        // }
+          if (source && target) {
+            //check to see that either source or target node already exists in the graph ( to ensure a connected graph)
+            let sourceExists =
+              newGraph.nodes.find(n => n.id === source.id) !== undefined;
+            let targetExists =
+              newGraph.nodes.find(n => n.id === target.id) !== undefined;
+
+            if (!sourceExists && !targetExists && newGraph.nodes.length > 0) {
+              //neither source or target already exists in the graph, don't add node to ensure only connected componetns.
+              
+              return;
+            }
+
+            let link = {
+              source: source.id,
+              target: target.id,
+              type:hasEdgeTypes ? type : 'combined', //set type based on flag to combine edges or not;
+              count: 1,
+              id: source.id + "_" + target.id + "_" + type,
+              selected:false
+            };
+
+
+            let existingLink = newGraph.links.find(l => {
+              //check for source and target in that order;
+              let directedCondition = l.source === link.source && l.target === link.target;
+
+              //check for source and target or target and source combination
+              let undirectedCondition = directedCondition || (l.source === link.target && l.target === link.source);
+
+              //Set condition based on directedFlag
+              let condition = isDirected ? directedCondition : undirectedCondition;
+
+              return condition && l.type === link.type 
+            });
+
+            //either increase the count of an existing link or add a new link
+            if (!existingLink) {
+              newGraph.links.push(link);
+            } else {
+              existingLink.count = existingLink.count + 1;
+            }
+
+            //Either add a new node or update neighbors and edge info for existing node;
+            [source,target].map(node=>{
+              let source_node = node;
+              let target_node = node === source ? target : source; 
+
+              if (!newGraph.nodes.find(n => n.id === source_node.id)) {
+                source_node.type = nodes[source_node.id].type;
+                source_node.continent = nodes[source_node.id].continent;
+                //Compute shorter string for name 
+                let nameString = source_node.name.split(' ');
+                if (source_node.type === 'person'){
+                  source_node.shortName = nameString[0][0] + '.' + nameString[nameString.length-1] 
+                }else {
+                  let upperCase = nameString.filter(c=> c === c.toUpperCase());
+                  source_node.shortName = upperCase.length>0 ? upperCase : nameString.reduce((acc,cValue)=>acc+ cValue[0],'');
+                }
+                
+                
+                if (!existingLink) {
+                  source_node.neighbors = [target_node.id];
+                  source_node.edges = [link.id];
+                }
+                source_node.userSelectedNeighbors = []; //Keep track of when users have selected it's neighbors to keep it highlighted.
+                source_node.selected = false;
+                newGraph.nodes.push(source_node);
+                // console.log('pushing ' + source.screen_name + ' that connects to ' + target.screen_name)
+              } else {
+                if (!existingLink) {
+                  source_node.neighbors.push(target_node.id);
+                  source_node.edges.push(link.id);
+                }
+              }
+            })
+          }
+
+        };
+
+        //Iterate through all the combinations and write out a file for each
+        //For each size
+
+        Object.keys(graphSizes).map(size => {
+          
+          graphSize = graphSizes[size];
+          //With each directionality
+          [false,true].map(isDirectedFlag => {
+            //For each edge type
+            [false,true].map(hasEdgeTypesFlag => {
+
+              graph.links = [];
+              newGraph = { nodes: [], links: [] };
+
+              isDirected = isDirectedFlag;
+              hasEdgeTypes = hasEdgeTypesFlag;
+
+              //don't make a directed graph if edgeTypes are not set to true; 
+              if (isDirected && !hasEdgeTypes){
+                // do nothing
+              } else {
+                 // while (!graphDone) {
+                  tweets.map(tweet => {
+                    //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
+                    if (tweet.retweeted_status) {
+                      let source = graph.nodes.find(n => n.id === tweet.user.id);
+                      let target = graph.nodes.find(
+                        n => n.id === tweet.retweeted_status.user.id
+                      );
+  
+                      createEdge(source, target, "retweet");
+                    } else {
+                      //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
+                      tweet.entities.user_mentions.map(mention => {
+                        let source = graph.nodes.find(
+                          n => n.id === tweet.user.id
+                        );
+                        let target = graph.nodes.find(n => n.id === mention.id);
+  
+                        createEdge(source, target, "mentions");
+                      });
+                    }
+                  });
+
+                  let filename = 'network_' + size + '_' + (isDirected ? 'directed' : 'undirected') + '_' + (hasEdgeTypes ? 'multiEdge' : 'singleEdge') + '.json';
+                  saveToFile(newGraph, filename);
+              } 
+            });
+          });
+        });
       });
-
-      console.log(JSON.stringify(newGraph))
-      });
-      
     });
   });
 
 
-      
+  function saveToFile(data, filename){
+        if(!data) {
+            console.error('Console.save: No data')
+            return;
+        }
+
+        if(!filename) filename = 'output.json'
+ 
+        if(typeof data === "object"){
+            data = JSON.stringify(data, undefined, 4)
+        }
+ 
+        var blob = new Blob([data], {type: 'text/json'}),
+            e    = document.createEvent('MouseEvents'),
+            a    = document.createElement('a')
+ 
+        a.download = filename
+        a.href = window.URL.createObjectURL(blob)
+        a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
+        e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+        a.dispatchEvent(e)
+    };
+});

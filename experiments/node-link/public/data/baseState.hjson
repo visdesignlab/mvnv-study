@@ -6,25 +6,30 @@
       "#777777",
       "#706842"
     ],
-    "bars": [{
-        "attr":"followers_count",
+    "bars": [
+      {
+        "attr": "followers_count",
         "domain": [
           0,
           2000
         ]
-      },{
-        "attr":"friends_count",
+      },
+      {
+        "attr": "friends_count",
         "domain": [
           0,
           2000
         ]
-      },{
-        "attr":"statuses_count",
+      },
+      {
+        "attr": "statuses_count",
         "domain": null
-      }, {
-        "attr":"favourites_count",
+      },
+      {
+        "attr": "favourites_count",
         "domain": null
-    }],
+      }
+    ],
     "circles": [
       {
         "attr": "type",
@@ -39,7 +44,7 @@
           "#1b9e77",
           "#d95f02",
           "#7570b3",
-          "#e7298a"    
+          "#e7298a"
         ]
       }
     ],
@@ -49,25 +54,37 @@
     ],
     "drawBars": true,
     "edgeColor": "type",
-    "edgeWidth": {"attr":"count","domain":[1,3]},
+    "edgeWidth": {
+      "attr": "count",
+      "domain": [
+        1,
+        3
+      ]
+    },
     "labelAttr": "shortName",
     "noEdgeColor": "white",
     "noNodeFill": "white",
     "noNodeStroke": "white",
     "nodeFill": "type",
-    "nodeSize": {"attr":"friends_count","domain":[0,2000]},
+    "nodeSize": {
+      "attr": "friends_count",
+      "domain": [
+        0,
+        2000
+      ]
+    },
     "nodeStroke": "type",
     "selectedColor": "#ea9b0f",
     "selectedNodes": "stroke",
     "showNodeLabels": "always"
   },
-  "graph":{
-    "small":"../public/data/network_small",
-    "medium":"../public/data/network_medium",
-    "large":"../public/data/network_large"
-  } ,
-  "graphSize":"large",
   "fixedPositions": true,
+  "graph": {
+    "large": "../public/data/network_large",
+    "medium": "../public/data/network_medium",
+    "small": "../public/data/network_small"
+  },
+  "graphSize": "large",
   "interaction": {
     "draggableNodes": true,
     "edgeTooltip": false,
@@ -75,10 +92,10 @@
     "multiNodeSelection": true,
     "nodeTooltip": false,
     "onEdgeClick": null,
-    "selectNeighbors": false
+    "onNodeClick": "highlightNeighbors"
   },
-  "isDirected": false,
-  "multiEdgeTypes": false,
+  "isDirected": true,
+  "multiEdgeTypes": true,
   "state": {
     "selectedNodes": []
   },
@@ -87,16 +104,16 @@
       "#427d9b",
       "#88419d"
     ],
+    "labelSize": 14,
     "nodeColors": [
       "#1b9e77",
       "#d95f02",
       "#7570b3",
-      "#e7298a"    
+      "#e7298a"
     ],
     "nodeHeight": 30,
     "nodeIsRect": true,
-    "nodeWidth": 50,
-    "labelSize":14
+    "nodeWidth": 50
   },
-    "vis": "NL"
+  "vis": "NL"
 }
