@@ -41,10 +41,6 @@
                 "domain": ["North America", "South America", "Asia", "Europe"],
                 "range": ["#1b9e77", "#d95f02", "#7570b3", "#e7298a"]
             }
-
-
-
-
         },
         "edge": {
             "count": {
@@ -64,7 +60,7 @@
         "noEdgeColor": "white",
         "noNodeFill": "white",
         "noNodeStroke": "white",
-        "quantColor": [
+        "quantColors": [
             "#2d2d2d",
             "#d67205",
             "#777777",

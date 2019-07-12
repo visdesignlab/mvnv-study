@@ -17,6 +17,9 @@ var config;
 var allTaskConfigs;
 var taskConfigs = {};
 
+//compute default data domains once and use when needed
+var defaultDomains = {};
+
 ///////////////////////////For Experiment End/////////////////////////////
 var colorRange = ["#5e3c99", "#b2abd2", "#fdb863", "#e66101"];
 var color = d3
@@ -25,7 +28,7 @@ var color = d3
   //.range(["#56ebd3", "#33837f", "#68c3ef", "#1c4585"]) //Colorgorical, blue-ish
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
-var height = 800;
+var height = 1200;
 var width = 1200;
 var size = 1800; //720;
 
@@ -134,37 +137,43 @@ function loadVis(id) {
 
   // .force("y", d3.forceY().y(0));
 
-  loadConfigs();
 
   //Set up 'selected values' for ui elements;
 
-  //Set up callbacks for the config panel on the left.
-  d3.selectAll("input[name='isDirected']").on("change", function() {
-    config.isDirected = eval(this.value);
-    updateVis();
-  });
+    //Load up new graph based on graph directionality selection
+    d3.selectAll("input[type='radio']").on("change", function() {
 
-  //Set up callbacks for the config panel on the left.
-  d3.selectAll("input[name='graphSize']").on("change", function() {
-    loadGraphs(this.value);
-  });
+    // console.log(this.name,this.value)
+      config[this.name] = this.name === 'graphSize'? this.value : eval(this.value);
+  
+      let file =  config.graphSize + 
+      ( config.isDirected ? '_directed' : '_undirected' ) +
+      ( config.isMultiEdge ? '_multiEdge' : '_singleEdge' ) 
 
-  d3.selectAll("input[name='fixedPositions']").on("change", function() {
-    config.fixedPositions = eval(this.value);
-    updateVis();
-  });
+      console.log('will load in ', file, config.graphFiles[file])
+      
+      loadNewGraph(config.graphFiles[file]);
+    });
+
 
   d3.select("#exportConfig").on("click", function() {
     console.log("saving to file");
     saveToFile(config, "config.json");
   });
+
+  //Load up list of tasks here ** TO DO ** 
+
+    //load in the first taskConfig
+    loadConfigs("../../configs/task1Config.json");
+
+
+
 }
 
 function setPanelValuesFromFile() {
 
    //create internal dictionary of defaultDomains for each attribute;
-  let defaultDomains = {};
-
+  
   [['node','nodes'],['edge','links']].map(node_edge=>{
     Object.keys(config.attributeScales[node_edge[0]]).map(attr=>{
       let graphElements = graph[node_edge[1]]
@@ -180,7 +189,6 @@ function setPanelValuesFromFile() {
         
       //set domainValues in config.attributeScales if there are none
       config.attributeScales[node_edge[0]][attr].domain =  config.attributeScales[node_edge[0]][attr].domain || defaultDomains[attr] 
-      console.log('domain for ', attr , ' is ', config.attributeScales[node_edge[0]][attr].domain)
     });
   })
 
@@ -214,6 +222,12 @@ function setPanelValuesFromFile() {
     })
     .attr("checked", "checked");
 
+    //cannot have directed graph that is of single edge type, so disable that if it is the case;
+    d3.selectAll("input[name='isDirected']")
+    .property("disabled", function(){
+      return  eval(d3.select(this).property("value")) === true && config.isMultiEdge === false;
+    })
+
   d3.selectAll("input[name='isMultiEdge']")
     .filter(function() {
       return (
@@ -221,6 +235,12 @@ function setPanelValuesFromFile() {
       );
     })
     .attr("checked", "checked");
+
+  //cannot have directed graph that is of single edge type, so disable that if it is the case;
+      d3.selectAll("input[name='isMultiEdge']")
+      .property("disabled", function(){
+        return  eval(d3.select(this).property("value")) === false && config.isDirected === true;
+      })
 
   d3.select("#renderBarsCheckbox").property("checked", config.drawBars);
 
@@ -421,11 +441,11 @@ function setPanelValuesFromFile() {
        if (this.value){
         config.attributeScales.node[d.attr].domain = eval(this.value);
        } else {
-        // if value is empty, calculate 'default ranges';
-         this.value = [0,2]
+        // if value is empty, use 'default ranges';
+         this.value = '[' + defaultDomains[d.attr] + ']'
+         config.attributeScales.node[d.attr].domain = eval(this.value);
        }
       
-
       updateVis();
 
       //call createHist for that attribute
@@ -449,7 +469,7 @@ function setPanelValuesFromFile() {
   d3.select("#nodeFillSelect")
     .select("select")
     .on("change", function() {
-      config.nodeFill = this.value;
+      config.nodeFillAttr = this.value;
       config.drawBars = false;
 
       d3.select("#renderBarsCheckbox").property("checked", false);
@@ -469,10 +489,10 @@ function setPanelValuesFromFile() {
   d3.select("#nodeSizeSelect")
     .select("select")
     .on("change", function() {
-      config.nodeSize.attr = this.value;
-      let newDomain = d3.extent(graph.nodes, n => n[config.nodeSize.attr]);
+      config.nodeSizeAttr = this.value;
+      config.drawBars = false;
 
-      config.nodeSize.domain = newDomain;
+      d3.select("#renderBarsCheckbox").property("checked", false);
 
       createHist(
         this.value,
@@ -482,20 +502,47 @@ function setPanelValuesFromFile() {
 
       d3.select("#nodeSizeSelect")
         .select("input")
-        .property("value", () => {
-          return config.nodeSize.domain
-            ? "[" + config.nodeSize.domain + "]"
-            : "[ " +
-                d3
-                  .extent(graph.nodes, n => n[config.nodeSize.attr])
-                  .join(",") +
-                "]";
-        });
+        .property("value", () => "[" +  config.attributeScales.node[config.nodeSizeAttr].domain + "]");
 
       // config.drawBars = false;
 
       // d3.select('#renderBarsCheckbox').property('checked', false)
       updateVis();
+    });
+
+    d3.select("#nodeSizeSelect")
+    .selectAll("option")
+    .property("selected", (d)=>d.attr === config.nodeSizeAttr);
+
+    d3.select("#nodeSizeSelect")
+      .select("input")
+      .on("change", function(){
+
+        console.log ( 'd is ' , config.nodeSizeAttr )
+       if (this.value){
+        config.attributeScales.node[config.nodeSizeAttr].domain = eval(this.value);
+       } else {
+        // if value is empty, use 'default ranges';
+         this.value = '[' + defaultDomains[config.nodeSizeAttr] + ']'
+         config.attributeScales.node[config.nodeSizeAttr].domain = eval(this.value);
+       }
+
+       console.log('new domain is', config.attributeScales.node[config.nodeSizeAttr])
+
+       //also update the string for the corresponding domain input above
+       d3.select("#" + config.nodeSizeAttr + "-domain")
+       .property("value", () => "[" +  config.attributeScales.node[config.nodeSizeAttr].domain + "]");
+
+
+ 
+      createHist(
+        config.nodeSizeAttr,
+        d3.select("#nodeSizeSelect_histogram"),
+        graph.nodes
+      );
+           
+      updateVis();
+
     });
 
   d3.select("#renderBarsCheckbox").on("input", function() {
@@ -718,37 +765,42 @@ function updateVis() {
   //Create Scales
 
   let nodeLength = function(node) {
+
     let nodeSizeScale = d3
-      .scaleLinear()
-      .domain(
-        config.nodeSize.domain
-          ? config.nodeSize.domain
-          : d3.extent(graph.nodes.map(n => n[config.nodeSize.attr]))
-      )
-      .range([nodeMarkerLength, nodeMarkerLength * 2])
-      .clamp(true);
+    .scaleLinear()
+    .range([nodeMarkerLength/2, nodeMarkerLength * 2])
+    .clamp(true);
+    
+    //if an attribute has been assigned to nodeSizeAttr, set domain
+    if (config.nodeSizeAttr){
+     nodeSizeScale
+      .domain(config.attributeScales.node[config.nodeSizeAttr].domain)
+    }
 
     let value =
-      config.nodeSize.attr && !config.drawBars
-        ? nodeSizeScale(node[config.nodeSize.attr])
+        config.nodeSizeAttr && !config.drawBars
+        ? nodeSizeScale(node[config.nodeSizeAttr])
         : nodeMarkerLength;
+        //make circles a little larger than just the radius of the marker;
     return config.nodeIsRect ? value : value * 1.3;
   };
 
   let nodeHeight = function(node) {
+
     let nodeSizeScale = d3
-      .scaleLinear()
-      .domain(
-        config.nodeSize.domain
-          ? config.nodeSize.domain
-          : d3.extent(graph.nodes.map(n => n[config.nodeSize.attr]))
-      )
-      .range([nodeMarkerHeight, nodeMarkerHeight * 2])
-      .clamp(true);
+    .scaleLinear()
+    .range([nodeMarkerHeight/2, nodeMarkerHeight * 2])
+    .clamp(true);
+    
+    //if an attribute has been assigned to nodeSizeAttr, set domain
+    if (config.nodeSizeAttr){
+     nodeSizeScale
+      .domain( config.attributeScales.node[config.nodeSizeAttr].domain)
+    }
 
     let value =
-      config.nodeSize.attr && !config.drawBars
-        ? nodeSizeScale(node[config.nodeSize.attr])
+    config.nodeSizeAttr && !config.drawBars
+        ? nodeSizeScale(node[config.nodeSizeAttr])
         : nodeMarkerHeight;
     return config.nodeIsRect ? value : value * 1.3;
   };
@@ -756,86 +808,67 @@ function updateVis() {
   let nodeFill = function(node) {
     let nodeFillScale = d3
       .scaleOrdinal()
-      .domain(
-        graph.nodes
-          .map(n => n[config.nodeFill])
-          .filter((value, index, self) => self.indexOf(value) === index)
-      )
-      .range(config.nodeColors);
+      
 
-    let value;
-    let selectedNodeEncoding = config.selectedNodes === "fill";
+    //if an attribute has been assigned to nodeFillAttr, set domain
+    if (config.nodeFillAttr){
+      nodeFillScale
+       .domain( config.attributeScales.node[config.nodeFillAttr].domain)
+       .range(config.attributeScales.node[config.nodeFillAttr].range);
+     }
 
-    if (node.selected && selectedNodeEncoding) {
-      value =
-        config.selectedColor || nodeFillScale(node[config.nodeFill]);
-    } else {
-      value =
-        config.nodeFill && !selectedNodeEncoding && !config.drawBars
-          ? nodeFillScale(node[config.nodeFill])
+    let value =
+        config.nodeFillAttr && !config.drawBars
+          ? nodeFillScale(node[config.nodeFillAttr])
           : config.noNodeFill;
-    }
-
-    if (value === undefined) {
-      console.log("fail", node, nodeFillScale(node[config.nodeFill]));
-    }
 
     return value;
+  };
+  
+  //function to determine fill color of nestedCategoricalMarks
+  let catFill = function(attr,value) {
+
+    //assume there are defined domain and ranges for these
+    let nodeFillScale = d3
+      .scaleOrdinal()
+      .domain( config.attributeScales.node[attr].domain)
+      .range(config.attributeScales.node[attr].range);
+      
+    return nodeFillScale(value);
+
   };
 
   let nodeStroke = function(node) {
-    let nodeStrokeScale = d3
-      .scaleOrdinal()
-      .domain(d3.extent(graph.nodes.map(n => n[config.nodeStroke])))
-      .range(config.nodeColors);
-
-    let value;
-    let selectedNodeEncoding = config.selectedNodes === "stroke";
-
-    if (node.selected && selectedNodeEncoding) {
-      value = config.selectedColor;
-    } else {
-      value =
-        config.nodeStroke && !selectedNodeEncoding
-          ? nodeStrokeScale(node[config.nodeStroke])
-          : config.noNodeStroke;
-    }
-
-    return value;
+    return node.selected ? config.selectedNodeColor : config.noNodeStroke; 
   };
 
   let edgeColor = function(edge) {
-    let edgeColorScale = d3
+    let edgeStrokeScale = d3
       .scaleOrdinal()
-      .domain(d3.extent(graph.links.map(l => l[config.edgeColor])))
-      .range(config.edgeColors);
+      .domain(config.attributeScales.edge[config.edgeStrokeAttr].domain)
+      .range(config.attributeScales.edge[config.edgeStrokeAttr].range);
 
-    let value = config.edgeColor
-      ? edgeColorScale(edge[config.edgeColor])
+    let value = config.edgeStrokeAttr
+      ? edgeStrokeScale(edge[config.edgeStrokeAttr])
       : config.noEdgeColor;
     return value;
   };
 
   let edgeWidth = function(edge) {
-    let domain =
-      config.edgeWidth.domain ||
-      d3.extent(graph.links.map(l => l[config.edgeWidth.attr]));
-
-    // console.log('domain is', domain)
     let edgeWidthScale = d3
       .scaleLinear()
-      .domain(domain)
+      .domain(config.attributeScales.edge[config.edgeWidthAttr].domain)
       .clamp(true)
       .range([2, 10]);
 
-    let value = config.edgeWidth.attr
-      ? edgeWidthScale(edge[config.edgeWidth.attr])
+    let value = config.edgeWidthAttr
+      ? edgeWidthScale(edge[config.edgeWidthAttr])
       : config.noEdgeColor;
     return value;
   };
 
   //create scales for bars;
-  let scaleObjects = config.bars;
+  let barAttributes = config.quantAttrs;
 
   //object to store scales as a function of attr name;
   let scales = {};
@@ -843,26 +876,23 @@ function updateVis() {
 
   let barPadding = 3;
 
-  scaleObjects.map((s, i) => {
-    let attrDomain = s.domain || d3.extent(graph.nodes.map(n => n[s.attr]));
+  barAttributes.map((b, i) => {
     let scale = d3
       .scaleLinear()
-      .domain(attrDomain)
+      .domain(config.attributeScales.node[b].domain)
       .range([0, nodeMarkerHeight - 2 * barPadding])
       .clamp(true);
 
-    let domainKey = attrDomain.join("-");
+    let domainKey = scale.domain().join("-");
     scaleColors[domainKey] = "";
 
-    // console.log('domainKey is ', domainKey)
-
     //save scale and color to use with that attribute bar
-    scales[s.attr] = { scale, domainKey, position: 0 };
+    scales[b]= { scale, domainKey};
   });
 
   //Assign one color per unique domain;
   Object.keys(scaleColors).map((domainKey, i) => {
-    scaleColors[domainKey] = config.barColors[i];
+    scaleColors[domainKey] = config.quantColors[i];
   });
 
   Object.keys(scales).map(
@@ -1001,7 +1031,7 @@ function updateVis() {
   {
     // //  Separate enter/exit/update for bars so as to bind to the correct data;
 
-    let drawCircles = Object.keys(config.circles).length > 0;
+    let drawCircles = Object.keys(config.catAttrs).length > 0;
     let circleRegion = drawCircles ? nodeMarkerLength * 0.4 : 0;
     let circleRadius = drawCircles ? nodeMarkerHeight * 0.2 : 0;
     let circlePadding = drawCircles ? 5 : 0;
@@ -1011,8 +1041,6 @@ function updateVis() {
     let nodeWidth =
       nodeMarkerLength - barPadding - circleRadius - circlePadding;
     let barWidth = nodeWidth / numBars - barPadding;
-
-    let groupingFactor = 2;
 
     let scaleStart = -nodeMarkerLength / 2 + barPadding;
     let scaleEnd = scaleStart + (numBars - 1) * (barWidth + barPadding);
@@ -1057,12 +1085,7 @@ function updateVis() {
     });
 
     bars.attr("transform", (d, i) => {
-      let offset =
-        scales[d.attr].position === 0
-          ? barXScale(i)
-          : barXScale(i) - scales[d.attr].position * groupingFactor;
-
-      return "translate(" + offset + ",0)";
+      return "translate(" + barXScale(i) + ",0)";
     });
 
     bars
@@ -1093,7 +1116,7 @@ function updateVis() {
         .style("font-weight", "bold");
     });
 
-    let circleAttrs = config.drawBars ? config.circles : [];
+    let circleAttrs = config.drawBars ? config.catAttrs : [];
 
     let circleYScale = d3
       .scaleLinear()
@@ -1104,18 +1127,8 @@ function updateVis() {
       .selectAll(".categorical")
       //for each circle associate the relevant data from the parent node
       .data(d =>
-        circleAttrs.map(obj => {
-          //compute color scale for this attr from config file
-          let colorFillScale = d3
-            .scaleOrdinal()
-            .domain(
-              graph.nodes
-                .map(n => n[obj.attr])
-                .filter((value, index, self) => self.indexOf(value) === index)
-            )
-            .range(obj.colors);
-
-          return { data: d[obj.attr], attr: obj.attr, scale: colorFillScale };
+        circleAttrs.map(attr => {
+          return {data: d[attr],attr};
         })
       );
 
@@ -1132,7 +1145,7 @@ function updateVis() {
     circles
       .attr("cx", circleRegion)
       .attr("cy", (d, i) => circleYScale(i))
-      .style("fill", d => d.scale(d.data));
+      .style("fill", d => catFill(d.attr,d.data));
   }
 
   d3.select("#exportGraph").on("click", () => {
@@ -1208,7 +1221,7 @@ function updateVis() {
         d === currentData ||
         currentData.neighbors.find(n => n === d.id) ||
         currentData.edges.find(n => n === d.id);
-      if (config.interaction.selectNeighbors) {
+      if (config.selectNeighbors) {
         if (isNeighbor && isNode) {
           //add to list of selected neighbors
           if (!isClicked) {
@@ -1237,7 +1250,7 @@ function updateVis() {
       .filter(isNeighbor)
       .classed("muted", d => {
         return (
-          config.interaction.selectNeighbors &&
+          config.selectNeighbors &&
           hasUserSelection &&
           d.userSelectedNeighbors.length < 1
         );
@@ -1249,7 +1262,7 @@ function updateVis() {
       .classed(
         "muted",
         d =>
-          config.interaction.selectNeighbors && hasUserSelection && !d.selected
+          config.selectNeighbors && hasUserSelection && !d.selected
       );
 
     node
@@ -1263,7 +1276,6 @@ function updateVis() {
   simulation.force("link").links(graph.links);
   simulation.force("collision", d3.forceCollide().radius(d => nodeLength(d)));
 
-  if (config.fixedPositions) {
     //if source/target are still strings from the input file
     if (graph.links[0].source.id === undefined) {
       //restablish link references to their source and target nodes;
@@ -1297,8 +1309,6 @@ function updateVis() {
         n.savedX = n.fx;
         n.savedY = n.fy;
       });
-
-      console.log("positions here", graph.nodes);
     } else {
       graph.nodes.map(n => {
         n.fx = n.savedX;
@@ -1308,24 +1318,26 @@ function updateVis() {
       });
     }
     updatePos();
-  } else {
-    graph.nodes.map(n => {
-      n.x = 0;
-      n.y = 0;
-      n.vx = null;
-      n.vy = null;
-      n.fx = null;
-      n.fy = null;
-    });
+   
+  
+  // else {
+  //   graph.nodes.map(n => {
+  //     n.x = 0;
+  //     n.y = 0;
+  //     n.vx = null;
+  //     n.vy = null;
+  //     n.fx = null;
+  //     n.fy = null;
+  //   });
 
-    for (var i = 0; i < 2000; ++i) simulation.tick();
-    simulation.stop();
+  //   for (var i = 0; i < 2000; ++i) simulation.tick();
+  //   simulation.stop();
 
-    //  add a collision force that is proportional to the radius of the nodes;
-    simulation.force("collision", d3.forceCollide().radius(d => nodeLength(d)));
+  //   //  add a collision force that is proportional to the radius of the nodes;
+  //   simulation.force("collision", d3.forceCollide().radius(d => nodeLength(d)));
 
-    simulation.alphaTarget(0.1).restart();
-  }
+  //   simulation.alphaTarget(0.1).restart();
+  // }
 
   d3.select("#stop-simulation").on("click", () => {
     simulation.stop();
@@ -1445,11 +1457,11 @@ function updateVis() {
   }
 }
 
-function loadConfigs() {
+function loadConfigs(taskConfigFile) {
   //load base configuration for all tasks
   d3.json("../../configs/baseConfig.json", function(baseConfig) {
     //load task specific configuration
-    d3.json("../../configs/task1Config.json", function(taskConfig) {
+    d3.json(taskConfigFile, function(taskConfig) {
       //rehape relevant config values into a single dictionary.
       config = {
         ...baseConfig,
@@ -1465,22 +1477,29 @@ function loadConfigs() {
 
       console.log("new config is ", config);
 
-      //load in actual graph data
-      d3.json(config.graphFiles[config.loadedGraph], function(fileGraph) {
-        //save as global variable
-        graph = fileGraph;
-
-        console.log("graph is ", graph);
-        graph.nodes.map(n => {
-          (n.savedX = n.fx), (n.savedY = n.fy);
-        });
-
-        setPanelValuesFromFile();
-        updateVis();
-      });
+      loadNewGraph(config.graphFiles[config.loadedGraph])
     });
   });
 }
+
+function loadNewGraph(fileName){
+
+     //load in actual graph data
+     d3.json(fileName, function(fileGraph) {
+      //save as global variable
+      graph = fileGraph;
+
+      console.log("loaded graph is ", graph);
+      graph.nodes.map(n => {
+        (n.savedX = n.fx), (n.savedY = n.fy);
+      });
+
+      setPanelValuesFromFile();
+      updateVis();
+    });
+
+}
+
 
 function drawVis() {
   //read in configuration file;
