@@ -66,17 +66,11 @@
                                 <label>Graph Size</label>
     
                             <ul>
-    
-                                <!-- <div class="control is-inline-flex">
-                                    <input class="slider" id="sizeSlider" step="10" min="10" max="80" value="50"
-                                        type="range">
-                                    <output id="sliderValue">50</output>
-                                </div> -->
                                         <div class="control">
-                                            <label class="radio">
+                                            <!-- <label class="radio">
                                                 <input type="radio" name="graphSize" value="small" >
                                                 Small [30]
-                                            </label>
+                                            </label> -->
     
                                             <label class="radio">
                                                     <input type="radio" name="graphSize" value="medium">
@@ -92,10 +86,51 @@
                             </ul>
                         </li>
 
+                        <li>
+                                <!-- Set config.isDirected to true/false -->
+                                <a>Graph Type</a>
+                                <ul>
+                                    <div class="control">
+                                        <label class="radio">
+                                            <input type="radio" name="isDirected" value="true">
+                                            Directed
+                                        </label>
+        
+                                        <label class="radio">
+                                            <input type="radio" name="isDirected" value="false">
+                                            Undirected
+                                        </label>
+                                    </div>
+        
+                                </ul>
+        
+        
+                            </li>
+
+                            <li>
+                                    <!-- Set config.isMultiEdge to true/false -->
+                                    <a>Graph Edges</a>
+                                    <ul>
+                                        <div class="control">
+                                            <label class="radio">
+                                                <input type="radio" name="isMultiEdge" value="true">
+                                                Multiple Types
+                                            </label>
+            
+                                            <label class="radio">
+                                                <input type="radio" name="isMultiEdge" value="false">
+                                                Single Type
+                                            </label>
+                                        </div>
+            
+                                    </ul>
+            
+            
+                                </li>
+
                     <li id="labelSize">
                             <label>Node Label Font Size</label>
                         <ul>
-                           
                             <div class="control is-inline-flex">
                                 <input class="slider" id="fontSlider" step="1" min="10" max="30" value="14"
                                     type="range">
@@ -117,64 +152,9 @@
                     </li>
 
                     
-
-
-                    <li>
-                        <!-- Set config.isDirected to true/false -->
-                        <a>Graph Type</a>
-                        <ul>
-                            <div class="control">
-                                <label class="radio">
-                                    <input type="radio" name="isDirected" value="true">
-                                    Directed
-                                </label>
-
-                                <label class="radio">
-                                    <input type="radio" name="isDirected" value="false">
-                                    Undirected
-                                </label>
-                            </div>
-
-                        </ul>
-
-
-                    </li>
-
-
-                    <!-- <p class="menu-label">
-                        Layout Settings
-                    </p> -->
                     <ul class="menu-list">
-                        <!-- Set config.isDirected to true/false -->
-                        <!-- <li>
-                            
-                            <a>Positions</a>
-                            <ul>
-                                <div class="control">
-                                    <label class="radio">
-                                        <input type="radio" name="fixedPositions" value="true">
-                                        Fixed
-                                    </label>
-
-                                    <label class="radio">
-                                        <input type="radio" name="fixedPositions" value="false">
-                                        Force Directed
-                                    </label>
-                                </div>
-
-                            </ul>
-
-
-                        </li> -->
 
                         <div style="padding-top: 30px; padding-bottom: 10px">
-
-                              <!-- Force Layout Strength
-                                        <div class="control is-inline-flex">
-                                            <input class="slider" id="fontSlider" step=""50 min="-1000" max="0" value="0"
-                                                type="range">
-                                            <output id="forceLayoutLabel">0</output> </div>
-                             -->
 
                                 <a class="button" id="stop-simulation">Stop Simulation</a>
                                 <a class="button" id="start-simulation">Restart Simulation</a>
@@ -192,11 +172,17 @@
                             </div>
     
     
-                            <li id="nodeBarsSelect">
+                            <li id="nodeQuantSelect">
                                 <a>Attribute for Nested Quant Attributes (Bars)</a>
                                 <ul>
                                 </ul>
                             </li>
+
+                            <li id="nodeCatSelect">
+                                    <a>Attribute for Nested Cat Attributes</a>
+                                    <ul>
+                                    </ul>
+                                </li>
     
     
                             <li id="nodeQuantAttributes">
@@ -213,17 +199,6 @@
 
                         <li id="nodeFillSelect">
                             <a>Attribute for Node Fill</a>
-                            <ul>
-                                <div class="select">
-                                    <select>
-                                    </select>
-                                </div>
-
-                            </ul>
-                        </li>
-
-                        <li id="nodeStrokeSelect">
-                            <a>Attribute for Node Stroke</a>
                             <ul>
                                 <div class="select">
                                     <select>
@@ -276,26 +251,6 @@
                         </li>
 
                         <br />
-                        
-
-                        <!-- <li id="nodeCirclesSelect">
-                            <a>Attribute for Nested Categorical Attrs (Circles)</a>
-                            <ul>
-                                <div class="select is-multiple">
-                                    <select multiple size="2">
-
-                                    </select>
-                                </div>
-
-                            </ul>
-                        </li> -->
-
-
-
-
-
-
-                        <!-- <a class="button is-light" id="refreshVis">Update Node-Link Diagram</a> -->
                         <br />
 
                         <a class="button is-light" id="exportConfig">Export Config</a>
