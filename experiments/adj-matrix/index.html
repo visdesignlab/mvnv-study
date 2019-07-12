@@ -3,12 +3,39 @@
 <title>Adjacency-Matrix</title>
 
 <style>
-.container {
-  float: left;
+.selectedEdgeType {
+  stroke: blue !important;
+  stroke-width: 2!important;
+}
+.topocontainer {
+  /*
   overflow: scroll;
   display:inline-block;
   height:600px;
   width:600px;
+  */
+  float: left;
+  display: inline-block;
+  position: relative;
+  width: 57.15%;
+  /*padding-bottom: 100%;*/
+  vertical-align: top;
+  overflow: hidden;
+}
+.attrcontainer {
+  /*
+  overflow: scroll;
+  display:inline-block;
+  height:600px;
+  width:600px;
+  */
+  float: left;
+  display: inline-block;
+  position: relative;
+  width: 42.85%;
+  /*padding-bottom: 100%;*/
+  vertical-align: top;
+  overflow: hidden;
 }
 /* Hiding topology's scrollbar */
 #topology {
@@ -18,8 +45,15 @@
 #topology::-webkit-scrollbar {
     display: none;  // Safari and Chrome
 }
-
+.highlightedCell{
+  fill: #FFF4D3;
+  fill-opacity:1 !important;
+}
 .column {
+
+}
+.highlightCol{
+  pointer-events: auto;
 
 }
 .background {
@@ -38,12 +72,37 @@ div.tooltip {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
 }
+
+body {
+   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+   font-weight: 300;
+}
+
+line {
+  pointer-events: none;
+}
 .hovered {
-  fill: #FFF4D3;
+  fill: #fee8c8;
+  fill-opacity:1 !important;
+}
+
+.neighborSelected{
+  fill: #fdbb84 !important;
+  fill-opacity:1 !important;
+}
+
+/* most specific */
+rect.selected{
+  fill: #e34a33 !important;
+  fill-opacity:1 !important;
 }
 
 text.active {
   fill: red;
+  font-weight: bold;
+}
+
+text.selected {
   font-weight: bold;
 }
 
@@ -52,7 +111,16 @@ line {
   opacity: 0.3;
 }
 
+#interactiveFreeFormMain{
 
+}
+
+.svg-content {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 </style>
 
 <!--<script src="/Libraries/d3.js"></script>
@@ -67,14 +135,15 @@ line {
 
   <p>Order:
     <select id="order">
-      <option value="name">by Name</option>
-      <option value="familyBefore">by Before: Family</option>
-      <option value="individualBefore">by Before: Individual</option>
-      <option value="familyAfter">by After: Family</option>
-      <option value="individualAfter">by After: Individual</option>
-      <option value="group">by Group</option>
+      <option value="screen_name">by Name</option>
+      <option value="followers_count">by Followers</option>
+      <option value="query_tweet_count">by Tweet Count</option>
+      <option value="friends_count">by Friends</option>
+      <option value="statuses_count">by Statuses</option>
+      <option value="listed_count">by Listed</option>
+      <option value="favourites_count">by Favourites</option>
+      <option value="count_followers_in_query">by Followers in Network</option>
     </select>
-
   </p>
 </aside>
 
@@ -84,12 +153,14 @@ line {
 </div>
 
 <div id="interactiveFreeFormMain">
-  <div id="topology" class="container" height="700" width="700"> </div>
-  <div id="attributes" class="container" height="700" width="500"> </div>
+  <div id="topology" class="topocontainer" height="700" width="700"> </div>
+  <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
 
 </div>
+<svg id ="legends" height = "60" width = "575"> </svg>
 
 <!-- <script src="http://requirejs.org/docs/release/2.1.8/comments/require.js"></script> -->
-<script src="scripts/d3.min.js"> </script>
+<script type="text/javascript" src="scripts/d3.min.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
 
-<script src="scripts/cleaned_model.js"> </script>
+<script type="text/javascript"  src="scripts/cleaned_model.js"> </script>
