@@ -1,0 +1,20 @@
+{
+  "tasks": [
+    {
+      "id": "task1",
+      "prompt": "Select the person with the highest number of followers."
+    },
+    {
+      "id": "task2",
+      "prompt": "Find 3 nodes that are people and folow more people than follow them."
+    },
+    {
+      "id": "task3",
+      "prompt": "Which of the people who has interacted with R.Kosara has tweeted the most?"
+    },
+    {
+      "id": "task4",
+      "prompt": "What is the approximate combined # of followers of all the people who have interacted/retweeted  Alex Lex?"
+    }
+  ]
+}

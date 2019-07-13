@@ -38,7 +38,7 @@
                 "range": ["#a88e69", "#68aa73"]
             },
             "continent": {
-                "domain": ["North America", "South America", "Asia", "Europe"],
+                "domain": ["North America", "South America", "Europe", "Asia"],
                 "range": ["#1b9e77", "#d95f02", "#7570b3", "#e7298a"]
             }
         },
@@ -47,14 +47,14 @@
                 "domain": [1, 11]
             },
             "type": {
-                "domain": ["mentions", "retweets","combined"],
+                "domain": ["mentions", "retweet","combined"],
                 "range": ["#427d9b", "#88419d","rgb(163, 161, 161)"]
             }
         }
     },
     "style": {
         "selectedNodeColor": "#ea9b0f",
-        "hoveredNodeColor": "fde8ca"
+        "hoveredNodeColor": "#fde8ca"
     },
     "nodeLink": {
         "noEdgeColor": "white",
@@ -74,6 +74,6 @@
         ]
     },
     "adjMatrix": {
-
+        "neighborHighlightColor":""
     }
 }
