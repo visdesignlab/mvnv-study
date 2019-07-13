@@ -3,7 +3,7 @@
 <title>Adjacency-Matrix</title>
 
 <style>
-.selectedEdgeType {
+  .selectedEdgeType {
   stroke: blue !important;
   stroke-width: 2!important;
 }
@@ -104,6 +104,7 @@ text.active {
 
 text.selected {
   font-weight: bold;
+  fill: green;
 }
 
 line {
@@ -121,8 +122,25 @@ line {
     top: 0;
     left: 0;
 }
-</style>
+/* Panel Info */
+#panelControl, #clear-selection{
+        background-color:rgb(78, 78, 78);
+        color:white;
+    }
 
+
+    #panelDiv .button {
+        width:300px;
+    }
+
+    #panelDiv{
+        height:800px;
+        overflow-y: scroll;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css">
+<link rel="stylesheet" href="css/bulma-slider.min.css">
+<link rel="stylesheet" href="css/bulma-checkradio.min.css">
 <!--<script src="/Libraries/d3.js"></script>
 <script src="/Libraries/d3_color_scale.js"></script>-->
 
@@ -146,21 +164,233 @@ line {
     </select>
   </p>
 </aside>
+<div class="columns">
 
-<div id="overlay">
-		<div class="spinner"></div>
-		<div id="overlay-text">Loading Content</div>
+  <!-- Control panel -->
+  <div class="column is-narrow" id="panelDiv">
+
+    <aside class="menu">
+
+
+
+
+      <!-- <p class="menu-label">
+                    Graph Settings
+                </p> -->
+      <ul class="menu-list">
+
+        <li id="graphSize">
+          <label>Graph Size</label>
+
+          <ul>
+            <div class="control">
+              <!-- <label class="radio">
+                                                <input type="radio" name="graphSize" value="small" >
+                                                Small [30]
+                                            </label> -->
+
+              <label class="radio">
+                <input type="radio" name="graphSize" value="small">
+                Small [50]
+              </label>
+
+              <label class="radio">
+                <input type="radio" name="graphSize" value="large" checked="checked">
+                Large [80]
+              </label>
+            </div>
+
+          </ul>
+        </li>
+
+        <li>
+          <!-- Set config.isDirected to true/false -->
+          <a>Graph Type</a>
+          <ul>
+            <div class="control">
+              <label class="radio">
+                <input type="radio" name="isDirected" value="true">
+                Directed
+              </label>
+
+              <label class="radio">
+                <input type="radio" name="isDirected" value="false">
+                Undirected
+              </label>
+            </div>
+
+          </ul>
+
+
+        </li>
+
+        <li>
+          <!-- Set config.isMultiEdge to true/false -->
+          <a>Graph Edges</a>
+          <ul>
+            <div class="control">
+              <label class="radio">
+                <input type="radio" name="isMultiEdge" value="true">
+                Multiple Types
+              </label>
+
+              <label class="radio">
+                <input type="radio" name="isMultiEdge" value="false">
+                Single Type
+              </label>
+            </div>
+
+          </ul>
+
+
+        </li>
+
+        <li id="labelSize">
+          <label>Node Label Font Size</label>
+          <ul>
+            <div class="control is-inline-flex">
+              <input class="slider" id="fontSlider" step="1" min="10" max="30" value="14" type="range">
+              <output id="fontSliderValue">14</output> </div>
+          </ul>
+        </li>
+
+
+        <li id="nodeMarkerSize">
+          <label>Node Size [width,height]</label>
+          <ul>
+
+
+            <div class="control is-inline-flex">
+              <input width="50%" id="markerSize" class="input" type="text" placeholder="width/height">
+            </div>
+
+          </ul>
+        </li>
+
+
+        <ul class="menu-list">
+
+
+          <br />
+
+          <div class="field">
+            <input class="is-checkradio is-circle" id="renderBarsCheckbox" type="checkbox" name="renderBarsCheckbox" checked="checked">
+            <label for="renderBarsCheckbox">Render Nested Edge Bars</label>
+          </div>
+
+
+          <li id="nodeQuantSelect">
+            <a>Attribute for Nested Quant Attributes (Bars)</a>
+            <ul>
+            </ul>
+          </li>
+
+          <li id="nodeCatSelect">
+            <a>Attribute for Nested Cat Attributes</a>
+            <ul>
+            </ul>
+          </li>
+
+
+          <li id="nodeQuantAttributes">
+            <a>Node Attribute Inspector</a>
+            <ul>
+              <div class="select ">
+                <select>
+                </select>
+              </div>
+
+            </ul>
+          </li>
+
+
+          <li id="nodeFillSelect">
+            <a>Attribute for Node Fill</a>
+            <ul>
+              <div class="select">
+                <select>
+                </select>
+              </div>
+
+            </ul>
+          </li>
+
+          <li id="nodeSizeSelect">
+            <a>Attribute for Node Size</a>
+            <ul>
+              <div class="select">
+                <select>
+                </select>
+
+              </div>
+
+              <div class="control is-inline-flex">
+                <input width="50%" class="input" type="text" placeholder="[min,max]">
+              </div>
+
+            </ul>
+          </li>
+
+          <li id="edgeStrokeSelect">
+            <a>Attribute for Edge Stroke</a>
+            <ul>
+              <div class="select">
+                <select>
+                </select>
+              </div>
+
+            </ul>
+          </li>
+
+          <li id="edgeWidthSelect">
+            <a>Attribute for Edge Width</a>
+            <ul>
+              <div class="select ">
+                <select>
+                </select>
+              </div>
+
+              <div class="control is-inline-flex">
+                <input class="input" id="edgeWidthScale" type="text" placeholder="[min,max]">
+              </div>
+
+            </ul>
+          </li>
+
+          <br />
+          <br />
+
+          <a class="button is-light" id="exportConfig">Export Config</a>
+
+    </aside>
+    <div id="overlay">
+      <div class="spinner"></div>
+      <div id="overlay-text">Loading Content</div>
+    </div>
+  </div>
+
+
+
+
+  <div class="column" id="visDiv">
+    <a class="button" id="panelControl">Hide/Show Control Panel</a>
+
+    <div id="interactiveFreeFormMain">
+      <div id="topology" class="topocontainer" height="700" width="700"> </div>
+      <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
+
+    </div>
+    <svg id="legends" height="60" width="575"> </svg>
+  </div>
 </div>
-
-<div id="interactiveFreeFormMain">
-  <div id="topology" class="topocontainer" height="700" width="700"> </div>
-  <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
-
-</div>
-<svg id ="legends" height = "60" width = "575"> </svg>
 
 <!-- <script src="http://requirejs.org/docs/release/2.1.8/comments/require.js"></script> -->
 <script type="text/javascript" src="scripts/d3.min.js"> </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
-
-<script type="text/javascript"  src="scripts/cleaned_model.js"> </script>
+<script>
+  d3.select("#panelControl").on("click", () => {
+    let panel = d3.select("#panelDiv");
+    let isVisible = panel.style("display") === "block";
+    panel.style("display", isVisible ? "none" : "block");
+  });
+</script>
+<script type="text/javascript" src="scripts/cleaned_model.js"> </script>
