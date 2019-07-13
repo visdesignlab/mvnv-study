@@ -1310,13 +1310,19 @@ var View = /** @class */ (function () {
 var Controller = /** @class */ (function () {
     function Controller() {
         var _this = this;
-        this.configuration = d3.json("configs/config.json");
+        this.configuration = d3.json("configs/config.json"); //../configs/baseconfig.json
         this.configuration.then(function (data) {
             _this.configuration = data;
         });
         this.view = new View(this); // initalize view,
         this.model = new Model(this); // start reading in data
     }
+    Controller.prototype.reload = function () {
+        d3.select('#topology').selectAll('*').remove();
+        d3.select('#attributes').selectAll('*').remove();
+        d3.select('#legends').selectAll('*').remove();
+        window.controller = new Controller();
+    };
     /**
      * Passes the processed edge and node data to the view.
      * @return None
@@ -1340,5 +1346,5 @@ var Controller = /** @class */ (function () {
     };
     return Controller;
 }());
-var control = new Controller();
+window.controller = new Controller();
 //window.controller = control;

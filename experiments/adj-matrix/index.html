@@ -391,6 +391,9 @@ line {
     let panel = d3.select("#panelDiv");
     let isVisible = panel.style("display") === "block";
     panel.style("display", isVisible ? "none" : "block");
+    window.controller.reload();
   });
 </script>
+
+<!---<script type="text/javascript" src="scripts/fill_config_settings.js"></script>-->
 <script type="text/javascript" src="scripts/cleaned_model.js"> </script>

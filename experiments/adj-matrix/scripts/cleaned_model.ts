@@ -1565,13 +1565,21 @@ class Controller {
 
 
   constructor() {
-    this.configuration = d3.json("configs/config.json");
+    this.configuration = d3.json("configs/config.json");//../configs/baseconfig.json
+
     this.configuration.then(data => {
       this.configuration = data;
     })
 
     this.view = new View(this); // initalize view,
     this.model = new Model(this); // start reading in data
+  }
+
+  reload(){
+    d3.select('#topology').selectAll('*').remove();
+    d3.select('#attributes').selectAll('*').remove();
+    d3.select('#legends').selectAll('*').remove();
+    window.controller = new Controller();
   }
 
   /**
@@ -1603,5 +1611,5 @@ class Controller {
 
 }
 
-let control = new Controller();
+window.controller = new Controller();
 //window.controller = control;

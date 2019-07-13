@@ -19,19 +19,19 @@
                 "domain": [0, 6000]
             },
             "count_followers_in_query": {
-               
+
             },
             "favourites_count": {
-               
+
             },
             "listed_count": {
-               
+
             },
             "memberFor_days": {
-               
+
             },
             "query_tweet_count": {
-               
+
             },
             "type": {
                 "domain": ["person", "institution"],
@@ -74,6 +74,7 @@
         ]
     },
     "adjMatrix": {
+
 
     }
 }
