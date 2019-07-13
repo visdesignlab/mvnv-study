@@ -4,18 +4,9 @@
     "isDirected": false,
     "isMultiEdge": false,
     "graphSize": "large",
-    "nodeAttributes": [
-        "followers_count",
-        "continent",
-        "count_followers_in_query",
-        "listed_count",
-        "type"
-    ],
-    "edgeAttributes": [
-        "type",
-        "count"
-    ],
-    "nodeLink": {
+    "nodeAttributes": ["followers_count", "friends_count","type","continent"],
+    "edgeAttributes": ["type", "count"],
+    "nodeLinkValues": {
         "drawBars": true,
         "selectNeighbors": true,
         "nodeHeight": {
@@ -23,7 +14,7 @@
             "small": 60
         },
         "nodeWidth": {
-            "large": 80,
+            "large": 70,
             "small": 80
         },
         "labelSize": {
@@ -36,5 +27,7 @@
         "edgeWidthAttr": "count",
         "edgeStrokeAttr": "type"
     },
-    "adjMatrixValues": {}
+    "adjMatrixValues": {
+
+    }
 }

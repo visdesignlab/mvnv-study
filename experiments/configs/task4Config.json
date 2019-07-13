@@ -1,13 +1,13 @@
 {
     "nodeLink": {
-        "drawBars": false,
-        "selectNeighbors": false,
+        "drawBars": true,
+        "selectNeighbors": true,
         "nodeHeight": {
-            "large": 45,
+            "large": 40,
             "small": 60
         },
         "nodeWidth": {
-            "large": 45,
+            "large": 40,
             "small": 80
         },
         "labelSize": {
@@ -30,17 +30,13 @@
         ]
     },
     "taskID": "task1",
-    "loadedGraph": "large_undirected_singleEdge",
+    "loadedGraph": "large_undirected_multiEdge",
     "isDirected": false,
-    "isMultiEdge": false,
+    "isMultiEdge": true,
     "graphSize": "large",
     "nodeAttributes": [
         "followers_count",
-        "friends_count",
-        "continent",
-        "count_followers_in_query",
-        "favourites_count",
-        "listed_count"
+        "continent"
     ],
     "edgeAttributes": [
         "type",

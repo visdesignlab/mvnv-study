@@ -10,45 +10,96 @@
     "attributeScales": {
         "node": {
             "followers_count": {
-                "domain": [0, 2000]
+                "domain": [
+                    0,
+                    1200
+                ]
             },
             "friends_count": {
-                "domain": [0, 2000]
+                "domain": [
+                    0,
+                    1200
+                ]
             },
             "statuses_count": {
-                "domain": [0, 6000]
+                "domain": [
+                    0,
+                    5500
+                ]
             },
             "count_followers_in_query": {
-               
+                "domain": [
+                    0,
+                    35
+                ]
             },
             "favourites_count": {
-               
+                "domain": [
+                    0,
+                    8000
+                ]
             },
             "listed_count": {
-               
+                "domain": [
+                    0,
+                    120
+                ]
             },
             "memberFor_days": {
-               
+                "domain": [
+                    175,
+                    4498
+                ]
             },
             "query_tweet_count": {
-               
+                "domain": [
+                    0,
+                    10
+                ]
             },
             "type": {
-                "domain": ["person", "institution"],
-                "range": ["#a88e69", "#68aa73"]
+                "domain": [
+                    "person",
+                    "institution"
+                ],
+                "range": [
+                    "#a88e69",
+                    "#68aa73"
+                ]
             },
             "continent": {
-                "domain": ["North America", "South America", "Europe", "Asia"],
-                "range": ["#1b9e77", "#d95f02", "#7570b3", "#e7298a"]
+                "domain": [
+                    "North America",
+                    "South America",
+                    "Europe",
+                    "Asia"
+                ],
+                "range": [
+                    "#1b9e77",
+                    "#d95f02",
+                    "#7570b3",
+                    "#e7298a"
+                ]
             }
         },
         "edge": {
             "count": {
-                "domain": [1, 11]
+                "domain": [
+                    1,
+                    5
+                ]
             },
             "type": {
-                "domain": ["mentions", "retweet","combined"],
-                "range": ["#427d9b", "#88419d","rgb(163, 161, 161)"]
+                "domain": [
+                    "mentions",
+                    "retweet",
+                    "combined"
+                ],
+                "range": [
+                    "#427d9b",
+                    "#88419d",
+                    "rgb(163, 161, 161)"
+                ]
             }
         }
     },
@@ -65,15 +116,9 @@
             "#d67205",
             "#777777",
             "#706842"
-        ],
-        "catColors": [
-            "#1b9e77",
-            "#d95f02",
-            "#7570b3",
-            "#e7298a"
         ]
     },
     "adjMatrix": {
-        "neighborHighlightColor":""
+        "neighborHighlightColor": ""
     }
 }

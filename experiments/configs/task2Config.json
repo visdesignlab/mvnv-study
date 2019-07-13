@@ -6,9 +6,7 @@
     "graphSize": "large",
     "nodeAttributes": [
         "followers_count",
-        "continent",
-        "count_followers_in_query",
-        "listed_count",
+        "friends_count",
         "type"
     ],
     "edgeAttributes": [
@@ -17,7 +15,7 @@
     ],
     "nodeLink": {
         "drawBars": true,
-        "selectNeighbors": true,
+        "selectNeighbors": false,
         "nodeHeight": {
             "large": 50,
             "small": 60
