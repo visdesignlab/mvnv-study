@@ -103,6 +103,8 @@
     .barGroup > .bar {
         stroke-width: 2px;
         stroke:white;
+        fill:rgb(167, 197, 158);
+
     }
 
     .input {
@@ -189,9 +191,11 @@
     }
 
     #panelDiv{
-        height:2000px;
+        height:1500px;
         overflow-y: scroll;
     }
+
+    
 
     /* .svg-icon {
     width: 2em;
