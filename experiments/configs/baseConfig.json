@@ -74,7 +74,8 @@
         ]
     },
     "adjMatrix": {
-
+      "sortKey":"screen_name",
+      "initialKey":"screen_name",
 
     }
 }

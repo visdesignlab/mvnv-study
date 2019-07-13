@@ -25,7 +25,7 @@ class Model {
     tweets.map((tweet) => {
 
       //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
-      if (this.controller.configuration.edgeTypes.includes("mentions")) {
+      if (this.controller.configuration.attributeScales.edge.type.domain.includes("mentions")) {
         tweet.entities.user_mentions.map(mention => {
           let source = graph.nodes.find(n => n.id === tweet.user.id);
           let target = graph.nodes.find(n => n.id === mention.id);
@@ -51,7 +51,7 @@ class Model {
 
 
       //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-      if (tweet.retweeted_status && this.controller.configuration.edgeTypes.includes("retweet")) {
+      if (tweet.retweeted_status && this.controller.configuration.attributeScales.edge.type.domain.includes("retweet")) {
         let source = graph.nodes.find(n => n.id === tweet.user.id);
         let target = graph.nodes.find(n => n.id === tweet.retweeted_status.user.id);
 
@@ -71,7 +71,7 @@ class Model {
       }
 
       //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
-      if (tweet.in_reply_to_user_id_str && this.controller.configuration.edgeTypes.includes("reply")) {
+      if (tweet.in_reply_to_user_id_str && this.controller.configuration.attributeScales.edge.type.domain.includes("reply")) {
         let source = graph.nodes.find(n => n.id === tweet.user.id);
         let target = graph.nodes.find(n => n.id === tweet.in_reply_to_user_id);
 
@@ -100,7 +100,7 @@ class Model {
         this.nodes = data.nodes
         this.idMap = {};
 
-        this.order = this.changeOrder(this.controller.configuration.sortKey);
+        this.order = this.changeOrder(this.controller.configuration.adjMatrix.sortKey);
         if (this.orderType == "screen_name") {
           this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b.screen_name));
         } else {
@@ -133,7 +133,7 @@ class Model {
   changeOrder(type: string) {
     let order;
     this.orderType = type;
-    this.controller.configuration.sortKey = type;
+    this.controller.configuration.adjMatrix.sortKey = type;
     if (type == 'screen_name') {
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[a].screen_name.localeCompare(this.nodes[b].screen_name) })
     }
@@ -531,7 +531,7 @@ class View {
 
     this.edgeScales = {};
 
-    this.controller.configuration.edgeTypes.forEach(type => {
+    this.controller.configuration.attributeScales.edge.type.domain.forEach(type => {
       // calculate the max
       let extent = [0, this.controller.model.maxTracker[type]]
       console.log(extent);
@@ -561,11 +561,11 @@ class View {
       .attr('width',this.verticalScale.bandwidth())
       .attr('fill-opacity',0);
 
-      let dividers = this.controller.configuration.edgeTypes.length;
+      let dividers = this.controller.configuration.attributeScales.edge.type.domain.length;
       dividers = dividers == 0 ? 1 : dividers; // if dividers = 0, set to 1  throw an error?
       let squares = cells
       for(let index = 0; index < dividers; index++){
-        let type = this.controller.configuration.edgeTypes[index]
+        let type = this.controller.configuration.attributeScales.edge.type.domain[index]
         console.log(type);
         let scale = this.edgeScales[type];
         scale.range([0,this.verticalScale.bandwidth()])
@@ -573,7 +573,7 @@ class View {
 
         cells
         .filter(d=>{
-          return d[this.controller.configuration.edgeTypes[index]] !== 0;
+          return d[this.controller.configuration.attributeScales.edge.type.domain[index]] !== 0;
         })
         .append("rect")
         .attr('x',(d,i)=>{return this.verticalScale(d.x) + index*this.verticalScale.bandwidth()/dividers})
