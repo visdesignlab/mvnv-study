@@ -1000,7 +1000,7 @@ function updateVis() {
   };
 
   let nodeStroke = function(node) {
-    return node.selected ? config.selectedNodeColor : config.nodeLink.noNodeStroke;
+    return node.selected ? config.style.selectedNodeColor : config.nodeLink.noNodeStroke;
   };
 
   let edgeColor = function(edge) {
