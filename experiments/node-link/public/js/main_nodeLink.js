@@ -107,6 +107,35 @@ function getSiblingLinks(graph, source, target) {
   return siblings;
 }
 
+function exportConfig(baseKeys,nodeLinkKeys,isTaskConfig){
+
+  let configCopy = JSON.parse(JSON.stringify(config));
+
+  //only keep keys for this particular config file;
+
+  Object.keys(configCopy).map(key=>{
+    if (!baseKeys.includes(key)){
+      delete configCopy[key]
+    }
+  });
+
+  Object.keys(configCopy.nodeLink).map(nKey=>{
+    if (!nodeLinkKeys.includes(nKey)){
+      delete configCopy.nodeLink[nKey]
+    }
+  })
+
+  //find out which 'state' you're saving : optimal, 5attr, or 10attr;
+  let state = d3.select('.button.clicked').attr('id')
+  let fileName={
+    'optimalConfig':"task"+ (taskNum+1) + "Config.json",
+    'nodeLinkConfig':"5AttrConfig.json",
+    'saturatedConfig':"10AttrConfig.json"
+  }
+
+  saveToFile(configCopy, isTaskConfig ? fileName[state] : "baseConfig.json");
+}
+
 // Single function to put chart into specified target
 function loadVis(id) {
   d3.select("#panelControl").on("click", () => {
@@ -139,13 +168,6 @@ function loadVis(id) {
 
   // .force("y", d3.forceY().y(0));
 
-  d3.select("#exportConfig").on("click", function() {
-    console.log("saving to file");
-
-
-    saveToFile(config, "config.json");
-  });
-
   //Load up list of tasks here ** TO DO **
 
   //load in the first taskConfig
@@ -160,37 +182,27 @@ function loadVis(id) {
   d3.json("../../configs/baseConfig.json", function(baseConfig) {
     d3.json("../../configs/5AttrConfig.json", function(nodeLinkConfig) {
       d3.json("../../configs/10AttrConfig.json", function(saturatedConfig) {
-        //rehape relevant config values into a single dictionary.
-        let config = {
-          ...baseConfig,
-          ...baseConfig.nodeLink,
-          ...baseConfig.style,
-          ...nodeLinkConfig,
-          ...nodeLinkConfig.nodeLink
-        };
-
-        delete config.nodeLink;
-        delete config.adjMatrix;
-        delete config.style;
-
-        allConfigs.nodeLinkConfig = config;
-
-         config = {
-          ...baseConfig,
-          ...baseConfig.nodeLink,
-          ...baseConfig.style,
-          ...saturatedConfig,
-          ...saturatedConfig.nodeLink
-        };
-
-        delete config.nodeLink;
-        delete config.adjMatrix;
-        delete config.style;
-
-        allConfigs.saturatedConfig = config;
+        allConfigs.nodeLinkConfig = mergeConfigs(baseConfig,nodeLinkConfig);
+        allConfigs.saturatedConfig = mergeConfigs(baseConfig,saturatedConfig);
       });
     });
   });
+}
+
+function mergeConfigs(baseConfig,taskConfig){
+
+  //copy over the nodeLink key/value pairs from the baseConfig to the taskConfig;
+  Object.keys(baseConfig.nodeLink).map(nodeAttr=>{
+    taskConfig.nodeLink[nodeAttr] = baseConfig.nodeLink[nodeAttr];
+  })
+
+  //rehape both config values into a single dictionary.
+  let config = {
+    ...baseConfig,
+    ...taskConfig
+  };
+
+  return config;
 }
 
 function setPanelValuesFromFile() {
@@ -219,16 +231,27 @@ function setPanelValuesFromFile() {
     });
   });
 
+  //ser values for radioButtons
+  d3.selectAll("input[type='radio']").property("checked", function() {
+      
+    if (this.name === 'graphSize'){
+      return config[this.name] === this.value
+    } else {
+      return config[this.name] === eval(this.value)
+    }
+     
+  });
+
   d3.select("#fontSlider").on("input", function() {
     d3.select("#fontSliderValue").text(this.value);
-    config.labelSize[config.graphSize] = eval(this.value);
+    config.nodeLink.labelSize[config.graphSize] = eval(this.value);
   });
 
   d3.select("#fontSlider").property(
     "value",
-    config.labelSize[config.graphSize]
+    config.nodeLink.labelSize[config.graphSize]
   );
-  d3.select("#fontSliderValue").text(config.labelSize[config.graphSize]);
+  d3.select("#fontSliderValue").text(config.nodeLink.labelSize[config.graphSize]);
 
   d3.select("#fontSlider").on("change", function() {
     updateVis();
@@ -236,15 +259,15 @@ function setPanelValuesFromFile() {
 
   d3.select("#markerSize").property(
     "value",
-    config.nodeWidth[config.graphSize] +
+    config.nodeLink.nodeWidth[config.graphSize] +
       "," +
-      config.nodeHeight[config.graphSize]
+      config.nodeLink.nodeHeight[config.graphSize]
   );
 
   d3.select("#markerSize").on("change", function() {
     let markerSize = this.value.split(",");
-    config.nodeWidth[config.graphSize] = eval(markerSize[0]);
-    config.nodeHeight[config.graphSize] = eval(markerSize[1]);
+    config.nodeLink.nodeWidth[config.graphSize] = eval(markerSize[0]);
+    config.nodeLink.nodeHeight[config.graphSize] = eval(markerSize[1]);
     updateVis();
   });
 
@@ -273,6 +296,8 @@ function setPanelValuesFromFile() {
       config.graphSize +
       (config.isDirected ? "_directed" : "_undirected") +
       (config.isMultiEdge ? "_multiEdge" : "_singleEdge");
+
+    config.loadedGraph = file;
 
      setDisabledRadioButtons();
 
@@ -304,7 +329,7 @@ function setPanelValuesFromFile() {
 
   setDisabledRadioButtons();
 
-  d3.select("#renderBarsCheckbox").property("checked", config.drawBars);
+  d3.select("#renderBarsCheckbox").property("checked", config.nodeLink.drawBars);
 
   //get attribute list from baseConfig file;
   let nodeAttrs = Object.entries(config.attributeScales.node);
@@ -377,7 +402,7 @@ function setPanelValuesFromFile() {
       .select(".input")
       .property(
         "value",
-        () => "[" + attrScales[config[m.configAttr]].domain + "]"
+        () => "[" + attrScales[config.nodeLink[m.configAttr]].domain + "]"
       );
 
     let selectMenu = item
@@ -395,7 +420,7 @@ function setPanelValuesFromFile() {
 
     selectMenu
       .selectAll("option")
-      .filter((d, i) => config[m.configAttr] === d.attr)
+      .filter((d, i) => config.nodeLink[m.configAttr] === d.attr)
       .property("selected", true);
 
     //  //Set up callbacks for the config panel on the left.
@@ -421,15 +446,15 @@ function setPanelValuesFromFile() {
 
       newSvg.attr("id", m.name + "_histogram");
 
-      let attr = m.configAttr ? config[m.configAttr] : config.quantAttrs[0];
+      let attr = m.configAttr ? config.nodeLink[m.configAttr] : config.nodeAttributes.filter(isQuant)[0];
       createHist(attr, newSvg, isNode ? graph.nodes : graph.links, isNode);
     }
   });
 
   //set behavior for bar selections
 
-  let barAttrs = config.quantAttrs;
-  let catAttrs = config.catAttrs;
+  let barAttrs = config.nodeAttributes.filter(isQuant);
+  let catAttrs = config.nodeAttributes.filter(isCategorical)
 
   let section = d3.select("#nodeQuantSelect").select("ul");
 
@@ -480,7 +505,7 @@ function setPanelValuesFromFile() {
     .on("change", function(d) {
       let includeAttr = d3.select(this).property("checked");
       if (includeAttr) {
-        config.quantAttrs.push(d.attr);
+        config.nodeAttributes.push(d.attr);
 
         //call createHist for that attribute
         d3.select("#nodeQuantAttributes")
@@ -497,7 +522,7 @@ function setPanelValuesFromFile() {
         );
         updateVis();
       } else {
-        config.quantAttrs = config.quantAttrs.filter(el => el !== d.attr);
+        config.nodeAttributes = config.nodeAttributes.filter(el => el !== d.attr);
         updateVis();
       }
     });
@@ -574,10 +599,10 @@ function setPanelValuesFromFile() {
     .on("change", function(d) {
       let includeAttr = d3.select(this).property("checked");
       if (includeAttr) {
-        config.catAttrs.push(d);
+        config.nodeAttributes.push(d);
         updateVis();
       } else {
-        config.catAttrs = config.catAttrs.filter(el => el !== d);
+        config.nodeAttributes = config.nodeAttributes.filter(el => el !== d);
         updateVis();
       }
     });
@@ -591,8 +616,8 @@ function setPanelValuesFromFile() {
   d3.select("#nodeFillSelect")
     .select("select")
     .on("change", function() {
-      config.nodeFillAttr = this.value;
-      config.drawBars = false;
+      config.nodeLink.nodeFillAttr = this.value;
+      config.nodeLink.drawBars = false;
 
       d3.select("#renderBarsCheckbox").property("checked", false);
       updateVis();
@@ -602,7 +627,7 @@ function setPanelValuesFromFile() {
     .select("select")
     .on("change", function() {
       config.nodeStroke = this.value;
-      // config.drawBars = false;
+      // config.nodeLink.drawBars = false;
 
       // d3.select('#renderBarsCheckbox').property('checked', false)
       updateVis();
@@ -611,8 +636,8 @@ function setPanelValuesFromFile() {
   d3.select("#nodeSizeSelect")
     .select("select")
     .on("change", function() {
-      config.nodeSizeAttr = this.value;
-      config.drawBars = false;
+      config.nodeLink.nodeSizeAttr = this.value;
+      config.nodeLink.drawBars = false;
 
       d3.select("#renderBarsCheckbox").property("checked", false);
 
@@ -627,7 +652,7 @@ function setPanelValuesFromFile() {
         .property(
           "value",
           () =>
-            "[" + config.attributeScales.node[config.nodeSizeAttr].domain + "]"
+            "[" + config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain + "]"
         );
 
       updateVis();
@@ -635,38 +660,38 @@ function setPanelValuesFromFile() {
 
   d3.select("#nodeSizeSelect")
     .selectAll("option")
-    .property("selected", d => d.attr === config.nodeSizeAttr);
+    .property("selected", d => d.attr === config.nodeLink.nodeSizeAttr);
 
   d3.select("#nodeSizeSelect")
     .select("input")
     .on("change", function() {
-      console.log("d is ", config.nodeSizeAttr);
+      console.log("d is ", config.nodeLink.nodeSizeAttr);
       if (this.value) {
-        config.attributeScales.node[config.nodeSizeAttr].domain = eval(
+        config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain = eval(
           this.value
         );
       } else {
         // if value is empty, use 'default ranges';
-        this.value = "[" + defaultDomains.node[config.nodeSizeAttr] + "]";
-        config.attributeScales.node[config.nodeSizeAttr].domain = eval(
+        this.value = "[" + defaultDomains.node[config.nodeLink.nodeSizeAttr] + "]";
+        config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain = eval(
           this.value
         );
       }
 
       console.log(
         "new domain is",
-        config.attributeScales.node[config.nodeSizeAttr]
+        config.attributeScales.node[config.nodeLink.nodeSizeAttr]
       );
 
       //also update the string for the corresponding domain input above
-      d3.select("#" + config.nodeSizeAttr + "-domain").property(
+      d3.select("#" + config.nodeLink.nodeSizeAttr + "-domain").property(
         "value",
         () =>
-          "[" + config.attributeScales.node[config.nodeSizeAttr].domain + "]"
+          "[" + config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain + "]"
       );
 
       createHist(
-        config.nodeSizeAttr,
+        config.nodeLink.nodeSizeAttr,
         d3.select("#nodeSizeSelect_histogram"),
         graph.nodes
       );
@@ -675,24 +700,24 @@ function setPanelValuesFromFile() {
     });
 
   d3.select("#renderBarsCheckbox").on("input", function() {
-    config.drawBars = d3.select(this).property("checked");
+    config.nodeLink.drawBars = d3.select(this).property("checked");
 
     updateVis();
   });
 
   d3.select("#edgeWidthScale").on("change", function() {
     if (this.value) {
-      config.attributeScales.edge[config.edgeWidthAttr].domain = eval(
+      config.attributeScales.edge[config.nodeLink.edgeWidthAttr].domain = eval(
         this.value
       );
     } else {
       // if value is empty, use 'default ranges';
-      this.value = "[" + defaultDomains.edge[config.edgeWidthAttr] + "]";
-      config.attributeScales.edge[config.edgeWidthAttr].domain =
-        defaultDomains.edge[config.edgeWidthAttr];
+      this.value = "[" + defaultDomains.edge[config.nodeLink.edgeWidthAttr] + "]";
+      config.attributeScales.edge[config.nodeLink.edgeWidthAttr].domain =
+        defaultDomains.edge[config.nodeLink.edgeWidthAttr];
     }
     createHist(
-      config.edgeWidthAttr,
+      config.nodeLink.edgeWidthAttr,
       d3.select("#edgeWidthSelect_histogram"),
       graph.links,
       false
@@ -702,6 +727,7 @@ function setPanelValuesFromFile() {
   });
 
   updateVis();
+
 }
 
 function createHist(attrName, svgSelection, data, isNode = true) {
@@ -876,18 +902,30 @@ function createHist(attrName, svgSelection, data, isNode = true) {
   text
     .attr("transform", d => "translate(" + x(d) + ",10) rotate(-30)")
     .text(d => {
-      let format = d < 1000 ? d3.format("2.0s") : d3.format(".2s");
-
+      let format;
+      
+      switch (d){
+        case (d < 10):
+          format = d3.format("2.2s")
+          break; 
+        case (d < 1000):
+          format = d3.format("2.0s")
+          break; 
+        default :
+          format = d3.format(".2s");
+      }
       return format(d);
+
+      
     });
 }
 function updateVis() {
   //choose which graph to render;
 
-  let nodeMarkerLength = config.nodeWidth[config.graphSize] || 60;
-  let nodeMarkerHeight = config.nodeHeight[config.graphSize] || 35;
+  let nodeMarkerLength = config.nodeLink.nodeWidth[config.graphSize] || 60;
+  let nodeMarkerHeight = config.nodeLink.nodeHeight[config.graphSize] || 35;
 
-  config.nodeIsRect = config.drawBars;
+  config.nodeIsRect = config.nodeLink.drawBars;
 
   //Create Scales
 
@@ -898,15 +936,15 @@ function updateVis() {
       .clamp(true);
 
     //if an attribute has been assigned to nodeSizeAttr, set domain
-    if (config.nodeSizeAttr) {
+    if (config.nodeLink.nodeSizeAttr) {
       nodeSizeScale.domain(
-        config.attributeScales.node[config.nodeSizeAttr].domain
+        config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain
       );
     }
 
     let value =
-      config.nodeSizeAttr && !config.drawBars
-        ? nodeSizeScale(node[config.nodeSizeAttr])
+      config.nodeLink.nodeSizeAttr && !config.nodeLink.drawBars
+        ? nodeSizeScale(node[config.nodeLink.nodeSizeAttr])
         : nodeMarkerLength;
     //make circles a little larger than just the radius of the marker;
     return value; //config.nodeIsRect ? value : value * 1.3;
@@ -919,15 +957,15 @@ function updateVis() {
       .clamp(true);
 
     //if an attribute has been assigned to nodeSizeAttr, set domain
-    if (config.nodeSizeAttr) {
+    if (config.nodeLink.nodeSizeAttr) {
       nodeSizeScale.domain(
-        config.attributeScales.node[config.nodeSizeAttr].domain
+        config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain
       );
     }
 
     let value =
-      config.nodeSizeAttr && !config.drawBars
-        ? nodeSizeScale(node[config.nodeSizeAttr])
+      config.nodeLink.nodeSizeAttr && !config.nodeLink.drawBars
+        ? nodeSizeScale(node[config.nodeLink.nodeSizeAttr])
         : nodeMarkerHeight;
     return value; //config.nodeIsRect ? value : value * 1.3;
   };
@@ -936,16 +974,16 @@ function updateVis() {
     let nodeFillScale = d3.scaleOrdinal();
 
     //if an attribute has been assigned to nodeFillAttr, set domain
-    if (config.nodeFillAttr) {
+    if (config.nodeLink.nodeFillAttr) {
       nodeFillScale
-        .domain(config.attributeScales.node[config.nodeFillAttr].domain)
-        .range(config.attributeScales.node[config.nodeFillAttr].range);
+        .domain(config.attributeScales.node[config.nodeLink.nodeFillAttr].domain)
+        .range(config.attributeScales.node[config.nodeLink.nodeFillAttr].range);
     }
 
     let value =
-      config.nodeFillAttr && !config.drawBars
-        ? nodeFillScale(node[config.nodeFillAttr])
-        : config.noNodeFill;
+      config.nodeLink.nodeFillAttr && !config.nodeLink.drawBars
+        ? nodeFillScale(node[config.nodeLink.nodeFillAttr])
+        : config.nodeLink.noNodeFill;
 
     return value;
   };
@@ -962,36 +1000,36 @@ function updateVis() {
   };
 
   let nodeStroke = function(node) {
-    return node.selected ? config.selectedNodeColor : config.noNodeStroke;
+    return node.selected ? config.selectedNodeColor : config.nodeLink.noNodeStroke;
   };
 
   let edgeColor = function(edge) {
     let edgeStrokeScale = d3
       .scaleOrdinal()
-      .domain(config.attributeScales.edge[config.edgeStrokeAttr].domain)
-      .range(config.attributeScales.edge[config.edgeStrokeAttr].range);
+      .domain(config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].domain)
+      .range(config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].range);
 
-    let value = config.edgeStrokeAttr
-      ? edgeStrokeScale(edge[config.edgeStrokeAttr])
-      : config.noEdgeColor;
+    let value = config.nodeLink.edgeStrokeAttr
+      ? edgeStrokeScale(edge[config.nodeLink.edgeStrokeAttr])
+      : config.nodeLink.noEdgeColor;
     return value;
   };
 
   let edgeWidth = function(edge) {
     let edgeWidthScale = d3
       .scaleLinear()
-      .domain(config.attributeScales.edge[config.edgeWidthAttr].domain)
+      .domain(config.attributeScales.edge[config.nodeLink.edgeWidthAttr].domain)
       .clamp(true)
       .range([2, 10]);
 
-    let value = config.edgeWidthAttr
-      ? edgeWidthScale(edge[config.edgeWidthAttr])
-      : config.noEdgeColor;
+    let value = config.nodeLink.edgeWidthAttr
+      ? edgeWidthScale(edge[config.nodeLink.edgeWidthAttr])
+      : config.nodeLink.noEdgeColor;
     return value;
   };
 
   //create scales for bars;
-  let barAttributes = config.quantAttrs;
+  let barAttributes = config.nodeAttributes.filter(isQuant);
 
   //object to store scales as a function of attr name;
   let scales = {};
@@ -1017,7 +1055,7 @@ function updateVis() {
 
   //Assign one color per unique domain;
   Object.keys(scaleColors).map((domainKey, i) => {
-    scaleColors[domainKey] = config.quantColors[i];
+    scaleColors[domainKey] = config.nodeLink.quantColors[i];
   });
 
   Object.keys(scales).map(
@@ -1102,9 +1140,9 @@ function updateVis() {
 
     node
       .select("text")
-      .style("font-size", config.labelSize[config.graphSize])
-      .text(d => d[config.labelAttr])
-      .attr("y", d => (config.drawBars ? -nodeHeight(d) * 0.5 - 4 : ".5em"))
+      .style("font-size", config.nodeLink.labelSize[config.graphSize])
+      .text(d => d[config.nodeLink.labelAttr])
+      .attr("y", d => (config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 4 : ".5em"))
       .attr("dx", function(d) {
         return (
           -d3
@@ -1137,7 +1175,7 @@ function updateVis() {
         //make sure label box spans the width of the node
         return d3.min([-textWidth / 2, -nodeLength(d) / 2 - 2]);
       })
-      .attr("y", d => (config.drawBars ? -nodeHeight(d) * 0.5 - 16 : "-.5em"));
+      .attr("y", d => (config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 16 : "-.5em"));
 
     node.call(
       d3
@@ -1152,13 +1190,14 @@ function updateVis() {
   {
     // //  Separate enter/exit/update for bars so as to bind to the correct data;
 
-    let drawCat = Object.keys(config.catAttrs).length > 0;
+    let drawCat = Object.keys(config.nodeAttributes.filter(isCategorical)).length > 0;
     let radius = drawCat ? nodeMarkerHeight * 0.15 : 0;
     let padding = drawCat ? 0 : 0;
     let xPos = drawCat ? nodeMarkerLength/2 - radius : 0;
 
 
-    let barAttrs = config.drawBars ? Object.keys(scales) : [];
+    let barAttrs = config.nodeLink.drawBars ? Object.keys(scales) : [];
+
     let numBars = barAttrs.length;
     let nodeWidth = nodeMarkerLength - barPadding - radius*2 - padding;
     let barWidth = nodeWidth / numBars - barPadding;
@@ -1236,8 +1275,7 @@ function updateVis() {
         .style("color", scales[attr].fill)
         .style("font-weight", "bold");
     });
-
-    let catAttrs = config.drawBars ? config.catAttrs : [];
+    let catAttrs = config.nodeLink.drawBars ? config.nodeAttributes.filter(isCategorical) : [];
 
     let yRange =
       catAttrs.length < 2
@@ -1348,7 +1386,7 @@ function updateVis() {
         d === currentData ||
         currentData.neighbors.find(n => n === d.id) ||
         currentData.edges.find(n => n === d.id);
-      if (config.selectNeighbors) {
+      if (config.nodeLink.selectNeighbors) {
         if (isNeighbor && isNode) {
           //add to list of selected neighbors
           if (!isClicked) {
@@ -1377,7 +1415,7 @@ function updateVis() {
       .filter(isNeighbor)
       .classed("muted", d => {
         return (
-          config.selectNeighbors &&
+          config.nodeLink.selectNeighbors &&
           hasUserSelection &&
           d.userSelectedNeighbors.length < 1
         );
@@ -1388,7 +1426,7 @@ function updateVis() {
       .filter(isNeighbor)
       .classed(
         "muted",
-        d => config.selectNeighbors && hasUserSelection && !d.selected
+        d => config.nodeLink.selectNeighbors && hasUserSelection && !d.selected
       );
 
     node
@@ -1582,6 +1620,14 @@ function updateVis() {
   }
 }
 
+function isQuant(attr){
+  return Object.keys(config.attributeScales.node).includes(attr) && config.attributeScales.node[attr].range === undefined;
+}
+
+function isCategorical(attr){
+  return Object.keys(config.attributeScales.node).includes(attr) && config.attributeScales.node[attr].range !== undefined;
+}
+
 async function loadConfigs(taskID) {
   //load base configuration for all tasks
   d3.json("../../configs/baseConfig.json", function(baseConfig) {
@@ -1590,18 +1636,18 @@ async function loadConfigs(taskID) {
     let taskConfigFile = "../../configs/" + taskID + "Config.json";
 
     d3.json(taskConfigFile, async function(taskConfig) {
-      //rehape relevant config values into a single dictionary.
-      config = {
-        ...baseConfig,
-        ...baseConfig.nodeLink,
-        ...baseConfig.style,
-        ...taskConfig,
-        ...taskConfig.nodeLink
-      };
 
-      delete config.nodeLink;
-      delete config.adjMatrix;
-      delete config.style;
+      d3.select("#exportBaseConfig").on("click", function() {
+        exportConfig(Object.keys(baseConfig),Object.keys(baseConfig.nodeLink),false)
+      });
+    
+      d3.select("#exportConfig").on("click", function() {
+        exportConfig(Object.keys(taskConfig),Object.keys(taskConfig.nodeLink),true)
+      });
+
+      // rehape relevant config values into a single dictionary.
+      config = mergeConfigs(baseConfig,taskConfig)
+      
 
       allConfigs.optimalConfig = config;
 
@@ -1609,7 +1655,7 @@ async function loadConfigs(taskID) {
 
       d3.select("#taskArea")
         .select(".card-header-title")
-        .text(task.prompt);
+        .text('Task ' + (taskNum+1) + ' - ' + task.prompt);
 
       d3.select("#optimalConfig").on("click", () =>
         applyConfig("optimalConfig")
@@ -1660,8 +1706,6 @@ function loadNewGraph(fileName) {
   d3.json(fileName, function(fileGraph) {
     //save as global variable
     graph = fileGraph;
-
-    console.log("loaded graph is ", graph);
     graph.nodes.map(n => {
       (n.savedX = n.fx), (n.savedY = n.fy);
     });
