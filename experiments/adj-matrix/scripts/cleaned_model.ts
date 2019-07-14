@@ -1,4 +1,14 @@
 //import * as d3 from 'd3';
+deepmerge.all = function deepmergeAll(array, optionsArgument) {
+    if (!Array.isArray(array) || array.length < 2) {
+        throw new Error('first argument should be an array with at least two elements')
+    }
+
+    // we are sure there are at least 2 values, so it is safe to have no initial value
+    return array.reduce(function(prev, next) {
+        return deepmerge(prev, next, optionsArgument)
+    })
+}
 
 class Model {
   /*
@@ -51,13 +61,13 @@ class Model {
 
 
       //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-      if (tweet.retweeted_status && this.controller.configuration.attributeScales.edge.type.domain.includes("retweet")) {
+      if (tweet.retweeted_status && this.controller.configuration.attributeScales.edge.type.domain.includes("retweets")) {
         let source = graph.nodes.find(n => n.id === tweet.user.id);
         let target = graph.nodes.find(n => n.id === tweet.retweeted_status.user.id);
 
 
         if (source && target) {
-          let link = { 'source': source.id, 'target': target.id, 'type': 'retweet' }
+          let link = { 'source': source.id, 'target': target.id, 'type': 'retweets' }
 
           newGraph.links.push(link);
           if (!newGraph.nodes.find(n => n === source)) {
@@ -100,7 +110,7 @@ class Model {
         this.nodes = data.nodes
         this.idMap = {};
 
-        this.order = this.changeOrder(this.controller.configuration.adjMatrix.sortKey);
+        this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
         if (this.orderType == "screen_name") {
           this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b.screen_name));
         } else {
@@ -133,7 +143,7 @@ class Model {
   changeOrder(type: string) {
     let order;
     this.orderType = type;
-    this.controller.configuration.adjMatrix.sortKey = type;
+    this.controller.configuration.state.adjMatrix.sortKey = type;
     if (type == 'screen_name') {
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[a].screen_name.localeCompare(this.nodes[b].screen_name) })
     }
@@ -536,7 +546,8 @@ class View {
       let extent = [0, this.controller.model.maxTracker[type]]
       console.log(extent);
       // set up scale
-      let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.style.edgeColors[type]]);
+      let typeIndex =  this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
+      let scale = d3.scaleLinear().domain(extent).range(["white",this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
 
       // store scales
       this.edgeScales[type] = scale;
@@ -551,8 +562,8 @@ class View {
 
 
       .attr("class", "cell");
-
-    if(this.controller.configuration.nestedBars){
+    console.log(this.controller.configuration.adjMatrix.edgeBars,this.controller.configuration,this.controller.configuration.adjMatrix);
+    if(this.controller.configuration.adjMatrix.edgeBars){
       // bind squars to cells for the mouse over effect
       cells
       .append("rect")
@@ -568,6 +579,7 @@ class View {
         let type = this.controller.configuration.attributeScales.edge.type.domain[index]
         console.log(type);
         let scale = this.edgeScales[type];
+        let typeColor = scale.range()[1];
         scale.range([0,this.verticalScale.bandwidth()])
         scale.clamp(true);
 
@@ -582,7 +594,7 @@ class View {
         })
         .attr('height',d=>this.edgeScales[type](d[type]))
         .attr('width',this.verticalScale.bandwidth()/dividers)
-        .attr('fill',this.controller.configuration.style.edgeColors[type])
+        .attr('fill',typeColor)
       }
 
 
@@ -738,7 +750,7 @@ class View {
       .text((d, i) => this.nodes[i].screen_name)
       .on('click', (d, index, nodes) => {
 
-        d3.select(nodes[index]).classed('selected', !this.controller.configuration.state.columnSelectedNodes.includes(d[index].rowid));
+        d3.select(nodes[index]).classed('selected', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
 
         console.log(d[index].rowid);
         this.selectColumnNode(d[index].rowid);
@@ -843,15 +855,16 @@ generateColorLegend(){
     console.log(scale)
     let extent = scale.domain();
     console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
-    let sampleNumbers = this.linspace(extent[0], extent[1], 5);
+    let number = 3;
+    let sampleNumbers = this.linspace(extent[0], extent[1], number);
     console.log(sampleNumbers);
     let svg = d3.select('#legends').append("g")
       .attr("id", "legendLinear" + type)
       .attr("transform", (d, i) => "translate(" + xOffset + "," + yOffset + ")")
       .on('click', (d,i,nodes) => {
-        if (this.controller.configuration.interaction.selectEdgeType == true) {
-          let edgeType = this.controller.configuration.state.selectedEdgeType == type ? 'all' : type;
-          this.controller.configuration.state.selectedEdgeType = edgeType;
+        if (this.controller.configuration.adjMatrix.selectEdgeType == true) { //
+          let edgeType = this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
+          this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
           this.setSquareColors(edgeType);
           console.log(nodes[i]);
           if(edgeType == "all"){
@@ -862,7 +875,7 @@ generateColorLegend(){
           }
         }
       });
-    let boxWidth = 6* rectWidth + 15
+    let boxWidth = (number+1)* rectWidth + 15
 
     svg.append('rect')
       .classed('edgeLegendBorder',true)
@@ -976,15 +989,15 @@ generateColorLegend(){
       if (this.matrix[i][nodeIndex].z > 0) {
         let nodeID = this.matrix[i][nodeIndex].rowid;
         console.log(nodeID);
-        if (this.controller.configuration.state.highlightedNodes.hasOwnProperty(nodeID) && !this.controller.configuration.state.highlightedNodes[nodeID].includes(addingNode)) {
+        if (this.controller.configuration.state.adjMatrix.highlightedNodes.hasOwnProperty(nodeID) && !this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].includes(addingNode)) {
           // if array exists, add it
-          console.log(this.controller.configuration.state.highlightedNodes[nodeID]);
-          this.controller.configuration.state.highlightedNodes[nodeID].push(addingNode);
+          console.log(this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID]);
+          this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].push(addingNode);
         } else {
           // if array non exist, create it and add node
-          console.log(this.controller.configuration.state.highlightedNodes);
-          this.controller.configuration.state.highlightedNodes[nodeID] = [addingNode];
-          console.log(this.controller.configuration.state.highlightedNodes);
+          console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
+          this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID] = [addingNode];
+          console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
         }
       }
     }
@@ -1004,21 +1017,21 @@ generateColorLegend(){
    */
   removeHighlightNode(removingNode: string) {
     // remove from selected nodes
-    console.log(this.controller.configuration.state.columnSelectedNodes);
+    console.log(this.controller.configuration.state.adjMatrix.columnSelectedNodes);
 
-    console.log(this.controller.configuration.state.highlightedNodes);
-    for (let nodeID in this.controller.configuration.state.highlightedNodes) {
+    console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
+    for (let nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
       console.log('to_remove_Hightlight', nodeID);
       //finds the position of removing node in the nodes array
-      let index = this.controller.configuration.state.highlightedNodes[nodeID].indexOf(removingNode);
+      let index = this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].indexOf(removingNode);
       // keep on removing all places of removing node
       if (index > -1) {
-        this.controller.configuration.state.highlightedNodes[nodeID].splice(index, 1);
+        this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].splice(index, 1);
         // delete properties if no nodes left
-        if (this.controller.configuration.state.highlightedNodes[nodeID].length == 0) {
-          delete this.controller.configuration.state.highlightedNodes[nodeID];
+        if (this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].length == 0) {
+          delete this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID];
         }
-        console.log(this.controller.configuration.state.highlightedNodes[nodeID])
+        console.log(this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID])
       }
     }
   }
@@ -1029,7 +1042,7 @@ generateColorLegend(){
     // remove all highlights
     d3.selectAll('.neighborSelected').classed('neighborSelected', false);
     // re add all highlights
-    for (let nodeID in this.controller.configuration.state.highlightedNodes) {
+    for (let nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
       console.log("node to be highlighted", nodeID);
       d3.select('#highlight' + 'Topo' + 'Row' + nodeID)
         .classed('neighborSelected', true);
@@ -1061,21 +1074,21 @@ generateColorLegend(){
    * @return        [description]
    */
   selectColumnNode(nodeID) {
-    let nodeIndex = this.controller.configuration.state.columnSelectedNodes.indexOf(nodeID);
+    let nodeIndex = this.controller.configuration.state.adjMatrix.columnSelectedNodes.indexOf(nodeID);
     console.log(nodeIndex);
     if (nodeIndex > -1) {
       // find all neighbors and remove them
-      console.log("remove node", this.controller.configuration.state.columnSelectedNodes, this.controller.configuration.state.columnSelectedNodes.splice(nodeIndex, 1));
+      console.log("remove node", this.controller.configuration.state.adjMatrix.columnSelectedNodes, this.controller.configuration.state.adjMatrix.columnSelectedNodes.splice(nodeIndex, 1));
       this.removeHighlightNode(nodeID);
-      this.controller.configuration.state.columnSelectedNodes.splice(nodeIndex, 1);
-      console.log("remove node", this.controller.configuration.state.columnSelectedNodes);
+      this.controller.configuration.state.adjMatrix.columnSelectedNodes.splice(nodeIndex, 1);
+      console.log("remove node", this.controller.configuration.state.adjMatrix.columnSelectedNodes);
       // remove node from column selected nodes
     } else {
       console.log("add node", nodeID);
       this.addHighlightNode(nodeID);
-      this.controller.configuration.state.columnSelectedNodes.push(nodeID);
+      this.controller.configuration.state.adjMatrix.columnSelectedNodes.push(nodeID);
     }
-    console.log(this.controller.configuration.state.columnSelectedNodes);
+    console.log(this.controller.configuration.state.adjMatrix.columnSelectedNodes);
     this.renderHighlightNodes();
     /*let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID);
 
@@ -1269,7 +1282,7 @@ generateColorLegend(){
       })
 
 
-    let columns = this.controller.configuration.columns;
+    let columns = this.controller.configuration.nodeAttributes;
 
     // Based on the data type set widths
     // numerical are 50, bool are a verticle bandwidth * 2
@@ -1563,16 +1576,43 @@ class Controller {
   private model: any;
   private configuration: any;
 
+  mergeConfigs(){
+    console.log("in merge");
+    let that = this;
+    Promise.all([
+      d3.json("./../configs/baseconfig.json"),
+      d3.json("./../configs/task1Config.json"),
+      d3.json("./../configs/state.json")
+    ]).then(function(configComponents){
+      console.log(configComponents)
+      let components =[configComponents[0],configComponents[1],configComponents[2]];
+      let result = deepmerge.all(components);
 
-  constructor() {
-    this.configuration = d3.json("configs/config.json");//../configs/baseconfig.json
-
-    this.configuration.then(data => {
-      this.configuration = data;
+      console.log(result);
+      that.finishConstructing(result);
     })
 
-    this.view = new View(this); // initalize view,
-    this.model = new Model(this); // start reading in data
+  }
+
+  finishConstructing(config){
+      this.configuration = config;
+      this.view = new View(this); // initalize view,
+      this.model = new Model(this); // start reading in data
+  }
+  constructor() {
+
+
+    this.configuration = this.mergeConfigs();
+    /*console.log(this.configuration);
+
+    this.configuration.then(data => {
+      console.log(data);
+      this.configuration = data;
+    })
+    console.log(this.configuration);*/
+
+
+
   }
 
   reload(){
@@ -1613,3 +1653,63 @@ class Controller {
 
 window.controller = new Controller();
 //window.controller = control;
+/* Deep merge stuff */
+function isMergeableObject(val) {
+    var nonNullObject = val && typeof val === 'object'
+
+    return nonNullObject
+        && Object.prototype.toString.call(val) !== '[object RegExp]'
+        && Object.prototype.toString.call(val) !== '[object Date]'
+}
+
+function emptyTarget(val) {
+    return Array.isArray(val) ? [] : {}
+}
+
+function cloneIfNecessary(value, optionsArgument) {
+    var clone = optionsArgument && optionsArgument.clone === true
+    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value
+}
+
+function defaultArrayMerge(target, source, optionsArgument) {
+    var destination = target.slice()
+    source.forEach(function(e, i) {
+        if (typeof destination[i] === 'undefined') {
+            destination[i] = cloneIfNecessary(e, optionsArgument)
+        } else if (isMergeableObject(e)) {
+            destination[i] = deepmerge(target[i], e, optionsArgument)
+        } else if (target.indexOf(e) === -1) {
+            destination.push(cloneIfNecessary(e, optionsArgument))
+        }
+    })
+    return destination
+}
+
+function mergeObject(target, source, optionsArgument) {
+    var destination = {}
+    if (isMergeableObject(target)) {
+        Object.keys(target).forEach(function (key) {
+            destination[key] = cloneIfNecessary(target[key], optionsArgument)
+        })
+    }
+    Object.keys(source).forEach(function (key) {
+        if (!isMergeableObject(source[key]) || !target[key]) {
+            destination[key] = cloneIfNecessary(source[key], optionsArgument)
+        } else {
+            destination[key] = deepmerge(target[key], source[key], optionsArgument)
+        }
+    })
+    return destination
+}
+
+function deepmerge(target, source, optionsArgument) {
+    var array = Array.isArray(source);
+    var options = optionsArgument || { arrayMerge: defaultArrayMerge }
+    var arrayMerge = options.arrayMerge || defaultArrayMerge
+
+    if (array) {
+        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)
+    } else {
+        return mergeObject(target, source, optionsArgument)
+    }
+}

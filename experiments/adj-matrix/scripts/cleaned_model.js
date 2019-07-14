@@ -1,4 +1,13 @@
 //import * as d3 from 'd3';
+deepmerge.all = function deepmergeAll(array, optionsArgument) {
+    if (!Array.isArray(array) || array.length < 2) {
+        throw new Error('first argument should be an array with at least two elements');
+    }
+    // we are sure there are at least 2 values, so it is safe to have no initial value
+    return array.reduce(function (prev, next) {
+        return deepmerge(prev, next, optionsArgument);
+    });
+};
 var Model = /** @class */ (function () {
     function Model(controller) {
         var _this = this;
@@ -9,7 +18,7 @@ var Model = /** @class */ (function () {
                 _this.matrix = [];
                 _this.nodes = data.nodes;
                 _this.idMap = {};
-                _this.order = _this.changeOrder(_this.controller.configuration.sortKey);
+                _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
                 if (_this.orderType == "screen_name") {
                     _this.nodes = _this.nodes.sort(function (a, b) { return a.screen_name.localeCompare(b.screen_name); });
                 }
@@ -35,7 +44,7 @@ var Model = /** @class */ (function () {
         tweets = tweets.tweets;
         tweets.map(function (tweet) {
             //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
-            if (_this.controller.configuration.edgeTypes.includes("mentions")) {
+            if (_this.controller.configuration.attributeScales.edge.type.domain.includes("mentions")) {
                 tweet.entities.user_mentions.map(function (mention) {
                     var source = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
                     var target = graph.nodes.find(function (n) { return n.id === mention.id; });
@@ -53,7 +62,7 @@ var Model = /** @class */ (function () {
                 });
             }
             //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-            if (tweet.retweeted_status && _this.controller.configuration.edgeTypes.includes("retweet")) {
+            if (tweet.retweeted_status && _this.controller.configuration.attributeScales.edge.type.domain.includes("retweet")) {
                 var source_1 = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
                 var target_1 = graph.nodes.find(function (n) { return n.id === tweet.retweeted_status.user.id; });
                 if (source_1 && target_1) {
@@ -68,7 +77,7 @@ var Model = /** @class */ (function () {
                 }
             }
             //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
-            if (tweet.in_reply_to_user_id_str && _this.controller.configuration.edgeTypes.includes("reply")) {
+            if (tweet.in_reply_to_user_id_str && _this.controller.configuration.attributeScales.edge.type.domain.includes("reply")) {
                 var source_2 = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
                 var target_2 = graph.nodes.find(function (n) { return n.id === tweet.in_reply_to_user_id; });
                 if (source_2 && target_2) {
@@ -94,7 +103,7 @@ var Model = /** @class */ (function () {
         var _this = this;
         var order;
         this.orderType = type;
-        this.controller.configuration.sortKey = type;
+        this.controller.configuration.state.adjMatrix.sortKey = type;
         if (type == 'screen_name') {
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a].screen_name.localeCompare(_this.nodes[b].screen_name); });
         }
@@ -431,12 +440,13 @@ var View = /** @class */ (function () {
             // highlight other nodes (add jumps?)
         });
         this.edgeScales = {};
-        this.controller.configuration.edgeTypes.forEach(function (type) {
+        this.controller.configuration.attributeScales.edge.type.domain.forEach(function (type) {
             // calculate the max
             var extent = [0, _this.controller.model.maxTracker[type]];
             console.log(extent);
             // set up scale
-            var scale = d3.scaleLinear().domain(extent).range(["white", _this.controller.configuration.style.edgeColors[type]]);
+            var typeIndex = _this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
+            var scale = d3.scaleLinear().domain(extent).range(["white", _this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
             // store scales
             _this.edgeScales[type] = scale;
             //console.log(type, this.edgeScales[type].domain(), this.edgeScales[type].range().clamp());
@@ -447,7 +457,8 @@ var View = /** @class */ (function () {
             .data(function (d) { return d; /*.filter(item => item.z > 0)*/ })
             .enter().append('g')
             .attr("class", "cell");
-        if (this.controller.configuration.nestedBars) {
+        console.log(this.controller.configuration.adjMatrix.edgeBars, this.controller.configuration, this.controller.configuration.adjMatrix);
+        if (this.controller.configuration.adjMatrix.edgeBars) {
             // bind squars to cells for the mouse over effect
             cells
                 .append("rect")
@@ -455,18 +466,19 @@ var View = /** @class */ (function () {
                 .attr('height', this.verticalScale.bandwidth())
                 .attr('width', this.verticalScale.bandwidth())
                 .attr('fill-opacity', 0);
-            var dividers_1 = this.controller.configuration.edgeTypes.length;
+            var dividers_1 = this.controller.configuration.attributeScales.edge.type.domain.length;
             dividers_1 = dividers_1 == 0 ? 1 : dividers_1; // if dividers = 0, set to 1  throw an error?
             var squares = cells;
             var _loop_1 = function (index) {
-                var type = this_1.controller.configuration.edgeTypes[index];
+                var type = this_1.controller.configuration.attributeScales.edge.type.domain[index];
                 console.log(type);
                 var scale = this_1.edgeScales[type];
+                var typeColor = scale.range()[1];
                 scale.range([0, this_1.verticalScale.bandwidth()]);
                 scale.clamp(true);
                 cells
                     .filter(function (d) {
-                    return d[_this.controller.configuration.edgeTypes[index]] !== 0;
+                    return d[_this.controller.configuration.attributeScales.edge.type.domain[index]] !== 0;
                 })
                     .append("rect")
                     .attr('x', function (d, i) { return _this.verticalScale(d.x) + index * _this.verticalScale.bandwidth() / dividers_1; })
@@ -475,7 +487,7 @@ var View = /** @class */ (function () {
                 })
                     .attr('height', function (d) { return _this.edgeScales[type](d[type]); })
                     .attr('width', this_1.verticalScale.bandwidth() / dividers_1)
-                    .attr('fill', this_1.controller.configuration.style.edgeColors[type]);
+                    .attr('fill', typeColor);
             };
             var this_1 = this;
             for (var index = 0; index < dividers_1; index++) {
@@ -615,7 +627,7 @@ var View = /** @class */ (function () {
             .style("font-size", 7.5 + "px")
             .text(function (d, i) { return _this.nodes[i].screen_name; })
             .on('click', function (d, index, nodes) {
-            d3.select(nodes[index]).classed('selected', !_this.controller.configuration.state.columnSelectedNodes.includes(d[index].rowid));
+            d3.select(nodes[index]).classed('selected', !_this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
             console.log(d[index].rowid);
             _this.selectColumnNode(d[index].rowid);
         });
@@ -717,15 +729,16 @@ var View = /** @class */ (function () {
             console.log(scale);
             var extent = scale.domain();
             console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
-            var sampleNumbers = this_2.linspace(extent[0], extent[1], 5);
+            var number = 3;
+            var sampleNumbers = this_2.linspace(extent[0], extent[1], number);
             console.log(sampleNumbers);
             var svg = d3.select('#legends').append("g")
                 .attr("id", "legendLinear" + type)
                 .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
                 .on('click', function (d, i, nodes) {
-                if (_this.controller.configuration.interaction.selectEdgeType == true) {
-                    var edgeType = _this.controller.configuration.state.selectedEdgeType == type ? 'all' : type;
-                    _this.controller.configuration.state.selectedEdgeType = edgeType;
+                if (_this.controller.configuration.adjMatrix.selectEdgeType == true) { //
+                    var edgeType = _this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
+                    _this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
                     _this.setSquareColors(edgeType);
                     console.log(nodes[i]);
                     if (edgeType == "all") {
@@ -737,7 +750,7 @@ var View = /** @class */ (function () {
                     }
                 }
             });
-            var boxWidth = 6 * rectWidth + 15;
+            var boxWidth = (number + 1) * rectWidth + 15;
             svg.append('rect')
                 .classed('edgeLegendBorder', true)
                 .attr('stroke', 'gray')
@@ -830,16 +843,16 @@ var View = /** @class */ (function () {
             if (this.matrix[i][nodeIndex].z > 0) {
                 var nodeID = this.matrix[i][nodeIndex].rowid;
                 console.log(nodeID);
-                if (this.controller.configuration.state.highlightedNodes.hasOwnProperty(nodeID) && !this.controller.configuration.state.highlightedNodes[nodeID].includes(addingNode)) {
+                if (this.controller.configuration.state.adjMatrix.highlightedNodes.hasOwnProperty(nodeID) && !this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].includes(addingNode)) {
                     // if array exists, add it
-                    console.log(this.controller.configuration.state.highlightedNodes[nodeID]);
-                    this.controller.configuration.state.highlightedNodes[nodeID].push(addingNode);
+                    console.log(this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID]);
+                    this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].push(addingNode);
                 }
                 else {
                     // if array non exist, create it and add node
-                    console.log(this.controller.configuration.state.highlightedNodes);
-                    this.controller.configuration.state.highlightedNodes[nodeID] = [addingNode];
-                    console.log(this.controller.configuration.state.highlightedNodes);
+                    console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
+                    this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID] = [addingNode];
+                    console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
                 }
             }
         }
@@ -852,20 +865,20 @@ var View = /** @class */ (function () {
      */
     View.prototype.removeHighlightNode = function (removingNode) {
         // remove from selected nodes
-        console.log(this.controller.configuration.state.columnSelectedNodes);
-        console.log(this.controller.configuration.state.highlightedNodes);
-        for (var nodeID in this.controller.configuration.state.highlightedNodes) {
+        console.log(this.controller.configuration.state.adjMatrix.columnSelectedNodes);
+        console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
+        for (var nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
             console.log('to_remove_Hightlight', nodeID);
             //finds the position of removing node in the nodes array
-            var index = this.controller.configuration.state.highlightedNodes[nodeID].indexOf(removingNode);
+            var index = this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].indexOf(removingNode);
             // keep on removing all places of removing node
             if (index > -1) {
-                this.controller.configuration.state.highlightedNodes[nodeID].splice(index, 1);
+                this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].splice(index, 1);
                 // delete properties if no nodes left
-                if (this.controller.configuration.state.highlightedNodes[nodeID].length == 0) {
-                    delete this.controller.configuration.state.highlightedNodes[nodeID];
+                if (this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].length == 0) {
+                    delete this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID];
                 }
-                console.log(this.controller.configuration.state.highlightedNodes[nodeID]);
+                console.log(this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID]);
             }
         }
     };
@@ -874,7 +887,7 @@ var View = /** @class */ (function () {
         // remove all highlights
         d3.selectAll('.neighborSelected').classed('neighborSelected', false);
         // re add all highlights
-        for (var nodeID in this.controller.configuration.state.highlightedNodes) {
+        for (var nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
             console.log("node to be highlighted", nodeID);
             d3.select('#highlight' + 'Topo' + 'Row' + nodeID)
                 .classed('neighborSelected', true);
@@ -904,22 +917,22 @@ var View = /** @class */ (function () {
      * @return        [description]
      */
     View.prototype.selectColumnNode = function (nodeID) {
-        var nodeIndex = this.controller.configuration.state.columnSelectedNodes.indexOf(nodeID);
+        var nodeIndex = this.controller.configuration.state.adjMatrix.columnSelectedNodes.indexOf(nodeID);
         console.log(nodeIndex);
         if (nodeIndex > -1) {
             // find all neighbors and remove them
-            console.log("remove node", this.controller.configuration.state.columnSelectedNodes, this.controller.configuration.state.columnSelectedNodes.splice(nodeIndex, 1));
+            console.log("remove node", this.controller.configuration.state.adjMatrix.columnSelectedNodes, this.controller.configuration.state.adjMatrix.columnSelectedNodes.splice(nodeIndex, 1));
             this.removeHighlightNode(nodeID);
-            this.controller.configuration.state.columnSelectedNodes.splice(nodeIndex, 1);
-            console.log("remove node", this.controller.configuration.state.columnSelectedNodes);
+            this.controller.configuration.state.adjMatrix.columnSelectedNodes.splice(nodeIndex, 1);
+            console.log("remove node", this.controller.configuration.state.adjMatrix.columnSelectedNodes);
             // remove node from column selected nodes
         }
         else {
             console.log("add node", nodeID);
             this.addHighlightNode(nodeID);
-            this.controller.configuration.state.columnSelectedNodes.push(nodeID);
+            this.controller.configuration.state.adjMatrix.columnSelectedNodes.push(nodeID);
         }
-        console.log(this.controller.configuration.state.columnSelectedNodes);
+        console.log(this.controller.configuration.state.adjMatrix.columnSelectedNodes);
         this.renderHighlightNodes();
         /*let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID);
     
@@ -1084,7 +1097,7 @@ var View = /** @class */ (function () {
             d3.selectAll('.highlightTopoRow')
                 .classed('hovered', false);
         });
-        var columns = this.controller.configuration.columns;
+        var columns = this.controller.configuration.nodeAttributes;
         // Based on the data type set widths
         // numerical are 50, bool are a verticle bandwidth * 2
         //
@@ -1309,14 +1322,35 @@ var View = /** @class */ (function () {
 // Work on importing class file
 var Controller = /** @class */ (function () {
     function Controller() {
-        var _this = this;
-        this.configuration = d3.json("configs/config.json"); //../configs/baseconfig.json
-        this.configuration.then(function (data) {
-            _this.configuration = data;
+        this.configuration = this.mergeConfigs();
+        /*console.log(this.configuration);
+    
+        this.configuration.then(data => {
+          console.log(data);
+          this.configuration = data;
+        })
+        console.log(this.configuration);*/
+    }
+    Controller.prototype.mergeConfigs = function () {
+        console.log("in merge");
+        var that = this;
+        Promise.all([
+            d3.json("./../configs/baseconfig.json"),
+            d3.json("./../configs/task1Config.json"),
+            d3.json("./../configs/state.json")
+        ]).then(function (configComponents) {
+            console.log(configComponents);
+            var components = [configComponents[0], configComponents[1], configComponents[2]];
+            var result = deepmerge.all(components);
+            console.log(result);
+            that.finishConstructing(result);
         });
+    };
+    Controller.prototype.finishConstructing = function (config) {
+        this.configuration = config;
         this.view = new View(this); // initalize view,
         this.model = new Model(this); // start reading in data
-    }
+    };
     Controller.prototype.reload = function () {
         d3.select('#topology').selectAll('*').remove();
         d3.select('#attributes').selectAll('*').remove();
@@ -1348,3 +1382,60 @@ var Controller = /** @class */ (function () {
 }());
 window.controller = new Controller();
 //window.controller = control;
+/* Deep merge stuff */
+function isMergeableObject(val) {
+    var nonNullObject = val && typeof val === 'object';
+    return nonNullObject
+        && Object.prototype.toString.call(val) !== '[object RegExp]'
+        && Object.prototype.toString.call(val) !== '[object Date]';
+}
+function emptyTarget(val) {
+    return Array.isArray(val) ? [] : {};
+}
+function cloneIfNecessary(value, optionsArgument) {
+    var clone = optionsArgument && optionsArgument.clone === true;
+    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value;
+}
+function defaultArrayMerge(target, source, optionsArgument) {
+    var destination = target.slice();
+    source.forEach(function (e, i) {
+        if (typeof destination[i] === 'undefined') {
+            destination[i] = cloneIfNecessary(e, optionsArgument);
+        }
+        else if (isMergeableObject(e)) {
+            destination[i] = deepmerge(target[i], e, optionsArgument);
+        }
+        else if (target.indexOf(e) === -1) {
+            destination.push(cloneIfNecessary(e, optionsArgument));
+        }
+    });
+    return destination;
+}
+function mergeObject(target, source, optionsArgument) {
+    var destination = {};
+    if (isMergeableObject(target)) {
+        Object.keys(target).forEach(function (key) {
+            destination[key] = cloneIfNecessary(target[key], optionsArgument);
+        });
+    }
+    Object.keys(source).forEach(function (key) {
+        if (!isMergeableObject(source[key]) || !target[key]) {
+            destination[key] = cloneIfNecessary(source[key], optionsArgument);
+        }
+        else {
+            destination[key] = deepmerge(target[key], source[key], optionsArgument);
+        }
+    });
+    return destination;
+}
+function deepmerge(target, source, optionsArgument) {
+    var array = Array.isArray(source);
+    var options = optionsArgument || { arrayMerge: defaultArrayMerge };
+    var arrayMerge = options.arrayMerge || defaultArrayMerge;
+    if (array) {
+        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument);
+    }
+    else {
+        return mergeObject(target, source, optionsArgument);
+    }
+}

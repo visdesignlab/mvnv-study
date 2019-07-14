@@ -1,0 +1,13 @@
+{
+	"state": {
+		"selectedNodes": [],
+		"nodeLink":{},
+		"adjMatrix": {
+			"sortings": [],
+			"selectedEdgeType": "all",
+			"columnSelectedNodes": [],
+			"highlightedNodes": {},
+			"sortKey": "screen_name"
+		}
+	}
+}
