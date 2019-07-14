@@ -1598,12 +1598,13 @@ class Controller {
   private model: any;
   private configuration: any;
 
-  mergeConfigs() {
+  loadConfigs() {
     console.log("in merge");
     let that = this;
+    console.log("./../configs/task"+(this.taskNum+1).toString()+"Config.json");
     Promise.all([
       d3.json("./../configs/baseconfig.json"),
-      d3.json("./../configs/task1Config.json"),
+      d3.json("./../configs/task"+(this.taskNum+1).toString()+"Config.json"),
       d3.json("./../configs/state.json")
     ]).then(function(configComponents) {
       console.log(configComponents)
@@ -1611,7 +1612,9 @@ class Controller {
       let result = deepmerge.all(components);
 
       console.log(result);
-      that.finishConstructing(result);
+      that.configuration = result;
+      that.reload();
+      //that.finishConstructing(result);
     })
 
   }
@@ -1623,9 +1626,42 @@ class Controller {
     console.log(this.model);
 
   }
-  constructor() {
 
-    this.mergeConfigs();
+  private tasks:any;
+  private taskNum:number;
+
+  async loadTasks(){
+    this.taskNum = 0;
+    await d3.json("./../configs/tasks.json").then( (data)=>{
+      console.log(data);
+      this.tasks = data.tasks;
+
+      console.log("before data",this.tasks)
+    });
+    console.log("after data",this.tasks);
+
+    let task = this.tasks[this.taskNum]
+    d3.select("#taskArea")
+        .select(".card-header-title")
+        .text('Task ' + (this.taskNum+1) + ' - ' + task.prompt);
+
+
+    d3.select("#next").on("click", () => {
+        this.taskNum = d3.min([this.taskNum + 1, this.tasks.length - 1]);
+        this.loadConfigs();
+      });
+
+      d3.select("#previous").on("click", () => {
+        this.taskNum = d3.max([this.taskNum - 1, 0]);
+        this.loadConfigs();
+
+      });
+
+  }
+  constructor() {
+    this.loadTasks();
+
+    this.loadConfigs();
 
     /*console.log(this.configuration);
 
@@ -1638,12 +1674,21 @@ class Controller {
 
 
   }
-
-  reload() {
-    d3.select('.loading').style('display','block');
+  clearView(){
     d3.select('#topology').selectAll('*').remove();
     d3.select('#attributes').selectAll('*').remove();
     d3.select('#legends').selectAll('*').remove();
+  }
+  loadCurrentTask(){
+    let task = this.tasks[this.taskNum]
+    d3.select("#taskArea")
+        .select(".card-header-title")
+        .text('Task ' + (this.taskNum+1) + ' - ' + task.prompt);
+  }
+  reload() {
+    this.clearView();
+    this.loadCurrentTask();
+    d3.select('.loading').style('display','block');
 
     this.view = new View(this); // initalize view,
     this.model = new Model(this); //.reload();
