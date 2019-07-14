@@ -113,7 +113,9 @@ line {
 }
 
 #interactiveFreeFormMain{
-
+  width:90%;
+  margin-left: auto;
+  margin-right:auto;
 }
 
 .svg-content {
@@ -137,6 +139,188 @@ line {
         height:800px;
         overflow-y: scroll;
     }
+/* Loading */
+@keyframes loading {
+  to {transform: rotate(360deg);}
+}
+
+.loading:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 10px solid #ccc;
+  border-top-color: #000;
+  animation: loading .6s linear infinite;
+}
+
+.loadingGroup{
+  position: relative;
+}
+/*
+.loading {
+  position: relative;
+  left: 50%;
+  top: 70%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+
+}
+.loadingOverlay{
+  position: relative;
+  left:0px;
+  top:0px;
+  width:100%;
+  height:450px;
+  background-color: rgba(255,255,255,0.3);
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Absolute Center Spinner
+
+.loading {
+  display:none;
+  position: absolute;
+  z-index: 999;
+  height: 50%;
+  width: 100%;
+  margin: auto;
+}
+
+/* Transparent Overlay
+.loading:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50;
+  left: 300;
+  bottom: 0;
+  right: 0;
+  /*width: 100%;
+  height: 50%;*/
+  background-color: rgba(255,255,255,0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below
+.loading:not(:required) {
+  /* hide "loading..." text
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.loading:not(:required):after {
+  content: '';
+  display: block;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  -webkit-animation: spinner 1500ms infinite linear;
+  -moz-animation: spinner 1500ms infinite linear;
+  -ms-animation: spinner 1500ms infinite linear;
+  -o-animation: spinner 1500ms infinite linear;
+  animation: spinner 1500ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+  box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+}
+
+/* Animation
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+*/
+.rows{
+    display: flex;
+    flex-direction: column;
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css">
 <link rel="stylesheet" href="css/bulma-slider.min.css">
@@ -360,27 +544,52 @@ line {
           <br />
           <br />
 
-          <a class="button is-light" id="exportConfig">Export Config</a>
+          <a class="button is-light" id="exportConfig">Export Task Config</a>
+
+          <br />
+
+          <a class="button is-light" id="exportBaseConfig">Export Base Config</a>
 
     </aside>
-    <div id="overlay">
-      <div class="spinner"></div>
-      <div id="overlay-text">Loading Content</div>
-    </div>
+
   </div>
 
 
 
 
   <div class="column" id="visDiv">
-    <a class="button" id="panelControl">Hide/Show Control Panel</a>
+    <div id="taskArea">
 
-    <div id="interactiveFreeFormMain">
-      <div id="topology" class="topocontainer" height="700" width="700"> </div>
-      <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
+      <a class="button" id="panelControl">Hide/Show Control Panel</a>
+      <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
+      <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
+      <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+          </p>
 
+
+
+          <a href="#" class="card-header-icon" aria-label="more options">
+            <span class="icon">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+          </a>
+        </header>
+      </div>
     </div>
-    <svg id="legends" height="60" width="575"> </svg>
+    <div class="loadingGroup">
+      <div class="loading"></div>
+      <div class="loadingOverlay"></div>
+      <div id="interactiveFreeFormMain">
+        <div id="topology" class="topocontainer" height="700" width="700"> </div>
+        <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
+        <svg id="legends" height="60" width="575"> </svg>
+      </div>
+    <div>
+    <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+    <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
   </div>
 </div>
 
@@ -395,5 +604,5 @@ line {
   });
 </script>
 
-<!---<script type="text/javascript" src="scripts/fill_config_settings.js"></script>-->
+<script type="text/javascript" src="scripts/fill_config_settings.js"></script>
 <script type="text/javascript" src="scripts/cleaned_model.js"> </script>

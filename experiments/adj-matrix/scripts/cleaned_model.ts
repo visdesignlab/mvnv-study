@@ -1,13 +1,13 @@
 //import * as d3 from 'd3';
 deepmerge.all = function deepmergeAll(array, optionsArgument) {
-    if (!Array.isArray(array) || array.length < 2) {
-        throw new Error('first argument should be an array with at least two elements')
-    }
+  if (!Array.isArray(array) || array.length < 2) {
+    throw new Error('first argument should be an array with at least two elements')
+  }
 
-    // we are sure there are at least 2 values, so it is safe to have no initial value
-    return array.reduce(function(prev, next) {
-        return deepmerge(prev, next, optionsArgument)
-    })
+  // we are sure there are at least 2 values, so it is safe to have no initial value
+  return array.reduce(function(prev, next) {
+    return deepmerge(prev, next, optionsArgument)
+  })
 }
 
 class Model {
@@ -22,12 +22,14 @@ class Model {
   private controller: any;
   private idMap;
   private orderType;
+  public graph: any;
 
 
   grabTwitterData(graph, tweets) {
     let toRemove = [];
     let newGraph = { 'nodes': [], 'links': [] };
-
+    this.graph = graph;
+    console.log(this.graph)
     //create edges from tweets.
 
     tweets = tweets.tweets;
@@ -61,13 +63,13 @@ class Model {
 
 
       //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-      if (tweet.retweeted_status && this.controller.configuration.attributeScales.edge.type.domain.includes("retweets")) {
+      if (tweet.retweeted_status && this.controller.configuration.attributeScales.edge.type.domain.includes("retweet")) {
         let source = graph.nodes.find(n => n.id === tweet.user.id);
         let target = graph.nodes.find(n => n.id === tweet.retweeted_status.user.id);
 
 
         if (source && target) {
-          let link = { 'source': source.id, 'target': target.id, 'type': 'retweets' }
+          let link = { 'source': source.id, 'target': target.id, 'type': 'retweet' }
 
           newGraph.links.push(link);
           if (!newGraph.nodes.find(n => n === source)) {
@@ -106,6 +108,9 @@ class Model {
     d3.json("scripts/Eurovis2019Network.json").then((network: any) => {
       d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
         let data = this.grabTwitterData(network, tweets);
+        this.graph = data;
+        console.log(controller.configuration, data);
+        setPanelValuesFromFile(controller.configuration, data);
         this.matrix = [];
         this.nodes = data.nodes
         this.idMap = {};
@@ -133,6 +138,10 @@ class Model {
         this.controller.loadData(this.nodes, this.edges, this.matrix);
       })
     })
+  }
+
+  reload() {
+    this.controller.loadData(this.nodes, this.edges, this.matrix);
   }
 
   /**
@@ -325,17 +334,20 @@ class View {
    * @return [description]
    */
   renderView() {
-
+    d3.select('.loading').style('display', 'block').style('opacity', 1);
     this.viewWidth = 1000;
 
     this.margins = { left: 65, top: 65, right: 10, bottom: 10 };
 
     this.initalizeEdges();
     this.initalizeAttributes();
+    console.log("Made it to orderchange");
+    d3.select('.loading').style('display','none');
     let that = this;
     d3.select("#order").on("change", function() {
       that.sort(this.value);
     });
+
   }
 
   /**
@@ -546,8 +558,8 @@ class View {
       let extent = [0, this.controller.model.maxTracker[type]]
       console.log(extent);
       // set up scale
-      let typeIndex =  this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
-      let scale = d3.scaleLinear().domain(extent).range(["white",this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
+      let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
+      let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
 
       // store scales
       this.edgeScales[type] = scale;
@@ -562,39 +574,39 @@ class View {
 
 
       .attr("class", "cell");
-    console.log(this.controller.configuration.adjMatrix.edgeBars,this.controller.configuration,this.controller.configuration.adjMatrix);
-    if(this.controller.configuration.adjMatrix.edgeBars){
+    console.log(this.controller.configuration.adjMatrix.edgeBars, this.controller.configuration, this.controller.configuration.adjMatrix);
+    if (this.controller.configuration.adjMatrix.edgeBars) {
       // bind squars to cells for the mouse over effect
       cells
-      .append("rect")
-      .attr("x", d => this.verticalScale(d.x))
-      .attr('height',this.verticalScale.bandwidth())
-      .attr('width',this.verticalScale.bandwidth())
-      .attr('fill-opacity',0);
+        .append("rect")
+        .attr("x", d => this.verticalScale(d.x))
+        .attr('height', this.verticalScale.bandwidth())
+        .attr('width', this.verticalScale.bandwidth())
+        .attr('fill-opacity', 0);
 
       let dividers = this.controller.configuration.attributeScales.edge.type.domain.length;
       dividers = dividers == 0 ? 1 : dividers; // if dividers = 0, set to 1  throw an error?
       let squares = cells
-      for(let index = 0; index < dividers; index++){
+      for (let index = 0; index < dividers; index++) {
         let type = this.controller.configuration.attributeScales.edge.type.domain[index]
         console.log(type);
         let scale = this.edgeScales[type];
         let typeColor = scale.range()[1];
-        scale.range([0,this.verticalScale.bandwidth()])
+        scale.range([0, this.verticalScale.bandwidth()])
         scale.clamp(true);
 
         cells
-        .filter(d=>{
-          return d[this.controller.configuration.attributeScales.edge.type.domain[index]] !== 0;
-        })
-        .append("rect")
-        .attr('x',(d,i)=>{return this.verticalScale(d.x) + index*this.verticalScale.bandwidth()/dividers})
-        .attr('y',(d)=>{
-          return this.verticalScale.bandwidth() - scale(d[type]);
-        })
-        .attr('height',d=>this.edgeScales[type](d[type]))
-        .attr('width',this.verticalScale.bandwidth()/dividers)
-        .attr('fill',typeColor)
+          .filter(d => {
+            return d[this.controller.configuration.attributeScales.edge.type.domain[index]] !== 0;
+          })
+          .append("rect")
+          .attr('x', (d, i) => { return this.verticalScale(d.x) + index * this.verticalScale.bandwidth() / dividers })
+          .attr('y', (d) => {
+            return this.verticalScale.bandwidth() - scale(d[type]);
+          })
+          .attr('height', d => this.edgeScales[type](d[type]))
+          .attr('width', this.verticalScale.bandwidth() / dividers)
+          .attr('fill', typeColor)
       }
 
 
@@ -604,12 +616,12 @@ class View {
 
     } else {
       let squares = cells
-      .append("rect")
-      .attr("x", d => this.verticalScale(d.x))
-      //.filter(d=>{return d.item >0})
-      .attr("width", this.verticalScale.bandwidth())
-      .attr("height", this.verticalScale.bandwidth())
-      .style("fill", 'white')
+        .append("rect")
+        .attr("x", d => this.verticalScale(d.x))
+        //.filter(d=>{return d.item >0})
+        .attr("width", this.verticalScale.bandwidth())
+        .attr("height", this.verticalScale.bandwidth())
+        .style("fill", 'white')
       squares
         .filter(d => d.z == 0)
         .style("fill-opacity", 0);
@@ -800,10 +812,10 @@ class View {
             return "pink";
           }
         })
-        .filter(d => {return d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0)
-          .style("fill-opacity", (d)=>{
-            return (d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0)? 1:0;
-          });
+        .filter(d => { return d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0)
+        .style("fill-opacity", (d) => {
+          return (d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
+        });
     } else if (type == "reply") {
       squares.style("fill", (d: any) => {
         if (d.reply !== 0) {
@@ -812,8 +824,8 @@ class View {
           return "white";
         }
       })
-        .style("fill-opacity", (d)=>{
-          return d.reply !== 0? 1:0;
+        .style("fill-opacity", (d) => {
+          return d.reply !== 0 ? 1 : 0;
         });
 
 
@@ -821,123 +833,130 @@ class View {
       squares.style("fill", (d: any) => {
         if (d.retweet !== 0) {
           return this.edgeScales["retweet"](d.retweet);
-        }else {
+        } else {
           return "white";
         }
       })
-      .style("fill-opacity", (d)=>{
-        return d.retweet !== 0? 1:0;
-      });
+        .style("fill-opacity", (d) => {
+          return d.retweet !== 0 ? 1 : 0;
+        });
     } else if (type == "mentions") {
       squares.style("fill", (d: any) => {
         if (d.mentions !== 0) {
           return this.edgeScales["mentions"](d.mentions);
-        }else {
+        } else {
           return "white";
         }
       })
-      .style("fill-opacity", (d)=>{
-        return d.mentions !== 0? 1:0;
-      });
+        .style("fill-opacity", (d) => {
+          return d.mentions !== 0 ? 1 : 0;
+        });
     }
   }
 
 
-generateColorLegend(){
-  let yOffset = 10;
-  let xOffset = 10;
-  let rectWidth = 25
-  let rectHeight = 10;
-  let legendWidth = 200;
-  for (let type in this.edgeScales) {
-
-    let scale = this.edgeScales[type];
-    console.log(scale)
-    let extent = scale.domain();
-    console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
-    let number = 3;
-    let sampleNumbers = this.linspace(extent[0], extent[1], number);
-    console.log(sampleNumbers);
-    let svg = d3.select('#legends').append("g")
-      .attr("id", "legendLinear" + type)
-      .attr("transform", (d, i) => "translate(" + xOffset + "," + yOffset + ")")
-      .on('click', (d,i,nodes) => {
-        if (this.controller.configuration.adjMatrix.selectEdgeType == true) { //
-          let edgeType = this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
-          this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
-          this.setSquareColors(edgeType);
-          console.log(nodes[i]);
-          if(edgeType == "all"){
-            d3.selectAll('.selectedEdgeType').classed('selectedEdgeType',false);
-          } else {
-            d3.selectAll('.selectedEdgeType').classed('selectedEdgeType',false);
-            console.log(d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType',true));
+  generateColorLegend() {
+    let yOffset = 10;
+    let xOffset = 10;
+    let rectWidth = 25
+    let rectHeight = 10;
+    let legendWidth = 200;
+    for (let type in this.edgeScales) {
+      if (type == "combined") {
+        continue;
+      }
+      let scale = this.edgeScales[type];
+      console.log(scale)
+      let extent = scale.domain();
+      console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
+      let number = {
+        "retweet": 4,
+        "mentions": 3,
+        "combined": 1
+      };
+      let sampleNumbers = this.linspace(extent[0], extent[1], number[type]);
+      console.log(sampleNumbers);
+      let svg = d3.select('#legends').append("g")
+        .attr("id", "legendLinear" + type)
+        .attr("transform", (d, i) => "translate(" + xOffset + "," + yOffset + ")")
+        .on('click', (d, i, nodes) => {
+          if (this.controller.configuration.adjMatrix.selectEdgeType == true) { //
+            let edgeType = this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
+            this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
+            this.setSquareColors(edgeType);
+            console.log(nodes[i]);
+            if (edgeType == "all") {
+              d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
+            } else {
+              d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
+              console.log(d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType', true));
+            }
           }
-        }
-      });
-    let boxWidth = (number+1)* rectWidth + 15
+        });
+      console.log("NUMBER TYPE", type, number[type]);
+      let boxWidth = (number[type] + 1) * rectWidth + 15
 
-    svg.append('rect')
-      .classed('edgeLegendBorder',true)
-      .attr('stroke', 'gray')
-      .attr('stroke-width', 1)
-      .attr('width',boxWidth)
-      .attr('height', 55)
-      .attr('fill-opacity', 0)
-      .attr('x', 0)
-      .attr('y', -9)
-      .attr('ry', 2)
-      .attr('rx', 2)
+      svg.append('rect')
+        .classed('edgeLegendBorder', true)
+        .attr('stroke', 'gray')
+        .attr('stroke-width', 1)
+        .attr('width', boxWidth)
+        .attr('height', 55)
+        .attr('fill-opacity', 0)
+        .attr('x', 0)
+        .attr('y', -9)
+        .attr('ry', 2)
+        .attr('rx', 2)
 
-    let pluralType = type;
+      let pluralType = type;
 
-    if(pluralType == "retweet"){
-      pluralType = "retweets";
-    } else if(pluralType == "reply"){
-      pluralType = "replies";
+      if (pluralType == "retweet") {
+        pluralType = "retweets";
+      } else if (pluralType == "reply") {
+        pluralType = "replies";
+      }
+
+      svg.append('text')
+        .attr('x', boxWidth / 2)
+        .attr('y', 8)
+        .attr('text-anchor', 'middle')
+        .text("# of " + pluralType)
+
+      let groups = svg.selectAll('g')
+        .data(sampleNumbers)
+        .enter()
+        .append('g')
+        .attr('transform', (d, i) => 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')')
+
+      groups
+        .append('rect')
+        .attr('width', rectWidth)
+        .attr('height', rectHeight)
+        .attr('fill', (d) => {
+          console.log(d);
+          return scale(d);
+        })
+        .attr('stroke', (d) => {
+          return d == 0 ? '#bbb' : 'white';
+        })
+
+      groups
+        .append('text')
+        .attr('x', rectWidth / 2)
+        .attr('y', 25)
+        .attr('text-anchor', 'middle')
+        .text(d => {
+          return Math.round(d);
+        })
+
+
+      xOffset += legendWidth;
+
+
+
+
     }
-
-    svg.append('text')
-      .attr('x',boxWidth / 2)
-      .attr('y', 8)
-      .attr('text-anchor', 'middle')
-      .text("Number of " + pluralType)
-
-    let groups = svg.selectAll('g')
-      .data(sampleNumbers)
-      .enter()
-      .append('g')
-      .attr('transform', (d, i) => 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')')
-
-    groups
-      .append('rect')
-      .attr('width', rectWidth)
-      .attr('height', rectHeight)
-      .attr('fill', (d) => {
-        console.log(d);
-        return scale(d);
-      })
-      .attr('stroke', (d) => {
-        return d == 0 ? '#bbb' : 'white';
-      })
-
-    groups
-      .append('text')
-      .attr('x', rectWidth / 2)
-      .attr('y', 25)
-      .attr('text-anchor', 'middle')
-      .text(d => {
-        return Math.round(d);
-      })
-
-
-    xOffset += legendWidth;
-
-
-
-
   }
-}
 
 
 
@@ -1186,7 +1205,7 @@ generateColorLegend(){
       .delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
   }
-  private columnNames: { };
+  private columnNames: {};
   /**
    * [initalizeAttributes description]
    * @return [description]
@@ -1481,6 +1500,8 @@ generateColorLegend(){
     //
     columnHeaders.selectAll('.legend')
 
+    d3.select('.loading').style('display', 'none');
+
 
 
 
@@ -1542,12 +1563,12 @@ generateColorLegend(){
    * @return None
    */
   renderLoading() {
-    d3.select('#overlay')
-      .style('opacity', 0)
-      .style('display', 'block')
-      .transition()
-      .duration(1000)
-      .style('opacity', 1);
+    d3.select('.loading')
+    /*.style('opacity', 0)
+    .style('display', 'block')
+    .transition()
+    .duration(1000)
+    .style('opacity', 1);*/
   }
 
   /**
@@ -1555,14 +1576,15 @@ generateColorLegend(){
    * @return None
    */
   hideLoading() {
-    if (d3.select('#overlay').attr('display') != "none") {
-      d3.select('#overlay')
+    /*
+    if (d3.select('.loading').attr('display') != "none") {
+      d3.select('.loading')
         .transition()
         .duration(1000)
         .style('opacity', 0)
         .delay(1000)
         .style('display', 'none');
-    }
+    }*/
   }
 
 }
@@ -1576,16 +1598,16 @@ class Controller {
   private model: any;
   private configuration: any;
 
-  mergeConfigs(){
+  mergeConfigs() {
     console.log("in merge");
     let that = this;
     Promise.all([
       d3.json("./../configs/baseconfig.json"),
       d3.json("./../configs/task1Config.json"),
       d3.json("./../configs/state.json")
-    ]).then(function(configComponents){
+    ]).then(function(configComponents) {
       console.log(configComponents)
-      let components =[configComponents[0],configComponents[1],configComponents[2]];
+      let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);
 
       console.log(result);
@@ -1594,15 +1616,17 @@ class Controller {
 
   }
 
-  finishConstructing(config){
-      this.configuration = config;
-      this.view = new View(this); // initalize view,
-      this.model = new Model(this); // start reading in data
+  finishConstructing(config) {
+    this.configuration = config;
+    this.view = new View(this); // initalize view,
+    this.model = new Model(this); // start reading in data
+    console.log(this.model);
+
   }
   constructor() {
 
+    this.mergeConfigs();
 
-    this.configuration = this.mergeConfigs();
     /*console.log(this.configuration);
 
     this.configuration.then(data => {
@@ -1615,11 +1639,17 @@ class Controller {
 
   }
 
-  reload(){
+  reload() {
+    d3.select('.loading').style('display','block');
     d3.select('#topology').selectAll('*').remove();
     d3.select('#attributes').selectAll('*').remove();
     d3.select('#legends').selectAll('*').remove();
-    window.controller = new Controller();
+
+    this.view = new View(this); // initalize view,
+    this.model = new Model(this); //.reload();
+
+    //
+    //this.model = new Model(this); // start reading in data
   }
 
   /**
@@ -1655,61 +1685,61 @@ window.controller = new Controller();
 //window.controller = control;
 /* Deep merge stuff */
 function isMergeableObject(val) {
-    var nonNullObject = val && typeof val === 'object'
+  var nonNullObject = val && typeof val === 'object'
 
-    return nonNullObject
-        && Object.prototype.toString.call(val) !== '[object RegExp]'
-        && Object.prototype.toString.call(val) !== '[object Date]'
+  return nonNullObject
+    && Object.prototype.toString.call(val) !== '[object RegExp]'
+    && Object.prototype.toString.call(val) !== '[object Date]'
 }
 
 function emptyTarget(val) {
-    return Array.isArray(val) ? [] : {}
+  return Array.isArray(val) ? [] : {}
 }
 
 function cloneIfNecessary(value, optionsArgument) {
-    var clone = optionsArgument && optionsArgument.clone === true
-    return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value
+  var clone = optionsArgument && optionsArgument.clone === true
+  return (clone && isMergeableObject(value)) ? deepmerge(emptyTarget(value), value, optionsArgument) : value
 }
 
 function defaultArrayMerge(target, source, optionsArgument) {
-    var destination = target.slice()
-    source.forEach(function(e, i) {
-        if (typeof destination[i] === 'undefined') {
-            destination[i] = cloneIfNecessary(e, optionsArgument)
-        } else if (isMergeableObject(e)) {
-            destination[i] = deepmerge(target[i], e, optionsArgument)
-        } else if (target.indexOf(e) === -1) {
-            destination.push(cloneIfNecessary(e, optionsArgument))
-        }
-    })
-    return destination
+  var destination = target.slice()
+  source.forEach(function(e, i) {
+    if (typeof destination[i] === 'undefined') {
+      destination[i] = cloneIfNecessary(e, optionsArgument)
+    } else if (isMergeableObject(e)) {
+      destination[i] = deepmerge(target[i], e, optionsArgument)
+    } else if (target.indexOf(e) === -1) {
+      destination.push(cloneIfNecessary(e, optionsArgument))
+    }
+  })
+  return destination
 }
 
 function mergeObject(target, source, optionsArgument) {
-    var destination = {}
-    if (isMergeableObject(target)) {
-        Object.keys(target).forEach(function (key) {
-            destination[key] = cloneIfNecessary(target[key], optionsArgument)
-        })
-    }
-    Object.keys(source).forEach(function (key) {
-        if (!isMergeableObject(source[key]) || !target[key]) {
-            destination[key] = cloneIfNecessary(source[key], optionsArgument)
-        } else {
-            destination[key] = deepmerge(target[key], source[key], optionsArgument)
-        }
+  var destination = {}
+  if (isMergeableObject(target)) {
+    Object.keys(target).forEach(function(key) {
+      destination[key] = cloneIfNecessary(target[key], optionsArgument)
     })
-    return destination
+  }
+  Object.keys(source).forEach(function(key) {
+    if (!isMergeableObject(source[key]) || !target[key]) {
+      destination[key] = cloneIfNecessary(source[key], optionsArgument)
+    } else {
+      destination[key] = deepmerge(target[key], source[key], optionsArgument)
+    }
+  })
+  return destination
 }
 
 function deepmerge(target, source, optionsArgument) {
-    var array = Array.isArray(source);
-    var options = optionsArgument || { arrayMerge: defaultArrayMerge }
-    var arrayMerge = options.arrayMerge || defaultArrayMerge
+  var array = Array.isArray(source);
+  var options = optionsArgument || { arrayMerge: defaultArrayMerge }
+  var arrayMerge = options.arrayMerge || defaultArrayMerge
 
-    if (array) {
-        return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)
-    } else {
-        return mergeObject(target, source, optionsArgument)
-    }
+  if (array) {
+    return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument)
+  } else {
+    return mergeObject(target, source, optionsArgument)
+  }
 }

@@ -15,6 +15,9 @@ var Model = /** @class */ (function () {
         d3.json("scripts/Eurovis2019Network.json").then(function (network) {
             d3.json("scripts/Eurovis2019Tweets.json").then(function (tweets) {
                 var data = _this.grabTwitterData(network, tweets);
+                _this.graph = data;
+                console.log(controller.configuration, data);
+                setPanelValuesFromFile(controller.configuration, data);
                 _this.matrix = [];
                 _this.nodes = data.nodes;
                 _this.idMap = {};
@@ -40,6 +43,8 @@ var Model = /** @class */ (function () {
         var _this = this;
         var toRemove = [];
         var newGraph = { 'nodes': [], 'links': [] };
+        this.graph = graph;
+        console.log(this.graph);
         //create edges from tweets.
         tweets = tweets.tweets;
         tweets.map(function (tweet) {
@@ -93,6 +98,9 @@ var Model = /** @class */ (function () {
             }
         });
         return newGraph;
+    };
+    Model.prototype.reload = function () {
+        this.controller.loadData(this.nodes, this.edges, this.matrix);
     };
     /**
      *   Determines the order of the current nodes
@@ -245,10 +253,13 @@ var View = /** @class */ (function () {
      * @return [description]
      */
     View.prototype.renderView = function () {
+        d3.select('.loading').style('display', 'block').style('opacity', 1);
         this.viewWidth = 1000;
         this.margins = { left: 65, top: 65, right: 10, bottom: 10 };
         this.initalizeEdges();
         this.initalizeAttributes();
+        console.log("Made it to orderchange");
+        d3.select('.loading').style('display', 'none');
         var that = this;
         d3.select("#order").on("change", function () {
             that.sort(this.value);
@@ -725,12 +736,19 @@ var View = /** @class */ (function () {
         var rectHeight = 10;
         var legendWidth = 200;
         var _loop_2 = function (type) {
+            if (type == "combined") {
+                return "continue";
+            }
             var scale = this_2.edgeScales[type];
             console.log(scale);
             var extent = scale.domain();
             console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
-            var number = 3;
-            var sampleNumbers = this_2.linspace(extent[0], extent[1], number);
+            var number = {
+                "retweet": 4,
+                "mentions": 3,
+                "combined": 1
+            };
+            var sampleNumbers = this_2.linspace(extent[0], extent[1], number[type]);
             console.log(sampleNumbers);
             var svg = d3.select('#legends').append("g")
                 .attr("id", "legendLinear" + type)
@@ -750,7 +768,8 @@ var View = /** @class */ (function () {
                     }
                 }
             });
-            var boxWidth = (number + 1) * rectWidth + 15;
+            console.log("NUMBER TYPE", type, number[type]);
+            var boxWidth = (number[type] + 1) * rectWidth + 15;
             svg.append('rect')
                 .classed('edgeLegendBorder', true)
                 .attr('stroke', 'gray')
@@ -773,7 +792,7 @@ var View = /** @class */ (function () {
                 .attr('x', boxWidth / 2)
                 .attr('y', 8)
                 .attr('text-anchor', 'middle')
-                .text("Number of " + pluralType);
+                .text("# of " + pluralType);
             var groups = svg.selectAll('g')
                 .data(sampleNumbers)
                 .enter()
@@ -1249,6 +1268,7 @@ var View = /** @class */ (function () {
         });
         //
         columnHeaders.selectAll('.legend');
+        d3.select('.loading').style('display', 'none');
         // Append g's for table headers
         // For any data row, add
         /*.on("click", clicked)
@@ -1296,33 +1316,34 @@ var View = /** @class */ (function () {
      * @return None
      */
     View.prototype.renderLoading = function () {
-        d3.select('#overlay')
-            .style('opacity', 0)
-            .style('display', 'block')
-            .transition()
-            .duration(1000)
-            .style('opacity', 1);
+        d3.select('.loading');
+        /*.style('opacity', 0)
+        .style('display', 'block')
+        .transition()
+        .duration(1000)
+        .style('opacity', 1);*/
     };
     /**
      * Changes the current view to hide the loading screen
      * @return None
      */
     View.prototype.hideLoading = function () {
-        if (d3.select('#overlay').attr('display') != "none") {
-            d3.select('#overlay')
-                .transition()
-                .duration(1000)
-                .style('opacity', 0)
-                .delay(1000)
-                .style('display', 'none');
-        }
+        /*
+        if (d3.select('.loading').attr('display') != "none") {
+          d3.select('.loading')
+            .transition()
+            .duration(1000)
+            .style('opacity', 0)
+            .delay(1000)
+            .style('display', 'none');
+        }*/
     };
     return View;
 }());
 // Work on importing class file
 var Controller = /** @class */ (function () {
     function Controller() {
-        this.configuration = this.mergeConfigs();
+        this.mergeConfigs();
         /*console.log(this.configuration);
     
         this.configuration.then(data => {
@@ -1350,12 +1371,17 @@ var Controller = /** @class */ (function () {
         this.configuration = config;
         this.view = new View(this); // initalize view,
         this.model = new Model(this); // start reading in data
+        console.log(this.model);
     };
     Controller.prototype.reload = function () {
+        d3.select('.loading').style('display', 'block');
         d3.select('#topology').selectAll('*').remove();
         d3.select('#attributes').selectAll('*').remove();
         d3.select('#legends').selectAll('*').remove();
-        window.controller = new Controller();
+        this.view = new View(this); // initalize view,
+        this.model = new Model(this); //.reload();
+        //
+        //this.model = new Model(this); // start reading in data
     };
     /**
      * Passes the processed edge and node data to the view.
