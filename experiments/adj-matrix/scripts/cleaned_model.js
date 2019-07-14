@@ -1150,21 +1150,27 @@ var View = /** @class */ (function () {
         var columnRange = [];
         var xRange = 0;
         var columnWidth = 450 / columns.length;
+        var categoricalAttributes = ["type", "continent"];
         columns.forEach(function (col) {
             // calculate range
             columnRange.push(xRange);
-            if (col == "influential" || col == "original") { //if ordinal
+            var domain = _this.controller.configuration.attributeScales.node[col].domain;
+            if (categoricalAttributes.indexOf(col) > -1) { //if categorical
                 // append colored blocks
-                var scale = d3.scaleLinear(); //.domain([true,false]).range([barMargin.left, colWidth-barMargin.right]);
+                // placeholder scale
+                var range = _this.controller.configuration.attributeScales.node[col].range;
+                var scale = d3.scaleOrdinal().domain(domain).range(range);
+                //.domain([true,false]).range([barMargin.left, colWidth-barMargin.right]);
                 attributeScales[col] = scale;
             }
             else {
-                var range = d3.extent(_this.nodes, function (d) { return d[col]; });
-                var scale = d3.scaleLinear().domain(range).range([barMargin.left, columnWidth - barMargin.right]);
+                var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidth - barMargin.right]);
+                scale.clamp(true);
                 attributeScales[col] = scale;
             }
             xRange += columnWidth;
         });
+        this.attributeScales = attributeScales;
         // need max and min of each column
         /*this.barWidthScale = d3.scaleLinear()
           .domain([0, 1400])
@@ -1172,84 +1178,60 @@ var View = /** @class */ (function () {
         this.columnScale.range(columnRange);
         for (var _i = 0, _a = Object.entries(attributeScales); _i < _a.length; _i++) {
             var _b = _a[_i], column = _b[0], scale = _b[1];
-            if (column == "influential" || column == "original") {
-                var circs = this.attributes.append("g")
-                    .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")");
-                var circ1 = circs
-                    .append('g')
-                    .attr('transform', 'translate(10,5)');
-                circ1
-                    .append('circle')
-                    .attr('cx', 0)
-                    .attr('cy', -20)
-                    .attr('fill', "#68AA73")
-                    .attr('r', 4);
-                circ1
-                    .append('text')
-                    .text('T')
-                    .attr('text-anchor', 'middle');
-                var circs2 = circs
-                    .append('g')
-                    .attr('transform', 'translate(35,5)');
-                circs2
-                    .append('circle')
-                    .attr('cx', 0)
-                    .attr('cy', -20)
-                    .attr('fill', "#A88E69")
-                    .attr('r', 4);
-                circs2
-                    .append('text')
-                    .text('F')
-                    .attr('text-anchor', 'middle');
-                console.log(circs);
-                continue;
+            if (categoricalAttributes.indexOf(column) > -1) {
+                console.log(column);
+                this.generateCategoricalLegend(column);
             }
-            this.attributes.append("g")
-                .attr("class", "attr-axis")
-                .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
-                .call(d3.axisTop(scale)
-                .tickValues(scale.domain())
-                .tickFormat(function (d) {
-                if ((d / 1000) >= 1) {
-                    d = Math.round(d / 1000) + "K";
-                }
-                return d;
-            }))
-                .selectAll('text')
-                .style("text-anchor", function (d, i) { return i % 2 ? "end" : "start"; });
+            else {
+                this.attributes.append("g")
+                    .attr("class", "attr-axis")
+                    .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
+                    .call(d3.axisTop(scale)
+                    .tickValues(scale.domain())
+                    .tickFormat(function (d) {
+                    if ((d / 1000) >= 1) {
+                        d = Math.round(d / 1000) + "K";
+                    }
+                    return d;
+                }))
+                    .selectAll('text')
+                    .style("text-anchor", function (d, i) { return i % 2 ? "end" : "start"; });
+            }
         }
         /* Create data columns data */
-        columns.forEach(function (c) {
-            var columnPosition = _this.columnScale(c);
-            if (c == "influential" || c == "original") {
+        columns.forEach(function (column) {
+            var columnPosition = _this.columnScale(column);
+            if (categoricalAttributes.indexOf(column) > -1) { // if categorical
+                var topMargin = 1;
+                var width_1 = _this.verticalScale.bandwidth() - 2 * topMargin;
                 _this.attributeRows
-                    .append('circle')
-                    .attr('cx', columnPosition + columnWidth / 2)
-                    .attr('cy', _this.verticalScale.bandwidth() / 2)
-                    .attr('fill', function (d) {
-                    console.log(d);
-                    return (d[c] ? "#68AA73" : "#A88E69");
-                })
-                    .attr('r', 2.5);
+                    .append('rect')
+                    .attr('x', columnPosition + columnWidth / 2 - width_1 / 2)
+                    .attr('y', 1)
+                    .attr('fill', function (d) { return attributeScales[column](d[column]); })
+                    .attr('width', width_1)
+                    .attr('height', width_1);
                 return;
             }
-            _this.attributeRows
-                .append("rect")
-                .attr("class", "glyph")
-                .attr('height', barHeight)
-                .attr('width', 10) // width changed later on transition
-                .attr('x', columnPosition + barMargin.left)
-                .attr('y', barMargin.top) // as y is set by translate
-                .attr('fill', '#8B8B8B')
-                .transition()
-                .duration(2000)
-                .attr('width', function (d, i) { return attributeScales[c](d[c]); });
-            _this.attributeRows
-                .append("div")
-                .attr("class", "glyphLabel")
-                .text(function (d, i) {
-                return (i ? formatNumber : formatCurrency)(d);
-            });
+            else {
+                _this.attributeRows
+                    .append("rect")
+                    .attr("class", "glyph")
+                    .attr('height', barHeight)
+                    .attr('width', 10) // width changed later on transition
+                    .attr('x', columnPosition + barMargin.left)
+                    .attr('y', barMargin.top) // as y is set by translate
+                    .attr('fill', '#8B8B8B')
+                    .transition()
+                    .duration(2000)
+                    .attr('width', function (d, i) { return attributeScales[column](d[column]); });
+                _this.attributeRows
+                    .append("div")
+                    .attr("class", "glyphLabel")
+                    .text(function (d, i) {
+                    return (i ? formatNumber : formatCurrency)(d);
+                });
+            }
         });
         // Add Verticle Dividers
         this.attributes.selectAll('.column')
@@ -1265,16 +1247,18 @@ var View = /** @class */ (function () {
         // Add headers
         var columnHeaders = this.attributes.append('g')
             .classed('column-headers', true);
-        this.columnscreen_names = {
+        this.columnNames = {
             "followers_count": "Followers",
             "query_tweet_count": "Tweets",
-            "friends_count": "Friends",
+            "friends_count": "# They Follow",
             "statuses_count": "Statuses ",
             "listed_count": "Listed",
             "favourites_count": "Favourites",
-            "count_followers_in_query": "Followers",
-            "influential": "Influential",
-            "original": "Original",
+            "count_followers_in_query": "Followers (G)",
+            "continent": "Continent",
+            "type": "Account Type",
+            "memberFor_days": "# Days on Twitter",
+            "listed_count": "Listed Count"
         };
         columnHeaders.selectAll('.header')
             .data(columns)
@@ -1286,7 +1270,7 @@ var View = /** @class */ (function () {
             .style('font-size', '11px')
             .attr('text-anchor', 'left')
             .text(function (d, i) {
-            return _this.columnscreen_names[d];
+            return _this.columnNames[d];
         });
         //
         columnHeaders.selectAll('.legend');
@@ -1298,12 +1282,32 @@ var View = /** @class */ (function () {
         .classed("g-table-column-" + (sortOrder === d3.ascending ? "ascending" : "descending"), function(d) {
           return d === sortKey;
         });*/
-        function type(d) {
-            d.familyBefore = +d.familyBefore;
-            d.familyAfter = +d.familyAfter;
-            d.individualBefore = +d.individualBefore;
-            d.individualAfter = +d.individualAfter;
-            return d;
+    };
+    View.prototype.generateCategoricalLegend = function (attribute) {
+        var attributeInfo = this.controller.configuration.attributeScales.node[attribute];
+        var dividers = attributeInfo.domain.length;
+        var legendHeight = 35;
+        var legendItemSize = (legendHeight - 5) / dividers;
+        var rects = this.attributes.append("g")
+            .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
+        for (var i = 0; i < dividers; i++) {
+            var rect1 = rects
+                .append('g')
+                .attr('transform', 'translate(10,' + i * legendItemSize + ')');
+            rect1
+                .append('rect')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('fill', attributeInfo.range[i])
+                .attr('width', legendItemSize - 1)
+                .attr('height', legendItemSize - 1);
+            rect1
+                .append('text')
+                .text(attributeInfo.domain[i])
+                .attr('x', legendItemSize + 2)
+                .attr('y', legendItemSize / 2)
+                .attr('text-anchor', 'start')
+                .style('font-size', 7.5);
         }
     };
     /**

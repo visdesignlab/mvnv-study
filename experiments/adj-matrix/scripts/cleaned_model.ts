@@ -105,38 +105,38 @@ class Model {
   }
   constructor(controller: any) {
     this.controller = controller;
-    console.log("data/network_"+controller.configuration.loadedGraph+".json");
-    d3.json("data/network_"+controller.configuration.loadedGraph+".json").then((data: any) => {
+    console.log("data/network_" + controller.configuration.loadedGraph + ".json");
+    d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
       //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
-        //let data = this.grabTwitterData(network, network.links);
-        this.graph = data;
-        console.log(controller.configuration, data);
-        setPanelValuesFromFile(controller.configuration, data);
-        this.matrix = [];
-        this.nodes = data.nodes
-        this.idMap = {};
+      //let data = this.grabTwitterData(network, network.links);
+      this.graph = data;
+      console.log(controller.configuration, data);
+      setPanelValuesFromFile(controller.configuration, data);
+      this.matrix = [];
+      this.nodes = data.nodes
+      this.idMap = {};
 
-        this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
-        if (this.orderType == "screen_name" || this.orderType == "name") {
-          this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b[this.orderType]));
-        } else {
-          this.nodes = this.nodes.sort((a, b) => { return b[this.orderType] - a[this.orderType]; });
-        }
+      this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
+      if (this.orderType == "screen_name" || this.orderType == "name") {
+        this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b[this.orderType]));
+      } else {
+        this.nodes = this.nodes.sort((a, b) => { return b[this.orderType] - a[this.orderType]; });
+      }
 
-        this.nodes.forEach((node, index) => {
-          node.index = index;
-          this.idMap[node.id] = index;
-        })
+      this.nodes.forEach((node, index) => {
+        node.index = index;
+        this.idMap[node.id] = index;
+      })
 
-        this.edges = data.links;
-        this.controller = controller;
+      this.edges = data.links;
+      this.controller = controller;
 
-        this.processData();
-
-
+      this.processData();
 
 
-        this.controller.loadData(this.nodes, this.edges, this.matrix);
+
+
+      this.controller.loadData(this.nodes, this.edges, this.matrix);
       //})
     })
   }
@@ -185,7 +185,7 @@ class Model {
       rowNode.y = i;
 
       /* matrix used for edge attributes, otherwise should we hide */
-      this.matrix[i] = this.nodes.map(function(colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, count:0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
+      this.matrix[i] = this.nodes.map(function(colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
     });
 
     this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 }
@@ -325,7 +325,7 @@ class View {
     this.initalizeEdges();
     this.initalizeAttributes();
     console.log("Made it to orderchange");
-    d3.select('.loading').style('display','none');
+    d3.select('.loading').style('display', 'none');
     let that = this;
     d3.select("#order").on("change", function() {
       that.sort(this.value);
@@ -538,7 +538,7 @@ class View {
 
     this.controller.configuration.attributeScales.edge.type.domain.forEach(type => {
       // calculate the max
-      let extent = [0,this.controller.configuration.attributeScales.edge.count.domain[1]];
+      let extent = [0, this.controller.configuration.attributeScales.edge.count.domain[1]];
       //model.maxTracker[type]]
       console.log(extent);
       // set up scale
@@ -568,14 +568,14 @@ class View {
         .attr('fill-opacity', 0);
 
 
-      let dividers = this.controller.configuration.isMultiEdge ? 2:1;
+      let dividers = this.controller.configuration.isMultiEdge ? 2 : 1;
 
 
 
       let squares = cells
       for (let index = 0; index < dividers; index++) {
 
-        let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index]:'combined';
+        let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
         console.log(type);
         let scale = this.edgeScales[type];
         console.log(scale);
@@ -843,13 +843,13 @@ class View {
     }
   }
 
-  generateScaleLegend(type,numberOfEdge){
+  generateScaleLegend(type, numberOfEdge) {
     let yOffset = 10;
     let xOffset = 10;
     let rectWidth = 25
     let rectHeight = 10;
     let legendWidth = 200;
-    xOffset += legendWidth*numberOfEdge;
+    xOffset += legendWidth * numberOfEdge;
 
     let scale = this.edgeScales[type];
     console.log(scale)
@@ -939,18 +939,18 @@ class View {
   generateColorLegend() {
     let counter = 0;
     for (let type in this.edgeScales) {
-      if(this.controller.configuration.isMultiEdge){
+      if (this.controller.configuration.isMultiEdge) {
         if (type == "combined") {
           continue;
         }
-        this.generateScaleLegend(type,counter)
-        counter+=1;
+        this.generateScaleLegend(type, counter)
+        counter += 1;
 
       } else {
         if (type != "combined") {
           continue;
         }
-        this.generateScaleLegend(type,counter)
+        this.generateScaleLegend(type, counter)
       }
     }
   }
@@ -1203,6 +1203,7 @@ class View {
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
   }
   private columnscreen_names: {};
+  private attributeScales : any;
   /**
    * [initalizeAttributes description]
    * @return [description]
@@ -1318,26 +1319,30 @@ class View {
     let columnWidth = 450 / columns.length;
 
 
-
+    let categoricalAttributes = ["type", "continent"]
 
     columns.forEach(col => {
       // calculate range
       columnRange.push(xRange);
-
-      if (col == "influential" || col == "original") { //if ordinal
+      let domain = this.controller.configuration.attributeScales.node[col].domain;
+      if (categoricalAttributes.indexOf(col) > -1) { //if categorical
         // append colored blocks
-        let scale = d3.scaleLinear()//.domain([true,false]).range([barMargin.left, colWidth-barMargin.right]);
+        // placeholder scale
+        let range = this.controller.configuration.attributeScales.node[col].range;
+        let scale = d3.scaleOrdinal().domain(domain).range(range);
+        //.domain([true,false]).range([barMargin.left, colWidth-barMargin.right]);
 
         attributeScales[col] = scale;
       } else {
-        let range = d3.extent(this.nodes, (d) => { return d[col] })
-        let scale = d3.scaleLinear().domain(range).range([barMargin.left, columnWidth - barMargin.right]);
+
+        let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidth - barMargin.right]);
+        scale.clamp(true);
         attributeScales[col] = scale;
       }
 
       xRange += columnWidth;
     })
-
+    this.attributeScales = attributeScales;
 
 
 
@@ -1355,99 +1360,67 @@ class View {
     this.columnScale.range(columnRange);
 
     for (let [column, scale] of Object.entries(attributeScales)) {
-      if (column == "influential" || column == "original") {
-        let circs = this.attributes.append("g")
-          .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")");
-        let circ1 = circs
-          .append('g')
-          .attr('transform', 'translate(10,5)')
+      if (categoricalAttributes.indexOf(column) > -1) {
+        console.log(column);
+        this.generateCategoricalLegend(column);
 
-        circ1
-          .append('circle')
-          .attr('cx', 0)
-          .attr('cy', -20)
-          .attr('fill', "#68AA73")
-          .attr('r', 4);
-
-        circ1
-          .append('text')
-          .text('T')
-          .attr('text-anchor', 'middle')
-        let circs2 = circs
-          .append('g')
-          .attr('transform', 'translate(35,5)')
-        circs2
-          .append('circle')
-          .attr('cx', 0)
-          .attr('cy', -20)
-          .attr('fill', "#A88E69")
-          .attr('r', 4)
-        circs2
-          .append('text')
-          .text('F')
-          .attr('text-anchor', 'middle')
-        console.log(circs);
-        continue;
+      } else {
+        this.attributes.append("g")
+          .attr("class", "attr-axis")
+          .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
+          .call(d3.axisTop(scale)
+            .tickValues(scale.domain())
+            .tickFormat((d) => {
+              if ((d / 1000) >= 1) {
+                d = Math.round(d / 1000) + "K";
+              }
+              return d;
+            }))
+          .selectAll('text')
+          .style("text-anchor", function(d, i) { return i % 2 ? "end" : "start" });
       }
-      this.attributes.append("g")
-        .attr("class", "attr-axis")
-        .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
-        .call(d3.axisTop(scale)
-          .tickValues(scale.domain())
-          .tickFormat((d) => {
-            if ((d / 1000) >= 1) {
-              d = Math.round(d / 1000) + "K";
-            }
-            return d;
-          }))
-        .selectAll('text')
-        .style("text-anchor", function(d, i) { return i % 2 ? "end" : "start" });
+
 
     }
 
 
 
     /* Create data columns data */
-    columns.forEach((c) => {
-      let columnPosition = this.columnScale(c);
+    columns.forEach((column) => {
+      let columnPosition = this.columnScale(column);
 
-      if (c == "influential" || c == "original") {
+      if (categoricalAttributes.indexOf(column) > -1) { // if categorical
+        let topMargin = 1;
+        let width = this.verticalScale.bandwidth() - 2*topMargin;
         this.attributeRows
-          .append('circle')
-          .attr('cx', columnPosition + columnWidth / 2)
-          .attr('cy', this.verticalScale.bandwidth() / 2)
-          .attr('fill', (d) => {
-            console.log(d);
-            return (d[c] ? "#68AA73" : "#A88E69");
-          })
-          .attr('r', 2.5);
+          .append('rect')
+          .attr('x', columnPosition + columnWidth / 2 -width/2)
+          .attr('y', 1)
+          .attr('fill', (d) => attributeScales[column](d[column]))
+          .attr('width', width)
+          .attr('height', width);
         return;
+      } else {
+        this.attributeRows
+          .append("rect")
+          .attr("class", "glyph")
+          .attr('height', barHeight)
+          .attr('width', 10) // width changed later on transition
+          .attr('x', columnPosition + barMargin.left)
+          .attr('y', barMargin.top) // as y is set by translate
+          .attr('fill', '#8B8B8B')
+          .transition()
+          .duration(2000)
+          .attr('width', (d, i) => { return attributeScales[column](d[column]); })
+
+
+        this.attributeRows
+          .append("div")
+          .attr("class", "glyphLabel")
+          .text(function(d, i) {
+            return (i ? formatNumber : formatCurrency)(d);
+          });
       }
-
-
-
-      this.attributeRows
-        .append("rect")
-        .attr("class", "glyph")
-        .attr('height', barHeight)
-        .attr('width', 10) // width changed later on transition
-        .attr('x', columnPosition + barMargin.left)
-        .attr('y', barMargin.top) // as y is set by translate
-        .attr('fill', '#8B8B8B')
-        .transition()
-        .duration(2000)
-        .attr('width', (d, i) => { return attributeScales[c](d[c]); })
-
-
-      this.attributeRows
-        .append("div")
-        .attr("class", "glyphLabel")
-        .text(function(d, i) {
-          return (i ? formatNumber : formatCurrency)(d);
-        });
-
-
-
     });
 
     // Add Verticle Dividers
@@ -1469,16 +1442,18 @@ class View {
 
 
 
-    this.columnscreen_names = {
+    this.columnNames = {
       "followers_count": "Followers",
       "query_tweet_count": "Tweets",
-      "friends_count": "Friends",
+      "friends_count": "# They Follow",
       "statuses_count": "Statuses ",
       "listed_count": "Listed",
       "favourites_count": "Favourites",
-      "count_followers_in_query": "Followers",
-      "influential": "Influential",
-      "original": "Original",
+      "count_followers_in_query": "Followers (G)",
+      "continent": "Continent",
+      "type": "Account Type",
+      "memberFor_days":"# Days on Twitter",
+      "listed_count":"Listed Count"
     }
 
     columnHeaders.selectAll('.header')
@@ -1491,7 +1466,7 @@ class View {
       .style('font-size', '11px')
       .attr('text-anchor', 'left')
       .text((d, i) => {
-        return this.columnscreen_names[d];
+        return this.columnNames[d];
       });
 
     //
@@ -1515,16 +1490,40 @@ class View {
       return d === sortKey;
     });*/
 
-    function type(d) {
-      d.familyBefore = +d.familyBefore;
-      d.familyAfter = +d.familyAfter;
-      d.individualBefore = +d.individualBefore;
-      d.individualAfter = +d.individualAfter;
-      return d;
+
+  }
+  generateCategoricalLegend(attribute){
+    let attributeInfo = this.controller.configuration.attributeScales.node[attribute];
+    let dividers = attributeInfo.domain.length;
+    let legendHeight = 35;
+    let legendItemSize = (legendHeight-5) / dividers;
+    let rects = this.attributes.append("g")
+      .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
+
+    for (let i = 0; i < dividers; i++) {
+
+
+      let rect1 = rects
+        .append('g')
+        .attr('transform', 'translate(10,'+ i * legendItemSize+')')
+
+      rect1
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('fill', attributeInfo.range[i])
+        .attr('width',legendItemSize-1)
+        .attr('height',legendItemSize-1)
+
+      rect1
+        .append('text')
+        .text(attributeInfo.domain[i])
+        .attr('x',legendItemSize+2)
+        .attr('y',legendItemSize/2)
+        .attr('text-anchor', 'start')
+        .style('font-size',7.5)
+
     }
-
-
-
   }
 
   /**
@@ -1598,10 +1597,10 @@ class Controller {
   loadConfigs() {
     console.log("in merge");
     let that = this;
-    console.log("./../configs/task"+(this.taskNum+1).toString()+"Config.json");
+    console.log("./../configs/task" + (this.taskNum + 1).toString() + "Config.json");
     Promise.all([
       d3.json("./../configs/baseconfig.json"),
-      d3.json("./../configs/task"+(this.taskNum+1).toString()+"Config.json"),
+      d3.json("./../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
       d3.json("./../configs/state.json")
     ]).then(function(configComponents) {
       console.log(configComponents)
@@ -1624,35 +1623,35 @@ class Controller {
 
   }
 
-  private tasks:any;
-  private taskNum:number;
+  private tasks: any;
+  private taskNum: number;
 
-  async loadTasks(){
+  async loadTasks() {
     this.taskNum = 0;
-    await d3.json("./../configs/tasks.json").then( (data)=>{
+    await d3.json("./../configs/tasks.json").then((data) => {
       console.log(data);
       this.tasks = data.tasks;
 
-      console.log("before data",this.tasks)
+      console.log("before data", this.tasks)
     });
-    console.log("after data",this.tasks);
+    console.log("after data", this.tasks);
 
     let task = this.tasks[this.taskNum]
     d3.select("#taskArea")
-        .select(".card-header-title")
-        .text('Task ' + (this.taskNum+1) + ' - ' + task.prompt);
+      .select(".card-header-title")
+      .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
 
 
     d3.select("#next").on("click", () => {
-        this.taskNum = d3.min([this.taskNum + 1, this.tasks.length - 1]);
-        this.loadConfigs();
-      });
+      this.taskNum = d3.min([this.taskNum + 1, this.tasks.length - 1]);
+      this.loadConfigs();
+    });
 
-      d3.select("#previous").on("click", () => {
-        this.taskNum = d3.max([this.taskNum - 1, 0]);
-        this.loadConfigs();
+    d3.select("#previous").on("click", () => {
+      this.taskNum = d3.max([this.taskNum - 1, 0]);
+      this.loadConfigs();
 
-      });
+    });
 
   }
   constructor() {
@@ -1671,21 +1670,21 @@ class Controller {
 
 
   }
-  clearView(){
+  clearView() {
     d3.select('#topology').selectAll('*').remove();
     d3.select('#attributes').selectAll('*').remove();
     d3.select('#legends').selectAll('*').remove();
   }
-  loadCurrentTask(){
+  loadCurrentTask() {
     let task = this.tasks[this.taskNum]
     d3.select("#taskArea")
-        .select(".card-header-title")
-        .text('Task ' + (this.taskNum+1) + ' - ' + task.prompt);
+      .select(".card-header-title")
+      .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
   }
   reload() {
     this.clearView();
     this.loadCurrentTask();
-    d3.select('.loading').style('display','block');
+    d3.select('.loading').style('display', 'block');
 
     this.view = new View(this); // initalize view,
     this.model = new Model(this); //.reload();
