@@ -1,0 +1,51 @@
+{
+    "taskID": "task1",
+    "loadedGraph": "large_undirected_singleEdge",
+    "isDirected": false,
+    "isMultiEdge": false,
+    "graphSize": "large",
+    "nodeAttributes": [
+        "followers_count",
+        "friends_count"
+    ],
+    "edgeAttributes": [
+        "type",
+        "count"
+    ],
+    "nodeLinkValues": {
+        "quantAttrs": [
+            "followers_count",
+            "friends_count",
+            "statuses_count",
+            "count_followers_in_query",
+            "favourites_count",
+            "listed_count",
+            "memberFor_days",
+            "query_tweet_count"
+        ],
+        "catAttrs": [
+            "type",
+            "continent"
+        ],
+        "drawBars": true,
+        "selectNeighbors": true,
+        "nodeHeight": {
+            "large": 50,
+            "small": 60
+        },
+        "nodeWidth": {
+            "large": 70,
+            "small": 80
+        },
+        "labelSize": {
+            "large": 12,
+            "small": 14
+        },
+        "labelAttr": "shortName",
+        "nodeFillAttr": "type",
+        "nodeSizeAttr": "friends_count",
+        "edgeWidthAttr": "count",
+        "edgeStrokeAttr": "type"
+    },
+    "adjMatrixValues": {}
+}

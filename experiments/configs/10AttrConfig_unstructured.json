@@ -12,19 +12,19 @@
             "followers_count": {
                 "domain": [
                     0,
-                    1200
+                    2000
                 ]
             },
             "friends_count": {
                 "domain": [
                     0,
-                    1200
+                    2000
                 ]
             },
             "statuses_count": {
                 "domain": [
                     0,
-                    5500
+                    6000
                 ]
             },
             "count_followers_in_query": {
@@ -36,13 +36,13 @@
             "favourites_count": {
                 "domain": [
                     0,
-                    8000
+                    98798
                 ]
             },
             "listed_count": {
                 "domain": [
                     0,
-                    120
+                    1564
                 ]
             },
             "memberFor_days": {
@@ -54,7 +54,7 @@
             "query_tweet_count": {
                 "domain": [
                     0,
-                    10
+                    34
                 ]
             },
             "type": {
@@ -86,13 +86,13 @@
             "count": {
                 "domain": [
                     1,
-                    5
+                    11
                 ]
             },
             "type": {
                 "domain": [
                     "mentions",
-                    "retweet",
+                    "retweets",
                     "combined"
                 ],
                 "range": [
@@ -103,22 +103,68 @@
             }
         }
     },
-    "style": {
-        "selectedNodeColor": "#ea9b0f",
-        "hoveredNodeColor": "#fde8ca"
+    "noEdgeColor": "white",
+    "noNodeFill": "white",
+    "noNodeStroke": "white",
+    "quantColors": [
+        "#2d2d2d",
+        "#d67205",
+        "#777777",
+        "#706842"
+    ],
+    "catColors": [
+        "#1b9e77",
+        "#d95f02",
+        "#7570b3",
+        "#e7298a"
+    ],
+    "selectedNodeColor": "#ea9b0f",
+    "hoveredNodeColor": "#fde8ca",
+    "taskID": "task1",
+    "loadedGraph": "large_undirected_singleEdge",
+    "isDirected": false,
+    "isMultiEdge": false,
+    "graphSize": "large",
+    "nodeAttributes": [
+        "followers_count",
+        "friends_count"
+    ],
+    "edgeAttributes": [
+        "type",
+        "count"
+    ],
+    "quantAttrs": [
+        "followers_count",
+        "friends_count",
+        "statuses_count",
+        "count_followers_in_query",
+        "favourites_count",
+        "listed_count",
+        "memberFor_days",
+        "query_tweet_count"
+    ],
+    "catAttrs": [
+        "type",
+        "continent"
+    ],
+    "drawBars": true,
+    "selectNeighbors": true,
+    "nodeHeight": {
+        "large": 40,
+        "small": 60
     },
-    "nodeLink": {
-        "noEdgeColor": "white",
-        "noNodeFill": "white",
-        "noNodeStroke": "white",
-        "quantColors": [
-            "#2d2d2d",
-            "#d67205",
-            "#777777",
-            "#706842"
-        ]
+    "nodeWidth": {
+        "large": 90,
+        "small": 80
     },
-    "adjMatrix": {
-        "neighborHighlightColor": ""
-    }
+    "labelSize": {
+        "large": 12,
+        "small": 14
+    },
+    "labelAttr": "shortName",
+    "nodeFillAttr": "type",
+    "nodeSizeAttr": "friends_count",
+    "edgeWidthAttr": "count",
+    "edgeStrokeAttr": "type",
+    "nodeIsRect": true
 }
