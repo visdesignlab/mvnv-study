@@ -47,31 +47,32 @@ var Model = /** @class */ (function () {
     function Model(controller) {
         var _this = this;
         this.controller = controller;
-        d3.json("scripts/Eurovis2019Network.json").then(function (network) {
-            d3.json("scripts/Eurovis2019Tweets.json").then(function (tweets) {
-                var data = _this.grabTwitterData(network, tweets);
-                _this.graph = data;
-                console.log(controller.configuration, data);
-                setPanelValuesFromFile(controller.configuration, data);
-                _this.matrix = [];
-                _this.nodes = data.nodes;
-                _this.idMap = {};
-                _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
-                if (_this.orderType == "screen_name") {
-                    _this.nodes = _this.nodes.sort(function (a, b) { return a.screen_name.localeCompare(b.screen_name); });
-                }
-                else {
-                    _this.nodes = _this.nodes.sort(function (a, b) { return b[_this.orderType] - a[_this.orderType]; });
-                }
-                _this.nodes.forEach(function (node, index) {
-                    node.index = index;
-                    _this.idMap[node.id] = index;
-                });
-                _this.edges = data.links;
-                _this.controller = controller;
-                _this.processData();
-                _this.controller.loadData(_this.nodes, _this.edges, _this.matrix);
+        console.log("data/network_" + controller.configuration.loadedGraph + ".json");
+        d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then(function (data) {
+            //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
+            //let data = this.grabTwitterData(network, network.links);
+            _this.graph = data;
+            console.log(controller.configuration, data);
+            setPanelValuesFromFile(controller.configuration, data);
+            _this.matrix = [];
+            _this.nodes = data.nodes;
+            _this.idMap = {};
+            _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
+            if (_this.orderType == "shortName") {
+                _this.nodes = _this.nodes.sort(function (a, b) { return a.screen_name.localeCompare(b.screen_name); });
+            }
+            else {
+                _this.nodes = _this.nodes.sort(function (a, b) { return b[_this.orderType] - a[_this.orderType]; });
+            }
+            _this.nodes.forEach(function (node, index) {
+                node.index = index;
+                _this.idMap[node.id] = index;
             });
+            _this.edges = data.links;
+            _this.controller = controller;
+            _this.processData();
+            _this.controller.loadData(_this.nodes, _this.edges, _this.matrix);
+            //})
         });
     }
     Model.prototype.grabTwitterData = function (graph, tweets) {
@@ -181,33 +182,26 @@ var Model = /** @class */ (function () {
         this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 };
         // Convert links to matrix; count character occurrences.
         this.edges.forEach(function (link) {
-            var addValue = 0;
+            var addValue = 1;
             console.log('first', link);
-            if (link.type == "reply") {
-                addValue = 3;
-                _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].reply += 1;
-                if (_this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].reply > _this.maxTracker['reply']) {
-                    _this.maxTracker['reply'] = _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].reply;
-                }
-            }
-            else if (link.type == "retweet") {
-                addValue = 2;
-                _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].retweet += 1;
-                console.log(_this.matrix[_this.idMap[link.source]][_this.idMap[link.target]]);
-                if (_this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].retweet > _this.maxTracker['retweet'] && _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].retweet !== null) {
-                    _this.maxTracker['retweet'] = _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].retweet;
-                }
-            }
-            else if (link.type == "mentions") {
-                addValue = 1;
-                _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].mentions += 1;
-                if (_this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].mentions > _this.maxTracker['mentions']) {
-                    _this.maxTracker['mentions'] = _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].mentions;
-                }
-            }
-            console.log("Max", _this.maxTracker);
-            _this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 };
+            _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]][link.type] += 1;
+            /*if (link.type == "reply") {
+              addValue = 3;
+      
+      
+            } else if (link.type == "retweet") {
+              addValue = 2;
+              this.matrix[this.idMap[link.source]][this.idMap[link.target]].retweet += 1;
+      
+            } else if (link.type == "mentions") {
+              addValue = 1;
+              this.matrix[this.idMap[link.source]][this.idMap[link.target]].mentions += 1;
+            } else
+            console.log("Max", this.maxTracker);
+      
+      
             /* could be used for varying edge types */
+            _this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 };
             _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].z += addValue;
             _this.matrix[_this.idMap[link.source]].count += 1;
             if (_this.controller.configuration.isDirected) {

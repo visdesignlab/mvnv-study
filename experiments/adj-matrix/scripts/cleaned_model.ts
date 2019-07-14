@@ -105,9 +105,10 @@ class Model {
   }
   constructor(controller: any) {
     this.controller = controller;
-    d3.json("scripts/Eurovis2019Network.json").then((network: any) => {
-      d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
-        let data = this.grabTwitterData(network, tweets);
+    console.log("data/network_"+controller.configuration.loadedGraph+".json");
+    d3.json("data/network_"+controller.configuration.loadedGraph+".json").then((data: any) => {
+      //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
+        //let data = this.grabTwitterData(network, network.links);
         this.graph = data;
         console.log(controller.configuration, data);
         setPanelValuesFromFile(controller.configuration, data);
@@ -116,7 +117,7 @@ class Model {
         this.idMap = {};
 
         this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
-        if (this.orderType == "screen_name") {
+        if (this.orderType == "shortName") {
           this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b.screen_name));
         } else {
           this.nodes = this.nodes.sort((a, b) => { return b[this.orderType] - a[this.orderType]; });
@@ -136,7 +137,7 @@ class Model {
 
 
         this.controller.loadData(this.nodes, this.edges, this.matrix);
-      })
+      //})
     })
   }
 
@@ -190,39 +191,21 @@ class Model {
     this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 }
     // Convert links to matrix; count character occurrences.
     this.edges.forEach((link) => {
-      let addValue = 0;
+      let addValue = 1;
       console.log('first', link);
-      if (link.type == "reply") {
-        addValue = 3;
-        this.matrix[this.idMap[link.source]][this.idMap[link.target]].reply += 1;
-        if (this.matrix[this.idMap[link.source]][this.idMap[link.target]].reply > this.maxTracker['reply']) {
-          this.maxTracker['reply'] = this.matrix[this.idMap[link.source]][this.idMap[link.target]].reply
-        }
-      } else if (link.type == "retweet") {
-        addValue = 2;
-        this.matrix[this.idMap[link.source]][this.idMap[link.target]].retweet += 1;
-        console.log(this.matrix[this.idMap[link.source]][this.idMap[link.target]]);
-        if (this.matrix[this.idMap[link.source]][this.idMap[link.target]].retweet > this.maxTracker['retweet'] && this.matrix[this.idMap[link.source]][this.idMap[link.target]].retweet !== null) {
-          this.maxTracker['retweet'] = this.matrix[this.idMap[link.source]][this.idMap[link.target]].retweet
-        }
-      } else if (link.type == "mentions") {
-        addValue = 1;
-        this.matrix[this.idMap[link.source]][this.idMap[link.target]].mentions += 1;
-        if (this.matrix[this.idMap[link.source]][this.idMap[link.target]].mentions > this.maxTracker['mentions']) {
-          this.maxTracker['mentions'] = this.matrix[this.idMap[link.source]][this.idMap[link.target]].mentions
-        }
-      }
-      console.log("Max", this.maxTracker);
-      this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 }
+      this.matrix[this.idMap[link.source]][this.idMap[link.target]][link.type] += 1;
+
+
 
       /* could be used for varying edge types */
+      this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 }
       this.matrix[this.idMap[link.source]][this.idMap[link.target]].z += addValue;
 
       this.matrix[this.idMap[link.source]].count += 1;
-      if (this.controller.configuration.isDirected) {
+      /*if (this.controller.configuration.isDirected) {
         this.matrix[this.idMap[link.target]][this.idMap[link.source]].z += addValue;
         this.matrix[this.idMap[link.target]].count += 1;
-      }
+      }*/
     });
   }
 
