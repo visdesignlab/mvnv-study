@@ -58,8 +58,8 @@ var Model = /** @class */ (function () {
             _this.nodes = data.nodes;
             _this.idMap = {};
             _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
-            if (_this.orderType == "shortName") {
-                _this.nodes = _this.nodes.sort(function (a, b) { return a.screen_name.localeCompare(b.screen_name); });
+            if (_this.orderType == "screen_name" || _this.orderType == "name") {
+                _this.nodes = _this.nodes.sort(function (a, b) { return a.screen_name.localeCompare(b[_this.orderType]); });
             }
             else {
                 _this.nodes = _this.nodes.sort(function (a, b) { return b[_this.orderType] - a[_this.orderType]; });
@@ -140,7 +140,7 @@ var Model = /** @class */ (function () {
     };
     /**
      *   Determines the order of the current nodes
-     * @param  type A string corresponding to the attribute name to sort by.
+     * @param  type A string corresponding to the attribute screen_name to sort by.
      * @return      A numerical range in corrected order.
      */
     Model.prototype.changeOrder = function (type) {
@@ -177,37 +177,22 @@ var Model = /** @class */ (function () {
             rowNode.id = +rowNode.id;
             rowNode.y = i;
             /* matrix used for edge attributes, otherwise should we hide */
-            _this.matrix[i] = _this.nodes.map(function (colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, z: 0, reply: 0, retweet: 0, mentions: 0 }; });
+            _this.matrix[i] = _this.nodes.map(function (colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
         });
         this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 };
         // Convert links to matrix; count character occurrences.
         this.edges.forEach(function (link) {
             var addValue = 1;
             console.log('first', link);
-            _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]][link.type] += 1;
-            /*if (link.type == "reply") {
-              addValue = 3;
-      
-      
-            } else if (link.type == "retweet") {
-              addValue = 2;
-              this.matrix[this.idMap[link.source]][this.idMap[link.target]].retweet += 1;
-      
-            } else if (link.type == "mentions") {
-              addValue = 1;
-              this.matrix[this.idMap[link.source]][this.idMap[link.target]].mentions += 1;
-            } else
-            console.log("Max", this.maxTracker);
-      
-      
+            _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]][link.type] += link.count;
             /* could be used for varying edge types */
-            _this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 };
+            //this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 }
             _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].z += addValue;
-            _this.matrix[_this.idMap[link.source]].count += 1;
-            if (_this.controller.configuration.isDirected) {
-                _this.matrix[_this.idMap[link.target]][_this.idMap[link.source]].z += addValue;
-                _this.matrix[_this.idMap[link.target]].count += 1;
-            }
+            _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].count += 1;
+            /*if (this.controller.configuration.isDirected) {
+              this.matrix[this.idMap[link.target]][this.idMap[link.source]].z += addValue;
+              this.matrix[this.idMap[link.target]].count += 1;
+            }*/
         });
     };
     Model.prototype.getOrder = function () {
@@ -296,15 +281,15 @@ var View = /** @class */ (function () {
     };
     /**
      * [highlightNodes description]
-     * @param  name         [description]
+     * @param  screen_name         [description]
      * @param  verticleNode [description]
      * @return              [description]
   
-    highlightNodes(name: string, verticleNode: boolean) {
+    highlightNodes(screen_name: string, verticleNode: boolean) {
       let selector: string = verticleNode ? ".highlightRow" : ".highlightRow";
   
       d3.selectAll(selector)
-        .filter((d: any) => { return d.name == name })
+        .filter((d: any) => { return d.screen_name == screen_name })
         .classed('hovered', true);
     }*/
     /**
@@ -482,11 +467,13 @@ var View = /** @class */ (function () {
         this.edgeScales = {};
         this.controller.configuration.attributeScales.edge.type.domain.forEach(function (type) {
             // calculate the max
-            var extent = [0, _this.controller.model.maxTracker[type]];
+            var extent = [0, _this.controller.configuration.attributeScales.edge.count.domain[1]];
+            //model.maxTracker[type]]
             console.log(extent);
             // set up scale
             var typeIndex = _this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
             var scale = d3.scaleLinear().domain(extent).range(["white", _this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
+            scale.clamp(true);
             // store scales
             _this.edgeScales[type] = scale;
             //console.log(type, this.edgeScales[type].domain(), this.edgeScales[type].range().clamp());
@@ -497,28 +484,29 @@ var View = /** @class */ (function () {
             .data(function (d) { return d; /*.filter(item => item.z > 0)*/ })
             .enter().append('g')
             .attr("class", "cell");
-        console.log(this.controller.configuration.adjMatrix.edgeBars, this.controller.configuration, this.controller.configuration.adjMatrix);
-        if (this.controller.configuration.adjMatrix.edgeBars) {
-            // bind squars to cells for the mouse over effect
+        console.log(this.controller.configuration.adjMatrixValues.edgeBars, this.controller.configuration, this.controller.configuration.adjMatrix);
+        if (this.controller.configuration.adjMatrixValues.edgeBars) {
+            // bind squares to cells for the mouse over effect
             cells
                 .append("rect")
                 .attr("x", function (d) { return _this.verticalScale(d.x); })
                 .attr('height', this.verticalScale.bandwidth())
                 .attr('width', this.verticalScale.bandwidth())
                 .attr('fill-opacity', 0);
-            var dividers_1 = this.controller.configuration.attributeScales.edge.type.domain.length;
-            dividers_1 = dividers_1 == 0 ? 1 : dividers_1; // if dividers = 0, set to 1  throw an error?
+            var dividers_1 = this.controller.configuration.isMultiEdge ? 2 : 1;
             var squares = cells;
             var _loop_1 = function (index) {
-                var type = this_1.controller.configuration.attributeScales.edge.type.domain[index];
+                var type = this_1.controller.configuration.isMultiEdge ? this_1.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
                 console.log(type);
                 var scale = this_1.edgeScales[type];
+                console.log(scale);
                 var typeColor = scale.range()[1];
+                // change encoding to position
                 scale.range([0, this_1.verticalScale.bandwidth()]);
                 scale.clamp(true);
                 cells
                     .filter(function (d) {
-                    return d[_this.controller.configuration.attributeScales.edge.type.domain[index]] !== 0;
+                    return d[type] !== 0;
                 })
                     .append("rect")
                     .attr('x', function (d, i) { return _this.verticalScale(d.x) + index * _this.verticalScale.bandwidth() / dividers_1; })
@@ -650,7 +638,7 @@ var View = /** @class */ (function () {
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
             .style("font-size", 7.5 + "px")
-            .text(function (d, i) { return _this.nodes[i].screen_name; })
+            .text(function (d, i) { return _this.nodes[i].name; })
             .on('click', function (d, i, nodes) {
             d3.select(nodes[i]).classed('selected', function (data) {
                 console.log(data, data[0]);
@@ -665,7 +653,7 @@ var View = /** @class */ (function () {
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
             .style("font-size", 7.5 + "px")
-            .text(function (d, i) { return _this.nodes[i].screen_name; })
+            .text(function (d, i) { return _this.nodes[i].name; })
             .on('click', function (d, index, nodes) {
             d3.select(nodes[index]).classed('selected', !_this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
             console.log(d[index].rowid);
@@ -699,8 +687,8 @@ var View = /** @class */ (function () {
             console.log(this.edgeScales, squares);
             squares
                 .style("fill", function (d) {
-                if (d.reply !== 0) {
-                    return _this.edgeScales["reply"](d.reply);
+                if (d.combined !== 0) {
+                    return _this.edgeScales["combined"](d.combined);
                 }
                 else if (d.retweet !== 0) {
                     return _this.edgeScales["retweet"](d.retweet);
@@ -712,22 +700,22 @@ var View = /** @class */ (function () {
                     return "pink";
                 }
             })
-                .filter(function (d) { return d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0; })
+                .filter(function (d) { return d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0; })
                 .style("fill-opacity", function (d) {
-                return (d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
+                return (d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
             });
         }
-        else if (type == "reply") {
+        else if (type == "combined") {
             squares.style("fill", function (d) {
-                if (d.reply !== 0) {
-                    return _this.edgeScales["reply"](d.reply);
+                if (d.combined !== 0) {
+                    return _this.edgeScales["combined"](d.combined);
                 }
                 else {
                     return "white";
                 }
             })
                 .style("fill-opacity", function (d) {
-                return d.reply !== 0 ? 1 : 0;
+                return d.combined !== 0 ? 1 : 0;
             });
         }
         else if (type == "retweet") {
@@ -757,100 +745,105 @@ var View = /** @class */ (function () {
             });
         }
     };
-    View.prototype.generateColorLegend = function () {
+    View.prototype.generateScaleLegend = function (type, numberOfEdge) {
         var _this = this;
         var yOffset = 10;
         var xOffset = 10;
         var rectWidth = 25;
         var rectHeight = 10;
         var legendWidth = 200;
-        var _loop_2 = function (type) {
-            if (type == "combined") {
-                return "continue";
-            }
-            var scale = this_2.edgeScales[type];
-            console.log(scale);
-            var extent = scale.domain();
-            console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
-            var number = {
-                "retweet": 4,
-                "mentions": 3,
-                "combined": 1
-            };
-            var sampleNumbers = this_2.linspace(extent[0], extent[1], number[type]);
-            console.log(sampleNumbers);
-            var svg = d3.select('#legends').append("g")
-                .attr("id", "legendLinear" + type)
-                .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
-                .on('click', function (d, i, nodes) {
-                if (_this.controller.configuration.adjMatrix.selectEdgeType == true) { //
-                    var edgeType = _this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
-                    _this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
-                    _this.setSquareColors(edgeType);
-                    console.log(nodes[i]);
-                    if (edgeType == "all") {
-                        d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
-                    }
-                    else {
-                        d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
-                        console.log(d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType', true));
-                    }
+        xOffset += legendWidth * numberOfEdge;
+        var scale = this.edgeScales[type];
+        console.log(scale);
+        var extent = scale.domain();
+        console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
+        var number = 5;
+        var sampleNumbers = this.linspace(extent[0], extent[1], number);
+        console.log(sampleNumbers);
+        var svg = d3.select('#legends').append("g")
+            .attr("id", "legendLinear" + type)
+            .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
+            .on('click', function (d, i, nodes) {
+            if (_this.controller.configuration.adjMatrix.selectEdgeType == true) { //
+                var edgeType = _this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
+                _this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
+                _this.setSquareColors(edgeType);
+                console.log(nodes[i]);
+                if (edgeType == "all") {
+                    d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
                 }
-            });
-            console.log("NUMBER TYPE", type, number[type]);
-            var boxWidth = (number[type] + 1) * rectWidth + 15;
-            svg.append('rect')
-                .classed('edgeLegendBorder', true)
-                .attr('stroke', 'gray')
-                .attr('stroke-width', 1)
-                .attr('width', boxWidth)
-                .attr('height', 55)
-                .attr('fill-opacity', 0)
-                .attr('x', 0)
-                .attr('y', -9)
-                .attr('ry', 2)
-                .attr('rx', 2);
-            var pluralType = type;
-            if (pluralType == "retweet") {
-                pluralType = "retweets";
+                else {
+                    d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
+                    console.log(d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType', true));
+                }
             }
-            else if (pluralType == "reply") {
-                pluralType = "replies";
-            }
-            svg.append('text')
-                .attr('x', boxWidth / 2)
-                .attr('y', 8)
-                .attr('text-anchor', 'middle')
-                .text("# of " + pluralType);
-            var groups = svg.selectAll('g')
-                .data(sampleNumbers)
-                .enter()
-                .append('g')
-                .attr('transform', function (d, i) { return 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')'; });
-            groups
-                .append('rect')
-                .attr('width', rectWidth)
-                .attr('height', rectHeight)
-                .attr('fill', function (d) {
-                console.log(d);
-                return scale(d);
-            })
-                .attr('stroke', function (d) {
-                return d == 0 ? '#bbb' : 'white';
-            });
-            groups
-                .append('text')
-                .attr('x', rectWidth / 2)
-                .attr('y', 25)
-                .attr('text-anchor', 'middle')
-                .text(function (d) {
-                return Math.round(d);
-            });
-            xOffset += legendWidth;
-        };
-        var this_2 = this;
+        });
+        console.log("NUMBER TYPE", type, number);
+        var boxWidth = (number + 1) * rectWidth + 15;
+        svg.append('rect')
+            .classed('edgeLegendBorder', true)
+            .attr('stroke', 'gray')
+            .attr('stroke-width', 1)
+            .attr('width', boxWidth)
+            .attr('height', 55)
+            .attr('fill-opacity', 0)
+            .attr('x', 0)
+            .attr('y', -9)
+            .attr('ry', 2)
+            .attr('rx', 2);
+        var pluralType = type;
+        if (pluralType == "retweet") {
+            pluralType = "retweets";
+        }
+        else if (pluralType == "combined") {
+            pluralType = "combination";
+        }
+        svg.append('text')
+            .attr('x', boxWidth / 2)
+            .attr('y', 8)
+            .attr('text-anchor', 'middle')
+            .text("# of " + pluralType);
+        var groups = svg.selectAll('g')
+            .data(sampleNumbers)
+            .enter()
+            .append('g')
+            .attr('transform', function (d, i) { return 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')'; });
+        groups
+            .append('rect')
+            .attr('width', rectWidth)
+            .attr('height', rectHeight)
+            .attr('fill', function (d) {
+            console.log(d);
+            return scale(d);
+        })
+            .attr('stroke', function (d) {
+            return d == 0 ? '#bbb' : 'white';
+        });
+        groups
+            .append('text')
+            .attr('x', rectWidth / 2)
+            .attr('y', 25)
+            .attr('text-anchor', 'middle')
+            .text(function (d) {
+            return Math.round(d);
+        });
+    };
+    View.prototype.generateColorLegend = function () {
+        var counter = 0;
         for (var type in this.edgeScales) {
-            _loop_2(type);
+            if (this.controller.configuration.isMultiEdge) {
+                if (type == "combined") {
+                    continue;
+                }
+                this.generateScaleLegend(type, counter);
+                counter += 1;
+            }
+            else {
+                if (type != "combined") {
+                    continue;
+                }
+                this.generateScaleLegend(type, counter);
+            }
         }
     };
     View.prototype.highlightRow = function (node) {
@@ -1272,7 +1265,7 @@ var View = /** @class */ (function () {
         // Add headers
         var columnHeaders = this.attributes.append('g')
             .classed('column-headers', true);
-        this.columnNames = {
+        this.columnscreen_names = {
             "followers_count": "Followers",
             "query_tweet_count": "Tweets",
             "friends_count": "Friends",
@@ -1293,7 +1286,7 @@ var View = /** @class */ (function () {
             .style('font-size', '11px')
             .attr('text-anchor', 'left')
             .text(function (d, i) {
-            return _this.columnNames[d];
+            return _this.columnscreen_names[d];
         });
         //
         columnHeaders.selectAll('.legend');

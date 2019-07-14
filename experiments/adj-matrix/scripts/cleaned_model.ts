@@ -117,8 +117,8 @@ class Model {
         this.idMap = {};
 
         this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
-        if (this.orderType == "shortName") {
-          this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b.screen_name));
+        if (this.orderType == "screen_name" || this.orderType == "name") {
+          this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b[this.orderType]));
         } else {
           this.nodes = this.nodes.sort((a, b) => { return b[this.orderType] - a[this.orderType]; });
         }
@@ -147,7 +147,7 @@ class Model {
 
   /**
    *   Determines the order of the current nodes
-   * @param  type A string corresponding to the attribute name to sort by.
+   * @param  type A string corresponding to the attribute screen_name to sort by.
    * @return      A numerical range in corrected order.
    */
   changeOrder(type: string) {
@@ -185,7 +185,7 @@ class Model {
       rowNode.y = i;
 
       /* matrix used for edge attributes, otherwise should we hide */
-      this.matrix[i] = this.nodes.map(function(colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, z: 0, reply: 0, retweet: 0, mentions: 0 }; });
+      this.matrix[i] = this.nodes.map(function(colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, count:0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
     });
 
     this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 }
@@ -193,15 +193,15 @@ class Model {
     this.edges.forEach((link) => {
       let addValue = 1;
       console.log('first', link);
-      this.matrix[this.idMap[link.source]][this.idMap[link.target]][link.type] += 1;
+      this.matrix[this.idMap[link.source]][this.idMap[link.target]][link.type] += link.count;
 
 
 
       /* could be used for varying edge types */
-      this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 }
+      //this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 }
       this.matrix[this.idMap[link.source]][this.idMap[link.target]].z += addValue;
 
-      this.matrix[this.idMap[link.source]].count += 1;
+      this.matrix[this.idMap[link.source]][this.idMap[link.target]].count += 1;
       /*if (this.controller.configuration.isDirected) {
         this.matrix[this.idMap[link.target]][this.idMap[link.source]].z += addValue;
         this.matrix[this.idMap[link.target]].count += 1;
@@ -335,15 +335,15 @@ class View {
 
   /**
    * [highlightNodes description]
-   * @param  name         [description]
+   * @param  screen_name         [description]
    * @param  verticleNode [description]
    * @return              [description]
 
-  highlightNodes(name: string, verticleNode: boolean) {
+  highlightNodes(screen_name: string, verticleNode: boolean) {
     let selector: string = verticleNode ? ".highlightRow" : ".highlightRow";
 
     d3.selectAll(selector)
-      .filter((d: any) => { return d.name == name })
+      .filter((d: any) => { return d.screen_name == screen_name })
       .classed('hovered', true);
   }*/
 
@@ -538,12 +538,13 @@ class View {
 
     this.controller.configuration.attributeScales.edge.type.domain.forEach(type => {
       // calculate the max
-      let extent = [0, this.controller.model.maxTracker[type]]
+      let extent = [0,this.controller.configuration.attributeScales.edge.count.domain[1]];
+      //model.maxTracker[type]]
       console.log(extent);
       // set up scale
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
       let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
-
+      scale.clamp(true);
       // store scales
       this.edgeScales[type] = scale;
       //console.log(type, this.edgeScales[type].domain(), this.edgeScales[type].range().clamp());
@@ -554,12 +555,11 @@ class View {
     var cells = this.edgeRows.selectAll(".cell")
       .data(d => { return d/*.filter(item => item.z > 0)*/ })
       .enter().append('g')
-
-
       .attr("class", "cell");
-    console.log(this.controller.configuration.adjMatrix.edgeBars, this.controller.configuration, this.controller.configuration.adjMatrix);
-    if (this.controller.configuration.adjMatrix.edgeBars) {
-      // bind squars to cells for the mouse over effect
+
+    console.log(this.controller.configuration.adjMatrixValues.edgeBars, this.controller.configuration, this.controller.configuration.adjMatrix);
+    if (this.controller.configuration.adjMatrixValues.edgeBars) {
+      // bind squares to cells for the mouse over effect
       cells
         .append("rect")
         .attr("x", d => this.verticalScale(d.x))
@@ -567,20 +567,26 @@ class View {
         .attr('width', this.verticalScale.bandwidth())
         .attr('fill-opacity', 0);
 
-      let dividers = this.controller.configuration.attributeScales.edge.type.domain.length;
-      dividers = dividers == 0 ? 1 : dividers; // if dividers = 0, set to 1  throw an error?
+
+      let dividers = this.controller.configuration.isMultiEdge ? 2:1;
+
+
+
       let squares = cells
       for (let index = 0; index < dividers; index++) {
-        let type = this.controller.configuration.attributeScales.edge.type.domain[index]
+
+        let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index]:'combined';
         console.log(type);
         let scale = this.edgeScales[type];
+        console.log(scale);
         let typeColor = scale.range()[1];
+        // change encoding to position
         scale.range([0, this.verticalScale.bandwidth()])
         scale.clamp(true);
 
         cells
           .filter(d => {
-            return d[this.controller.configuration.attributeScales.edge.type.domain[index]] !== 0;
+            return d[type] !== 0;
           })
           .append("rect")
           .attr('x', (d, i) => { return this.verticalScale(d.x) + index * this.verticalScale.bandwidth() / dividers })
@@ -724,7 +730,7 @@ class View {
       .attr("dy", ".32em")
       .attr("text-anchor", "end")
       .style("font-size", 7.5 + "px")
-      .text((d, i) => this.nodes[i].screen_name)
+      .text((d, i) => this.nodes[i].name)
       .on('click', (d, i, nodes) => {
         d3.select(nodes[i]).classed('selected', (data) => {
           console.log(data, data[0]);
@@ -742,7 +748,7 @@ class View {
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
       .style("font-size", 7.5 + "px")
-      .text((d, i) => this.nodes[i].screen_name)
+      .text((d, i) => this.nodes[i].name)
       .on('click', (d, index, nodes) => {
 
         d3.select(nodes[index]).classed('selected', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
@@ -785,8 +791,8 @@ class View {
       console.log(this.edgeScales, squares);
       squares
         .style("fill", (d: any) => {
-          if (d.reply !== 0) {
-            return this.edgeScales["reply"](d.reply);
+          if (d.combined !== 0) {
+            return this.edgeScales["combined"](d.combined);
           } else if (d.retweet !== 0) {
             return this.edgeScales["retweet"](d.retweet);
           } else if (d.mentions !== 0) {
@@ -795,20 +801,20 @@ class View {
             return "pink";
           }
         })
-        .filter(d => { return d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0)
+        .filter(d => { return d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0)
         .style("fill-opacity", (d) => {
-          return (d.reply !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
+          return (d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
         });
-    } else if (type == "reply") {
+    } else if (type == "combined") {
       squares.style("fill", (d: any) => {
-        if (d.reply !== 0) {
-          return this.edgeScales["reply"](d.reply);
+        if (d.combined !== 0) {
+          return this.edgeScales["combined"](d.combined);
         } else {
           return "white";
         }
       })
         .style("fill-opacity", (d) => {
-          return d.reply !== 0 ? 1 : 0;
+          return d.combined !== 0 ? 1 : 0;
         });
 
 
@@ -837,107 +843,115 @@ class View {
     }
   }
 
-
-  generateColorLegend() {
+  generateScaleLegend(type,numberOfEdge){
     let yOffset = 10;
     let xOffset = 10;
     let rectWidth = 25
     let rectHeight = 10;
     let legendWidth = 200;
-    for (let type in this.edgeScales) {
-      if (type == "combined") {
-        continue;
-      }
-      let scale = this.edgeScales[type];
-      console.log(scale)
-      let extent = scale.domain();
-      console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
-      let number = {
-        "retweet": 4,
-        "mentions": 3,
-        "combined": 1
-      };
-      let sampleNumbers = this.linspace(extent[0], extent[1], number[type]);
-      console.log(sampleNumbers);
-      let svg = d3.select('#legends').append("g")
-        .attr("id", "legendLinear" + type)
-        .attr("transform", (d, i) => "translate(" + xOffset + "," + yOffset + ")")
-        .on('click', (d, i, nodes) => {
-          if (this.controller.configuration.adjMatrix.selectEdgeType == true) { //
-            let edgeType = this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
-            this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
-            this.setSquareColors(edgeType);
-            console.log(nodes[i]);
-            if (edgeType == "all") {
-              d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
-            } else {
-              d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
-              console.log(d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType', true));
-            }
+    xOffset += legendWidth*numberOfEdge;
+
+    let scale = this.edgeScales[type];
+    console.log(scale)
+    let extent = scale.domain();
+    console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
+    let number = 5
+
+    let sampleNumbers = this.linspace(extent[0], extent[1], number);
+    console.log(sampleNumbers);
+    let svg = d3.select('#legends').append("g")
+      .attr("id", "legendLinear" + type)
+      .attr("transform", (d, i) => "translate(" + xOffset + "," + yOffset + ")")
+      .on('click', (d, i, nodes) => {
+        if (this.controller.configuration.adjMatrix.selectEdgeType == true) { //
+          let edgeType = this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
+          this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
+          this.setSquareColors(edgeType);
+          console.log(nodes[i]);
+          if (edgeType == "all") {
+            d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
+          } else {
+            d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
+            console.log(d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType', true));
           }
-        });
-      console.log("NUMBER TYPE", type, number[type]);
-      let boxWidth = (number[type] + 1) * rectWidth + 15
+        }
+      });
+    console.log("NUMBER TYPE", type, number);
+    let boxWidth = (number + 1) * rectWidth + 15
 
-      svg.append('rect')
-        .classed('edgeLegendBorder', true)
-        .attr('stroke', 'gray')
-        .attr('stroke-width', 1)
-        .attr('width', boxWidth)
-        .attr('height', 55)
-        .attr('fill-opacity', 0)
-        .attr('x', 0)
-        .attr('y', -9)
-        .attr('ry', 2)
-        .attr('rx', 2)
+    svg.append('rect')
+      .classed('edgeLegendBorder', true)
+      .attr('stroke', 'gray')
+      .attr('stroke-width', 1)
+      .attr('width', boxWidth)
+      .attr('height', 55)
+      .attr('fill-opacity', 0)
+      .attr('x', 0)
+      .attr('y', -9)
+      .attr('ry', 2)
+      .attr('rx', 2)
 
-      let pluralType = type;
+    let pluralType = type;
 
-      if (pluralType == "retweet") {
-        pluralType = "retweets";
-      } else if (pluralType == "reply") {
-        pluralType = "replies";
+    if (pluralType == "retweet") {
+      pluralType = "retweets";
+    } else if (pluralType == "combined") {
+      pluralType = "combination";
+    }
+
+    svg.append('text')
+      .attr('x', boxWidth / 2)
+      .attr('y', 8)
+      .attr('text-anchor', 'middle')
+      .text("# of " + pluralType)
+
+    let groups = svg.selectAll('g')
+      .data(sampleNumbers)
+      .enter()
+      .append('g')
+      .attr('transform', (d, i) => 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')')
+
+    groups
+      .append('rect')
+      .attr('width', rectWidth)
+      .attr('height', rectHeight)
+      .attr('fill', (d) => {
+        console.log(d);
+        return scale(d);
+      })
+      .attr('stroke', (d) => {
+        return d == 0 ? '#bbb' : 'white';
+      })
+
+    groups
+      .append('text')
+      .attr('x', rectWidth / 2)
+      .attr('y', 25)
+      .attr('text-anchor', 'middle')
+      .text(d => {
+        return Math.round(d);
+      })
+
+
+
+
+  }
+  generateColorLegend() {
+    let counter = 0;
+    for (let type in this.edgeScales) {
+      if(this.controller.configuration.isMultiEdge){
+        if (type == "combined") {
+          continue;
+        }
+        this.generateScaleLegend(type,counter)
+        counter+=1;
+
+      } else {
+        if (type != "combined") {
+          continue;
+        }
+        this.generateScaleLegend(type,counter)
       }
-
-      svg.append('text')
-        .attr('x', boxWidth / 2)
-        .attr('y', 8)
-        .attr('text-anchor', 'middle')
-        .text("# of " + pluralType)
-
-      let groups = svg.selectAll('g')
-        .data(sampleNumbers)
-        .enter()
-        .append('g')
-        .attr('transform', (d, i) => 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')')
-
-      groups
-        .append('rect')
-        .attr('width', rectWidth)
-        .attr('height', rectHeight)
-        .attr('fill', (d) => {
-          console.log(d);
-          return scale(d);
-        })
-        .attr('stroke', (d) => {
-          return d == 0 ? '#bbb' : 'white';
-        })
-
-      groups
-        .append('text')
-        .attr('x', rectWidth / 2)
-        .attr('y', 25)
-        .attr('text-anchor', 'middle')
-        .text(d => {
-          return Math.round(d);
-        })
-
-
-      xOffset += legendWidth;
-
-
-
-
     }
   }
 
@@ -1188,7 +1202,7 @@ class View {
       .delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
   }
-  private columnNames: {};
+  private columnscreen_names: {};
   /**
    * [initalizeAttributes description]
    * @return [description]
@@ -1455,7 +1469,7 @@ class View {
 
 
 
-    this.columnNames = {
+    this.columnscreen_names = {
       "followers_count": "Followers",
       "query_tweet_count": "Tweets",
       "friends_count": "Friends",
@@ -1477,7 +1491,7 @@ class View {
       .style('font-size', '11px')
       .attr('text-anchor', 'left')
       .text((d, i) => {
-        return this.columnNames[d];
+        return this.columnscreen_names[d];
       });
 
     //
