@@ -288,7 +288,16 @@ function setPanelValuesFromFile() {
     .filter(function() {
       return d3.select(this).property("value") === config.isDirected.toString();
     })
-    .attr("checked", "checked");
+    .property("checked", "checked");
+    
+
+  d3.selectAll("input[name='selectNeighbors']")
+  .filter(function() {
+    console.log(d3.select(this).property("value"), config.nodeLink.selectNeighbors.toString())
+    return d3.select(this).property("value") === config.nodeLink.selectNeighbors.toString();
+  })
+  .property("checked", "checked");
+
 
   d3.selectAll("input[name='isMultiEdge']")
     .filter(function() {
@@ -296,11 +305,18 @@ function setPanelValuesFromFile() {
         d3.select(this).property("value") === config.isMultiEdge.toString()
       );
     })
-    .attr("checked", "checked");
+    .property("checked", "checked");
 
   d3.selectAll("input[type='radio']").on("change", async function() {
+
+    if (this.name === 'selectNeighbors'){
+      config.nodeLink[this.name] = eval(this.value);
+      return;
+    }
     config[this.name] =
       this.name === "graphSize" ? this.value : eval(this.value);
+
+      
 
     let file =
       config.graphSize +
