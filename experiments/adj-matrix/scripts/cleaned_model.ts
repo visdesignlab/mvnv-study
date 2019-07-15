@@ -1689,7 +1689,6 @@ class Controller {
 
     this.view = new View(this); // initalize view,
     this.model = new Model(this); //.reload();
-
     //
     //this.model = new Model(this); // start reading in data
   }
