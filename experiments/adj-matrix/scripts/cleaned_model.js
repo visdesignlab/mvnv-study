@@ -619,18 +619,18 @@ var View = /** @class */ (function () {
               .filter((d: any, i) => { return d.y === rowIndex || d.y == colIndex })
               .classed('hovered', true)
       
-            that.tooltip.transition().duration(200).style("opacity", .9);
+              that.tooltip.transition().duration(200).style("opacity", .9);
       
-            let matrix = this.getScreenCTM()
-              .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+              let matrix = this.getScreenCTM()
+                .translate(+this.getAttribute("x"), +this.getAttribute("y"));
       
-            that.tooltip.transition()
-              .duration(200)
-              .style("opacity", .9);
+              that.tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
       
-            that.tooltip.html("DATA")
-              .style("left", (window.pageXOffset + matrix.e - 20) + "px")
-              .style("top", (window.pageYOffset + matrix.f - 20) + "px");*/
+              that.tooltip.html("DATA")
+                .style("left", (window.pageXOffset + matrix.e - 20) + "px")
+                .style("top", (window.pageYOffset + matrix.f - 20) + "px");*/
         }
         function mouseoutCell() {
             d3.selectAll("text").classed("active", false);
@@ -1241,11 +1241,45 @@ var View = /** @class */ (function () {
             "listed_count": "Listed",
             "favourites_count": "Favourites",
             "count_followers_in_query": "Followers (G)",
-            "continent": "Continent",
-            "type": "Account Type",
+            "continent": "",
+            "type": "",
             "memberFor_days": "# Days Old",
             "listed_count": "Listed Count"
         };
+        var that = this;
+        function calculateMaxChars(numColumns) {
+            switch (numColumns) {
+                case 1:
+                    return { "characters": 20, "font": 14 };
+                case 2:
+                    return { "characters": 20, "font": 13 };
+                case 3:
+                    return { "characters": 20, "font": 12 };
+                case 4:
+                    return { "characters": 20, "font": 11 };
+                case 5:
+                    return { "characters": 19, "font": 10 };
+                case 6:
+                    return { "characters": 17, "font": 10 };
+                case 7:
+                    return { "characters": 15, "font": 10 };
+                case 8:
+                    return { "characters": 13, "font": 10 };
+                case 9:
+                    return { "characters": 10, "font": 10 };
+                case 10:
+                    return { "characters": 8, "font": 10 };
+                default:
+                    return { "characters": 8, "font": 10 };
+            }
+            // takes number of columns
+            //4->20, 11 pt font
+            //5->20,
+            //6->
+        }
+        var options = calculateMaxChars(columns.length); // 10 attr => 8
+        var maxcharacters = options.characters;
+        var fontSize = options.font;
         columnHeaders.selectAll('.header')
             .data(columns)
             .enter()
@@ -1255,11 +1289,28 @@ var View = /** @class */ (function () {
             .classed('header', true)
             //.attr('y', -45)
             //.attr('x', (d) => this.columnScale(d) + barMargin.left)
-            .style('font-size', '11px')
+            .style('font-size', fontSize.toString() + 'px')
             .attr('text-anchor', 'left')
-            .attr('transform', 'rotate(-10)')
+            //.attr('transform','rotate(-10)')
             .text(function (d, i) {
+            if (_this.columnNames[d] && _this.columnNames[d].length > maxcharacters) {
+                return _this.columnNames[d].slice(0, maxcharacters - 2) + '...'; // experimentally determine how big
+            }
             return _this.columnNames[d];
+        })
+            .on('mouseover', function (d) {
+            that.tooltip.transition().duration(200).style("opacity", .9);
+            var matrix = this.getScreenCTM()
+                .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+            that.tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            that.tooltip.html(that.columnNames[d])
+                .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+                .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+        })
+            .on('mouseout', function (d) {
+            that.tooltip.transition().duration(250).style("opacity", 0);
         });
         //
         columnHeaders.selectAll('.legend');

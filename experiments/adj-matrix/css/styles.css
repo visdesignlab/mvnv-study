@@ -58,7 +58,8 @@ fill: #eee;
 div.tooltip {
 position: absolute;
 text-align: center;
-width: 40px;
+font-size:11px;
+width: 80px;
 border-radius: 5px;
 padding: 2px;
 background: white;
