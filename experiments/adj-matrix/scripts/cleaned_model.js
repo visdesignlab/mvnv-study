@@ -189,10 +189,11 @@ var Model = /** @class */ (function () {
             //this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 }
             _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].z += addValue;
             _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].count += 1;
-            /*if (this.controller.configuration.isDirected) {
-              this.matrix[this.idMap[link.target]][this.idMap[link.source]].z += addValue;
-              this.matrix[this.idMap[link.target]].count += 1;
-            }*/
+            // if not directed, increment the other values
+            if (!_this.controller.configuration.isDirected) {
+                _this.matrix[_this.idMap[link.target]][_this.idMap[link.source]].z += addValue;
+                _this.matrix[_this.idMap[link.target]][_this.idMap[link.source]][link.type] += link.count;
+            }
         });
     };
     Model.prototype.getOrder = function () {

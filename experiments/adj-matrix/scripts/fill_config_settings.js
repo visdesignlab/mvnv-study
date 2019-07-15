@@ -100,9 +100,9 @@ function setPanelValuesFromFile(config, graph) {
 
     config.loadedGraph = file;
 
-     setDisabledRadioButtons();
+    setDisabledRadioButtons();
 
-    await loadNewGraph(config.graphFiles[file]);
+    window.controller.reload();
 
   });
 
@@ -496,6 +496,7 @@ function setPanelValuesFromFile(config, graph) {
         d3.select("#nodeSizeSelect_histogram"),
         graph.nodes,true,config,graph
       );
+      window.controller.reload();
 
 
     });

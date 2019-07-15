@@ -202,10 +202,11 @@ class Model {
       this.matrix[this.idMap[link.source]][this.idMap[link.target]].z += addValue;
 
       this.matrix[this.idMap[link.source]][this.idMap[link.target]].count += 1;
-      /*if (this.controller.configuration.isDirected) {
+      // if not directed, increment the other values
+      if (!this.controller.configuration.isDirected) {
         this.matrix[this.idMap[link.target]][this.idMap[link.source]].z += addValue;
-        this.matrix[this.idMap[link.target]].count += 1;
-      }*/
+        this.matrix[this.idMap[link.target]][this.idMap[link.source]][link.type] += link.count;
+      }
     });
   }
 
