@@ -23,10 +23,14 @@
         "noNodeFill": "white",
         "noNodeStroke": "white",
         "quantColors": [
-            "#2d2d2d",
-            "#d67205",
-            "#777777",
-            "#706842"
+            "#7b7cb1",
+            "#01a068",
+            "#bf8531",
+            "#5472cf",
+            "#4d8615",
+            "#d63d61",
+            "#ae76ed",
+            "#f26336"
         ]
     },
     "taskID": "task1",
@@ -36,7 +40,7 @@
     "graphSize": "large",
     "nodeAttributes": [
         "followers_count",
-        "continent"
+        "type"
     ],
     "edgeAttributes": [
         "type",

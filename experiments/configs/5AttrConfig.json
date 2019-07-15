@@ -42,7 +42,8 @@
         "followers_count",
         "statuses_count",
         "memberFor_days",
-        "continent"
+        "continent",
+        "type"
     ],
     "edgeAttributes": [
         "type",
