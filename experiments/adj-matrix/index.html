@@ -217,7 +217,34 @@
     panel.style("display", isVisible ? "none" : "block");
     //window.controller.reload();
   });
+
+
 </script>
 
 <script type="text/javascript" src="scripts/fill_config_settings.js"></script>
 <script type="text/javascript" src="scripts/cleaned_model.js"> </script>
+<script>
+window.onload=function(){
+console.log(d3.select("#optimalConfig"));
+d3.select("#optimalConfig").on("click", () => {
+  console.log("Clicked Optimal!")
+  window.controller.tenAttr = false;
+  window.controller.fiveAttr = false;
+  window.controller.loadConfigs();
+});
+console.log(d3.select("#nodeLinkConfig"));
+d3.select("#nodeLinkConfig").on("click", () => { // 5 attr
+  console.log("Clicked 5");
+  window.controller.tenAttr = false;
+  window.controller.fiveAttr = true;
+  window.controller.loadConfigs();
+});
+
+d3.select("#saturatedConfig").on("click", () => { // 10 attr
+  console.log("Clicked 10")
+  window.controller.tenAttr = true;
+  window.controller.fiveAttr = false;
+  window.controller.loadConfigs();
+});
+}
+</script>

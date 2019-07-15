@@ -1383,10 +1383,17 @@ var Controller = /** @class */ (function () {
           */
     };
     Controller.prototype.loadConfigs = function () {
+        var taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
+        if (this.tenAttr) {
+            taskConfig = "../configs/10AttrConfig.json";
+        }
+        else if (this.fiveAttr) {
+            taskConfig = "../configs/5AttrConfig.json";
+        }
         var that = this;
         Promise.all([
             d3.json("../configs/baseConfig.json"),
-            d3.json("../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
+            d3.json(taskConfig),
             d3.json("../configs/state.json")
         ]).then(function (configComponents) {
             that.setupCSS(configComponents[0]);
