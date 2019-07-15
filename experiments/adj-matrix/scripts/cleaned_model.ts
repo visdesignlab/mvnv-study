@@ -328,7 +328,7 @@ class View {
     d3.select('.loading').style('display', 'block').style('opacity', 1);
     this.viewWidth = 1000;
 
-    this.margins = { left: 65, top: 65, right: 10, bottom: 10 };
+    this.margins = { left: 75, top: 65, right: 10, bottom: 10 };
 
     this.initalizeEdges();
     this.initalizeAttributes();
