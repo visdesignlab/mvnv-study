@@ -103,6 +103,17 @@ class Model {
     })
     return newGraph;
   }
+  isQuant(attr){
+    // if not in list
+    if(!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)){
+      return false;
+    } else if(this.controller.configuration.attributeScales.node[attr].range === undefined){
+      return true;
+    } else {
+      return false
+    }
+  }
+
   constructor(controller: any) {
     this.controller = controller;
     console.log("data/network_" + controller.configuration.loadedGraph + ".json");
@@ -115,10 +126,12 @@ class Model {
       this.matrix = [];
       this.nodes = data.nodes
       this.idMap = {};
-
+      console.log(this.orderType);
+      this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
+      console.log(this.orderType,this.isQuant(this.orderType));
       this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
-      if (this.orderType == "screen_name" || this.orderType == "name") {
-        this.nodes = this.nodes.sort((a, b) => a.screen_name.localeCompare(b[this.orderType]));
+      if (!this.isQuant(this.orderType)){// == "screen_name" || this.orderType == "name") {
+        this.nodes = this.nodes.sort((a, b) => a[this.orderType].localeCompare(b[this.orderType]));
       } else {
         this.nodes = this.nodes.sort((a, b) => { return b[this.orderType] - a[this.orderType]; });
       }
@@ -154,12 +167,12 @@ class Model {
     let order;
     this.orderType = type;
     this.controller.configuration.state.adjMatrix.sortKey = type;
-    if (type == 'screen_name') {
-      order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[a].screen_name.localeCompare(this.nodes[b].screen_name) })
+    if (!this.isQuant(this.orderType)){// == "screen_name" || this.orderType == "name") {
+      order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a][type].localeCompare(this.nodes[b][type]));
+    } else {
+      order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
     }
-    else {
-      order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; })
-    }
+
     this.order = order;
     return order;
   }
@@ -725,7 +738,7 @@ class View {
 
     //
     this.edgeRows.append("text")
-      .attr("class", "label")
+      .attr("class", "nodeLabel")
       .attr("x", 0)
       .attr("y", this.verticalScale.bandwidth() / 2)
       .attr("dy", ".32em")
@@ -743,7 +756,7 @@ class View {
 
 
     this.edgeColumns.append("text")
-      .attr("class", "label")
+      .attr("class", "nodeLabel")
       .attr("y", 3)
       .attr('x', 2)
       .attr("dy", ".32em")
@@ -1595,6 +1608,15 @@ class Controller {
   private model: any;
   private configuration: any;
 
+  setupExports(base,task){
+    d3.select("#exportBaseConfig").on("click", function() {
+          exportConfig(Object.keys(base),Object.keys(base.adjMatrix),false)
+        });
+
+        d3.select("#exportConfig").on("click", function() {
+          exportConfig(Object.keys(task),Object.keys(task.adjMatrixValues),true)
+        });
+  }
   loadConfigs() {
     console.log("in merge");
     let that = this;
@@ -1603,7 +1625,8 @@ class Controller {
       d3.json("./../configs/baseconfig.json"),
       d3.json("./../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
       d3.json("./../configs/state.json")
-    ]).then(function(configComponents) {
+    ]).then((configComponents) =>{
+      that.setupExports(configComponents[0],configComponents[1]);
       console.log(configComponents)
       let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);

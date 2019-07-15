@@ -345,6 +345,8 @@ line {
       <option value="listed_count">by Listed</option>
       <option value="favourites_count">by Favourites</option>
       <option value="count_followers_in_query">by Followers in Network</option>
+      <option value="continent">by Nationality</option>
+      <option value="type">by Account Type</option>
     </select>
   </p>
 </aside>
@@ -433,21 +435,8 @@ line {
           <label>Node Label Font Size</label>
           <ul>
             <div class="control is-inline-flex">
-              <input class="slider" id="fontSlider" step="1" min="10" max="30" value="14" type="range">
+              <input class="slider" id="fontSlider" step="1" min="8" max="25" value="8" type="range">
               <output id="fontSliderValue">14</output> </div>
-          </ul>
-        </li>
-
-
-        <li id="nodeMarkerSize">
-          <label>Node Size [width,height]</label>
-          <ul>
-
-
-            <div class="control is-inline-flex">
-              <input width="50%" id="markerSize" class="input" type="text" placeholder="width/height">
-            </div>
-
           </ul>
         </li>
 
@@ -459,7 +448,7 @@ line {
 
           <div class="field">
             <input class="is-checkradio is-circle" id="renderBarsCheckbox" type="checkbox" name="renderBarsCheckbox" checked="checked">
-            <label for="renderBarsCheckbox">Render Nested Edge Bars</label>
+            <label for="renderBarsCheckbox">Render Edges as Bars</label>
           </div>
 
 
@@ -487,60 +476,6 @@ line {
             </ul>
           </li>
 
-
-          <li id="nodeFillSelect">
-            <a>Attribute for Node Fill</a>
-            <ul>
-              <div class="select">
-                <select>
-                </select>
-              </div>
-
-            </ul>
-          </li>
-
-          <li id="nodeSizeSelect">
-            <a>Attribute for Node Size</a>
-            <ul>
-              <div class="select">
-                <select>
-                </select>
-
-              </div>
-
-              <div class="control is-inline-flex">
-                <input width="50%" class="input" type="text" placeholder="[min,max]">
-              </div>
-
-            </ul>
-          </li>
-
-          <li id="edgeStrokeSelect">
-            <a>Attribute for Edge Stroke</a>
-            <ul>
-              <div class="select">
-                <select>
-                </select>
-              </div>
-
-            </ul>
-          </li>
-
-          <li id="edgeWidthSelect">
-            <a>Attribute for Edge Width</a>
-            <ul>
-              <div class="select ">
-                <select>
-                </select>
-              </div>
-
-              <div class="control is-inline-flex">
-                <input class="input" id="edgeWidthScale" type="text" placeholder="[min,max]">
-              </div>
-
-            </ul>
-          </li>
-
           <br />
           <br />
 
@@ -548,7 +483,7 @@ line {
 
           <br />
 
-          <a class="button is-light" id="exportBaseConfig">Export Base Config</a>
+          <!-- <a class="button is-light" id="exportBaseConfig">Export Base Config</a>-->
 
     </aside>
 

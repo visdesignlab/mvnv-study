@@ -57,9 +57,12 @@ var Model = /** @class */ (function () {
             _this.matrix = [];
             _this.nodes = data.nodes;
             _this.idMap = {};
+            console.log(_this.orderType);
+            _this.orderType = _this.controller.configuration.state.adjMatrix.sortKey;
+            console.log(_this.orderType, _this.isQuant(_this.orderType));
             _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
-            if (_this.orderType == "screen_name" || _this.orderType == "name") {
-                _this.nodes = _this.nodes.sort(function (a, b) { return a.screen_name.localeCompare(b[_this.orderType]); });
+            if (!_this.isQuant(_this.orderType)) { // == "screen_name" || this.orderType == "name") {
+                _this.nodes = _this.nodes.sort(function (a, b) { return a[_this.orderType].localeCompare(b[_this.orderType]); });
             }
             else {
                 _this.nodes = _this.nodes.sort(function (a, b) { return b[_this.orderType] - a[_this.orderType]; });
@@ -135,6 +138,18 @@ var Model = /** @class */ (function () {
         });
         return newGraph;
     };
+    Model.prototype.isQuant = function (attr) {
+        // if not in list
+        if (!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)) {
+            return false;
+        }
+        else if (this.controller.configuration.attributeScales.node[attr].range === undefined) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
     Model.prototype.reload = function () {
         this.controller.loadData(this.nodes, this.edges, this.matrix);
     };
@@ -148,8 +163,8 @@ var Model = /** @class */ (function () {
         var order;
         this.orderType = type;
         this.controller.configuration.state.adjMatrix.sortKey = type;
-        if (type == 'screen_name') {
-            order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a].screen_name.localeCompare(_this.nodes[b].screen_name); });
+        if (!this.isQuant(this.orderType)) { // == "screen_name" || this.orderType == "name") {
+            order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a][type].localeCompare(_this.nodes[b][type]); });
         }
         else {
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[b][type] - _this.nodes[a][type]; });
@@ -633,7 +648,7 @@ var View = /** @class */ (function () {
         this.order = this.controller.getOrder();
         //
         this.edgeRows.append("text")
-            .attr("class", "label")
+            .attr("class", "nodeLabel")
             .attr("x", 0)
             .attr("y", this.verticalScale.bandwidth() / 2)
             .attr("dy", ".32em")
@@ -648,7 +663,7 @@ var View = /** @class */ (function () {
             _this.selectNode(d[0].rowid);
         });
         this.edgeColumns.append("text")
-            .attr("class", "label")
+            .attr("class", "nodeLabel")
             .attr("y", 3)
             .attr('x', 2)
             .attr("dy", ".32em")
@@ -1380,6 +1395,14 @@ var Controller = /** @class */ (function () {
         })
         console.log(this.configuration);*/
     }
+    Controller.prototype.setupExports = function (base, task) {
+        d3.select("#exportBaseConfig").on("click", function () {
+            exportConfig(Object.keys(base), Object.keys(base.adjMatrix), false);
+        });
+        d3.select("#exportConfig").on("click", function () {
+            exportConfig(Object.keys(task), Object.keys(task.adjMatrixValues), true);
+        });
+    };
     Controller.prototype.loadConfigs = function () {
         console.log("in merge");
         var that = this;
@@ -1389,6 +1412,7 @@ var Controller = /** @class */ (function () {
             d3.json("./../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
             d3.json("./../configs/state.json")
         ]).then(function (configComponents) {
+            that.setupExports(configComponents[0], configComponents[1]);
             console.log(configComponents);
             var components = [configComponents[0], configComponents[1], configComponents[2]];
             var result = deepmerge.all(components);

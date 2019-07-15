@@ -47,6 +47,10 @@
         "count"
     ],
     "adjMatrixValues": {
-        "edgeBars" : false
+        "edgeBars" : false,
+        "labelSize" : {
+            "large": 14,
+            "small": 8
+        }
     }
 }

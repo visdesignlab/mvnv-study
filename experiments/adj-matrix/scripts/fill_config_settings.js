@@ -1,3 +1,4 @@
+
 function setPanelValuesFromFile(config, graph) {
   function isQuant(attr){
     return Object.keys(config.attributeScales.node).includes(attr) && config.attributeScales.node[attr].range === undefined;
@@ -54,8 +55,9 @@ function setPanelValuesFromFile(config, graph) {
   );
   d3.select("#fontSliderValue").text(config.nodeLink.labelSize[config.graphSize]);
 
-  d3.select("#fontSlider").on("change", function() {
-
+  d3.select("#fontSlider").on("change", function(val) {
+    console.log(val, this,this.value,d3.selectAll('text'));
+    d3.selectAll('.nodeLabel').style('font-size',this.value);
   });
 
   d3.select("#markerSize").property(
@@ -130,7 +132,7 @@ function setPanelValuesFromFile(config, graph) {
 
   setDisabledRadioButtons();
 
-  d3.select("#renderBarsCheckbox").property("checked", config.nodeLink.drawBars);
+  d3.select("#renderBarsCheckbox").property("checked", config.adjMatrixValues.edgeBars);
 
   //get attribute list from baseConfig file;
   let nodeAttrs = Object.entries(config.attributeScales.node);
@@ -326,6 +328,7 @@ function setPanelValuesFromFile(config, graph) {
         config.nodeAttributes = config.nodeAttributes.filter(el => el !== d.attr);
 
       }
+      window.controller.reload();
     });
 
   fields
@@ -406,6 +409,7 @@ function setPanelValuesFromFile(config, graph) {
         config.nodeAttributes = config.nodeAttributes.filter(el => el !== d);
 
       }
+      window.controller.reload();
     });
 
   fields
@@ -502,8 +506,8 @@ function setPanelValuesFromFile(config, graph) {
     });
 
   d3.select("#renderBarsCheckbox").on("input", function() {
-    config.nodeLink.drawBars = d3.select(this).property("checked");
-
+    config.adjMatrixValues.edgeBars = d3.select(this).property("checked");
+    window.controller.reload();
 
   });
 
@@ -732,7 +736,75 @@ function createHist(attrName, svgSelection, data, isNode = true,config,graph) {
           format = d3.format(".2s");
       }
       return format(d);
-
-
     });
+
+}
+
+function exportConfig(baseKeys,nodeLinkKeys,isTaskConfig){
+
+  let configCopy = JSON.parse(JSON.stringify(window.controller.configuration));
+
+  //only keep keys for this particular config file;
+
+  Object.keys(configCopy).map(key=>{
+    if (!baseKeys.includes(key)){
+      delete configCopy[key]
+    }
+  });
+
+  Object.keys(configCopy.nodeLink).map(nKey=>{
+    if (!nodeLinkKeys.includes(nKey)){
+      delete configCopy.nodeLink[nKey]
+    }
+  })
+
+  //find out which 'state' you're saving : optimal, 5attr, or 10attr;
+  let state = "exportConfig"//d3.select('.button.clicked').attr('id')
+  let fileName={
+    'optimalConfig':"task"+ (window.controller.taskNum+1) + "Config.json",
+    'nodeLinkConfig':"5AttrConfig.json",
+    'saturatedConfig':"10AttrConfig.json"
+  }
+
+  saveToFile(configCopy, isTaskConfig ? fileName[state] : "baseConfig.json");
+}
+
+//Function to save exportedGraph to file automatically;
+function saveToFile(data, filename) {
+  if (!data) {
+    console.error("Console.save: No data");
+    return;
+  }
+
+  if (!filename) filename = "output.json";
+
+  if (typeof data === "object") {
+    data = JSON.stringify(data, undefined, 4);
+  }
+
+  var blob = new Blob([data], { type: "text/json" }),
+    e = document.createEvent("MouseEvents"),
+    a = document.createElement("a");
+
+  a.download = filename;
+  a.href = window.URL.createObjectURL(blob);
+  a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+  e.initMouseEvent(
+    "click",
+    true,
+    false,
+    window,
+    0,
+    0,
+    0,
+    0,
+    0,
+    false,
+    false,
+    false,
+    false,
+    0,
+    null
+  );
+  a.dispatchEvent(e);
 }
