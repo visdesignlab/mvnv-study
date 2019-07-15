@@ -47,6 +47,18 @@
 
     }
 
+    .axisLine{
+        stroke-width:2px;
+        stroke:black;
+    }
+
+    .sizeCircle{
+        fill:rgb(110, 110, 110);
+        /* stroke:black;
+        stroke-width:2px; */
+
+    }
+
     .pathLabel>textPath {
         font-size: 14px;
     }

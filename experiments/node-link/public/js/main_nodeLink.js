@@ -1753,19 +1753,30 @@ function drawLegend() {
 
   legendElement = d3.select("#legend");
 
-  d3.select("#legend-svg").attr('height',200);
+  d3.select("#legend-svg").attr('height',150);
 
   let legend = {
     width: d3.select("#legend-svg").attr("width"),
     height: d3.select("#legend-svg").attr("height")
   };
 
-  let quantAttributes = config.nodeAttributes.filter(isQuant);
-  let catAttributes = config.nodeAttributes.filter(isCategorical);
+  let drawBars = config.nodeLink.drawBars;
+
+  let quantAttributes = drawBars ? config.nodeAttributes.filter(isQuant) :[];
+  let catAttributes = drawBars ? config.nodeAttributes.filter(isCategorical) :[];
+
+  let colorAttribute = config.nodeLink.nodeFillAttr
+  let sizeAttribute = drawBars ? [] : [config.nodeLink.nodeSizeAttr];
+
+  let colorAttributeValues =  drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeFillAttr].legendLabels;
+  let sizeAttributeValues = drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain;
 
   let barWidth = 30;
   let barPadding = 60;
   let barHeight = 70;
+
+  let circleRadius = 60;
+  let circlePadding = 20;
 
   let squarePadding = 10;
 
@@ -1783,15 +1794,22 @@ function drawLegend() {
     .domain([0, catAttributes.length - 1])
     .range(yRange);
 
+   let circleScale = d3
+   .scaleLinear()
+   .domain(sizeAttributeValues)
+   .range([15,circleRadius]);
+
     let format = d3.format('2.2s')
 
   let squareOffset =
     quantAttributes.length * (barWidth + barPadding) + 5
 
-  legendElement.attr("transform", "translate(100," + legend.height*0.8 + ")");
+    let circlesOffset =  colorAttributeValues.length * (circleRadius + circlePadding) + 5
 
-  // console.log(config)
-  if (config.nodeLink.drawBars || !config.nodeLink.drawBars) {
+  legendElement.attr("transform", "translate(100," + (legend.height-35) + ")");
+
+  // draw nestedBars legend
+  {
     let bars = legendElement
       .selectAll(".legendBar")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
@@ -1953,6 +1971,117 @@ function drawLegend() {
     // });
 
 
+
+
+
+  }
+
+  //draw color/size legend
+  {
+    let circles = legendElement
+      .selectAll(".legendBarCircles")
+      //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
+      .data(
+        colorAttributeValues.map((c, i) => {
+          return {
+            value: c,
+            fill: config.attributeScales.node[colorAttribute].range[i]
+          };
+        })
+      );
+
+    let circlesEnter = circles
+      .enter()
+      .append("g")
+      .attr("class", "legendBarCircles");
+
+    circlesEnter.append("rect").attr("class", "circle");
+
+    circlesEnter.append("text").attr("class", "legendLabel");
+
+    circles.exit().remove();
+
+    circles = circlesEnter.merge(circles);
+
+    circles.attr("transform", (d, i) => {
+      return "translate(" + i * (circleRadius + circlePadding) + ",0)";
+    });
+
+    circles
+      .select(".circle")
+      .attr("height", circleRadius)
+      .attr("width", circleRadius)
+      .attr("y", -circleRadius-20)
+      .style("fill", d => d.fill)
+      .attr('rx',circleRadius)
+      .attr('ry',circleRadius);
+
+    circles
+      .select(".legendLabel")
+      .text(d => d.value)
+      .attr("transform", "translate(" + circleRadius/2 + "," + (-circleRadius-25) + ")")
+      .style("text-anchor", "middle")
+      .style("font-weight", "bold");
+
+      let axis = legendElement.selectAll('.axis').data(sizeAttribute);
+      
+      let axisEnter = axis.enter().append('g').attr('class','axis');
+      axisEnter.append("line").attr("class", "axisLine");
+      axisEnter.append("text").attr("class", "axisLabel");
+
+      axis.exit().remove();
+
+      axis = axisEnter.merge(axis);
+
+      axis.select('.axisLine')
+      .attr('x1',circlesOffset + (circleScale(sizeAttributeValues[0]) + circlePadding) )
+      .attr('x2',circlesOffset + (circleScale(sizeAttributeValues[1]) + circlePadding) )
+      .attr('y1',15)
+      .attr('y2',15);
+
+      axis.select('.axisLabel')
+      .text(d=>config.attributeScales.node[sizeAttribute[0]].label)
+      .attr('x',(circlesOffset + 65))
+      .attr('y',-circleScale.range()[1]*1.5)
+      .style('text-anchor', 'middle')
+      .style('font-weight', 'bold')
+
+      let sizeCircles = legendElement
+      .selectAll(".sizeCircles")
+      //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
+      .data(sizeAttributeValues);
+
+    let sizeCirclesEnter = sizeCircles 
+      .enter()
+      .append("g")
+      .attr("class", "sizeCircles");
+
+      sizeCirclesEnter.append("rect").attr("class", "sizeCircle");
+      sizeCirclesEnter.append("text").attr("class", "sizeCircleLabel");
+      
+
+      sizeCircles.exit().remove();
+
+      sizeCircles = sizeCirclesEnter.merge(sizeCircles);
+
+      sizeCircles.attr("transform", (d, i) => {
+      return "translate(" + (circlesOffset + i * (circleScale(d) + circlePadding) ) + ",0)";
+    });
+
+    sizeCircles
+      .select(".sizeCircle")
+      .attr("height", circleScale)
+      .attr("width", circleScale)
+      .attr("y", d=>-circleScale.range()[1]/2 -10 -circleScale(d)/2-10)
+      .attr('rx',circleScale)
+      .attr('ry',circleScale);
+
+      sizeCircles
+      .select(".sizeCircleLabel")
+      .text(d => d)
+      .attr("transform", d=>"translate(" + circleScale(d)/2 + "," + 15 + ")")
+      .style("text-anchor", "middle")
+      .style("font-weight", "bold");
 
 
 
