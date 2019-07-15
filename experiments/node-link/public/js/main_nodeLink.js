@@ -149,7 +149,7 @@ function loadVis(id) {
    width = targetDiv.style('width').replace(/\D/g, '')
    height = targetDiv.style('height').replace(/\D/g, '')
 
-    height = height*0.8;
+    height = height*0.75;
    let taskBarHeight = 48;
   //  console.log(width2,height2)
 
