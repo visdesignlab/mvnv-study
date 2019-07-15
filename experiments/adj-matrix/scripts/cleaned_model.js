@@ -279,7 +279,7 @@ var View = /** @class */ (function () {
     View.prototype.renderView = function () {
         d3.select('.loading').style('display', 'block').style('opacity', 1);
         this.viewWidth = 1000;
-        this.margins = { left: 75, top: 65, right: 10, bottom: 10 };
+        this.margins = { left: 85, top: 85, right: 0, bottom: 10 };
         this.initalizeEdges();
         this.initalizeAttributes();
         d3.select('.loading').style('display', 'none');
@@ -409,6 +409,14 @@ var View = /** @class */ (function () {
         this.edgeColumns.append("line")
             .attr("x1", -this.edgeWidth)
             .attr("z-index", 10);
+        //append final line
+        var extraLine = this.edges
+            .append("line")
+            .attr("x1", this.edgeWidth)
+            .attr("x2", this.edgeWidth)
+            .attr("y1", 0)
+            .attr("y2", this.edgeHeight);
+        console.log("Extra:", extraLine);
         this.edgeColumns
             .append('rect')
             .classed('highlightCol', true)
@@ -417,7 +425,7 @@ var View = /** @class */ (function () {
         })
             .attr('x', -this.edgeHeight - this.margins.bottom)
             .attr('y', 0)
-            .attr('width', this.edgeHeight + this.margins.bottom) // these are swapped as the columns have a rotation
+            .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top) // these are swapped as the columns have a rotation
             .attr('height', this.verticalScale.bandwidth())
             .attr('fill-opacity', 0)
             .on('mouseover', function () {
@@ -448,9 +456,9 @@ var View = /** @class */ (function () {
             .attr('id', function (d, i) {
             return "highlightTopoRow" + d[i].rowid;
         })
-            .attr('x', 0)
+            .attr('x', -this.margins.left)
             .attr('y', 0)
-            .attr('width', this.edgeWidth + this.margins.right)
+            .attr('width', this.edgeWidth + this.margins.right + this.margins.left)
             .attr('height', this.verticalScale.bandwidth())
             .attr('fill-opacity', 0)
             .on('mouseover', function (d, index) {
@@ -611,18 +619,18 @@ var View = /** @class */ (function () {
               .filter((d: any, i) => { return d.y === rowIndex || d.y == colIndex })
               .classed('hovered', true)
       
-            that.tooltip.transition().duration(200).style("opacity", .9);
+              that.tooltip.transition().duration(200).style("opacity", .9);
       
-            let matrix = this.getScreenCTM()
-              .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+              let matrix = this.getScreenCTM()
+                .translate(+this.getAttribute("x"), +this.getAttribute("y"));
       
-            that.tooltip.transition()
-              .duration(200)
-              .style("opacity", .9);
+              that.tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
       
-            that.tooltip.html("DATA")
-              .style("left", (window.pageXOffset + matrix.e - 20) + "px")
-              .style("top", (window.pageYOffset + matrix.f - 20) + "px");*/
+              that.tooltip.html("DATA")
+                .style("left", (window.pageXOffset + matrix.e - 20) + "px")
+                .style("top", (window.pageYOffset + matrix.f - 20) + "px");*/
         }
         function mouseoutCell() {
             d3.selectAll("text").classed("active", false);
@@ -639,6 +647,7 @@ var View = /** @class */ (function () {
         //
         this.edgeRows.append("text")
             .attr("class", "nodeLabel")
+            .attr('z-index', 30)
             .attr("x", 0)
             .attr("y", this.verticalScale.bandwidth() / 2)
             .attr("dy", ".32em")
@@ -653,6 +662,7 @@ var View = /** @class */ (function () {
         });
         this.edgeColumns.append("text")
             .attr("class", "nodeLabel")
+            .attr('z-index', 30)
             .attr("y", 3)
             .attr('x', 2)
             .attr("dy", ".32em")
@@ -1227,17 +1237,46 @@ var View = /** @class */ (function () {
             .classed('column-headers', true);
         this.columnNames = {
             "followers_count": "Followers",
-            "query_tweet_count": "Tweets",
-            "friends_count": "# They Follow",
-            "statuses_count": "Statuses ",
-            "listed_count": "Listed",
-            "favourites_count": "Favourites",
-            "count_followers_in_query": "Followers (G)",
-            "continent": "Continent",
-            "type": "Account Type",
-            "memberFor_days": "# Days Old",
-            "listed_count": "Listed Count"
+            "query_tweet_count": "On-Topic Tweets",
+            "friends_count": "Following",
+            "statuses_count": "Tweets",
+            "favourites_count": "Liked Tweets",
+            "count_followers_in_query": "In-Network Followers",
+            "continent": "",
+            "type": "",
+            "memberFor_days": "Account Age",
+            "listed_count": "In Lists"
         };
+        var that = this;
+        function calculateMaxChars(numColumns) {
+            switch (numColumns) {
+                case 1:
+                    return { "characters": 20, "font": 14 };
+                case 2:
+                    return { "characters": 20, "font": 13 };
+                case 3:
+                    return { "characters": 20, "font": 12 };
+                case 4:
+                    return { "characters": 19, "font": 11 };
+                case 5:
+                    return { "characters": 18, "font": 10 };
+                case 6:
+                    return { "characters": 16, "font": 10 };
+                case 7:
+                    return { "characters": 14, "font": 10 };
+                case 8:
+                    return { "characters": 12, "font": 10 };
+                case 9:
+                    return { "characters": 10, "font": 10 };
+                case 10:
+                    return { "characters": 8, "font": 10 };
+                default:
+                    return { "characters": 8, "font": 10 };
+            }
+        }
+        var options = calculateMaxChars(columns.length); // 10 attr => 8
+        var maxcharacters = options.characters;
+        var fontSize = options.font;
         columnHeaders.selectAll('.header')
             .data(columns)
             .enter()
@@ -1247,11 +1286,31 @@ var View = /** @class */ (function () {
             .classed('header', true)
             //.attr('y', -45)
             //.attr('x', (d) => this.columnScale(d) + barMargin.left)
-            .style('font-size', '11px')
+            .style('font-size', fontSize.toString() + 'px')
             .attr('text-anchor', 'left')
-            .attr('transform', 'rotate(-10)')
+            //.attr('transform','rotate(-10)')
             .text(function (d, i) {
+            if (_this.columnNames[d] && _this.columnNames[d].length > maxcharacters) {
+                return _this.columnNames[d].slice(0, maxcharacters - 2) + '...'; // experimentally determine how big
+            }
             return _this.columnNames[d];
+        })
+            .on('mouseover', function (d) {
+            console.log(that.columnNames[d].length, maxcharacters, that.columnNames[d].length > maxcharacters);
+            if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
+                that.tooltip.transition().duration(200).style("opacity", .9);
+                var matrix = this.getScreenCTM()
+                    .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+                that.tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                that.tooltip.html(that.columnNames[d])
+                    .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+                    .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+            }
+        })
+            .on('mouseout', function (d) {
+            that.tooltip.transition().duration(250).style("opacity", 0);
         });
         //
         columnHeaders.selectAll('.legend');
@@ -1271,6 +1330,7 @@ var View = /** @class */ (function () {
         var legendItemSize = (legendHeight - 5) / dividers;
         var rects = this.attributes.append("g")
             .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
+        // if()
         for (var i = 0; i < dividers; i++) {
             var rect1 = rects
                 .append('g')

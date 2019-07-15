@@ -58,7 +58,8 @@ fill: #eee;
 div.tooltip {
 position: absolute;
 text-align: center;
-width: 40px;
+font-size:11px;
+width: 80px;
 border-radius: 5px;
 padding: 2px;
 background: white;
@@ -100,12 +101,12 @@ font-weight: bold;
 
 .column text.selected {
 font-weight: 800;
-fill: #D3ECE9;
+/*fill: #D3ECE9;*/
 }
 
 .row text.selected {
 font-weight: 800;
-fill: #ea9b0f;
+/*fill: #ea9b0f;*/
 }
 
 line {

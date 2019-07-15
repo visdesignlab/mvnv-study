@@ -328,7 +328,7 @@ class View {
     d3.select('.loading').style('display', 'block').style('opacity', 1);
     this.viewWidth = 1000;
 
-    this.margins = { left: 75, top: 65, right: 10, bottom: 10 };
+    this.margins = { left: 85, top: 85, right: 0, bottom: 10 };
 
     this.initalizeEdges();
     this.initalizeAttributes();
@@ -468,7 +468,14 @@ class View {
       this.edgeColumns.append("line")
           .attr("x1", -this.edgeWidth)
           .attr("z-index",10);
-
+      //append final line
+      let extraLine = this.edges
+        .append("line")
+        .attr("x1",this.edgeWidth)
+        .attr("x2",this.edgeWidth)
+        .attr("y1",0)
+        .attr("y2",this.edgeHeight)
+        console.log("Extra:",extraLine)
 
 
     this.edgeColumns
@@ -479,7 +486,7 @@ class View {
       })
       .attr('x', -this.edgeHeight - this.margins.bottom)
       .attr('y', 0)
-      .attr('width', this.edgeHeight + this.margins.bottom) // these are swapped as the columns have a rotation
+      .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top) // these are swapped as the columns have a rotation
       .attr('height', this.verticalScale.bandwidth())
       .attr('fill-opacity', 0)
       .on('mouseover', () => {
@@ -514,9 +521,9 @@ class View {
       .attr('id', (d, i) => {
         return "highlightTopoRow" + d[i].rowid;
       })
-      .attr('x', 0)
+      .attr('x', -this.margins.left)
       .attr('y', 0)
-      .attr('width', this.edgeWidth + this.margins.right)
+      .attr('width', this.edgeWidth + this.margins.right + this.margins.left)
       .attr('height', this.verticalScale.bandwidth())
       .attr('fill-opacity', 0)
       .on('mouseover', (d, index) => {
@@ -556,7 +563,7 @@ class View {
       scale.clamp(true);
       // store scales
       this.edgeScales[type] = scale;
-    })
+    });
 
     this.generateColorLegend();
     var cells = this.edgeRows.selectAll(".cell")
@@ -601,6 +608,8 @@ class View {
           .attr('width', this.verticalScale.bandwidth() / dividers)
           .attr('fill', typeColor)
       }
+
+
 
 
 
@@ -699,18 +708,18 @@ class View {
         .filter((d: any, i) => { return d.y === rowIndex || d.y == colIndex })
         .classed('hovered', true)
 
-      that.tooltip.transition().duration(200).style("opacity", .9);
+        that.tooltip.transition().duration(200).style("opacity", .9);
 
-      let matrix = this.getScreenCTM()
-        .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+        let matrix = this.getScreenCTM()
+          .translate(+this.getAttribute("x"), +this.getAttribute("y"));
 
-      that.tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
+        that.tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
 
-      that.tooltip.html("DATA")
-        .style("left", (window.pageXOffset + matrix.e - 20) + "px")
-        .style("top", (window.pageYOffset + matrix.f - 20) + "px");*/
+        that.tooltip.html("DATA")
+          .style("left", (window.pageXOffset + matrix.e - 20) + "px")
+          .style("top", (window.pageYOffset + matrix.f - 20) + "px");*/
     }
 
     function mouseoutCell() {
@@ -733,6 +742,7 @@ class View {
     //
     this.edgeRows.append("text")
       .attr("class", "nodeLabel")
+      .attr('z-index',30)
       .attr("x", 0)
       .attr("y", this.verticalScale.bandwidth() / 2)
       .attr("dy", ".32em")
@@ -750,6 +760,7 @@ class View {
 
     this.edgeColumns.append("text")
       .attr("class", "nodeLabel")
+      .attr('z-index',30)
       .attr("y", 3)
       .attr('x', 2)
       .attr("dy", ".32em")
@@ -1042,7 +1053,7 @@ class View {
   }
 
 
-  renderHighlightNodes() {
+  renderNeighborHighlightNodes() {
     //for
     // remove all highlights
     d3.selectAll('.neighborSelected').classed('neighborSelected', false);
@@ -1090,7 +1101,7 @@ class View {
       this.addHighlightNode(nodeID);
       this.controller.configuration.state.adjMatrix.columnSelectedNodes.push(nodeID);
     }
-    this.renderHighlightNodes();
+    this.renderNeighborHighlightNodes();
     /*let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID);
 
     if(index > -1){ // if in selected node, remove it (unless it is )
@@ -1423,22 +1434,48 @@ class View {
     let columnHeaders = this.attributes.append('g')
       .classed('column-headers', true)
 
-
-
     this.columnNames = {
       "followers_count": "Followers",
-      "query_tweet_count": "Tweets",
-      "friends_count": "# They Follow",
-      "statuses_count": "Statuses ",
-      "listed_count": "Listed",
-      "favourites_count": "Favourites",
-      "count_followers_in_query": "Followers (G)",
-      "continent": "Continent",
-      "type": "Account Type",
-      "memberFor_days":"# Days Old",
-      "listed_count":"Listed Count"
+      "query_tweet_count": "On-Topic Tweets", // not going to be used (how active this person was on the conference)
+      "friends_count": "Following",
+      "statuses_count": "Tweets",
+      "favourites_count": "Liked Tweets",
+      "count_followers_in_query": "In-Network Followers",
+      "continent": "",
+      "type": "",
+      "memberFor_days":"Account Age",
+      "listed_count":"In Lists"
     }
-
+    let that = this;
+    function calculateMaxChars(numColumns){
+      switch(numColumns) {
+        case 1:
+          return {"characters":20,"font":14}
+        case 2:
+          return {"characters":20,"font":13}
+        case 3:
+          return {"characters":20,"font":12}
+        case 4:
+          return {"characters":19,"font":11}
+        case 5:
+          return {"characters":18,"font":10}
+        case 6:
+            return {"characters":16,"font":10}
+        case 7:
+            return {"characters":14,"font":10}
+        case 8:
+            return {"characters":12,"font":10}
+        case 9:
+            return {"characters":10,"font":10}
+        case 10:
+            return {"characters":8,"font":10}
+        default:
+            return {"characters":8,"font":10}
+      }
+    }
+    let options = calculateMaxChars(columns.length)// 10 attr => 8
+    let maxcharacters = options.characters;
+    let fontSize = options.font;
     columnHeaders.selectAll('.header')
       .data(columns)
       .enter()
@@ -1448,11 +1485,34 @@ class View {
       .classed('header', true)
       //.attr('y', -45)
       //.attr('x', (d) => this.columnScale(d) + barMargin.left)
-      .style('font-size', '11px')
+      .style('font-size', fontSize.toString() +'px')
       .attr('text-anchor', 'left')
-      .attr('transform','rotate(-10)')
+      //.attr('transform','rotate(-10)')
       .text((d, i) => {
+        if(this.columnNames[d] && this.columnNames[d].length > maxcharacters){
+          return this.columnNames[d].slice(0, maxcharacters-2) + '...';// experimentally determine how big
+        }
         return this.columnNames[d];
+      })
+      .on('mouseover',function(d){
+        console.log(that.columnNames[d].length, maxcharacters,that.columnNames[d].length > maxcharacters)
+        if(that.columnNames[d] && that.columnNames[d].length > maxcharacters){
+          that.tooltip.transition().duration(200).style("opacity", .9);
+
+          let matrix = this.getScreenCTM()
+            .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+
+          that.tooltip.transition()
+            .duration(200)
+            .style("opacity", .9);
+
+          that.tooltip.html(that.columnNames[d])
+            .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+            .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+        }
+      })
+      .on('mouseout', function(d){
+        that.tooltip.transition().duration(250).style("opacity", 0);
       });
 
     //
@@ -1485,7 +1545,7 @@ class View {
     let legendItemSize = (legendHeight-5) / dividers;
     let rects = this.attributes.append("g")
       .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
-
+    // if()
     for (let i = 0; i < dividers; i++) {
 
 
