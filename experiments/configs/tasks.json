@@ -2,11 +2,11 @@
   "tasks": [
     {
       "id": "task1",
-      "prompt": "Select the person with the highest number of followers."
+      "prompt": "Select the European account with the highest number of followers."
     },
     {
       "id": "task2",
-      "prompt": "Find 3 nodes that are people and follow more people than follow them."
+      "prompt": "Find 3 nodes that are people and have more friends than followers."
     },
     {
       "id": "task3",
@@ -14,7 +14,11 @@
     },
     {
       "id": "task4",
-      "prompt": "What is the approximate combined # of followers of all the people who have interacted/retweeted  Alex Lex?"
+      "prompt": "What is the approximate combined # of followers of all the people who have interacted with  A. Lex?"
+    },
+    {
+      "id":"task5",
+      "prompt":"How many europeans are on the path that connects L.Harrison and R.Gove ? "
     }
   ]
 }

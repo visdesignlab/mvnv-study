@@ -1,23 +1,7 @@
 {
-    "taskID": "task1",
-    "loadedGraph": "large_undirected_singleEdge",
-    "isDirected": false,
-    "isMultiEdge": false,
-    "graphSize": "large",
-    "nodeAttributes": [
-        "followers_count",
-        "continent",
-        "count_followers_in_query",
-        "listed_count",
-        "type"
-    ],
-    "edgeAttributes": [
-        "type",
-        "count"
-    ],
     "nodeLink": {
         "drawBars": true,
-        "selectNeighbors": true,
+        "selectNeighbors": false,
         "nodeHeight": {
             "large": 50,
             "small": 60
@@ -34,7 +18,35 @@
         "nodeFillAttr": "type",
         "nodeSizeAttr": "friends_count",
         "edgeWidthAttr": "count",
-        "edgeStrokeAttr": "type"
+        "edgeStrokeAttr": "type",
+        "noEdgeColor": "white",
+        "noNodeFill": "white",
+        "noNodeStroke": "white",
+        "quantColors": [
+            "#7b7cb1",
+            "#01a068",
+            "#bf8531",
+            "#5472cf",
+            "#4d8615",
+            "#d63d61",
+            "#ae76ed",
+            "#f26336"
+        ]
     },
+    "taskID": "task1",
+    "loadedGraph": "large_undirected_singleEdge",
+    "isDirected": false,
+    "isMultiEdge": false,
+    "graphSize": "large",
+    "nodeAttributes": [
+        "followers_count",
+        "statuses_count",
+        "memberFor_days",
+        "continent"
+    ],
+    "edgeAttributes": [
+        "type",
+        "count"
+    ],
     "adjMatrixValues": {}
 }

@@ -1,4 +1,38 @@
 {
+    "nodeLink": {
+        "drawBars": true,
+        "selectNeighbors": false,
+        "nodeHeight": {
+            "large": 50,
+            "small": 60
+        },
+        "nodeWidth": {
+            "large": 120,
+            "small": 80
+        },
+        "labelSize": {
+            "large": 12,
+            "small": 14
+        },
+        "labelAttr": "shortName",
+        "nodeFillAttr": "type",
+        "nodeSizeAttr": "friends_count",
+        "edgeWidthAttr": "count",
+        "edgeStrokeAttr": "type",
+        "noEdgeColor": "white",
+        "noNodeFill": "white",
+        "noNodeStroke": "white",
+        "quantColors": [
+            "#7b7cb1",
+            "#01a068",
+            "#bf8531",
+            "#5472cf",
+            "#4d8615",
+            "#d63d61",
+            "#ae76ed",
+            "#f26336"
+        ]
+    },
     "taskID": "task1",
     "loadedGraph": "large_undirected_singleEdge",
     "isDirected": false,
@@ -20,26 +54,5 @@
         "type",
         "count"
     ],
-    "nodeLink": {
-        "drawBars": true,
-        "selectNeighbors": true,
-        "nodeHeight": {
-            "large": 50,
-            "small": 60
-        },
-        "nodeWidth": {
-            "large": 120,
-            "small": 80
-        },
-        "labelSize": {
-            "large": 12,
-            "small": 14
-        },
-        "labelAttr": "shortName",
-        "nodeFillAttr": "type",
-        "nodeSizeAttr": "friends_count",
-        "edgeWidthAttr": "count",
-        "edgeStrokeAttr": "type"
-    },
     "adjMatrixValues": {}
 }
