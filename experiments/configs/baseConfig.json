@@ -10,86 +10,107 @@
     "attributeScales": {
         "node": {
             "followers_count": {
+                "label":"Followers",
                 "domain": [
                     0,
                     1200
                 ]
             },
             "friends_count": {
+                "label":"Following",
                 "domain": [
                     0,
                     1200
                 ]
             },
             "statuses_count": {
+                "label":"Tweets",
                 "domain": [
                     0,
                     5500
                 ]
             },
             "count_followers_in_query": {
+                "label":"C_Followers",
                 "domain": [
                     0,
                     35
                 ]
             },
             "favourites_count": {
+                "label":"Liked",
                 "domain": [
                     0,
                     8000
                 ]
             },
             "listed_count": {
+                "label":"In Lists",
                 "domain": [
                     0,
                     120
                 ]
             },
             "memberFor_days": {
+                "label":"Acct Age",
                 "domain": [
                     175,
                     4498
                 ]
             },
             "query_tweet_count": {
+                "label":"Queries",
                 "domain": [
                     0,
                     10
                 ]
             },
             "type": {
+                "label":"Node Type",
                 "domain": [
                     "person",
                     "institution"
                 ],
+                "legendLabels": [
+                    "Pers.",
+                    "Inst."
+                ],
                 "range": [
-                    "#a88e69",
-                    "#68aa73"
+                    "#e86b45",
+                    "#0191c2"
                 ]
             },
             "continent": {
+                "label":"Continent",
                 "domain": [
                     "North America",
                     "South America",
                     "Europe",
                     "Asia"
                 ],
+                "legendLabels": [
+                    "NA",
+                    "SA",
+                    "EU",
+                    "AS"
+                ],
                 "range": [
-                    "#1b9e77",
-                    "#d95f02",
-                    "#7570b3",
-                    "#e7298a"
-                ]
+                    "#39a512",
+                    "#6d6ad7",
+                    "#e86b45",
+                    "#0191c2"]
             }
         },
         "edge": {
             "count": {
+                "label":"Edge Count",
                 "domain": [
                     1,
                     5
                 ]
             },
             "type": {
+                "label":"Edge Type",
                 "domain": [
                     "mentions",
                     "retweet",
@@ -104,20 +125,21 @@
         }
     },
     "style": {
-        "selectedNodeColor": "#ea9b0f",
+        "selectedNodeColor": "black",
         "hoveredNodeColor": "#fde8ca"
     },
     "nodeLink": {
         "noEdgeColor": "white",
         "noNodeFill": "white",
         "noNodeStroke": "white",
-        "quantColors": [
-            "#2d2d2d",
-            "#d67205",
-            "#777777",
-            "#706842"
-        ]
-    },
+        "quantColors":["#7b7cb1",
+            "#01a068",
+            "#bf8531",
+            "#5472cf",
+            "#4d8615",
+            "#d63d61",
+            "#ae76ed",
+            "#f26336"]    },
     "adjMatrix": {
         "neighborHighlightColor": ""
     }

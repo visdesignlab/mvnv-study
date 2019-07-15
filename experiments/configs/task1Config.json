@@ -38,9 +38,9 @@
         "followers_count",
         "friends_count",
         "continent",
-        "count_followers_in_query",
-        "favourites_count",
-        "listed_count"
+        "type",
+        "memberFor_days",
+        "favourites_count"
     ],
     "edgeAttributes": [
         "type",
