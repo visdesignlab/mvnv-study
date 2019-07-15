@@ -328,7 +328,7 @@ class View {
     d3.select('.loading').style('display', 'block').style('opacity', 1);
     this.viewWidth = 1000;
 
-    this.margins = { left: 75, top: 65, right: 10, bottom: 10 };
+    this.margins = { left: 85, top: 85, right: 0, bottom: 10 };
 
     this.initalizeEdges();
     this.initalizeAttributes();
@@ -468,7 +468,14 @@ class View {
       this.edgeColumns.append("line")
           .attr("x1", -this.edgeWidth)
           .attr("z-index",10);
-
+      //append final line
+      let extraLine = this.edges
+        .append("line")
+        .attr("x1",this.edgeWidth)
+        .attr("x2",this.edgeWidth)
+        .attr("y1",0)
+        .attr("y2",this.edgeHeight)
+        console.log("Extra:",extraLine)
 
 
     this.edgeColumns
@@ -1427,7 +1434,7 @@ class View {
 
     this.columnNames = {
       "followers_count": "Followers",
-      "query_tweet_count": "Tweets",
+      "query_tweet_count": "Tweets", // not going to be used (how active this person was on the conference)
       "friends_count": "# They Follow",
       "statuses_count": "Statuses ",
       "listed_count": "Listed",
@@ -1485,7 +1492,7 @@ class View {
     let legendItemSize = (legendHeight-5) / dividers;
     let rects = this.attributes.append("g")
       .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
-
+    // if()
     for (let i = 0; i < dividers; i++) {
 
 

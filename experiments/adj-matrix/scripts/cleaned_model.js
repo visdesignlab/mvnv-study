@@ -279,7 +279,7 @@ var View = /** @class */ (function () {
     View.prototype.renderView = function () {
         d3.select('.loading').style('display', 'block').style('opacity', 1);
         this.viewWidth = 1000;
-        this.margins = { left: 75, top: 65, right: 10, bottom: 10 };
+        this.margins = { left: 85, top: 85, right: 0, bottom: 10 };
         this.initalizeEdges();
         this.initalizeAttributes();
         d3.select('.loading').style('display', 'none');
@@ -409,6 +409,14 @@ var View = /** @class */ (function () {
         this.edgeColumns.append("line")
             .attr("x1", -this.edgeWidth)
             .attr("z-index", 10);
+        //append final line
+        var extraLine = this.edges
+            .append("line")
+            .attr("x1", this.edgeWidth)
+            .attr("x2", this.edgeWidth)
+            .attr("y1", 0)
+            .attr("y2", this.edgeHeight);
+        console.log("Extra:", extraLine);
         this.edgeColumns
             .append('rect')
             .classed('highlightCol', true)
@@ -1271,6 +1279,7 @@ var View = /** @class */ (function () {
         var legendItemSize = (legendHeight - 5) / dividers;
         var rects = this.attributes.append("g")
             .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
+        // if()
         for (var i = 0; i < dividers; i++) {
             var rect1 = rects
                 .append('g')
