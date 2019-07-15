@@ -29,7 +29,6 @@ class Model {
     let toRemove = [];
     let newGraph = { 'nodes': [], 'links': [] };
     this.graph = graph;
-    console.log(this.graph)
     //create edges from tweets.
 
     tweets = tweets.tweets;
@@ -116,19 +115,15 @@ class Model {
 
   constructor(controller: any) {
     this.controller = controller;
-    console.log("data/network_" + controller.configuration.loadedGraph + ".json");
     d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
       //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
       //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
-      console.log(controller.configuration, data);
       setPanelValuesFromFile(controller.configuration, data);
       this.matrix = [];
       this.nodes = data.nodes
       this.idMap = {};
-      console.log(this.orderType);
       this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
-      console.log(this.orderType,this.isQuant(this.orderType));
       this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
       if (!this.isQuant(this.orderType)){// == "screen_name" || this.orderType == "name") {
         this.nodes = this.nodes.sort((a, b) => a[this.orderType].localeCompare(b[this.orderType]));
@@ -205,7 +200,6 @@ class Model {
     // Convert links to matrix; count character occurrences.
     this.edges.forEach((link) => {
       let addValue = 1;
-      console.log('first', link);
       this.matrix[this.idMap[link.source]][this.idMap[link.target]][link.type] += link.count;
 
 
@@ -334,11 +328,10 @@ class View {
     d3.select('.loading').style('display', 'block').style('opacity', 1);
     this.viewWidth = 1000;
 
-    this.margins = { left: 65, top: 65, right: 10, bottom: 10 };
+    this.margins = { left: 75, top: 65, right: 10, bottom: 10 };
 
     this.initalizeEdges();
     this.initalizeAttributes();
-    console.log("Made it to orderchange");
     d3.select('.loading').style('display', 'none');
     let that = this;
     d3.select("#order").on("change", function() {
@@ -472,10 +465,11 @@ class View {
       .attr("transform", (d, i) => {
         return "translate(" + this.verticalScale(i) + ")rotate(-90)";
       });
+      this.edgeColumns.append("line")
+          .attr("x1", -this.edgeWidth)
+          .attr("z-index",10);
 
 
-    this.edgeColumns.append("line")
-      .attr("x1", -this.edgeWidth);
 
     this.edgeColumns
       .append('rect')
@@ -508,6 +502,7 @@ class View {
       .attr("transform", (d, i) => {
         return "translate(0," + this.verticalScale(i) + ")";
       });
+    // append grid lines
     this.edgeRows.append("line")
       .attr("x2", this.edgeWidth + this.margins.right);
 
@@ -555,24 +550,20 @@ class View {
       // calculate the max
       let extent = [0, this.controller.configuration.attributeScales.edge.count.domain[1]];
       //model.maxTracker[type]]
-      console.log(extent);
       // set up scale
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
       let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
       scale.clamp(true);
       // store scales
       this.edgeScales[type] = scale;
-      //console.log(type, this.edgeScales[type].domain(), this.edgeScales[type].range().clamp());
     })
 
     this.generateColorLegend();
-    console.log(this.edgeScales);
     var cells = this.edgeRows.selectAll(".cell")
       .data(d => { return d/*.filter(item => item.z > 0)*/ })
       .enter().append('g')
       .attr("class", "cell");
 
-    console.log(this.controller.configuration.adjMatrixValues.edgeBars, this.controller.configuration, this.controller.configuration.adjMatrix);
     if (this.controller.configuration.adjMatrixValues.edgeBars) {
       // bind squares to cells for the mouse over effect
       cells
@@ -591,9 +582,7 @@ class View {
       for (let index = 0; index < dividers; index++) {
 
         let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
-        console.log(type);
         let scale = this.edgeScales[type];
-        console.log(scale);
         let typeColor = scale.range()[1];
         // change encoding to position
         scale.range([0, this.verticalScale.bandwidth()])
@@ -650,7 +639,6 @@ class View {
       topologyPrimaryRow.classed('hovered',true);
       attrSecondaryRow.classed('hovered',true);
       topologySecondaryCol.classed('hovered',true);*/
-      console.log(p);
       that.highlightRow(p);
       that.highlightRowAndCol(p);
 
@@ -681,25 +669,30 @@ class View {
           return d[i].x == p.x;
         })
         .classed("hovered", true);
-      console.log(test,test1);
+      console.log(test,test1);]
+
+
+
+
+
       */
       // Highlight attribute rows on hovered edge
-      let rowIndex, colIndex;
+      /* Highlight row and column labels
       d3.selectAll(".row text").classed("active", (d, i) => {
-        if (i == p.y) {
-          rowIndex = i //+ that.nodes.length;
+        if(d[i] == null){
+          return false;
         }
-        return i == p.y;
-      });
-      d3.selectAll(".column text").classed("active", (d, i) => {
-        if (i == p.x) {
-          colIndex = i //+ that.nodes.length;
-        }
-        return i == p.x;
+        return d[i].screen_name == p.rowid;
       });
 
-      rowIndex = that.order[rowIndex];
-      colIndex = that.order[colIndex];
+      d3.selectAll(".column text").classed("active", (d, i) => {
+        console.log(d[i],p)
+        return d[i].screen_name == p.colid;
+      });*/
+
+
+
+
       // determine the updated
 
       /*d3.selectAll('.highlightRow')
@@ -748,7 +741,6 @@ class View {
       .text((d, i) => this.nodes[i].name)
       .on('click', (d, i, nodes) => {
         d3.select(nodes[i]).classed('selected', (data) => {
-          console.log(data, data[0]);
           return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
         });
 
@@ -768,7 +760,6 @@ class View {
 
         d3.select(nodes[index]).classed('selected', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
 
-        console.log(d[index].rowid);
         this.selectColumnNode(d[index].rowid);
 
       });
@@ -803,7 +794,6 @@ class View {
 
 
     if (type == 'all') {
-      console.log(this.edgeScales, squares);
       squares
         .style("fill", (d: any) => {
           if (d.combined !== 0) {
@@ -867,13 +857,10 @@ class View {
     xOffset += legendWidth * numberOfEdge;
 
     let scale = this.edgeScales[type];
-    console.log(scale)
     let extent = scale.domain();
-    console.log(extent, "translate(" + xOffset + "," + yOffset + ")");
     let number = 5
 
     let sampleNumbers = this.linspace(extent[0], extent[1], number);
-    console.log(sampleNumbers);
     let svg = d3.select('#legends').append("g")
       .attr("id", "legendLinear" + type)
       .attr("transform", (d, i) => "translate(" + xOffset + "," + yOffset + ")")
@@ -882,16 +869,15 @@ class View {
           let edgeType = this.controller.configuration.state.adjMatrix.selectedEdgeType == type ? 'all' : type;
           this.controller.configuration.state.adjMatrix.selectedEdgeType = edgeType;
           this.setSquareColors(edgeType);
-          console.log(nodes[i]);
           if (edgeType == "all") {
             d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
           } else {
             d3.selectAll('.selectedEdgeType').classed('selectedEdgeType', false);
-            console.log(d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType', true));
+            d3.selectAll('#legendLinear' + type).select('.edgeLegendBorder').classed('selectedEdgeType', true)
+
           }
         }
       });
-    console.log("NUMBER TYPE", type, number);
     let boxWidth = (number + 1) * rectWidth + 15
 
     svg.append('rect')
@@ -931,7 +917,6 @@ class View {
       .attr('width', rectWidth)
       .attr('height', rectHeight)
       .attr('fill', (d) => {
-        console.log(d);
         return scale(d);
       })
       .attr('stroke', (d) => {
@@ -997,7 +982,6 @@ class View {
   }
 
   highlightNode(nodeID: string, attrOrTopo: string, rowOrCol: string = 'Row') {
-    console.log(d3.selectAll('#highlight' + attrOrTopo + rowOrCol + nodeID), '.highlight' + attrOrTopo + rowOrCol + nodeID);
     d3.selectAll('#highlight' + attrOrTopo + rowOrCol + nodeID)
       .classed('hovered', true);
   }
@@ -1014,21 +998,15 @@ class View {
     let nodeIndex = this.nodes.findIndex(function(item, i) {
       return item.screen_name == addingNode;
     });
-    console.log(this.matrix[nodeIndex]);
     for (let i = 0; i < this.matrix[0].length; i++) {
-      console.log(this.matrix[i][nodeIndex].z, this.matrix[i][nodeIndex]);
       if (this.matrix[i][nodeIndex].z > 0) {
         let nodeID = this.matrix[i][nodeIndex].rowid;
-        console.log(nodeID);
         if (this.controller.configuration.state.adjMatrix.highlightedNodes.hasOwnProperty(nodeID) && !this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].includes(addingNode)) {
           // if array exists, add it
-          console.log(this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID]);
           this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].push(addingNode);
         } else {
           // if array non exist, create it and add node
-          console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
           this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID] = [addingNode];
-          console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
         }
       }
     }
@@ -1048,11 +1026,8 @@ class View {
    */
   removeHighlightNode(removingNode: string) {
     // remove from selected nodes
-    console.log(this.controller.configuration.state.adjMatrix.columnSelectedNodes);
 
-    console.log(this.controller.configuration.state.adjMatrix.highlightedNodes);
     for (let nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
-      console.log('to_remove_Hightlight', nodeID);
       //finds the position of removing node in the nodes array
       let index = this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].indexOf(removingNode);
       // keep on removing all places of removing node
@@ -1062,7 +1037,6 @@ class View {
         if (this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].length == 0) {
           delete this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID];
         }
-        console.log(this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID])
       }
     }
   }
@@ -1074,7 +1048,6 @@ class View {
     d3.selectAll('.neighborSelected').classed('neighborSelected', false);
     // re add all highlights
     for (let nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
-      console.log("node to be highlighted", nodeID);
       d3.select('#highlight' + 'Topo' + 'Row' + nodeID)
         .classed('neighborSelected', true);
       d3.select('#highlight' + 'Attr' + 'Row' + nodeID)
@@ -1084,11 +1057,13 @@ class View {
 
   selectNode(nodeID: string) {
     let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID)
+
     if (index > -1) {
       this.controller.configuration.state.selectedNodes.splice(index, 1);
     } else {
       this.controller.configuration.state.selectedNodes.push(nodeID);
     }
+
     let attrRow = d3.selectAll('#highlight' + 'Attr' + 'Row' + nodeID);
     attrRow
       .classed('selected', !attrRow.classed('selected'));
@@ -1096,7 +1071,6 @@ class View {
     let topoRow = d3.selectAll('#highlight' + 'Topo' + 'Row' + nodeID);
     topoRow
       .classed('selected', !topoRow.classed('selected'));
-    console.log(attrRow, topoRow)
   }
 
   /**
@@ -1106,20 +1080,16 @@ class View {
    */
   selectColumnNode(nodeID) {
     let nodeIndex = this.controller.configuration.state.adjMatrix.columnSelectedNodes.indexOf(nodeID);
-    console.log(nodeIndex);
     if (nodeIndex > -1) {
       // find all neighbors and remove them
-      console.log("remove node", this.controller.configuration.state.adjMatrix.columnSelectedNodes, this.controller.configuration.state.adjMatrix.columnSelectedNodes.splice(nodeIndex, 1));
+      this.controller.configuration.state.adjMatrix.columnSelectedNodes.splice(nodeIndex, 1)
       this.removeHighlightNode(nodeID);
       this.controller.configuration.state.adjMatrix.columnSelectedNodes.splice(nodeIndex, 1);
-      console.log("remove node", this.controller.configuration.state.adjMatrix.columnSelectedNodes);
       // remove node from column selected nodes
     } else {
-      console.log("add node", nodeID);
       this.addHighlightNode(nodeID);
       this.controller.configuration.state.adjMatrix.columnSelectedNodes.push(nodeID);
     }
-    console.log(this.controller.configuration.state.adjMatrix.columnSelectedNodes);
     this.renderHighlightNodes();
     /*let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID);
 
@@ -1287,7 +1257,6 @@ class View {
         // selection of edge or attribute
         // classing hovered as true
 
-        console.log(p);
         // wont work for seriated matricies!
         let attrRow = this.highlightRow(p);
 
@@ -1376,7 +1345,6 @@ class View {
 
     for (let [column, scale] of Object.entries(attributeScales)) {
       if (categoricalAttributes.indexOf(column) > -1) {
-        console.log(column);
         this.generateCategoricalLegend(column);
 
       } else {
@@ -1549,19 +1517,15 @@ class View {
    * @return                 [description]
    */
   selectHighlight(nodeToSelect: any, rowOrCol: string, attrOrTopo: string = "Attr", orientation: string = 'x') {
-    console.log(nodeToSelect, attrOrTopo, orientation)
     let selection = d3.selectAll(".highlight" + attrOrTopo + rowOrCol)
       .filter((d, i) => {
         if (attrOrTopo == "Attr" && d.index == null) {
-          console.log(d);
           // attr
           return nodeToSelect.index == d[i][orientation];
         }
-        console.log(d);
         //topology
         return nodeToSelect.index == d.index;
       })
-    console.log(selection);
     return selection;
   }
 
@@ -1618,21 +1582,37 @@ class Controller {
           exportConfig(Object.keys(task),Object.keys(task.adjMatrixValues),true)
         });
   }
+  setupCSS(base){
+    return;
+    /*set css values for 'clicked' nodes;
+    //set fill or stroke of selected node;
+
+    //find the appropriate style sheet
+    var sheet = Object.values(document.styleSheets).find(s =>
+      s.href.includes("styles.css")
+    );
+
+    // let nodeIsRect = config.style.nodeShape === 'rect';
+    // sheet.addRule(".node", (nodeIsRect? 'rx: 2; ry:2'  : 'rx:20; ry:20' ) , 1);
+
+      let ruleString = "fill :" + base.style.selectedNodeColor +" !important;";
+      console.log(ruleString);
+      sheet.addRule(".rect.selected", ruleString, 1);
+      */
+
+  }
   loadConfigs() {
-    console.log("in merge");
     let that = this;
-    console.log("./../configs/task" + (this.taskNum + 1).toString() + "Config.json");
     Promise.all([
-      d3.json("./../configs/baseconfig.json"),
-      d3.json("./../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
-      d3.json("./../configs/state.json")
+      d3.json("../configs/baseConfig.json"),
+      d3.json("../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
+      d3.json("../configs/state.json")
     ]).then((configComponents) =>{
+      that.setupCSS(configComponents[0]);
       that.setupExports(configComponents[0],configComponents[1]);
-      console.log(configComponents)
       let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);
 
-      console.log(result);
       that.configuration = result;
       that.reload();
       //that.finishConstructing(result);
@@ -1644,7 +1624,6 @@ class Controller {
     this.configuration = config;
     this.view = new View(this); // initalize view,
     this.model = new Model(this); // start reading in data
-    console.log(this.model);
 
   }
 
@@ -1654,12 +1633,9 @@ class Controller {
   async loadTasks() {
     this.taskNum = 0;
     await d3.json("./../configs/tasks.json").then((data) => {
-      console.log(data);
       this.tasks = data.tasks;
 
-      console.log("before data", this.tasks)
     });
-    console.log("after data", this.tasks);
 
     let task = this.tasks[this.taskNum]
     d3.select("#taskArea")
@@ -1713,7 +1689,6 @@ class Controller {
 
     this.view = new View(this); // initalize view,
     this.model = new Model(this); //.reload();
-
     //
     //this.model = new Model(this); // start reading in data
   }
