@@ -486,7 +486,7 @@ class View {
       })
       .attr('x', -this.edgeHeight - this.margins.bottom)
       .attr('y', 0)
-      .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top-35) // these are swapped as the columns have a rotation
+      .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top) // these are swapped as the columns have a rotation
       .attr('height', this.verticalScale.bandwidth())
       .attr('fill-opacity', 0)
       .on('mouseover', () => {
@@ -521,9 +521,9 @@ class View {
       .attr('id', (d, i) => {
         return "highlightTopoRow" + d[i].rowid;
       })
-      .attr('x', 0)
+      .attr('x', -this.margins.left)
       .attr('y', 0)
-      .attr('width', this.edgeWidth + this.margins.right + this.margins.left-35)
+      .attr('width', this.edgeWidth + this.margins.right + this.margins.left)
       .attr('height', this.verticalScale.bandwidth())
       .attr('fill-opacity', 0)
       .on('mouseover', (d, index) => {
@@ -563,7 +563,7 @@ class View {
       scale.clamp(true);
       // store scales
       this.edgeScales[type] = scale;
-    })
+    });
 
     this.generateColorLegend();
     var cells = this.edgeRows.selectAll(".cell")
@@ -742,6 +742,7 @@ class View {
     //
     this.edgeRows.append("text")
       .attr("class", "nodeLabel")
+      .attr('z-index',30)
       .attr("x", 0)
       .attr("y", this.verticalScale.bandwidth() / 2)
       .attr("dy", ".32em")
@@ -759,6 +760,7 @@ class View {
 
     this.edgeColumns.append("text")
       .attr("class", "nodeLabel")
+      .attr('z-index',30)
       .attr("y", 3)
       .attr('x', 2)
       .attr("dy", ".32em")
@@ -1051,7 +1053,7 @@ class View {
   }
 
 
-  renderHighlightNodes() {
+  renderNeighborHighlightNodes() {
     //for
     // remove all highlights
     d3.selectAll('.neighborSelected').classed('neighborSelected', false);
@@ -1099,7 +1101,7 @@ class View {
       this.addHighlightNode(nodeID);
       this.controller.configuration.state.adjMatrix.columnSelectedNodes.push(nodeID);
     }
-    this.renderHighlightNodes();
+    this.renderNeighborHighlightNodes();
     /*let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID);
 
     if(index > -1){ // if in selected node, remove it (unless it is )

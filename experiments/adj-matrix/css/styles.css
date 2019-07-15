@@ -101,12 +101,12 @@ font-weight: bold;
 
 .column text.selected {
 font-weight: 800;
-fill: #D3ECE9;
+/*fill: #D3ECE9;*/
 }
 
 .row text.selected {
 font-weight: 800;
-fill: #ea9b0f;
+/*fill: #ea9b0f;*/
 }
 
 line {

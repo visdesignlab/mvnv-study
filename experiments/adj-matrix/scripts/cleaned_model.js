@@ -425,7 +425,7 @@ var View = /** @class */ (function () {
         })
             .attr('x', -this.edgeHeight - this.margins.bottom)
             .attr('y', 0)
-            .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top - 35) // these are swapped as the columns have a rotation
+            .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top) // these are swapped as the columns have a rotation
             .attr('height', this.verticalScale.bandwidth())
             .attr('fill-opacity', 0)
             .on('mouseover', function () {
@@ -456,9 +456,9 @@ var View = /** @class */ (function () {
             .attr('id', function (d, i) {
             return "highlightTopoRow" + d[i].rowid;
         })
-            .attr('x', 0)
+            .attr('x', -this.margins.left)
             .attr('y', 0)
-            .attr('width', this.edgeWidth + this.margins.right + this.margins.left - 35)
+            .attr('width', this.edgeWidth + this.margins.right + this.margins.left)
             .attr('height', this.verticalScale.bandwidth())
             .attr('fill-opacity', 0)
             .on('mouseover', function (d, index) {
@@ -647,6 +647,7 @@ var View = /** @class */ (function () {
         //
         this.edgeRows.append("text")
             .attr("class", "nodeLabel")
+            .attr('z-index', 30)
             .attr("x", 0)
             .attr("y", this.verticalScale.bandwidth() / 2)
             .attr("dy", ".32em")
@@ -661,6 +662,7 @@ var View = /** @class */ (function () {
         });
         this.edgeColumns.append("text")
             .attr("class", "nodeLabel")
+            .attr('z-index', 30)
             .attr("y", 3)
             .attr('x', 2)
             .attr("dy", ".32em")
