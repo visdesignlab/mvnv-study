@@ -425,7 +425,7 @@ var View = /** @class */ (function () {
         })
             .attr('x', -this.edgeHeight - this.margins.bottom)
             .attr('y', 0)
-            .attr('width', this.edgeHeight + this.margins.bottom) // these are swapped as the columns have a rotation
+            .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top - 35) // these are swapped as the columns have a rotation
             .attr('height', this.verticalScale.bandwidth())
             .attr('fill-opacity', 0)
             .on('mouseover', function () {
@@ -458,7 +458,7 @@ var View = /** @class */ (function () {
         })
             .attr('x', 0)
             .attr('y', 0)
-            .attr('width', this.edgeWidth + this.margins.right)
+            .attr('width', this.edgeWidth + this.margins.right + this.margins.left - 35)
             .attr('height', this.verticalScale.bandwidth())
             .attr('fill-opacity', 0)
             .on('mouseover', function (d, index) {
@@ -1235,16 +1235,15 @@ var View = /** @class */ (function () {
             .classed('column-headers', true);
         this.columnNames = {
             "followers_count": "Followers",
-            "query_tweet_count": "Tweets",
-            "friends_count": "# They Follow",
-            "statuses_count": "Statuses ",
-            "listed_count": "Listed",
-            "favourites_count": "Favourites",
-            "count_followers_in_query": "Followers (G)",
+            "query_tweet_count": "On-Topic Tweets",
+            "friends_count": "Following",
+            "statuses_count": "Tweets",
+            "favourites_count": "Liked Tweets",
+            "count_followers_in_query": "In-Network Followers",
             "continent": "",
             "type": "",
-            "memberFor_days": "# Days Old",
-            "listed_count": "Listed Count"
+            "memberFor_days": "Account Age",
+            "listed_count": "In Lists"
         };
         var that = this;
         function calculateMaxChars(numColumns) {
@@ -1256,15 +1255,15 @@ var View = /** @class */ (function () {
                 case 3:
                     return { "characters": 20, "font": 12 };
                 case 4:
-                    return { "characters": 20, "font": 11 };
+                    return { "characters": 19, "font": 11 };
                 case 5:
-                    return { "characters": 19, "font": 10 };
+                    return { "characters": 18, "font": 10 };
                 case 6:
-                    return { "characters": 17, "font": 10 };
+                    return { "characters": 16, "font": 10 };
                 case 7:
-                    return { "characters": 15, "font": 10 };
+                    return { "characters": 14, "font": 10 };
                 case 8:
-                    return { "characters": 13, "font": 10 };
+                    return { "characters": 12, "font": 10 };
                 case 9:
                     return { "characters": 10, "font": 10 };
                 case 10:
@@ -1272,10 +1271,6 @@ var View = /** @class */ (function () {
                 default:
                     return { "characters": 8, "font": 10 };
             }
-            // takes number of columns
-            //4->20, 11 pt font
-            //5->20,
-            //6->
         }
         var options = calculateMaxChars(columns.length); // 10 attr => 8
         var maxcharacters = options.characters;
@@ -1299,15 +1294,18 @@ var View = /** @class */ (function () {
             return _this.columnNames[d];
         })
             .on('mouseover', function (d) {
-            that.tooltip.transition().duration(200).style("opacity", .9);
-            var matrix = this.getScreenCTM()
-                .translate(+this.getAttribute("x"), +this.getAttribute("y"));
-            that.tooltip.transition()
-                .duration(200)
-                .style("opacity", .9);
-            that.tooltip.html(that.columnNames[d])
-                .style("left", (window.pageXOffset + matrix.e - 25) + "px")
-                .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+            console.log(that.columnNames[d].length, maxcharacters, that.columnNames[d].length > maxcharacters);
+            if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
+                that.tooltip.transition().duration(200).style("opacity", .9);
+                var matrix = this.getScreenCTM()
+                    .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+                that.tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                that.tooltip.html(that.columnNames[d])
+                    .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+                    .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+            }
         })
             .on('mouseout', function (d) {
             that.tooltip.transition().duration(250).style("opacity", 0);
