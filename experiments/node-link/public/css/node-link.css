@@ -5,8 +5,15 @@
     }
 
     body {
-        margin: 100px auto 4em auto;
+        margin: 0px auto 4em auto;
         width: 90%;
+    }
+    
+
+    #targetSize{
+        width:1440px;
+        height:900px;
+        background:#d2d2d2;
     }
 
     #experimentr {
