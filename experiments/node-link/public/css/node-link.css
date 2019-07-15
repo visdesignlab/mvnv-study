@@ -5,8 +5,20 @@
     }
 
     body {
-        margin: 100px auto 4em auto;
-        width: 90%;
+        margin: 0px;
+        /* width: 90%; */
+    }
+    
+
+    #targetSize{
+        width:1440px;
+        height:900px;
+        background:#d2d2d2;
+    }
+
+    #visContent{
+        margin:0px 50px; ;
+
     }
 
     #experimentr {
