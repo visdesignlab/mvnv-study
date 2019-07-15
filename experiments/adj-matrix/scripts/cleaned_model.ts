@@ -1435,19 +1435,22 @@ class View {
       "count_followers_in_query": "Followers (G)",
       "continent": "Continent",
       "type": "Account Type",
-      "memberFor_days":"# Days on Twitter",
+      "memberFor_days":"# Days Old",
       "listed_count":"Listed Count"
     }
 
     columnHeaders.selectAll('.header')
       .data(columns)
       .enter()
+      .append('g')
+      .attr('transform',(d)=>'translate('+(this.columnScale(d) + barMargin.left)+','+(-45)+')')
       .append('text')
       .classed('header', true)
-      .attr('y', -45)
-      .attr('x', (d) => this.columnScale(d) + barMargin.left)
+      //.attr('y', -45)
+      //.attr('x', (d) => this.columnScale(d) + barMargin.left)
       .style('font-size', '11px')
       .attr('text-anchor', 'left')
+      .attr('transform','rotate(-10)')
       .text((d, i) => {
         return this.columnNames[d];
       });
@@ -1602,10 +1605,16 @@ class Controller {
 
   }
   loadConfigs() {
+    let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
+    if(this.tenAttr){
+      taskConfig = "../configs/10AttrConfig.json"
+    } else if(this.fiveAttr){
+      taskConfig = "../configs/5AttrConfig.json"
+    }
     let that = this;
     Promise.all([
       d3.json("../configs/baseConfig.json"),
-      d3.json("../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
+      d3.json(taskConfig),
       d3.json("../configs/state.json")
     ]).then((configComponents) =>{
       that.setupCSS(configComponents[0]);

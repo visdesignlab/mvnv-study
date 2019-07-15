@@ -1235,18 +1235,21 @@ var View = /** @class */ (function () {
             "count_followers_in_query": "Followers (G)",
             "continent": "Continent",
             "type": "Account Type",
-            "memberFor_days": "# Days on Twitter",
+            "memberFor_days": "# Days Old",
             "listed_count": "Listed Count"
         };
         columnHeaders.selectAll('.header')
             .data(columns)
             .enter()
+            .append('g')
+            .attr('transform', function (d) { return 'translate(' + (_this.columnScale(d) + barMargin.left) + ',' + (-45) + ')'; })
             .append('text')
             .classed('header', true)
-            .attr('y', -45)
-            .attr('x', function (d) { return _this.columnScale(d) + barMargin.left; })
+            //.attr('y', -45)
+            //.attr('x', (d) => this.columnScale(d) + barMargin.left)
             .style('font-size', '11px')
             .attr('text-anchor', 'left')
+            .attr('transform', 'rotate(-10)')
             .text(function (d, i) {
             return _this.columnNames[d];
         });
@@ -1380,10 +1383,17 @@ var Controller = /** @class */ (function () {
           */
     };
     Controller.prototype.loadConfigs = function () {
+        var taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
+        if (this.tenAttr) {
+            taskConfig = "../configs/10AttrConfig.json";
+        }
+        else if (this.fiveAttr) {
+            taskConfig = "../configs/5AttrConfig.json";
+        }
         var that = this;
         Promise.all([
             d3.json("../configs/baseConfig.json"),
-            d3.json("../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
+            d3.json(taskConfig),
             d3.json("../configs/state.json")
         ]).then(function (configComponents) {
             that.setupCSS(configComponents[0]);
