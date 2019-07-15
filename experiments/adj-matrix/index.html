@@ -328,28 +328,6 @@ line {
 <!--<script src="/Libraries/d3.js"></script>
 <script src="/Libraries/d3_color_scale.js"></script>-->
 
-
-<!--<aside style="margin-top:80px;">-->
-<aside style="font-style:italic;
-				float:centre;width:250px;
-				border:1px solid;
-				 margin: 5em auto auto auto;">
-
-  <p>Order:
-    <select id="order">
-      <option value="screen_name">by Name</option>
-      <option value="followers_count">by Followers</option>
-      <option value="query_tweet_count">by Tweet Count</option>
-      <option value="friends_count">by Friends</option>
-      <option value="statuses_count">by Statuses</option>
-      <option value="listed_count">by Listed</option>
-      <option value="favourites_count">by Favourites</option>
-      <option value="count_followers_in_query">by Followers in Network</option>
-      <option value="continent">by Nationality</option>
-      <option value="type">by Account Type</option>
-    </select>
-  </p>
-</aside>
 <div class="columns">
 
   <!-- Control panel -->
@@ -451,6 +429,27 @@ line {
             <label for="renderBarsCheckbox">Render Edges as Bars</label>
           </div>
 
+          <li >
+            <a>Attribute to Sort on</a>
+            <div class="select">
+              <select id="order">
+                <option value="screen_name">by Name</option>
+                <option value="followers_count">by Followers</option>
+                <option value="query_tweet_count">by Tweet Count</option>
+                <option value="friends_count">by Friends</option>
+                <option value="statuses_count">by Statuses</option>
+                <option value="listed_count">by Listed</option>
+                <option value="favourites_count">by Favourites</option>
+                <option value="count_followers_in_query">by Followers in Network</option>
+                <option value="continent">by Nationality</option>
+                <option value="type">by Account Type</option>
+              </select>
+
+            </div>
+            <br></br>
+            <!--
+              -->
+          </li>
 
           <li id="nodeQuantSelect">
             <a>Attribute for Nested Quant Attributes (Bars)</a>

@@ -255,6 +255,9 @@ function setPanelValuesFromFile(config, graph) {
   });
 
   //set behavior for bar selections
+  let sortSelect = d3.select('#order').select('ul');
+
+
 
   let barAttrs = config.nodeAttributes.filter(isQuant);
   let catAttrs = config.nodeAttributes.filter(isCategorical)

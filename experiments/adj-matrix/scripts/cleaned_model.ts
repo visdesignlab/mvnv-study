@@ -342,6 +342,7 @@ class View {
     d3.select('.loading').style('display', 'none');
     let that = this;
     d3.select("#order").on("change", function() {
+
       that.sort(this.value);
     });
 
@@ -1183,9 +1184,9 @@ class View {
       .duration(transitionTime)
       .delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(0," + this.verticalScale(i) + ")"; })
-      .selectAll(".cell")
+      .selectAll(".cell").selectAll('rect')
       .delay((d) => { return this.verticalScale(d.x) * 4; })
-      .attr("x", (d) => this.verticalScale(d.x));
+      .attr("x", (d,i) => this.verticalScale(d.x));//
 
     this.attributeRows
       .transition()
@@ -1202,7 +1203,7 @@ class View {
     var t = this.edges.transition().duration(transitionTime);
     t.selectAll(".column")
       .delay((d, i) => { return this.verticalScale(i) * 4; })
-      .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });
+      .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ",0)rotate(-90)"; });
 
     /*d3.selectAll('.highlightRow') // taken care of as they're apart of row and column groupings already
       .transition()
@@ -1738,6 +1739,7 @@ class Controller {
    * @return [description]
    */
   changeOrder(order: string) {
+    this.configuration.state.adjMatrix.sortKey = order;
     return this.model.changeOrder(order);
   }
 

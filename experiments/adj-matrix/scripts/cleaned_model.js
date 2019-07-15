@@ -1045,9 +1045,9 @@ var View = /** @class */ (function () {
             .duration(transitionTime)
             .delay(function (d, i) { return _this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(0," + _this.verticalScale(i) + ")"; })
-            .selectAll(".cell")
+            .selectAll(".cell").selectAll('rect')
             .delay(function (d) { return _this.verticalScale(d.x) * 4; })
-            .attr("x", function (d) { return _this.verticalScale(d.x); });
+            .attr("x", function (d, i) { return _this.verticalScale(d.x); }); //
         this.attributeRows
             .transition()
             .duration(transitionTime)
@@ -1058,7 +1058,7 @@ var View = /** @class */ (function () {
         var t = this.edges.transition().duration(transitionTime);
         t.selectAll(".column")
             .delay(function (d, i) { return _this.verticalScale(i) * 4; })
-            .attr("transform", function (d, i) { return "translate(" + _this.verticalScale(i) + ")rotate(-90)"; });
+            .attr("transform", function (d, i) { return "translate(" + _this.verticalScale(i) + ",0)rotate(-90)"; });
         /*d3.selectAll('.highlightRow') // taken care of as they're apart of row and column groupings already
           .transition()
           .duration(transitionTime)
@@ -1500,6 +1500,7 @@ var Controller = /** @class */ (function () {
      * @return [description]
      */
     Controller.prototype.changeOrder = function (order) {
+        this.configuration.state.adjMatrix.sortKey = order;
         return this.model.changeOrder(order);
     };
     return Controller;
