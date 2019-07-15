@@ -1382,7 +1382,7 @@ var Controller = /** @class */ (function () {
     Controller.prototype.loadConfigs = function () {
         var that = this;
         Promise.all([
-            d3.json("./../configs/baseconfig.json"),
+            d3.json("./../configs/baseConfig.json"),
             d3.json("./../configs/task" + (this.taskNum + 1).toString() + "Config.json"),
             d3.json("./../configs/state.json")
         ]).then(function (configComponents) {
