@@ -33,9 +33,13 @@ var color = d3
   //.range(["#56ebd3", "#33837f", "#68c3ef", "#1c4585"]) //Colorgorical, blue-ish
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
-var height = 1200;
-var width = 1800;
-var size = 1800; //720;
+var height;
+var width;
+var visDimensions ={width:0,height:0};
+var panelDimensions ={width:0,height:0};
+// var size = 1800; //720;
+
+
 
 var svg;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
@@ -140,32 +144,49 @@ function exportConfig(baseKeys, nodeLinkKeys, isTaskConfig) {
 
 // Single function to put chart into specified target
 function loadVis(id) {
+
+  let targetDiv = d3.select('#targetSize')
+   width = targetDiv.style('width').replace(/\D/g, '')
+   height = targetDiv.style('height').replace(/\D/g, '')
+
+    height = height*0.8;
+   let taskBarHeight = 48;
+  //  console.log(width2,height2)
+
+  visDimensions.width  = width*0.8;
+  visDimensions.height  = height - taskBarHeight;
+
+  panelDimensions.width = width*0.2;
+  panelDimensions.height  = height - taskBarHeight;
+
+  console.log(panelDimensions.height);
+
   d3.select("#panelControl").on("click", () => {
     let panel = d3.select("#panelDiv");
     let isVisible = panel.style("display") === "block";
     panel.style("display", isVisible ? "none" : "block");
   });
 
-  legend = d3
-    .select("#" + id)
-    .append("svg")
-    .attr("id", "legend-svg")
-    .attr("width", width) //size + margin.left + margin.right)
-    .attr("height", 100);
-
-  legend.append("g").attr("id", "legend");
-
   svg = d3
     .select("#" + id)
     .append("svg")
     .attr("id", "node-link-svg")
-    .attr("width", width) //size + margin.left + margin.right)
-    .attr("height", height);
+    .attr("width", visDimensions.width) //size + margin.left + margin.right)
+    .attr("height", visDimensions.height);
 
   //set up svg and groups for nodes/links
   svg.append("g").attr("class", "links");
 
   svg.append("g").attr("class", "nodes");
+
+  legend = d3
+  .select("#" + id)
+  .append("svg")
+  .attr("id", "legend-svg")
+  .attr("width", panelDimensions.width) //size + margin.left + margin.right)
+  .attr("height", panelDimensions.height);
+
+legend.append("g").attr("id", "legend");
 
   simulation = d3
     .forceSimulation()
@@ -176,7 +197,7 @@ function loadVis(id) {
       })
     )
     .force("charge", d3.forceManyBody()) //.strength(-800))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("center", d3.forceCenter(visDimensions.width / 2, visDimensions.height / 2));
 
   // .force("y", d3.forceY().y(0));
 
@@ -1177,7 +1198,7 @@ function updateVis() {
         config.nodeIsRect ? nodeLength(d) / 20 : nodeLength(d) / 2
       )
       .attr("ry", d =>
-        config.nodeIsRect ? nodeHeight(d) / 20 : nodeLength(d) / 2
+        config.nodeIsRect ? nodeHeight(d) / 20 : nodeHeight(d) / 2
       );
 
     node
@@ -1639,8 +1660,8 @@ function updateVis() {
     let radius = nodeMarkerLength / 2;
 
     d3.selectAll(".nodeGroup").attr("transform", d => {
-      d.x = Math.max(radius, Math.min(width - radius, d.x));
-      d.y = Math.max(radius, Math.min(height - radius, d.y));
+      d.x = Math.max(radius, Math.min(visDimensions.width, d.x));
+      d.y = Math.max(radius, Math.min(visDimensions.height, d.y));
       return "translate(" + d.x + "," + d.y + ")";
     });
   }
@@ -1768,8 +1789,6 @@ function drawLegend() {
   //draw legend based on config;
 
   legendElement = d3.select("#legend");
-
-  d3.select("#legend-svg").attr('height',150);
 
   let legend = {
     width: d3.select("#legend-svg").attr("width"),
