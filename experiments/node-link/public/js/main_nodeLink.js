@@ -22,6 +22,9 @@ var tasks; //list of tasks, will eventually be separated out into different inde
 //compute default data domains once and use when needed
 var defaultDomains = { node: {}, edge: {} };
 
+//object to store scales as a function of attr name;
+var scales = {};
+
 ///////////////////////////For Experiment End/////////////////////////////
 var colorRange = ["#5e3c99", "#b2abd2", "#fdb863", "#e66101"];
 var color = d3
@@ -31,7 +34,7 @@ var color = d3
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
 var height = 1200;
-var width = 1200;
+var width = 1800;
 var size = 1800; //720;
 
 var svg;
@@ -107,31 +110,30 @@ function getSiblingLinks(graph, source, target) {
   return siblings;
 }
 
-function exportConfig(baseKeys,nodeLinkKeys,isTaskConfig){
-
+function exportConfig(baseKeys, nodeLinkKeys, isTaskConfig) {
   let configCopy = JSON.parse(JSON.stringify(config));
 
   //only keep keys for this particular config file;
 
-  Object.keys(configCopy).map(key=>{
-    if (!baseKeys.includes(key)){
-      delete configCopy[key]
+  Object.keys(configCopy).map(key => {
+    if (!baseKeys.includes(key)) {
+      delete configCopy[key];
     }
   });
 
-  Object.keys(configCopy.nodeLink).map(nKey=>{
-    if (!nodeLinkKeys.includes(nKey)){
-      delete configCopy.nodeLink[nKey]
+  Object.keys(configCopy.nodeLink).map(nKey => {
+    if (!nodeLinkKeys.includes(nKey)) {
+      delete configCopy.nodeLink[nKey];
     }
-  })
+  });
 
   //find out which 'state' you're saving : optimal, 5attr, or 10attr;
-  let state = d3.select('.button.clicked').attr('id')
-  let fileName={
-    'optimalConfig':"task"+ (taskNum+1) + "Config.json",
-    'nodeLinkConfig':"5AttrConfig.json",
-    'saturatedConfig':"10AttrConfig.json"
-  }
+  let state = d3.select(".button.clicked").attr("id");
+  let fileName = {
+    optimalConfig: "task" + (taskNum + 1) + "Config.json",
+    nodeLinkConfig: "5AttrConfig.json",
+    saturatedConfig: "10AttrConfig.json"
+  };
 
   saveToFile(configCopy, isTaskConfig ? fileName[state] : "baseConfig.json");
 }
@@ -143,6 +145,16 @@ function loadVis(id) {
     let isVisible = panel.style("display") === "block";
     panel.style("display", isVisible ? "none" : "block");
   });
+
+  legend = d3
+    .select("#" + id)
+    .append("svg")
+    .attr("id", "legend-svg")
+    .attr("width", width) //size + margin.left + margin.right)
+    .attr("height", 100);
+
+  legend.append("g").attr("id", "legend");
+
   svg = d3
     .select("#" + id)
     .append("svg")
@@ -182,19 +194,18 @@ function loadVis(id) {
   d3.json("../../configs/baseConfig.json", function(baseConfig) {
     d3.json("../../configs/5AttrConfig.json", function(nodeLinkConfig) {
       d3.json("../../configs/10AttrConfig.json", function(saturatedConfig) {
-        allConfigs.nodeLinkConfig = mergeConfigs(baseConfig,nodeLinkConfig);
-        allConfigs.saturatedConfig = mergeConfigs(baseConfig,saturatedConfig);
+        allConfigs.nodeLinkConfig = mergeConfigs(baseConfig, nodeLinkConfig);
+        allConfigs.saturatedConfig = mergeConfigs(baseConfig, saturatedConfig);
       });
     });
   });
 }
 
-function mergeConfigs(baseConfig,taskConfig){
-
+function mergeConfigs(baseConfig, taskConfig) {
   //copy over the nodeLink key/value pairs from the baseConfig to the taskConfig;
-  Object.keys(baseConfig.nodeLink).map(nodeAttr=>{
+  Object.keys(baseConfig.nodeLink).map(nodeAttr => {
     taskConfig.nodeLink[nodeAttr] = baseConfig.nodeLink[nodeAttr];
-  })
+  });
 
   //rehape both config values into a single dictionary.
   let config = {
@@ -233,13 +244,11 @@ function setPanelValuesFromFile() {
 
   //ser values for radioButtons
   d3.selectAll("input[type='radio']").property("checked", function() {
-      
-    if (this.name === 'graphSize'){
-      return config[this.name] === this.value
+    if (this.name === "graphSize") {
+      return config[this.name] === this.value;
     } else {
-      return config[this.name] === eval(this.value)
+      return config[this.name] === eval(this.value);
     }
-     
   });
 
   d3.select("#fontSlider").on("input", function() {
@@ -251,7 +260,9 @@ function setPanelValuesFromFile() {
     "value",
     config.nodeLink.labelSize[config.graphSize]
   );
-  d3.select("#fontSliderValue").text(config.nodeLink.labelSize[config.graphSize]);
+  d3.select("#fontSliderValue").text(
+    config.nodeLink.labelSize[config.graphSize]
+  );
 
   d3.select("#fontSlider").on("change", function() {
     updateVis();
@@ -287,7 +298,6 @@ function setPanelValuesFromFile() {
     })
     .attr("checked", "checked");
 
-       
   d3.selectAll("input[type='radio']").on("change", async function() {
     config[this.name] =
       this.name === "graphSize" ? this.value : eval(this.value);
@@ -299,37 +309,36 @@ function setPanelValuesFromFile() {
 
     config.loadedGraph = file;
 
-     setDisabledRadioButtons();
+    setDisabledRadioButtons();
 
     await loadNewGraph(config.graphFiles[file]);
     updateVis();
   });
-  
 
-  let setDisabledRadioButtons  = function (){
-
-      //cannot have directed graph that is of single edge type, so disable that if it is the case;
-  d3.selectAll("input[name='isDirected']").property("disabled", function() {
-    return (
-      eval(d3.select(this).property("value")) === true &&
-      config.isMultiEdge === false
-    );
-  });
+  let setDisabledRadioButtons = function() {
+    //cannot have directed graph that is of single edge type, so disable that if it is the case;
+    d3.selectAll("input[name='isDirected']").property("disabled", function() {
+      return (
+        eval(d3.select(this).property("value")) === true &&
+        config.isMultiEdge === false
+      );
+    });
 
     //cannot have directed graph that is of single edge type, so disable that if it is the case;
-  d3.selectAll("input[name='isMultiEdge']").property("disabled", function() {
-    return (
-      eval(d3.select(this).property("value")) === false &&
-      config.isDirected === true
-    );
-  });
-
-
-  }
+    d3.selectAll("input[name='isMultiEdge']").property("disabled", function() {
+      return (
+        eval(d3.select(this).property("value")) === false &&
+        config.isDirected === true
+      );
+    });
+  };
 
   setDisabledRadioButtons();
 
-  d3.select("#renderBarsCheckbox").property("checked", config.nodeLink.drawBars);
+  d3.select("#renderBarsCheckbox").property(
+    "checked",
+    config.nodeLink.drawBars
+  );
 
   //get attribute list from baseConfig file;
   let nodeAttrs = Object.entries(config.attributeScales.node);
@@ -396,7 +405,6 @@ function setPanelValuesFromFile() {
         return { attr: d[0], domain: d[1].domain };
       });
 
-
     //update domain box only for quant attributes domain input boxes
     d3.select("#" + m.name)
       .select(".input")
@@ -446,7 +454,9 @@ function setPanelValuesFromFile() {
 
       newSvg.attr("id", m.name + "_histogram");
 
-      let attr = m.configAttr ? config.nodeLink[m.configAttr] : config.nodeAttributes.filter(isQuant)[0];
+      let attr = m.configAttr
+        ? config.nodeLink[m.configAttr]
+        : config.nodeAttributes.filter(isQuant)[0];
       createHist(attr, newSvg, isNode ? graph.nodes : graph.links, isNode);
     }
   });
@@ -454,7 +464,7 @@ function setPanelValuesFromFile() {
   //set behavior for bar selections
 
   let barAttrs = config.nodeAttributes.filter(isQuant);
-  let catAttrs = config.nodeAttributes.filter(isCategorical)
+  let catAttrs = config.nodeAttributes.filter(isCategorical);
 
   let section = d3.select("#nodeQuantSelect").select("ul");
 
@@ -464,7 +474,7 @@ function setPanelValuesFromFile() {
       return !option[1].range;
     })
     .map(d => {
-      return { attr: d[0], domain: d[1].domain };
+      return { attr: d[0], domain: d[1].domain,  label:d[1].label};
     });
 
   let fields = section.selectAll(".field").data(attrOptions);
@@ -522,7 +532,9 @@ function setPanelValuesFromFile() {
         );
         updateVis();
       } else {
-        config.nodeAttributes = config.nodeAttributes.filter(el => el !== d.attr);
+        config.nodeAttributes = config.nodeAttributes.filter(
+          el => el !== d.attr
+        );
         updateVis();
       }
     });
@@ -531,7 +543,7 @@ function setPanelValuesFromFile() {
     .select("label")
     .attr("id", d => d.attr + "-label")
     .attr("for", d => d.attr + "-checkbox")
-    .text(d => d.attr);
+    .text(d => d.label);
 
   fields
     .select(".domain")
@@ -652,7 +664,9 @@ function setPanelValuesFromFile() {
         .property(
           "value",
           () =>
-            "[" + config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain + "]"
+            "[" +
+            config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain +
+            "]"
         );
 
       updateVis();
@@ -672,7 +686,8 @@ function setPanelValuesFromFile() {
         );
       } else {
         // if value is empty, use 'default ranges';
-        this.value = "[" + defaultDomains.node[config.nodeLink.nodeSizeAttr] + "]";
+        this.value =
+          "[" + defaultDomains.node[config.nodeLink.nodeSizeAttr] + "]";
         config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain = eval(
           this.value
         );
@@ -687,7 +702,9 @@ function setPanelValuesFromFile() {
       d3.select("#" + config.nodeLink.nodeSizeAttr + "-domain").property(
         "value",
         () =>
-          "[" + config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain + "]"
+          "[" +
+          config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain +
+          "]"
       );
 
       createHist(
@@ -712,7 +729,8 @@ function setPanelValuesFromFile() {
       );
     } else {
       // if value is empty, use 'default ranges';
-      this.value = "[" + defaultDomains.edge[config.nodeLink.edgeWidthAttr] + "]";
+      this.value =
+        "[" + defaultDomains.edge[config.nodeLink.edgeWidthAttr] + "]";
       config.attributeScales.edge[config.nodeLink.edgeWidthAttr].domain =
         defaultDomains.edge[config.nodeLink.edgeWidthAttr];
     }
@@ -727,7 +745,6 @@ function setPanelValuesFromFile() {
   });
 
   updateVis();
-
 }
 
 function createHist(attrName, svgSelection, data, isNode = true) {
@@ -847,10 +864,10 @@ function createHist(attrName, svgSelection, data, isNode = true) {
     })
     .attr("height", function(d) {
       return histHeight - y(d.length);
-    })
-    // .attr("fill", function(d) {
-    //   return barColors(d.length);
-    // });
+    });
+  // .attr("fill", function(d) {
+  //   return barColors(d.length);
+  // });
 
   bar
     .select("text")
@@ -903,20 +920,18 @@ function createHist(attrName, svgSelection, data, isNode = true) {
     .attr("transform", d => "translate(" + x(d) + ",10) rotate(-30)")
     .text(d => {
       let format;
-      
-      switch (d){
-        case (d < 10):
-          format = d3.format("2.2s")
-          break; 
-        case (d < 1000):
-          format = d3.format("2.0s")
-          break; 
-        default :
+
+      switch (d) {
+        case d < 10:
+          format = d3.format("2.2s");
+          break;
+        case d < 1000:
+          format = d3.format("2.0s");
+          break;
+        default:
           format = d3.format(".2s");
       }
       return format(d);
-
-      
     });
 }
 function updateVis() {
@@ -950,6 +965,13 @@ function updateVis() {
     return value; //config.nodeIsRect ? value : value * 1.3;
   };
 
+  let quantColors = function(i) {
+    let color = d3.hsl(config.nodeLink.quantColors[i]);
+    // color.l = 0.5;
+    // color.s =0.5;
+    // console.log(color)
+    return color;
+  };
   let nodeHeight = function(node) {
     let nodeSizeScale = d3
       .scaleLinear()
@@ -976,7 +998,9 @@ function updateVis() {
     //if an attribute has been assigned to nodeFillAttr, set domain
     if (config.nodeLink.nodeFillAttr) {
       nodeFillScale
-        .domain(config.attributeScales.node[config.nodeLink.nodeFillAttr].domain)
+        .domain(
+          config.attributeScales.node[config.nodeLink.nodeFillAttr].domain
+        )
         .range(config.attributeScales.node[config.nodeLink.nodeFillAttr].range);
     }
 
@@ -1000,13 +1024,17 @@ function updateVis() {
   };
 
   let nodeStroke = function(node) {
-    return node.selected ? config.style.selectedNodeColor : config.nodeLink.noNodeStroke;
+    return node.selected
+      ? config.style.selectedNodeColor
+      : config.nodeLink.noNodeStroke;
   };
 
   let edgeColor = function(edge) {
     let edgeStrokeScale = d3
       .scaleOrdinal()
-      .domain(config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].domain)
+      .domain(
+        config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].domain
+      )
       .range(config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].range);
 
     let value = config.nodeLink.edgeStrokeAttr
@@ -1031,13 +1059,9 @@ function updateVis() {
   //create scales for bars;
   let barAttributes = config.nodeAttributes.filter(isQuant);
 
-  //object to store scales as a function of attr name;
-  let scales = {};
   let scaleColors = {}; //Object to store which color to use for which scales
 
   let barPadding = 3;
-
-  
 
   barAttributes.map((b, i) => {
     let scale = d3
@@ -1055,7 +1079,7 @@ function updateVis() {
 
   //Assign one color per unique domain;
   Object.keys(scaleColors).map((domainKey, i) => {
-    scaleColors[domainKey] = config.nodeLink.quantColors[i];
+    scaleColors[domainKey] = quantColors(i);
   });
 
   Object.keys(scales).map(
@@ -1125,10 +1149,12 @@ function updateVis() {
 
     node
       .select(".node")
-      .attr("x", d => -nodeLength(d) / 2)
-      .attr("y", d => -nodeHeight(d) / 2)
-      .attr("width", nodeLength)
-      .attr("height", d => (config.nodeIsRect ? nodeHeight(d) : nodeLength(d)))
+      .attr("x", d => -nodeLength(d) / 2 - 4)
+      .attr("y", d => -nodeHeight(d) / 2 - 4)
+      .attr("width", d => nodeLength(d) + 8)
+      .attr("height", d =>
+        config.nodeIsRect ? nodeHeight(d) + 8 : nodeLength(d) + 8
+      )
       .style("fill", nodeFill)
       .style("stroke", nodeStroke)
       .attr("rx", d =>
@@ -1142,7 +1168,9 @@ function updateVis() {
       .select("text")
       .style("font-size", config.nodeLink.labelSize[config.graphSize])
       .text(d => d[config.nodeLink.labelAttr])
-      .attr("y", d => (config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 4 : ".5em"))
+      .attr("y", d =>
+        config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 4 : ".5em"
+      )
       .attr("dx", function(d) {
         return (
           -d3
@@ -1175,7 +1203,9 @@ function updateVis() {
         //make sure label box spans the width of the node
         return d3.min([-textWidth / 2, -nodeLength(d) / 2 - 2]);
       })
-      .attr("y", d => (config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 16 : "-.5em"));
+      .attr("y", d =>
+        config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 16 : "-.5em"
+      );
 
     node.call(
       d3
@@ -1190,16 +1220,18 @@ function updateVis() {
   {
     // //  Separate enter/exit/update for bars so as to bind to the correct data;
 
-    let drawCat = Object.keys(config.nodeAttributes.filter(isCategorical)).length > 0;
+    let drawCat =
+      Object.keys(config.nodeAttributes.filter(isCategorical)).length > 0;
     let radius = drawCat ? nodeMarkerHeight * 0.15 : 0;
     let padding = drawCat ? 0 : 0;
-    let xPos = drawCat ? nodeMarkerLength/2 - radius : 0;
+    let xPos = drawCat ? nodeMarkerLength / 2 - radius : 0;
 
-
-    let barAttrs = config.nodeLink.drawBars ? Object.keys(scales) : [];
+    let barAttrs = config.nodeLink.drawBars
+      ? config.nodeAttributes.filter(isQuant)
+      : [];
 
     let numBars = barAttrs.length;
-    let nodeWidth = nodeMarkerLength - barPadding - radius*2 - padding;
+    let nodeWidth = nodeMarkerLength - barPadding - radius * 2 - padding;
     let barWidth = nodeWidth / numBars - barPadding;
 
     let scaleStart = -nodeMarkerLength / 2 + barPadding;
@@ -1270,12 +1302,16 @@ function updateVis() {
       .style("font-weight", "normal");
 
     //color the text from the panel accordingly
-    barAttrs.map(attr => {
-      d3.select("#" + attr + "-label")
-        .style("color", scales[attr].fill)
-        .style("font-weight", "bold");
-    });
-    let catAttrs = config.nodeLink.drawBars ? config.nodeAttributes.filter(isCategorical) : [];
+    d3.select("#nodeQuantSelect")
+      .selectAll("label")
+      .style("color", d =>
+        barAttrs.includes(d.attr) ? scales[d.attr].fill : "#b2afaf"
+      )
+      .style("font-weight", "bold");
+
+    let catAttrs = config.nodeLink.drawBars
+      ? config.nodeAttributes.filter(isCategorical)
+      : [];
 
     let yRange =
       catAttrs.length < 2
@@ -1618,14 +1654,22 @@ function updateVis() {
     //   d.fx = null;
     //   d.fy = null;
   }
+
+  drawLegend();
 }
 
-function isQuant(attr){
-  return Object.keys(config.attributeScales.node).includes(attr) && config.attributeScales.node[attr].range === undefined;
+function isQuant(attr) {
+  return (
+    Object.keys(config.attributeScales.node).includes(attr) &&
+    config.attributeScales.node[attr].range === undefined
+  );
 }
 
-function isCategorical(attr){
-  return Object.keys(config.attributeScales.node).includes(attr) && config.attributeScales.node[attr].range !== undefined;
+function isCategorical(attr) {
+  return (
+    Object.keys(config.attributeScales.node).includes(attr) &&
+    config.attributeScales.node[attr].range !== undefined
+  );
 }
 
 async function loadConfigs(taskID) {
@@ -1636,38 +1680,42 @@ async function loadConfigs(taskID) {
     let taskConfigFile = "../../configs/" + taskID + "Config.json";
 
     d3.json(taskConfigFile, async function(taskConfig) {
-
       d3.select("#exportBaseConfig").on("click", function() {
-        exportConfig(Object.keys(baseConfig),Object.keys(baseConfig.nodeLink),false)
+        exportConfig(
+          Object.keys(baseConfig),
+          Object.keys(baseConfig.nodeLink),
+          false
+        );
       });
-    
+
       d3.select("#exportConfig").on("click", function() {
-        exportConfig(Object.keys(taskConfig),Object.keys(taskConfig.nodeLink),true)
+        exportConfig(
+          Object.keys(taskConfig),
+          Object.keys(taskConfig.nodeLink),
+          true
+        );
       });
 
       // rehape relevant config values into a single dictionary.
-      config = mergeConfigs(baseConfig,taskConfig)
-      
+      config = mergeConfigs(baseConfig, taskConfig);
 
       allConfigs.optimalConfig = config;
 
-      let task = tasks[taskNum]
+      let task = tasks[taskNum];
 
       d3.select("#taskArea")
         .select(".card-header-title")
-        .text('Task ' + (taskNum+1) + ' - ' + task.prompt);
+        .text("Task " + (taskNum + 1) + " - " + task.prompt);
 
       d3.select("#optimalConfig").on("click", () =>
         applyConfig("optimalConfig")
       );
 
       d3.select("#nodeLinkConfig").on("click", () =>
-
         applyConfig("nodeLinkConfig")
       );
 
       d3.select("#saturatedConfig").on("click", () =>
-
         applyConfig("saturatedConfig")
       );
 
@@ -1685,32 +1733,242 @@ async function loadConfigs(taskID) {
 
       await loadNewGraph(config.graphFiles[config.loadedGraph]);
       applyConfig("optimalConfig");
-
     });
   });
 }
 
-
-function applyConfig (configType) {
+function applyConfig(configType) {
   d3.select("#taskArea")
     .selectAll(".button")
     .classed("clicked", false);
   d3.select("#" + configType).classed("clicked", true);
   config = JSON.parse(JSON.stringify(allConfigs[configType]));
+
   setPanelValuesFromFile();
-};
+
+}
+
+function drawLegend() {
+  //draw legend based on config;
+
+  legendElement = d3.select("#legend");
+
+  d3.select("#legend-svg").attr('height',200);
+
+  let legend = {
+    width: d3.select("#legend-svg").attr("width"),
+    height: d3.select("#legend-svg").attr("height")
+  };
+
+  let quantAttributes = config.nodeAttributes.filter(isQuant);
+  let catAttributes = config.nodeAttributes.filter(isCategorical);
+
+  let barWidth = 30;
+  let barPadding = 60;
+  let barHeight = 70;
+
+  let squarePadding = 10;
+
+  let labelRotate = -90;
+
+  let squareSize = barHeight*0.3;
+
+  let yRange =
+      catAttributes.length < 2
+      ? [barHeight/2, barHeight/2]
+      : [barHeight/4, barHeight*0.75];
+
+  let yScale = d3
+    .scaleLinear()
+    .domain([0, catAttributes.length - 1])
+    .range(yRange);
+
+    let format = d3.format('2.2s')
+
+  let squareOffset =
+    quantAttributes.length * (barWidth + barPadding) + 5
+
+  legendElement.attr("transform", "translate(100," + legend.height*0.8 + ")");
+
+  // console.log(config)
+  if (config.nodeLink.drawBars || !config.nodeLink.drawBars) {
+    let bars = legendElement
+      .selectAll(".legendBar")
+      //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
+      .data(quantAttributes);
+
+    let barsEnter = bars
+      .enter()
+      .append("g")
+      .attr("class", "legendBar");
+
+    barsEnter
+      .append("rect")
+      .attr("class", "frame")
+      .append("title");
+
+    barsEnter.append("rect").attr("class", "bar");
+
+    barsEnter.append("text").attr("class", "legendLabel");
+
+    barsEnter.append("text").attr("class", "domainStart");
+    barsEnter.append("text").attr("class", "domainEnd");
+
+
+
+    bars.exit().remove();
+
+    bars = barsEnter.merge(bars);
+
+    bars.selectAll("rect").attr("width", barWidth);
+
+    bars.attr("transform", (d, i) => {
+      return "translate(" + i * (barWidth + barPadding) + ",0)";
+    });
+
+    bars
+      .select(".frame")
+      .attr("height", barHeight)
+      .attr("y", -barHeight)
+      .style("stroke", d => scales[d].fill);
+
+    bars
+      .select(".bar")
+      .attr("height", barHeight *0.7)
+      .attr("y", -barHeight *0.7)
+      .style("fill", d => scales[d].fill);
+
+    bars
+      .select(".legendLabel")
+      .text(d => config.attributeScales.node[d].label)
+      // .attr("transform", "translate(" + barWidth/2 + "," + (-barHeight-5) +")")
+      .attr("transform", "translate(-5,0) rotate(" + labelRotate + ")")
+      .style("text-anchor", "start")
+      // .style("fill","white")
+      .style("font-weight","bold")
+      // .style("font-size",barWidth/2)
+
+      bars
+      .select(".domainStart")
+      .text(d => config.attributeScales.node[d].domain[0])
+      .attr("transform", "translate(" + (barWidth+3) + ",0)")
+      // .attr("transform", "translate(-5,0) rotate(" + labelRotate + ")")
+      .style("text-anchor", "start")
+
+      bars
+      .select(".domainEnd")
+      .text(d => format(config.attributeScales.node[d].domain[1]))
+      .attr("transform", "translate(" + (barWidth+3) + "," + (-barHeight+10) +")")
+      // .attr("transform", "translate(-5,0) rotate(" + labelRotate + ")")
+      .style("text-anchor", "start")
+
+    let squares = legendElement
+      .selectAll(".legendSquare")
+      //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
+      .data(catAttributes);
+
+    let squaresEnter = squares
+      .enter()
+      .append("g")
+      .attr("class", "legendSquare");
+
+    squaresEnter.append("rect").attr("class", "square");
+
+    squaresEnter.append("text").attr("class", "squareLabel");
+
+    squares.exit().remove();
+
+    squares = squaresEnter.merge(squares);
+
+    squares
+      .selectAll("rect")
+      .attr("width", squareSize)
+      .attr("height", squareSize);
+
+    squares.attr("transform", (d, i) => {
+      return "translate(" + squareOffset + "," + -barHeight + ")";
+    });
+
+    squares
+      .select(".square")
+      .attr("y", (d,i)=> yScale(i)-squareSize/2)
+      .style("fill", config.attributeScales.edge.type.range[2]);
+
+    squares
+      .select(".squareLabel")
+      .text(d => config.attributeScales.node[d].label)
+      .attr("transform", (d,i)=> "translate(" + (squareSize + squarePadding ) + "," + (yScale(i)+squareSize/2) +  ")")
+      // .style("text-anchor", "end");
+
+
+      let categoricalScales = legendElement
+      .selectAll(".categoricalScale")
+      //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
+      .data(catAttributes);
+
+    let categoricalScalesEnter = categoricalScales
+      .enter()
+      .append("g")
+      .attr("class", "categoricalScale");
+
+      categoricalScales.exit().remove();
+
+      categoricalScales = categoricalScalesEnter.merge(categoricalScales);
+
+    let catLegend = categoricalScales.selectAll('.catLegend')
+    .data((d,ii)=>config.attributeScales.node[d].domain.map((domain,i)=>{
+      return {'pos':ii, 'value':domain,'legendLabel':config.attributeScales.node[d].legendLabels[i],'fill':config.attributeScales.node[d].range[i]};
+    }));
+
+    let catLegendEnter = catLegend.enter().append("g").attr('class','catLegend');
+
+    catLegendEnter.append('rect')
+    catLegendEnter.append('text');
+
+    catLegend.exit().remove();
+
+    catLegend = catLegendEnter.merge(catLegend);
+
+    catLegend.select('rect')
+    .attr('width',squareSize)
+    .attr('height',squareSize)
+    .attr('fill',d=>d.fill)
+
+    catLegend.select('text')
+    .text(d=>d.legendLabel)
+    .attr("transform",d=> "translate(" + squareSize + "," + (d.pos === 0 ? -5 : squareSize+5) + ") rotate(" + labelRotate + ")")
+    .style("text-anchor",d=>d.pos === 0 ? "start":"end")
+
+    catLegend.attr("transform", (d, i) => {
+      return "translate(" + (squareOffset + 120 + i*(squareSize + squarePadding))  + "," + (yScale(d.pos)-barHeight-squareSize/2) + ")";
+    });
+
+    // catLegend.select('text')
+    // .text(d=>d.value)
+    // .attr("transform",d=> "translate(" + (squareSize+2) + "," + squareSize + ") rotate(0)")
+    // // .style("text-anchor",d=>d.pos === 0 ? "start":"end")
+
+    // catLegend.attr("transform", (d, i) => {
+    //   return "translate(" + (squareOffset+squareSize + 5) +"," + (d.pos === 0 ? -(i+1)*(squareSize + barPadding) - barHeight : (i*(squareSize + barPadding)+5)) + ")";
+    // });
+
+
+
+
+
+  }
+}
 
 function loadNewGraph(fileName) {
   return new Promise(resolve => {
     //load in actual graph data
-  d3.json(fileName, function(fileGraph) {
-    //save as global variable
-    graph = fileGraph;
-    graph.nodes.map(n => {
-      (n.savedX = n.fx), (n.savedY = n.fy);
+    d3.json(fileName, function(fileGraph) {
+      //save as global variable
+      graph = fileGraph;
+      graph.nodes.map(n => {
+        (n.savedX = n.fx), (n.savedY = n.fy);
+      });
+      resolve();
     });
-    resolve();
-  });
   });
 }
-

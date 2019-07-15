@@ -47,31 +47,6 @@
 
     }
 
-    /* .nodes circle.clicked {
-        stroke-width: 3px;
-        stroke: rgb(197, 34, 20);
-        r: 20px;
-    } */
-
-
-
-    /* .bar.clipped{
-        stroke-dasharray: 0,0,10,50 ;
-        stroke:rgb(229, 103, 0);
-        stroke-width:3px;
-    } */
-
-    /* .bar.clipped{
-        fill:#08306b;
-    } */
-
-
-
-    /* .node{
-        stroke-width: 3px;
-        stroke: rgb(197, 34, 20);
-    } */
-
     .pathLabel>textPath {
         font-size: 14px;
     }
@@ -80,9 +55,10 @@
         font-size:10px;
     }
 
-    /* .label {
-        font-size: 14px;
-    } */
+    .legendLabel, .catLegend {
+        font-size: 1em;
+        /* font-weight:bold; */
+    }
 
     .muted {
         opacity: .2;

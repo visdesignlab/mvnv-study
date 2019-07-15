@@ -61,3 +61,5 @@ edgeLabels
 
     sheet.addRule(".node.clicked", ruleString, 1);
   }
+
+  "quantColors": ["#689c93","#9c9c6d","#87849c","#9c4f46","#5f829c","#9c6f3d","#7d9c49","#9c7e8d","#9c9c9c","#9b6a9c"],
