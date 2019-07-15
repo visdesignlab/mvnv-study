@@ -1,0 +1,417 @@
+{
+    "1314101": {
+        "screen_name": "eytanadar",
+        "type": "person",
+        "continent":"North America"
+    },
+    "6146692": {
+        "screen_name": "arnicas",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "9527212": {
+        "screen_name": "arvindsatya1",
+        "type": "person",
+        "continent":"North America"
+    },
+    "10414152": {
+        "screen_name": "laneharrison",
+        "type": "person",
+        "continent":"North America"
+    },
+    "11493602": {
+        "screen_name": "EvanMPeck",
+        "type": "person",
+        "continent":"North America"
+    },
+    "14000542": {
+        "screen_name": "jandot",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "14148549": {
+        "screen_name": "magneticnorth",
+        "type": "person",
+        "continent":"North America"
+    },
+    "14249829": {
+        "screen_name": "sharoz",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "14905766": {
+        "screen_name": "cybunk",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "15208867": {
+        "screen_name": "jozilla",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "16112517": {
+        "screen_name": "eagereyes",
+        "type": "person",
+        "continent":"North America"
+    },
+    "16557883": {
+        "screen_name": "ngehlenborg",
+        "type": "person",
+        "continent":"North America"
+    },
+    "18325271": {
+        "screen_name": "yelperalp",
+        "type": "person",
+        "continent":"North America"
+    },
+    "18406335": {
+        "screen_name": "dogvile",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "18704160": {
+        "screen_name": "dr_tj",
+        "type": "person",
+        "continent":"North America"
+    },
+    "19283433": {
+        "screen_name": "giCentre",
+        "type": "institution",
+        "continent":"Europe"
+    },
+    "19299318": {
+        "screen_name": "jsndyks",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "21084111": {
+        "screen_name": "JanWillemTulp",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "22766040": {
+        "screen_name": "leerraum",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "29700681": {
+        "screen_name": "BCKwon",
+        "type": "person",
+        "continent":"North America"
+    },
+    "30009655": {
+        "screen_name": "jamesscottbrown",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "31638712": {
+        "screen_name": "ryanwesslen",
+        "type": "person",
+        "continent":"North America"
+    },
+    "36853217": {
+        "screen_name": "tillnm",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "40219508": {
+        "screen_name": "_Noeska_",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "43953969": {
+        "screen_name": "jwoLondon",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "44195788": {
+        "screen_name": "scheidegger",
+        "type": "person",
+        "continent":"North America"
+    },
+    "49457800": {
+        "screen_name": "namwkim85",
+        "type": "person",
+        "continent":"North America"
+    },
+    "78865306": {
+        "screen_name": "geovisual",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "79908341": {
+        "screen_name": "mrshahidlatif",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "81658145": {
+        "screen_name": "alexander_lex",
+        "type": "person",
+        "continent":"North America"
+    },
+    "82713840": {
+        "screen_name": "dr_pi",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "82890309": {
+        "screen_name": "domoritz",
+        "type": "person",
+        "continent":"North America"
+    },
+    "84043985": {
+        "screen_name": "micahstubbs",
+        "type": "person",
+        "continent":"North America"
+    },
+    "85844572": {
+        "screen_name": "holgerstitz",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "91169926": {
+        "screen_name": "duto_guerra",
+        "type": "person",
+        "continent":"South America"
+    },
+    "92951551": {
+        "screen_name": "nicolapezzotti",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "136400506": {
+        "screen_name": "mathisonian",
+        "type": "person",
+        "continent":"North America"
+    },
+    "158685605": {
+        "screen_name": "HelwigHauser",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "188046229": {
+        "screen_name": "benjbach",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "190726679": {
+        "screen_name": "eurovis",
+        "type": "institution",
+        "continent":"Europe"
+    },
+    "191257554": {
+        "screen_name": "antarcticdesign",
+        "type": "institution",
+        "continent":"Europe"
+    },
+    "201277609": {
+        "screen_name": "jcrbrts",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "208312922": {
+        "screen_name": "rpgove",
+        "type": "person",
+        "continent":"North America"
+    },
+    "227831457": {
+        "screen_name": "sjengle",
+        "type": "person",
+        "continent":"North America"
+    },
+    "241173920": {
+        "screen_name": "flekschas",
+        "type": "person",
+        "continent":"North America"
+    },
+    "247943631": {
+        "screen_name": "jeffrey_heer",
+        "type": "person",
+        "continent":"North America"
+    },
+    "270431596": {
+        "screen_name": "klaus_lml",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "318046158": {
+        "screen_name": "kristw",
+        "type": "person",
+        "continent":"Asia"
+    },
+    "359650922": {
+        "screen_name": "FisherDanyel",
+        "type": "person",
+        "continent":"North America"
+    },
+    "395853499": {
+        "screen_name": "marc_streit",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "403626099": {
+        "screen_name": "StefvandenElzen",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "411546549": {
+        "screen_name": "myjyby",
+        "type": "person",
+        "continent":"North America"
+    },
+    "446672281": {
+        "screen_name": "avilanova01",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "531855716": {
+        "screen_name": "accidental_PhD",
+        "type": "person",
+        "continent":"North America"
+    },
+    "701375574": {
+        "screen_name": "uusci",
+        "type": "institution",
+        "continent":"North America"
+    },
+    "889998600": {
+        "screen_name": "DavidGotz",
+        "type": "person",
+        "continent":"North America"
+    },
+    "1006945298": {
+        "screen_name": "d3visualization",
+        "type": "institution",
+        "continent":"North America"
+    },
+    "1176519156": {
+        "screen_name": "NicholasStrayer",
+        "type": "person",
+        "continent":"North America"
+    },
+    "1325316703": {
+        "screen_name": "eagereyes_feed",
+        "type": "institution",
+        "continent":"North America"
+    },
+    "1556132462": {
+        "screen_name": "JessicaHullman",
+        "type": "person",
+        "continent":"North America"
+    },
+    "1652270612": {
+        "screen_name": "tamaramunzner",
+        "type": "person",
+        "continent":"North America"
+    },
+    "1658560038": {
+        "screen_name": "mirelard",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "1667081238": {
+        "screen_name": "cagatay_turkay",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "1873322353": {
+        "screen_name": "uwdata",
+        "type": "institution",
+        "continent":"North America"
+    },
+    "2527017636": {
+        "screen_name": "ThomasHollt",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "2596138699": {
+        "screen_name": "BangorCSEE",
+        "type": "institution",
+        "continent":"Europe"
+    },
+    "2873695769": {
+        "screen_name": "rlndscheepens",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "2889052877": {
+        "screen_name": "johliem",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "2924711485": {
+        "screen_name": "lonnibesancon",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "3230388598": {
+        "screen_name": "dataandme",
+        "type": "institution",
+        "continent":"North America"
+    },
+    "4058687172": {
+        "screen_name": "_____leena_____",
+        "type": "person",
+        "continent":"Asia"
+    },
+    "1085199426837188600": {
+        "screen_name": "eurovis2019",
+        "type": "institution",
+        "continent":"Europe"
+    },
+    "1055379531731796000": {
+        "screen_name": "MickaelSereno",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "4893004803": {
+        "screen_name": "TofHurter",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "883747950085656600": {
+        "screen_name": "miriah_meyer",
+        "type": "person",
+        "continent":"North America"
+    },
+    "944216617268973600": {
+        "screen_name": "MichaelAupetit",
+        "type": "person",
+        "continent":"Asia"
+    },
+    "4597853354": {
+        "screen_name": "d3js_org",
+        "type": "institution",
+        "continent":"North America"
+    },
+    "909697437694087200": {
+        "screen_name": "EuroVis2018",
+        "type": "institution",
+        "continent":"Europe"
+    },
+    "1035496563743842300": {
+        "screen_name": "mandykeck",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "824684769543741400": {
+        "screen_name": "LacePadilla",
+        "type": "person",
+        "continent":"North America"
+    },
+    "711885257549680600": {
+        "screen_name": "andrea_no_",
+        "type": "person",
+        "continent":"Europe"
+    },
+    "1068137549355515900": {
+        "screen_name": "vis_research",
+        "type": "institution",
+        "continent":"North America"
+    },
+    "743468486756868100": {
+        "screen_name": "manunna_91",
+        "type": "person",
+        "continent":"Europe"
+    }
+}
