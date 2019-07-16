@@ -269,6 +269,7 @@ class View {
 
   constructor(controller) {
     this.controller = controller;
+    this.controller.clickedCells = new Set();
 
     // set up load
     this.renderLoading();
@@ -631,28 +632,50 @@ class View {
     }
     let that = this;
     cells
-      .on("mouseover", (p)=>{
-        let cellID = p.rowid+p.colid;
-        console.log(this.controller.hoverRow,p.rowid,cellID)
-        that.addHighlightNodesToDict(this.controller.hoverRow,p.rowid,cellID);  // Add row (rowid)
-        console.log(this.controller.hoverRow,p,cellID)
-        that.addHighlightNodesToDict(this.controller.hoverRow,p.colid,cellID);  // Add row (colid)
-        console.log(this.controller.hoverRow)
-        console.log(this.controller.hoverCol)
-        that.addHighlightNodesToDict(this.controller.hoverCol,p.colid,cellID);  // Add col (colid)
-        console.log(this.controller.hoverCol)
-        d3.selectAll('.hovered').classed('hovered',false);
-        that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
-        that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      .on("mouseover", (cell) => {
+
+        let cellID = cell.rowid + cell.colid;
+        that.addHighlightNodesToDict(this.controller.hoverRow, cell.rowid, cellID);  // Add row (rowid)
+        that.addHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);  // Add row (colid)
+        that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       })
-      .on("mouseout", (p)=>{
-        let cellID = p.rowid+p.colid;
-        that.removeHighlightNodesToDict(this.controller.hoverRow,p.rowid,cellID);  // Add row (rowid)
-        that.removeHighlightNodesToDict(this.controller.hoverRow,p.colid,cellID);  // Add row (colid)
-        that.removeHighlightNodesToDict(this.controller.hoverCol,p.colid,cellID);  // Add col (colid)
-        d3.selectAll('.hovered').classed('hovered',false);
-        that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
-        that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      .on("mouseout", (cell) => {
+        let func = this.removeHighlightNodesToDict;
+
+        let cellID = cell.rowid + cell.colid;
+        that.removeHighlightNodesToDict(this.controller.hoverRow, cell.rowid, cellID);  // Add row (rowid)
+        that.removeHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);  // Add row (colid)
+        that.removeHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      })
+      .on("click", (cell,index,nodes) => {
+        let cellElement = d3.select(nodes[index]).selectAll('rect');
+        console.log(cellElement);
+        cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
+        console.log(cellElement.classed('clickedCell'));
+        let cellID = cell.rowid + cell.colid;
+
+        if(this.controller.clickedCells.has(cellID)){
+          this.controller.clickedCells.delete(cellID);
+          that.removeHighlightNodesToDict(this.controller.clickedRow, cell.rowid, cellID);  // Add row (rowid)
+          that.removeHighlightNodesToDict(this.controller.clickedRow, cell.colid, cellID);  // Add row (colid)
+          that.removeHighlightNodesToDict(this.controller.clickedCol, cell.colid, cellID);  // Add col (colid)
+        } else {
+          this.controller.clickedCells.add(cellID);
+          that.addHighlightNodesToDict(this.controller.clickedRow, cell.rowid, cellID);  // Add row (rowid)
+          that.addHighlightNodesToDict(this.controller.clickedRow, cell.colid, cellID);  // Add row (colid)
+          that.addHighlightNodesToDict(this.controller.clickedCol, cell.colid, cellID);  // Add col (colid)
+        }
+
+        d3.selectAll('.clicked').classed('clicked', false);
+        that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
+        that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
+
       });
     // color squares
 
@@ -777,13 +800,27 @@ class View {
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
       .on('click', (d, i, nodes) => {
+
+        /*let cellElement = d3.select(nodes[index]).selectAll('rect');
+        console.log(cellElement);
+        cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
+        console.log(cellElement.classed('clickedCell'));
+        let cellID = cell.rowid + cell.colid;*/
+        console.log(d[i]);
+        let nodeID = d[0].rowid;
+        // will add or remove node
+        console.log(nodeID,this.controller.answerRow,nodeID in this.controller.answerRow)
+        that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
+        d3.selectAll('.answer').classed('answer',nodeID in this.controller.answerRow);
+        that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+
         // selects row text
         d3.select(nodes[i]).classed('answer', (data) => {
           return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
         });
         // classes row
-        this.classHighlights(d.screen_name,'Row','answer');
-        this.selectNode(d[0].rowid);
+        //this.classHighlights(d.screen_name, 'Row', 'answer');
+        //this.selectNode(d[0].rowid);
       });
 
 
@@ -797,9 +834,20 @@ class View {
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
       .on('click', (d, index, nodes) => {
+        console.log( d[index]);
+        let nodeID = d[0].rowid;
+        // will add or remove node
+        console.log(nodeID,this.controller.clickedCol,nodeID in this.controller.clickedCol)
+        that.addHighlightNodesToDict(this.controller.clickedCol, nodeID, nodeID);  // Add row (rowid)
+        d3.selectAll('.clicked').classed('clicked',nodeID in this.controller.clickedCol);
+        that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
 
-        d3.select(nodes[index]).classed('clicked', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
-        this.classHighlights(d.screen_name,'Col','clicked');
+        // selects row text
+        //d3.select(nodes[i]).classed('answer', (data) => {
+        //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
+        //});
+        //d3.select(nodes[index]).classed('clicked', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
+        //this.classHighlights(d.screen_name, 'Col', 'clicked');
         //this.selectNeighborNodes(d[index].rowid);
 
       });
@@ -1003,7 +1051,7 @@ class View {
    */
   classHighlights(nodeID, rowOrCol: string = 'Row', className: string) {
     // select attr and topo highlight
-    d3.selectAll('#highlight' + 'Attr' + rowOrCol + nodeID +',#highlight' + 'Topo' + rowOrCol + nodeID)
+    d3.selectAll('#highlight' + 'Attr' + rowOrCol + nodeID + ',#highlight' + 'Topo' + rowOrCol + nodeID)
       .classed(className, true);
     //d3.selectAll('#highlight' + 'Topo' + rowOrCol + nodeID)
     //  .classed(className, true);*
@@ -1106,8 +1154,8 @@ class View {
     }
   }
 
-  nodeDictContainsPair(dict,nodeToHighlight,interactedElement){
-    if(nodeToHighlight in dict){
+  nodeDictContainsPair(dict, nodeToHighlight, interactedElement) {
+    if (nodeToHighlight in dict) {
       return dict[nodeToHighlight].has(interactedElement)
     }
     return false;
@@ -1122,14 +1170,14 @@ class View {
    * @param  interactedElement [description]
    * @return            [description]
    */
-  addHighlightNodesToDict(dict,nodeToHighlight,interactedElement){
+  addHighlightNodesToDict(dict, nodeToHighlight, interactedElement) {
     // if node already in highlight, remove it
-    if(this.nodeDictContainsPair(dict,nodeToHighlight,interactedElement)){
-      this.removeHighlightNodesToDict(dict,nodeToHighlight,interactedElement)
+    if (this.nodeDictContainsPair(dict, nodeToHighlight, interactedElement)) {
+      this.removeHighlightNodesToDict(dict, nodeToHighlight, interactedElement)
       return false;
     }
     // if not,
-    if(!(nodeToHighlight in dict)){
+    if (!(nodeToHighlight in dict)) {
       // create new set if no set exists
       dict[nodeToHighlight] = new Set();
     }
@@ -1138,14 +1186,14 @@ class View {
     return true;
   }
 
-  removeHighlightNodesToDict(dict,nodeToHighlight,interactedElement){
+  removeHighlightNodesToDict(dict, nodeToHighlight, interactedElement) {
     // if node is not in list, simply return
-    if(!this.nodeDictContainsPair(dict,nodeToHighlight,interactedElement)){
+    if (!this.nodeDictContainsPair(dict, nodeToHighlight, interactedElement)) {
       return;
     }
 
     // if there are other elements highlighting the node to highlight
-    if(dict[nodeToHighlight].size > 1){ // if set has more than 1 object
+    if (dict[nodeToHighlight].size > 1) { // if set has more than 1 object
       dict[nodeToHighlight].delete(interactedElement); // delete element from set
     }
     else {
@@ -1153,17 +1201,17 @@ class View {
     }
   }
 
-  renderHighlightNodesFromDict(dict,classToRender,rowOrCol :string = 'Row'){
+  renderHighlightNodesFromDict(dict, classToRender, rowOrCol: string = 'Row') {
     //unhighlight all other nodes
 
     //highlight correct nodes
     let cssSelector = '';
-    for(let nodeID in dict){
-      if(rowOrCol == 'Row'){
-        console.log(dict,nodeID,cssSelector);
-        cssSelector += '#highlight' + 'Attr'+ rowOrCol + nodeID +',' + '#highlight' + 'Topo'+ rowOrCol + nodeID +','
+    for (let nodeID in dict) {
+      if (rowOrCol == 'Row') {
+        console.log(dict, nodeID, cssSelector);
+        cssSelector += '#highlight' + 'Attr' + rowOrCol + nodeID + ',' + '#highlight' + 'Topo' + rowOrCol + nodeID + ','
       } else {
-        cssSelector += '#highlight' + rowOrCol + nodeID +','
+        cssSelector += '#highlight' + rowOrCol + nodeID + ','
       }
 
 
@@ -1171,7 +1219,7 @@ class View {
     // remove last comma
     cssSelector = cssSelector.substring(0, cssSelector.length - 1);
     console.log(cssSelector);
-    d3.selectAll(cssSelector).classed(classToRender,true);
+    d3.selectAll(cssSelector).classed(classToRender, true);
 
   }
 

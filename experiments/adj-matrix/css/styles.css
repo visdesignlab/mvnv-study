@@ -83,8 +83,16 @@ fill: #fde8ca;
 fill-opacity:1 !important;
 }
 
+.clickedCell{
+  stroke-width:2.5;
+  stroke: #ee0000;
+  /*rx:5;*
+  width:10;
+  height:10;*/
+}
+
 .clicked{
-fill: #F8D8A9 !important;
+fill: #F8CF91 !important;
 fill-opacity:1 !important;
 }
 
