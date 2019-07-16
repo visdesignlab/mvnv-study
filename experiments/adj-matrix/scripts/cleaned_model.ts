@@ -102,11 +102,11 @@ class Model {
     })
     return newGraph;
   }
-  isQuant(attr){
+  isQuant(attr) {
     // if not in list
-    if(!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)){
+    if (!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)) {
       return false;
-    } else if(this.controller.configuration.attributeScales.node[attr].range === undefined){
+    } else if (this.controller.configuration.attributeScales.node[attr].range === undefined) {
       return true;
     } else {
       return false
@@ -125,7 +125,7 @@ class Model {
       this.idMap = {};
       this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
       this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
-      if (!this.isQuant(this.orderType)){// == "screen_name" || this.orderType == "name") {
+      if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
         this.nodes = this.nodes.sort((a, b) => a[this.orderType].localeCompare(b[this.orderType]));
       } else {
         this.nodes = this.nodes.sort((a, b) => { return b[this.orderType] - a[this.orderType]; });
@@ -162,7 +162,7 @@ class Model {
     let order;
     this.orderType = type;
     this.controller.configuration.state.adjMatrix.sortKey = type;
-    if (!this.isQuant(this.orderType)){// == "screen_name" || this.orderType == "name") {
+    if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
       order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a][type].localeCompare(this.nodes[b][type]));
     } else {
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
@@ -465,17 +465,17 @@ class View {
       .attr("transform", (d, i) => {
         return "translate(" + this.verticalScale(i) + ")rotate(-90)";
       });
-      this.edgeColumns.append("line")
-          .attr("x1", -this.edgeWidth)
-          .attr("z-index",10);
-      //append final line
-      let extraLine = this.edges
-        .append("line")
-        .attr("x1",this.edgeWidth)
-        .attr("x2",this.edgeWidth)
-        .attr("y1",0)
-        .attr("y2",this.edgeHeight)
-        console.log("Extra:",extraLine)
+    this.edgeColumns.append("line")
+      .attr("x1", -this.edgeWidth)
+      .attr("z-index", 10);
+    //append final line
+    let extraLine = this.edges
+      .append("line")
+      .attr("x1", this.edgeWidth)
+      .attr("x2", this.edgeWidth)
+      .attr("y1", 0)
+      .attr("y2", this.edgeHeight)
+    console.log("Extra:", extraLine)
 
 
     this.edgeColumns
@@ -629,15 +629,43 @@ class View {
         .style("fill-opacity", 0);
       this.setSquareColors('all');
     }
-
+    let that = this;
     cells
-      .on("mouseover", mouseoverCell)
-      .on("mouseout", mouseoutCell);
+      .on("mouseover", (p)=>{
+        let cellID = p.rowid+p.colid;
+        console.log(this.controller.hoverRow,p.rowid,cellID)
+        that.addHighlightNodesToDict(this.controller.hoverRow,p.rowid,cellID);  // Add row (rowid)
+        console.log(this.controller.hoverRow,p,cellID)
+        that.addHighlightNodesToDict(this.controller.hoverRow,p.colid,cellID);  // Add row (colid)
+        console.log(this.controller.hoverRow)
+        console.log(this.controller.hoverCol)
+        that.addHighlightNodesToDict(this.controller.hoverCol,p.colid,cellID);  // Add col (colid)
+        console.log(this.controller.hoverCol)
+        d3.selectAll('.hovered').classed('hovered',false);
+        that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
+        that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      })
+      .on("mouseout", (p)=>{
+        let cellID = p.rowid+p.colid;
+        that.removeHighlightNodesToDict(this.controller.hoverRow,p.rowid,cellID);  // Add row (rowid)
+        that.removeHighlightNodesToDict(this.controller.hoverRow,p.colid,cellID);  // Add row (colid)
+        that.removeHighlightNodesToDict(this.controller.hoverCol,p.colid,cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered',false);
+        that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
+        that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      });
     // color squares
 
+    this.controller.clickedRow = {}
+    this.controller.clickedCol = {}
+    this.controller.answerRow = {}
+    this.controller.hoverRow = {}
+    this.controller.hoverCol = {}
 
-    let that = this;
     function mouseoverCell(p) {
+      console.log(p);
+      // Add row (colid)
+      // Add col (colid)
 
       /*let attrPrimaryRow = that.selectHighlight(p,"Row","Attr"),
           topologyPrimaryRow = that.selectHighlight(p,"Row","Topo",'y'),
@@ -648,8 +676,8 @@ class View {
       topologyPrimaryRow.classed('hovered',true);
       attrSecondaryRow.classed('hovered',true);
       topologySecondaryCol.classed('hovered',true);*/
-      that.highlightRow(p);
-      that.highlightRowAndCol(p);
+      //that.highlightRow(p);
+      //that.highlightRowAndCol(p);
 
       /*
       let test1 = d3.selectAll(".highlightRow") // secondary
@@ -739,10 +767,9 @@ class View {
     this.order = this.controller.getOrder();
 
 
-    //
     this.edgeRows.append("text")
-      .attr("class", "nodeLabel")
-      .attr('z-index',30)
+      .attr("class", "nodeRowLabel")
+      .attr('z-index', 30)
       .attr("x", 0)
       .attr("y", this.verticalScale.bandwidth() / 2)
       .attr("dy", ".32em")
@@ -750,17 +777,19 @@ class View {
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
       .on('click', (d, i, nodes) => {
-        d3.select(nodes[i]).classed('selected', (data) => {
+        // selects row text
+        d3.select(nodes[i]).classed('answer', (data) => {
           return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
         });
-
+        // classes row
+        this.classHighlights(d.screen_name,'Row','answer');
         this.selectNode(d[0].rowid);
       });
 
 
     this.edgeColumns.append("text")
-      .attr("class", "nodeLabel")
-      .attr('z-index',30)
+      .attr("class", "nodeColLabel")
+      .attr('z-index', 30)
       .attr("y", 3)
       .attr('x', 2)
       .attr("dy", ".32em")
@@ -769,9 +798,9 @@ class View {
       .text((d, i) => this.nodes[i].name)
       .on('click', (d, index, nodes) => {
 
-        d3.select(nodes[index]).classed('selected', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
-
-        this.selectColumnNode(d[index].rowid);
+        d3.select(nodes[index]).classed('clicked', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
+        this.classHighlights(d.screen_name,'Col','clicked');
+        //this.selectNeighborNodes(d[index].rowid);
 
       });
 
@@ -947,6 +976,7 @@ class View {
 
 
   }
+
   generateColorLegend() {
     let counter = 0;
     for (let type in this.edgeScales) {
@@ -966,15 +996,39 @@ class View {
     }
   }
 
+  /**
+   * [selectRow description]
+   * @param  node [description]
+   * @return      [description]
+   */
+  classHighlights(nodeID, rowOrCol: string = 'Row', className: string) {
+    // select attr and topo highlight
+    d3.selectAll('#highlight' + 'Attr' + rowOrCol + nodeID +',#highlight' + 'Topo' + rowOrCol + nodeID)
+      .classed(className, true);
+    //d3.selectAll('#highlight' + 'Topo' + rowOrCol + nodeID)
+    //  .classed(className, true);*
+
+    // highlight row text
+    //d3.selectAll('')rowOrCol
+    // else highlight column text
+
+  }
 
 
 
 
 
 
+
+
+  /**
+   * [highlightRow description]
+   * @param  node [description]
+   * @return      [description]
+   */
   highlightRow(node) {
     let nodeID = node.screen_name;
-    if (node.screen_name == null) {
+    if (nodeID == null) {
       nodeID = node.rowid;
     }
     // highlight attr
@@ -1052,6 +1106,74 @@ class View {
     }
   }
 
+  nodeDictContainsPair(dict,nodeToHighlight,interactedElement){
+    if(nodeToHighlight in dict){
+      return dict[nodeToHighlight].has(interactedElement)
+    }
+    return false;
+  }
+
+  /**
+   * If an interactedElement has not been interacted with, it will add the nodeToHighlight
+   * to the provided highlight dict. If it has, it will remove it and return false. Otherwise,
+   * it will add the interacted element connection to the nodeToHighlight.
+   * @param  dict       The underlying storage to show which
+   * @param  nodeToHighlight  [description]
+   * @param  interactedElement [description]
+   * @return            [description]
+   */
+  addHighlightNodesToDict(dict,nodeToHighlight,interactedElement){
+    // if node already in highlight, remove it
+    if(this.nodeDictContainsPair(dict,nodeToHighlight,interactedElement)){
+      this.removeHighlightNodesToDict(dict,nodeToHighlight,interactedElement)
+      return false;
+    }
+    // if not,
+    if(!(nodeToHighlight in dict)){
+      // create new set if no set exists
+      dict[nodeToHighlight] = new Set();
+    }
+    // add element to set
+    dict[nodeToHighlight].add(interactedElement);
+    return true;
+  }
+
+  removeHighlightNodesToDict(dict,nodeToHighlight,interactedElement){
+    // if node is not in list, simply return
+    if(!this.nodeDictContainsPair(dict,nodeToHighlight,interactedElement)){
+      return;
+    }
+
+    // if there are other elements highlighting the node to highlight
+    if(dict[nodeToHighlight].size > 1){ // if set has more than 1 object
+      dict[nodeToHighlight].delete(interactedElement); // delete element from set
+    }
+    else {
+      delete dict[nodeToHighlight];
+    }
+  }
+
+  renderHighlightNodesFromDict(dict,classToRender,rowOrCol :string = 'Row'){
+    //unhighlight all other nodes
+
+    //highlight correct nodes
+    let cssSelector = '';
+    for(let nodeID in dict){
+      if(rowOrCol == 'Row'){
+        console.log(dict,nodeID,cssSelector);
+        cssSelector += '#highlight' + 'Attr'+ rowOrCol + nodeID +',' + '#highlight' + 'Topo'+ rowOrCol + nodeID +','
+      } else {
+        cssSelector += '#highlight' + rowOrCol + nodeID +','
+      }
+
+
+    }
+    // remove last comma
+    cssSelector = cssSelector.substring(0, cssSelector.length - 1);
+    console.log(cssSelector);
+    d3.selectAll(cssSelector).classed(classToRender,true);
+
+  }
 
   renderNeighborHighlightNodes() {
     //for
@@ -1084,12 +1206,16 @@ class View {
       .classed('selected', !topoRow.classed('selected'));
   }
 
+  selectColumnNode(nodeID) {
+    // highlight
+  }
+
   /**
-   * [selectColumnNode description]
+   * Old implementation to select the neighboring nodes.
    * @param  nodeID [description]
    * @return        [description]
    */
-  selectColumnNode(nodeID) {
+  selectNeighborNodes(nodeID) {
     let nodeIndex = this.controller.configuration.state.adjMatrix.columnSelectedNodes.indexOf(nodeID);
     if (nodeIndex > -1) {
       // find all neighbors and remove them
@@ -1167,7 +1293,7 @@ class View {
       .attr("transform", (d, i) => { return "translate(0," + this.verticalScale(i) + ")"; })
       .selectAll(".cell").selectAll('rect')
       .delay((d) => { return this.verticalScale(d.x) * 4; })
-      .attr("x", (d,i) => this.verticalScale(d.x));//
+      .attr("x", (d, i) => this.verticalScale(d.x));//
 
     this.attributeRows
       .transition()
@@ -1199,7 +1325,7 @@ class View {
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
   }
   private columnscreen_names: {};
-  private attributeScales : any;
+  private attributeScales: any;
   /**
    * [initalizeAttributes description]
    * @return [description]
@@ -1385,10 +1511,10 @@ class View {
 
       if (categoricalAttributes.indexOf(column) > -1) { // if categorical
         let topMargin = 1;
-        let width = this.verticalScale.bandwidth() - 2*topMargin;
+        let width = this.verticalScale.bandwidth() - 2 * topMargin;
         this.attributeRows
           .append('rect')
-          .attr('x', columnPosition + columnWidth / 2 -width/2)
+          .attr('x', columnPosition + columnWidth / 2 - width / 2)
           .attr('y', 1)
           .attr('fill', (d) => attributeScales[column](d[column]))
           .attr('width', width)
@@ -1443,34 +1569,34 @@ class View {
       "count_followers_in_query": "In-Network Followers",
       "continent": "",
       "type": "",
-      "memberFor_days":"Account Age",
-      "listed_count":"In Lists"
+      "memberFor_days": "Account Age",
+      "listed_count": "In Lists"
     }
     let that = this;
-    function calculateMaxChars(numColumns){
-      switch(numColumns) {
+    function calculateMaxChars(numColumns) {
+      switch (numColumns) {
         case 1:
-          return {"characters":20,"font":14}
+          return { "characters": 20, "font": 14 }
         case 2:
-          return {"characters":20,"font":13}
+          return { "characters": 20, "font": 13 }
         case 3:
-          return {"characters":20,"font":12}
+          return { "characters": 20, "font": 12 }
         case 4:
-          return {"characters":19,"font":11}
+          return { "characters": 19, "font": 11 }
         case 5:
-          return {"characters":18,"font":10}
+          return { "characters": 18, "font": 10 }
         case 6:
-            return {"characters":16,"font":10}
+          return { "characters": 16, "font": 10 }
         case 7:
-            return {"characters":14,"font":10}
+          return { "characters": 14, "font": 10 }
         case 8:
-            return {"characters":12,"font":10}
+          return { "characters": 12, "font": 10 }
         case 9:
-            return {"characters":10,"font":10}
+          return { "characters": 10, "font": 10 }
         case 10:
-            return {"characters":8,"font":10}
+          return { "characters": 8, "font": 10 }
         default:
-            return {"characters":8,"font":10}
+          return { "characters": 8, "font": 10 }
       }
     }
     let options = calculateMaxChars(columns.length)// 10 attr => 8
@@ -1480,23 +1606,23 @@ class View {
       .data(columns)
       .enter()
       .append('g')
-      .attr('transform',(d)=>'translate('+(this.columnScale(d) + barMargin.left)+','+(-45)+')')
+      .attr('transform', (d) => 'translate(' + (this.columnScale(d) + barMargin.left) + ',' + (-45) + ')')
       .append('text')
       .classed('header', true)
       //.attr('y', -45)
       //.attr('x', (d) => this.columnScale(d) + barMargin.left)
-      .style('font-size', fontSize.toString() +'px')
+      .style('font-size', fontSize.toString() + 'px')
       .attr('text-anchor', 'left')
       //.attr('transform','rotate(-10)')
       .text((d, i) => {
-        if(this.columnNames[d] && this.columnNames[d].length > maxcharacters){
-          return this.columnNames[d].slice(0, maxcharacters-2) + '...';// experimentally determine how big
+        if (this.columnNames[d] && this.columnNames[d].length > maxcharacters) {
+          return this.columnNames[d].slice(0, maxcharacters - 2) + '...';// experimentally determine how big
         }
         return this.columnNames[d];
       })
-      .on('mouseover',function(d){
-        console.log(that.columnNames[d].length, maxcharacters,that.columnNames[d].length > maxcharacters)
-        if(that.columnNames[d] && that.columnNames[d].length > maxcharacters){
+      .on('mouseover', function(d) {
+        console.log(that.columnNames[d].length, maxcharacters, that.columnNames[d].length > maxcharacters)
+        if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
           that.tooltip.transition().duration(200).style("opacity", .9);
 
           let matrix = this.getScreenCTM()
@@ -1511,7 +1637,7 @@ class View {
             .style("top", (window.pageYOffset + matrix.f - 20) + "px");
         }
       })
-      .on('mouseout', function(d){
+      .on('mouseout', function(d) {
         that.tooltip.transition().duration(250).style("opacity", 0);
       });
 
@@ -1538,11 +1664,11 @@ class View {
 
 
   }
-  generateCategoricalLegend(attribute){
+  generateCategoricalLegend(attribute) {
     let attributeInfo = this.controller.configuration.attributeScales.node[attribute];
     let dividers = attributeInfo.domain.length;
     let legendHeight = 35;
-    let legendItemSize = (legendHeight-5) / dividers;
+    let legendItemSize = (legendHeight - 5) / dividers;
     let rects = this.attributes.append("g")
       .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
     // if()
@@ -1551,23 +1677,23 @@ class View {
 
       let rect1 = rects
         .append('g')
-        .attr('transform', 'translate(10,'+ i * legendItemSize+')')
+        .attr('transform', 'translate(10,' + i * legendItemSize + ')')
 
       rect1
         .append('rect')
         .attr('x', 0)
         .attr('y', 0)
         .attr('fill', attributeInfo.range[i])
-        .attr('width',legendItemSize-1)
-        .attr('height',legendItemSize-1)
+        .attr('width', legendItemSize - 1)
+        .attr('height', legendItemSize - 1)
 
       rect1
         .append('text')
         .text(attributeInfo.domain[i])
-        .attr('x',legendItemSize+2)
-        .attr('y',legendItemSize/2)
+        .attr('x', legendItemSize + 2)
+        .attr('y', legendItemSize / 2)
         .attr('text-anchor', 'start')
-        .style('font-size',7.5)
+        .style('font-size', 7.5)
 
     }
   }
@@ -1636,16 +1762,16 @@ class Controller {
   private model: any;
   private configuration: any;
 
-  setupExports(base,task){
+  setupExports(base, task) {
     d3.select("#exportBaseConfig").on("click", function() {
-          exportConfig(Object.keys(base),Object.keys(base.adjMatrix),false)
-        });
+      exportConfig(Object.keys(base), Object.keys(base.adjMatrix), false)
+    });
 
-        d3.select("#exportConfig").on("click", function() {
-          exportConfig(Object.keys(task),Object.keys(task.adjMatrixValues),true)
-        });
+    d3.select("#exportConfig").on("click", function() {
+      exportConfig(Object.keys(task), Object.keys(task.adjMatrixValues), true)
+    });
   }
-  setupCSS(base){
+  setupCSS(base) {
     return;
     /*set css values for 'clicked' nodes;
     //set fill or stroke of selected node;
@@ -1666,9 +1792,9 @@ class Controller {
   }
   loadConfigs() {
     let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
-    if(this.tenAttr){
+    if (this.tenAttr) {
       taskConfig = "../configs/10AttrConfig.json"
-    } else if(this.fiveAttr){
+    } else if (this.fiveAttr) {
       taskConfig = "../configs/5AttrConfig.json"
     }
     let that = this;
@@ -1676,9 +1802,9 @@ class Controller {
       d3.json("../configs/baseConfig.json"),
       d3.json(taskConfig),
       d3.json("../configs/state.json")
-    ]).then((configComponents) =>{
+    ]).then((configComponents) => {
       that.setupCSS(configComponents[0]);
-      that.setupExports(configComponents[0],configComponents[1]);
+      that.setupExports(configComponents[0], configComponents[1]);
       let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);
 
@@ -1725,6 +1851,12 @@ class Controller {
 
   }
   constructor() {
+    this.clickedRow = {}
+    this.clickedCol = {}
+    this.answerRow = {}
+    this.hoverRow = {}
+    this.hoverCol = {}
+
     this.loadTasks();
 
     this.loadConfigs();

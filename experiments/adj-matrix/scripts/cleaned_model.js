@@ -550,12 +550,41 @@ var View = /** @class */ (function () {
                 .style("fill-opacity", 0);
             this.setSquareColors('all');
         }
-        cells
-            .on("mouseover", mouseoverCell)
-            .on("mouseout", mouseoutCell);
-        // color squares
         var that = this;
+        cells
+            .on("mouseover", function (p) {
+            var cellID = p.rowid + p.colid;
+            console.log(_this.controller.hoverRow, p.rowid, cellID);
+            that.addHighlightNodesToDict(_this.controller.hoverRow, p.rowid, cellID); // Add row (rowid)
+            console.log(_this.controller.hoverRow, p, cellID);
+            that.addHighlightNodesToDict(_this.controller.hoverRow, p.colid, cellID); // Add row (colid)
+            console.log(_this.controller.hoverRow);
+            console.log(_this.controller.hoverCol);
+            that.addHighlightNodesToDict(_this.controller.hoverCol, p.colid, cellID); // Add col (colid)
+            console.log(_this.controller.hoverCol);
+            d3.selectAll('.hovered').classed('hovered', false);
+            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
+            that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
+        })
+            .on("mouseout", function (p) {
+            var cellID = p.rowid + p.colid;
+            that.removeHighlightNodesToDict(_this.controller.hoverRow, p.rowid, cellID); // Add row (rowid)
+            that.removeHighlightNodesToDict(_this.controller.hoverRow, p.colid, cellID); // Add row (colid)
+            that.removeHighlightNodesToDict(_this.controller.hoverCol, p.colid, cellID); // Add col (colid)
+            d3.selectAll('.hovered').classed('hovered', false);
+            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
+            that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
+        });
+        // color squares
+        this.controller.clickedRow = {};
+        this.controller.clickedCol = {};
+        this.controller.answerRow = {};
+        this.controller.hoverRow = {};
+        this.controller.hoverCol = {};
         function mouseoverCell(p) {
+            console.log(p);
+            // Add row (colid)
+            // Add col (colid)
             /*let attrPrimaryRow = that.selectHighlight(p,"Row","Attr"),
                 topologyPrimaryRow = that.selectHighlight(p,"Row","Topo",'y'),
                 attrSecondaryRow = that.selectHighlight(p,"Row","Attr"),
@@ -565,8 +594,8 @@ var View = /** @class */ (function () {
             topologyPrimaryRow.classed('hovered',true);
             attrSecondaryRow.classed('hovered',true);
             topologySecondaryCol.classed('hovered',true);*/
-            that.highlightRow(p);
-            that.highlightRowAndCol(p);
+            //that.highlightRow(p);
+            //that.highlightRowAndCol(p);
             /*
             let test1 = d3.selectAll(".highlightRow") // secondary
               .filter((d, i) => {
@@ -644,9 +673,8 @@ var View = /** @class */ (function () {
                 .classed('hovered', false);
         }
         this.order = this.controller.getOrder();
-        //
         this.edgeRows.append("text")
-            .attr("class", "nodeLabel")
+            .attr("class", "nodeRowLabel")
             .attr('z-index', 30)
             .attr("x", 0)
             .attr("y", this.verticalScale.bandwidth() / 2)
@@ -655,13 +683,16 @@ var View = /** @class */ (function () {
             .style("font-size", 7.5 + "px")
             .text(function (d, i) { return _this.nodes[i].name; })
             .on('click', function (d, i, nodes) {
-            d3.select(nodes[i]).classed('selected', function (data) {
+            // selects row text
+            d3.select(nodes[i]).classed('answer', function (data) {
                 return !_this.controller.configuration.state.selectedNodes.includes(data[0].rowid);
             });
+            // classes row
+            _this.classHighlights(d.screen_name, 'Row', 'answer');
             _this.selectNode(d[0].rowid);
         });
         this.edgeColumns.append("text")
-            .attr("class", "nodeLabel")
+            .attr("class", "nodeColLabel")
             .attr('z-index', 30)
             .attr("y", 3)
             .attr('x', 2)
@@ -670,8 +701,9 @@ var View = /** @class */ (function () {
             .style("font-size", 7.5 + "px")
             .text(function (d, i) { return _this.nodes[i].name; })
             .on('click', function (d, index, nodes) {
-            d3.select(nodes[index]).classed('selected', !_this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
-            _this.selectColumnNode(d[index].rowid);
+            d3.select(nodes[index]).classed('clicked', !_this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
+            _this.classHighlights(d.screen_name, 'Col', 'clicked');
+            //this.selectNeighborNodes(d[index].rowid);
         });
         this.tooltip = d3.select("body")
             .append("div")
@@ -853,9 +885,30 @@ var View = /** @class */ (function () {
             }
         }
     };
+    /**
+     * [selectRow description]
+     * @param  node [description]
+     * @return      [description]
+     */
+    View.prototype.classHighlights = function (nodeID, rowOrCol, className) {
+        if (rowOrCol === void 0) { rowOrCol = 'Row'; }
+        // select attr and topo highlight
+        d3.selectAll('#highlight' + 'Attr' + rowOrCol + nodeID + ',#highlight' + 'Topo' + rowOrCol + nodeID)
+            .classed(className, true);
+        //d3.selectAll('#highlight' + 'Topo' + rowOrCol + nodeID)
+        //  .classed(className, true);*
+        // highlight row text
+        //d3.selectAll('')rowOrCol
+        // else highlight column text
+    };
+    /**
+     * [highlightRow description]
+     * @param  node [description]
+     * @return      [description]
+     */
     View.prototype.highlightRow = function (node) {
         var nodeID = node.screen_name;
-        if (node.screen_name == null) {
+        if (nodeID == null) {
             nodeID = node.rowid;
         }
         // highlight attr
@@ -919,7 +972,69 @@ var View = /** @class */ (function () {
             }
         }
     };
-    View.prototype.renderHighlightNodes = function () {
+    View.prototype.nodeDictContainsPair = function (dict, nodeToHighlight, interactedElement) {
+        if (nodeToHighlight in dict) {
+            return dict[nodeToHighlight].has(interactedElement);
+        }
+        return false;
+    };
+    /**
+     * If an interactedElement has not been interacted with, it will add the nodeToHighlight
+     * to the provided highlight dict. If it has, it will remove it and return false. Otherwise,
+     * it will add the interacted element connection to the nodeToHighlight.
+     * @param  dict       The underlying storage to show which
+     * @param  nodeToHighlight  [description]
+     * @param  interactedElement [description]
+     * @return            [description]
+     */
+    View.prototype.addHighlightNodesToDict = function (dict, nodeToHighlight, interactedElement) {
+        // if node already in highlight, remove it
+        if (this.nodeDictContainsPair(dict, nodeToHighlight, interactedElement)) {
+            this.removeHighlightNodesToDict(dict, nodeToHighlight, interactedElement);
+            return false;
+        }
+        // if not,
+        if (!(nodeToHighlight in dict)) {
+            // create new set if no set exists
+            dict[nodeToHighlight] = new Set();
+        }
+        // add element to set
+        dict[nodeToHighlight].add(interactedElement);
+        return true;
+    };
+    View.prototype.removeHighlightNodesToDict = function (dict, nodeToHighlight, interactedElement) {
+        // if node is not in list, simply return
+        if (!this.nodeDictContainsPair(dict, nodeToHighlight, interactedElement)) {
+            return;
+        }
+        // if there are other elements highlighting the node to highlight
+        if (dict[nodeToHighlight].size > 1) { // if set has more than 1 object
+            dict[nodeToHighlight].delete(interactedElement); // delete element from set
+        }
+        else {
+            delete dict[nodeToHighlight];
+        }
+    };
+    View.prototype.renderHighlightNodesFromDict = function (dict, classToRender, rowOrCol) {
+        //unhighlight all other nodes
+        if (rowOrCol === void 0) { rowOrCol = 'Row'; }
+        //highlight correct nodes
+        var cssSelector = '';
+        for (var nodeID in dict) {
+            if (rowOrCol == 'Row') {
+                console.log(dict, nodeID, cssSelector);
+                cssSelector += '#highlight' + 'Attr' + rowOrCol + nodeID + ',' + '#highlight' + 'Topo' + rowOrCol + nodeID + ',';
+            }
+            else {
+                cssSelector += '#highlight' + rowOrCol + nodeID + ',';
+            }
+        }
+        // remove last comma
+        cssSelector = cssSelector.substring(0, cssSelector.length - 1);
+        console.log(cssSelector);
+        d3.selectAll(cssSelector).classed(classToRender, true);
+    };
+    View.prototype.renderNeighborHighlightNodes = function () {
         //for
         // remove all highlights
         d3.selectAll('.neighborSelected').classed('neighborSelected', false);
@@ -946,12 +1061,15 @@ var View = /** @class */ (function () {
         topoRow
             .classed('selected', !topoRow.classed('selected'));
     };
+    View.prototype.selectColumnNode = function (nodeID) {
+        // highlight
+    };
     /**
-     * [selectColumnNode description]
+     * Old implementation to select the neighboring nodes.
      * @param  nodeID [description]
      * @return        [description]
      */
-    View.prototype.selectColumnNode = function (nodeID) {
+    View.prototype.selectNeighborNodes = function (nodeID) {
         var nodeIndex = this.controller.configuration.state.adjMatrix.columnSelectedNodes.indexOf(nodeID);
         if (nodeIndex > -1) {
             // find all neighbors and remove them
@@ -964,7 +1082,7 @@ var View = /** @class */ (function () {
             this.addHighlightNode(nodeID);
             this.controller.configuration.state.adjMatrix.columnSelectedNodes.push(nodeID);
         }
-        this.renderHighlightNodes();
+        this.renderNeighborHighlightNodes();
         /*let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID);
     
         if(index > -1){ // if in selected node, remove it (unless it is )
@@ -1406,6 +1524,11 @@ var View = /** @class */ (function () {
 // Work on importing class file
 var Controller = /** @class */ (function () {
     function Controller() {
+        this.clickedRow = {};
+        this.clickedCol = {};
+        this.answerRow = {};
+        this.hoverRow = {};
+        this.hoverCol = {};
         this.loadTasks();
         this.loadConfigs();
         /*console.log(this.configuration);

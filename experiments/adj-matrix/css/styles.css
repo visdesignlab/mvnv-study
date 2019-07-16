@@ -77,19 +77,19 @@ body {
 line {
 pointer-events: none;
 }
+
 .hovered {
 fill: #fde8ca;
 fill-opacity:1 !important;
 }
 
-.neighborSelected{
-fill: #D3ECE9 !important;
+.clicked{
+fill: #F8D8A9 !important;
 fill-opacity:1 !important;
 }
 
 /* most specific */
-rect.selected{
-/*fill: #FFADA0 !important;*/
+rect.answer{
 fill :#ea9b0f !important;
 fill-opacity:1 !important;
 }
@@ -99,12 +99,15 @@ fill: red;
 font-weight: bold;
 }
 
-.column text.selected {
-font-weight: 800;
-/*fill: #D3ECE9;*/
+text.hovered {
+font-weight: 450;
+/*fill: #ea9b0f;*/
 }
-
-.row text.selected {
+text.clicked {
+font-weight: 650;
+/*fill: #ea9b0f;*/
+}
+text.answer {
 font-weight: 800;
 /*fill: #ea9b0f;*/
 }
