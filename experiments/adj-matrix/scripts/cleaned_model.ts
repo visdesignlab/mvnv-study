@@ -791,7 +791,10 @@ class View {
 
 
     this.edgeRows.append("text")
-      .attr("class", "nodeRowLabel")
+      .attr('class','nodeLabel')
+      .attr("id", (d,i)=>{
+        return "nodeLabelRow" + d[i].rowid;
+      })
       .attr('z-index', 30)
       .attr("x", 0)
       .attr("y", this.verticalScale.bandwidth() / 2)
@@ -825,7 +828,10 @@ class View {
 
 
     this.edgeColumns.append("text")
-      .attr("class", "nodeColLabel")
+      .attr("id", (d,i)=>{
+        return "nodeLabelCol" + d[i].rowid;
+      })
+      .attr('class','nodeLabel')
       .attr('z-index', 30)
       .attr("y", 3)
       .attr('x', 2)
@@ -839,8 +845,9 @@ class View {
         // will add or remove node
         console.log(nodeID,this.controller.clickedCol,nodeID in this.controller.clickedCol)
         that.addHighlightNodesToDict(this.controller.clickedCol, nodeID, nodeID);  // Add row (rowid)
-        d3.selectAll('.clicked').classed('clicked',nodeID in this.controller.clickedCol);
+        d3.selectAll('.clicked').classed('clicked',false);
         that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
+        that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
 
         // selects row text
         //d3.select(nodes[i]).classed('answer', (data) => {
@@ -1202,6 +1209,7 @@ class View {
   }
 
   renderHighlightNodesFromDict(dict, classToRender, rowOrCol: string = 'Row') {
+
     //unhighlight all other nodes
 
     //highlight correct nodes
@@ -1214,11 +1222,17 @@ class View {
         cssSelector += '#highlight' + rowOrCol + nodeID + ','
       }
 
+      if(classToRender == 'answer' && rowOrCol == "Row"){
+        cssSelector += '#nodeLabelRow'+nodeID+','
+      }
 
     }
     // remove last comma
     cssSelector = cssSelector.substring(0, cssSelector.length - 1);
     console.log(cssSelector);
+    if(cssSelector==''){
+      return;
+    }
     d3.selectAll(cssSelector).classed(classToRender, true);
 
   }

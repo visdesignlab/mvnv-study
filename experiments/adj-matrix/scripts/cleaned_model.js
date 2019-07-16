@@ -693,7 +693,10 @@ var View = /** @class */ (function () {
         }
         this.order = this.controller.getOrder();
         this.edgeRows.append("text")
-            .attr("class", "nodeRowLabel")
+            .attr('class', 'nodeLabel')
+            .attr("id", function (d, i) {
+            return "nodeLabelRow" + d[i].rowid;
+        })
             .attr('z-index', 30)
             .attr("x", 0)
             .attr("y", this.verticalScale.bandwidth() / 2)
@@ -723,7 +726,10 @@ var View = /** @class */ (function () {
             //this.selectNode(d[0].rowid);
         });
         this.edgeColumns.append("text")
-            .attr("class", "nodeColLabel")
+            .attr("id", function (d, i) {
+            return "nodeLabelCol" + d[i].rowid;
+        })
+            .attr('class', 'nodeLabel')
             .attr('z-index', 30)
             .attr("y", 3)
             .attr('x', 2)
@@ -737,8 +743,9 @@ var View = /** @class */ (function () {
             // will add or remove node
             console.log(nodeID, _this.controller.clickedCol, nodeID in _this.controller.clickedCol);
             that.addHighlightNodesToDict(_this.controller.clickedCol, nodeID, nodeID); // Add row (rowid)
-            d3.selectAll('.clicked').classed('clicked', nodeID in _this.controller.clickedCol);
+            d3.selectAll('.clicked').classed('clicked', false);
             that.renderHighlightNodesFromDict(_this.controller.clickedCol, 'clicked', 'Col');
+            that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
             // selects row text
             //d3.select(nodes[i]).classed('answer', (data) => {
             //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
@@ -1070,10 +1077,16 @@ var View = /** @class */ (function () {
             else {
                 cssSelector += '#highlight' + rowOrCol + nodeID + ',';
             }
+            if (classToRender == 'answer' && rowOrCol == "Row") {
+                cssSelector += '#nodeLabelRow' + nodeID + ',';
+            }
         }
         // remove last comma
         cssSelector = cssSelector.substring(0, cssSelector.length - 1);
         console.log(cssSelector);
+        if (cssSelector == '') {
+            return;
+        }
         d3.selectAll(cssSelector).classed(classToRender, true);
     };
     View.prototype.renderNeighborHighlightNodes = function () {
