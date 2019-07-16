@@ -1286,6 +1286,22 @@ var View = /** @class */ (function () {
                 .classed('hovered', false);
             d3.selectAll('.highlightTopoRow')
                 .classed('hovered', false);
+        }).on('click', function (d, i, nodes) {
+            /*let cellElement = d3.select(nodes[index]).selectAll('rect');
+            console.log(cellElement);
+            cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
+            console.log(cellElement.classed('clickedCell'));
+            let cellID = cell.rowid + cell.colid;*/
+            console.log(d);
+            var nodeID = d.screen_name;
+            // will add or remove node
+            console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
+            that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row (rowid)
+            d3.selectAll('.answer').classed('answer', nodeID in _this.controller.answerRow);
+            that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
+            // classes row
+            //this.classHighlights(d.screen_name, 'Row', 'answer');
+            //this.selectNode(d[0].rowid);
         });
         var columns = this.controller.configuration.nodeAttributes;
         // Based on the data type set widths

@@ -1420,6 +1420,8 @@ class View {
         return "translate(0," + this.verticalScale(i) + ")";
       });
 
+
+
     this.attributeRows.append("line")
       .attr("x1", 0)
       .attr("x2", this.attributeWidth)
@@ -1465,7 +1467,25 @@ class View {
           .classed('hovered', false)
         d3.selectAll('.highlightTopoRow')
           .classed('hovered', false)
-      })
+      }).on('click', (d, i, nodes) => {
+
+        /*let cellElement = d3.select(nodes[index]).selectAll('rect');
+        console.log(cellElement);
+        cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
+        console.log(cellElement.classed('clickedCell'));
+        let cellID = cell.rowid + cell.colid;*/
+        console.log(d);
+        let nodeID = d.screen_name;
+        // will add or remove node
+        console.log(nodeID,this.controller.answerRow,nodeID in this.controller.answerRow)
+        that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
+        d3.selectAll('.answer').classed('answer',nodeID in this.controller.answerRow);
+        that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+
+        // classes row
+        //this.classHighlights(d.screen_name, 'Row', 'answer');
+        //this.selectNode(d[0].rowid);
+      });
 
 
     let columns = this.controller.configuration.nodeAttributes;
