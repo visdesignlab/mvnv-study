@@ -160,7 +160,7 @@ var Model = /** @class */ (function () {
         var order;
         this.orderType = type;
         this.controller.configuration.state.adjMatrix.sortKey = type;
-        if (type == "cluster") {
+        if (type == "clusterSpectral" || type == "clusterBary" || type == "clusterLeaf") {
             /*var graph = reorder.graph()
                 .nodes(this.nodes)
                 .links(this.edges)
@@ -169,21 +169,18 @@ var Model = /** @class */ (function () {
                 .nodes(this.nodes)
                 .links(this.edges)
                 .init();
-            /*var graph = reorder.mat2graph(this.scalarMatrix, true);
-      
-            var barycenter = reorder.barycenter_order(graph);
-            console.log(barycenter);
-              let improved = reorder.adjacent_exchange(graph,
-                               barycenter[0],
-                               barycenter[1]);
-      
-            improved[0].forEach((lo, i) =>{
-              console.log(lo);
-                  this.nodes[i].barycenter = lo;
-             });
-            console.log(improved);
-            //var graph = reorder.mat2graph(this.matrix, true);*/
-            order = reorder.spectral_order(graph);
+            if (type == "clusterBary") {
+                var barycenter = reorder.barycenter_order(graph);
+                order = reorder.adjacent_exchange(graph, barycenter[0], barycenter[1])[1];
+            }
+            else if (type == "clusterSpectral") {
+                order = reorder.spectral_order(graph);
+            }
+            else if (type == "clusterLeaf") {
+                var mat = reorder.graph2mat(graph);
+                order = reorder.optimal_leaf_order()(mat);
+            }
+            //
             //order = reorder.optimal_leaf_order()(this.scalarMatrix);
         }
         else if (!this.isQuant(this.orderType)) { // == "screen_name" || this.orderType == "name") {
