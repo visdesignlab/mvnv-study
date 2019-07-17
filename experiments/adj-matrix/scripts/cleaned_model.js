@@ -627,13 +627,17 @@ var View = /** @class */ (function () {
             if (_this.controller.clickedCells.has(cellID)) {
                 _this.controller.clickedCells.delete(cellID);
                 that.removeHighlightNodesToDict(_this.controller.clickedRow, cell.rowid, cellID); // Add row (rowid)
-                that.removeHighlightNodesToDict(_this.controller.clickedRow, cell.colid, cellID); // Add row (colid)
+                if (cell.colid !== cell.rowid) {
+                    that.removeHighlightNodesToDict(_this.controller.clickedRow, cell.colid, cellID); // Add row (colid)
+                }
                 that.removeHighlightNodesToDict(_this.controller.clickedCol, cell.colid, cellID); // Add col (colid)
             }
             else {
                 _this.controller.clickedCells.add(cellID);
                 that.addHighlightNodesToDict(_this.controller.clickedRow, cell.rowid, cellID); // Add row (rowid)
-                that.addHighlightNodesToDict(_this.controller.clickedRow, cell.colid, cellID); // Add row (colid)
+                if (cell.colid !== cell.rowid) {
+                    that.addHighlightNodesToDict(_this.controller.clickedRow, cell.colid, cellID); // Add row (colid)
+                }
                 that.addHighlightNodesToDict(_this.controller.clickedCol, cell.colid, cellID); // Add col (colid)
             }
             d3.selectAll('.clicked').classed('clicked', false);
