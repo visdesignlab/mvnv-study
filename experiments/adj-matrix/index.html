@@ -12,6 +12,50 @@
 <div class="columns">
 
   <!-- Control panel -->
+
+
+
+
+
+  <div class="column" id="visDiv">
+    <div id="taskArea">
+
+      <a class="button" id="panelControl">Hide/Show Control Panel</a>
+      <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
+      <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
+      <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+          </p>
+
+
+
+          <a href="#" class="card-header-icon" aria-label="more options">
+            <span class="icon">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+          </a>
+        </header>
+      </div>
+    </div>
+    <div class="loadingGroup">
+      <div class="loading"></div>
+      <div class="loadingOverlay"></div>
+      <div id="interactiveFreeFormMain">
+        <div id="topology" class="topocontainer" height="700" width="700"> </div>
+        <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
+        <svg id="legends" height="60" width="575"> </svg>
+      </div>
+
+      <div>
+
+        <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+        <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+      </div>
+
+    </div>
+  </div>
   <div class="column is-narrow" id="panelDiv">
 
     <aside class="menu">
@@ -20,8 +64,8 @@
 
 
       <!-- <p class="menu-label">
-                    Graph Settings
-                </p> -->
+                  Graph Settings
+              </p> -->
       <ul class="menu-list">
 
         <li id="graphSize">
@@ -30,9 +74,9 @@
           <ul>
             <div class="control">
               <!-- <label class="radio">
-                                                <input type="radio" name="graphSize" value="small" >
-                                                Small [30]
-                                            </label> -->
+                                              <input type="radio" name="graphSize" value="small" >
+                                              Small [30]
+                                          </label> -->
 
               <label class="radio">
                 <input type="radio" name="graphSize" value="small">
@@ -110,7 +154,7 @@
             <label for="renderBarsCheckbox">Render Edges as Bars</label>
           </div>
 
-          <li >
+          <li>
             <a>Attribute to Sort on</a>
             <div class="select">
               <select id="order">
@@ -132,7 +176,7 @@
             </div>
             <br></br>
             <!--
-              -->
+            -->
           </li>
 
           <li id="nodeQuantSelect">
@@ -172,89 +216,48 @@
 
   </div>
 
+  <!-- <script src="http://requirejs.org/docs/release/2.1.8/comments/require.js"></script> -->
+  <script type="text/javascript" src="scripts/d3.min.js"> </script>
+  <!-- Reorder references -->
+  <script src="libs/reorder/science.v1.js"></script>
+  <script src="libs/reorder/tiny-queue.js"></script>
+  <script src="libs/reorder/reorder.v1.js"></script>
 
 
+  <script>
+    d3.select("#panelControl").on("click", () => {
+      let panel = d3.select("#panelDiv");
+      let isVisible = panel.style("display") === "block";
+      panel.style("display", isVisible ? "none" : "block");
+      //window.controller.reload();
+    });
+    d3.select("#panelControl").on("click")();
+  </script>
 
-  <div class="column" id="visDiv">
-    <div id="taskArea">
+  <script type="text/javascript" src="scripts/fill_config_settings.js"></script>
+  <script type="text/javascript" src="scripts/cleaned_model.js"> </script>
+  <script>
+    window.onload = function() {
+      console.log(d3.select("#optimalConfig"));
+      d3.select("#optimalConfig").on("click", () => {
+        console.log("Clicked Optimal!")
+        window.controller.tenAttr = false;
+        window.controller.fiveAttr = false;
+        window.controller.loadConfigs();
+      });
+      console.log(d3.select("#nodeLinkConfig"));
+      d3.select("#nodeLinkConfig").on("click", () => { // 5 attr
+        console.log("Clicked 5");
+        window.controller.tenAttr = false;
+        window.controller.fiveAttr = true;
+        window.controller.loadConfigs();
+      });
 
-      <a class="button" id="panelControl">Hide/Show Control Panel</a>
-      <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
-      <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
-      <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
-      <div class="card">
-        <header class="card-header">
-          <p class="card-header-title">
-          </p>
-
-
-
-          <a href="#" class="card-header-icon" aria-label="more options">
-            <span class="icon">
-              <i class="fas fa-angle-down" aria-hidden="true"></i>
-            </span>
-          </a>
-        </header>
-      </div>
-    </div>
-    <div class="loadingGroup">
-      <div class="loading"></div>
-      <div class="loadingOverlay"></div>
-      <div id="interactiveFreeFormMain">
-        <div id="topology" class="topocontainer" height="700" width="700"> </div>
-        <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
-        <svg id="legends" height="60" width="575"> </svg>
-      </div>
-    <div>
-    <a href="#" id="next" class="button is-pulled-right">Next Task</a>
-    <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
-  </div>
-</div>
-
-<!-- <script src="http://requirejs.org/docs/release/2.1.8/comments/require.js"></script> -->
-<script type="text/javascript" src="scripts/d3.min.js"> </script>
-<!-- Reorder references -->
-<script src="libs/reorder/science.v1.js"></script>
-<script src="libs/reorder/tiny-queue.js"></script>
-<script src="libs/reorder/reorder.v1.js"></script>
-
-
-<script>
-  d3.select("#panelControl").on("click", () => {
-    let panel = d3.select("#panelDiv");
-    let isVisible = panel.style("display") === "block";
-    panel.style("display", isVisible ? "none" : "block");
-    //window.controller.reload();
-  });
-  d3.select("#panelControl").on("click")();
-
-
-</script>
-
-<script type="text/javascript" src="scripts/fill_config_settings.js"></script>
-<script type="text/javascript" src="scripts/cleaned_model.js"> </script>
-<script>
-window.onload=function(){
-console.log(d3.select("#optimalConfig"));
-d3.select("#optimalConfig").on("click", () => {
-  console.log("Clicked Optimal!")
-  window.controller.tenAttr = false;
-  window.controller.fiveAttr = false;
-  window.controller.loadConfigs();
-});
-console.log(d3.select("#nodeLinkConfig"));
-d3.select("#nodeLinkConfig").on("click", () => { // 5 attr
-  console.log("Clicked 5");
-  window.controller.tenAttr = false;
-  window.controller.fiveAttr = true;
-  window.controller.loadConfigs();
-});
-
-d3.select("#saturatedConfig").on("click", () => { // 10 attr
-  console.log("Clicked 10")
-  window.controller.tenAttr = true;
-  window.controller.fiveAttr = false;
-  window.controller.loadConfigs();
-});
-}
-</script>
+      d3.select("#saturatedConfig").on("click", () => { // 10 attr
+        console.log("Clicked 10")
+        window.controller.tenAttr = true;
+        window.controller.fiveAttr = false;
+        window.controller.loadConfigs();
+      });
+    }
+  </script>
