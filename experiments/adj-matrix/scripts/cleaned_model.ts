@@ -680,7 +680,9 @@ class View {
 
         let cellID = cell.rowid + cell.colid;
         that.addHighlightNodesToDict(this.controller.hoverRow, cell.rowid, cellID);  // Add row (rowid)
-        that.addHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);  // Add row (colid)
+        if(cell.colid !== cell.rowid){
+          that.addHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);  // Add row (colid)
+        }
         that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
@@ -691,7 +693,10 @@ class View {
 
         let cellID = cell.rowid + cell.colid;
         that.removeHighlightNodesToDict(this.controller.hoverRow, cell.rowid, cellID);  // Add row (rowid)
-        that.removeHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);  // Add row (colid)
+        if(cell.colid !== cell.rowid){
+          that.removeHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);
+        }
+          // Add row (colid)
         that.removeHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
@@ -1259,6 +1264,7 @@ class View {
 
     //highlight correct nodes
     let cssSelector = '';
+    console.log(dict);
     for (let nodeID in dict) {
       if (rowOrCol == 'Row') {
         console.log(dict, nodeID, cssSelector);
