@@ -112,15 +112,18 @@ class Model {
       return false
     }
   }
-
+  private scalarMatrix: any;
   constructor(controller: any) {
     this.controller = controller;
     d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
       //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
       //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
+      console.log("data/network_" + controller.configuration.loadedGraph + ".json");
       setPanelValuesFromFile(controller.configuration, data);
       this.matrix = [];
+      this.scalarMatrix = [];
+
       this.nodes = data.nodes
       this.idMap = {};
       this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
@@ -137,6 +140,7 @@ class Model {
       })
 
       this.edges = data.links;
+
       this.controller = controller;
 
       this.processData();
@@ -162,7 +166,35 @@ class Model {
     let order;
     this.orderType = type;
     this.controller.configuration.state.adjMatrix.sortKey = type;
-    if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
+    if (type=="cluster"){
+      /*var graph = reorder.graph()
+    	  .nodes(this.nodes)
+    	  .links(this.edges)
+    	  .init();*/
+      var graph = reorder.graph()
+    	  .nodes(this.nodes)
+    	  .links(this.edges)
+    	  .init();
+
+      /*var graph = reorder.mat2graph(this.scalarMatrix, true);
+
+      var barycenter = reorder.barycenter_order(graph);
+      console.log(barycenter);
+	    let improved = reorder.adjacent_exchange(graph,
+						 barycenter[0],
+						 barycenter[1]);
+
+      improved[0].forEach((lo, i) =>{
+        console.log(lo);
+       	    this.nodes[i].barycenter = lo;
+       });
+      console.log(improved);
+      //var graph = reorder.mat2graph(this.matrix, true);*/
+      order = reorder.spectral_order(graph);
+
+      //order = reorder.optimal_leaf_order()(this.scalarMatrix);
+    }
+    else if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
       order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a][type].localeCompare(this.nodes[b][type]));
     } else {
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
@@ -194,14 +226,26 @@ class Model {
 
       /* matrix used for edge attributes, otherwise should we hide */
       this.matrix[i] = this.nodes.map(function(colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
-    });
+      this.scalarMatrix[i] = this.nodes.map(function(colNode) { return 0; });
 
+    });
+    function checkEdge(edge){
+      if (typeof edge.source !== "number") return false
+	    if (typeof edge.target !== "number") return false;
+      return true
+    }
+    console.log(this.edges)
+    this.edges = this.edges.filter(checkEdge);
+    console.log(this.edges)
     this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 }
     // Convert links to matrix; count character occurrences.
     this.edges.forEach((link) => {
+
+
       let addValue = 1;
       this.matrix[this.idMap[link.source]][this.idMap[link.target]][link.type] += link.count;
-
+      //
+      this.scalarMatrix[this.idMap[link.source]][this.idMap[link.target]] += link.count;
 
 
       /* could be used for varying edge types */
@@ -213,7 +257,11 @@ class Model {
       if (!this.controller.configuration.isDirected) {
         this.matrix[this.idMap[link.target]][this.idMap[link.source]].z += addValue;
         this.matrix[this.idMap[link.target]][this.idMap[link.source]][link.type] += link.count;
+        this.scalarMatrix[this.idMap[link.source]][this.idMap[link.target]] += link.count;
+
       }
+      link.source = this.idMap[link.source];
+      link.target = this.idMap[link.target];
     });
   }
 
@@ -1183,9 +1231,10 @@ class View {
       this.removeHighlightNodesToDict(dict, nodeToHighlight, interactedElement)
       return false;
     }
-    // if not,
+
+    // create new set if set exists
     if (!(nodeToHighlight in dict)) {
-      // create new set if no set exists
+
       dict[nodeToHighlight] = new Set();
     }
     // add element to set

@@ -124,6 +124,7 @@
                 <option value="count_followers_in_query">by Followers in Network</option>
                 <option value="continent">by Nationality</option>
                 <option value="type">by Account Type</option>
+                <option value="cluster"> by Cluster </option>
               </select>
 
             </div>
@@ -210,6 +211,12 @@
 
 <!-- <script src="http://requirejs.org/docs/release/2.1.8/comments/require.js"></script> -->
 <script type="text/javascript" src="scripts/d3.min.js"> </script>
+<!-- Reorder references -->
+<script src="libs/reorder/science.v1.js"></script>
+<script src="libs/reorder/tiny-queue.js"></script>
+<script src="libs/reorder/reorder.v1.js"></script>
+
+
 <script>
   d3.select("#panelControl").on("click", () => {
     let panel = d3.select("#panelDiv");

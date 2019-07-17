@@ -51,8 +51,10 @@ var Model = /** @class */ (function () {
             //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
             //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
+            console.log("data/network_" + controller.configuration.loadedGraph + ".json");
             setPanelValuesFromFile(controller.configuration, data);
             _this.matrix = [];
+            _this.scalarMatrix = [];
             _this.nodes = data.nodes;
             _this.idMap = {};
             _this.orderType = _this.controller.configuration.state.adjMatrix.sortKey;
@@ -158,7 +160,33 @@ var Model = /** @class */ (function () {
         var order;
         this.orderType = type;
         this.controller.configuration.state.adjMatrix.sortKey = type;
-        if (!this.isQuant(this.orderType)) { // == "screen_name" || this.orderType == "name") {
+        if (type == "cluster") {
+            /*var graph = reorder.graph()
+                .nodes(this.nodes)
+                .links(this.edges)
+                .init();*/
+            var graph = reorder.graph()
+                .nodes(this.nodes)
+                .links(this.edges)
+                .init();
+            /*var graph = reorder.mat2graph(this.scalarMatrix, true);
+      
+            var barycenter = reorder.barycenter_order(graph);
+            console.log(barycenter);
+              let improved = reorder.adjacent_exchange(graph,
+                               barycenter[0],
+                               barycenter[1]);
+      
+            improved[0].forEach((lo, i) =>{
+              console.log(lo);
+                  this.nodes[i].barycenter = lo;
+             });
+            console.log(improved);
+            //var graph = reorder.mat2graph(this.matrix, true);*/
+            order = reorder.spectral_order(graph);
+            //order = reorder.optimal_leaf_order()(this.scalarMatrix);
+        }
+        else if (!this.isQuant(this.orderType)) { // == "screen_name" || this.orderType == "name") {
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a][type].localeCompare(_this.nodes[b][type]); });
         }
         else {
@@ -188,12 +216,25 @@ var Model = /** @class */ (function () {
             rowNode.y = i;
             /* matrix used for edge attributes, otherwise should we hide */
             _this.matrix[i] = _this.nodes.map(function (colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
+            _this.scalarMatrix[i] = _this.nodes.map(function (colNode) { return 0; });
         });
+        function checkEdge(edge) {
+            if (typeof edge.source !== "number")
+                return false;
+            if (typeof edge.target !== "number")
+                return false;
+            return true;
+        }
+        console.log(this.edges);
+        this.edges = this.edges.filter(checkEdge);
+        console.log(this.edges);
         this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 };
         // Convert links to matrix; count character occurrences.
         this.edges.forEach(function (link) {
             var addValue = 1;
             _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]][link.type] += link.count;
+            //
+            _this.scalarMatrix[_this.idMap[link.source]][_this.idMap[link.target]] += link.count;
             /* could be used for varying edge types */
             //this.maxTracker = { 'reply': 3, 'retweet': 3, 'mentions': 2 }
             _this.matrix[_this.idMap[link.source]][_this.idMap[link.target]].z += addValue;
@@ -202,7 +243,10 @@ var Model = /** @class */ (function () {
             if (!_this.controller.configuration.isDirected) {
                 _this.matrix[_this.idMap[link.target]][_this.idMap[link.source]].z += addValue;
                 _this.matrix[_this.idMap[link.target]][_this.idMap[link.source]][link.type] += link.count;
+                _this.scalarMatrix[_this.idMap[link.source]][_this.idMap[link.target]] += link.count;
             }
+            link.source = _this.idMap[link.source];
+            link.target = _this.idMap[link.target];
         });
     };
     Model.prototype.getOrder = function () {
@@ -1042,9 +1086,8 @@ var View = /** @class */ (function () {
             this.removeHighlightNodesToDict(dict, nodeToHighlight, interactedElement);
             return false;
         }
-        // if not,
+        // create new set if set exists
         if (!(nodeToHighlight in dict)) {
-            // create new set if no set exists
             dict[nodeToHighlight] = new Set();
         }
         // add element to set
