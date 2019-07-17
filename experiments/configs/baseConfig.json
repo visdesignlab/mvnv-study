@@ -17,7 +17,7 @@
                 ]
             },
             "friends_count": {
-                "label":"Friends",
+                "label":"Following",
                 "domain": [
                     0,
                     1200
@@ -31,7 +31,7 @@
                 ]
             },
             "count_followers_in_query": {
-                "label":"C_Followers",
+                "label":"In-Network followers",
                 "domain": [
                     0,
                     35
@@ -52,28 +52,29 @@
                 ]
             },
             "memberFor_days": {
-                "label":"Acct Age",
+                "label":"Account Age",
                 "domain": [
                     175,
                     4498
                 ]
             },
             "query_tweet_count": {
-                "label":"Queries",
+                "label":"On-topic Tweets",
                 "domain": [
                     0,
                     10
                 ]
             },
             "type": {
-                "label":"Node Type",
+                "label":"Type",
+                "type":"Color",
                 "domain": [
                     "person",
                     "institution"
                 ],
                 "legendLabels": [
-                    "Pers.",
-                    "Inst."
+                    "Person",
+                    "Institution"
                 ],
                 "range": [
                     "#e86b45",
@@ -81,6 +82,7 @@
                 ]
             },
             "continent": {
+                "type":"Text",
                 "label":"Continent",
                 "domain": [
                     "North America",
@@ -125,7 +127,7 @@
         }
     },
     "style": {
-        "selectedNodeColor": "black",
+        "selectedNodeColor": "#e86b45",
         "hoveredNodeColor": "#fde8ca"
     },
     "nodeLink": {

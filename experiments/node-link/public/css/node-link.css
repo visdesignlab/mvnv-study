@@ -11,14 +11,20 @@
     
 
     #targetSize{
-        width:1440px;
-        height:900px;
-        background:#d2d2d2;
+        width:1920px;
+        height:1080px;
+        background-color:rgb(207, 207, 207);
+        /* border-style:solid; */
+        /* border-color:rgb(100, 100, 100); */
     }
 
-    #visContent{
-        margin:0px 50px; ;
+    /* #visContent{
+        /* margin:0px 50px; ; */
 
+    /* } */ 
+
+    #node-link-svg{
+        display: inline-flex;
     }
 
     #experimentr {
@@ -40,8 +46,9 @@
         text-decoration: underline;
     }
 
+
     #hit {
-        display: none;
+        /* display: none;  */
     }
 
     
@@ -69,6 +76,12 @@
         /* stroke:black;
         stroke-width:2px; */
 
+    }
+
+
+
+    #legend-svg{
+        background-color:rgb(154, 154, 154);
     }
 
     .pathLabel>textPath {
@@ -181,18 +194,32 @@
         color:white;
     }
 
-    #vis{
-        width:100%;
+    /* #vis{ */
+        /* width:100%; */
         /* height:100%; */
+    /* } */
+
+    #vis{
+        display:flex;
     }
+
+    .taskCard{
+        padding:10px 20px;
+        font-size:20px;
+    }
+
+
 
     #panelDiv .button {
         width:300px;
+        
     }
 
     #panelDiv{
         height:1500px;
         overflow-y: scroll;
+        margin-top:50px;
+        /* display:none; */
     }
 
     

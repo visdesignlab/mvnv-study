@@ -33,9 +33,13 @@ var color = d3
   //.range(["#56ebd3", "#33837f", "#68c3ef", "#1c4585"]) //Colorgorical, blue-ish
   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
   .range(colorRange);
-var height = 1200;
-var width = 1800;
-var size = 1800; //720;
+var height;
+var width;
+var visDimensions ={width:0,height:0};
+var panelDimensions ={width:0,height:0};
+// var size = 1800; //720;
+
+
 
 var svg;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
@@ -140,32 +144,58 @@ function exportConfig(baseKeys, nodeLinkKeys, isTaskConfig) {
 
 // Single function to put chart into specified target
 function loadVis(id) {
+
+  let targetDiv = d3.select('#targetSize')
+   width = targetDiv.style('width').replace(/\D/g, '')
+   height = targetDiv.style('height').replace(/\D/g, '')
+
+    // height = height*0.75;
+   let taskBarHeight = 74;
+  //  console.log(width2,height2)
+
+  visDimensions.width  = width*0.8 - 24;
+  visDimensions.height  = height - taskBarHeight;
+
+  panelDimensions.width = width*0.2;
+  panelDimensions.height  = height - taskBarHeight;
+
+  console.log(panelDimensions.height);
+
   d3.select("#panelControl").on("click", () => {
     let panel = d3.select("#panelDiv");
     let isVisible = panel.style("display") === "block";
     panel.style("display", isVisible ? "none" : "block");
   });
 
-  legend = d3
-    .select("#" + id)
-    .append("svg")
-    .attr("id", "legend-svg")
-    .attr("width", width) //size + margin.left + margin.right)
-    .attr("height", 100);
+  // d3.select('#vis')
+  // .style("width", visDimensions.width +  'px') //size + margin.left + margin.right)
+  // .style("height", visDimensions.height+  'px');
 
-  legend.append("g").attr("id", "legend");
+  d3.select('#visPanel')
+  .style("width", panelDimensions.width +  'px') //size + margin.left + margin.right)
+  // .style("height", panelDimensions.height +  'px');
 
   svg = d3
-    .select("#" + id)
-    .append("svg")
-    .attr("id", "node-link-svg")
-    .attr("width", width) //size + margin.left + margin.right)
-    .attr("height", height);
+    .select("#node-link-svg")
+    .attr("width", visDimensions.width) //size + margin.left + margin.right)
+    .attr("height", visDimensions.height);
 
   //set up svg and groups for nodes/links
   svg.append("g").attr("class", "links");
 
   svg.append("g").attr("class", "nodes");
+
+  let parentWidth = d3.select('#visPanel').select('.content').node().getBoundingClientRect().width;
+
+  // debugger
+  // console.log('really', parentWidth.getBoundingClientRect())
+    legend = d3
+  .select("#legend-svg")
+  .attr("width", parentWidth) //size + margin.left + margin.right)
+  .attr("height",200)
+  // .attr("height", panelDimensions.height);
+
+// legend.append("g").attr("id", "legend");
 
   simulation = d3
     .forceSimulation()
@@ -176,7 +206,7 @@ function loadVis(id) {
       })
     )
     .force("charge", d3.forceManyBody()) //.strength(-800))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("center", d3.forceCenter(visDimensions.width / 2, visDimensions.height / 2));
 
   // .force("y", d3.forceY().y(0));
 
@@ -1132,6 +1162,7 @@ function updateVis() {
       .select("path")
       .style("stroke-width", edgeWidth)
       .style("stroke", edgeColor)
+      .style("opacity", .4)
       .attr("id", d => d.id);
 
     // TO DO , set ARROW DIRECTION DYNAMICALLY
@@ -1177,7 +1208,7 @@ function updateVis() {
         config.nodeIsRect ? nodeLength(d) / 20 : nodeLength(d) / 2
       )
       .attr("ry", d =>
-        config.nodeIsRect ? nodeHeight(d) / 20 : nodeLength(d) / 2
+        config.nodeIsRect ? nodeHeight(d) / 20 : nodeHeight(d) / 2
       );
 
     node
@@ -1239,7 +1270,7 @@ function updateVis() {
     let drawCat =
       Object.keys(config.nodeAttributes.filter(isCategorical)).length > 0;
     let radius = drawCat ? nodeMarkerHeight * 0.15 : 0;
-    let padding = drawCat ? 0 : 0;
+    let padding = drawCat ? 3 : 0;
     let xPos = drawCat ? nodeMarkerLength / 2 - radius : 0;
 
     let barAttrs = config.nodeLink.drawBars
@@ -1344,25 +1375,39 @@ function updateVis() {
       //for each circle associate the relevant data from the parent node
       .data(d =>
         catAttrs.map(attr => {
-          return { data: d[attr], attr };
+          let valuePos = config.attributeScales.node[attr].domain.indexOf(d[attr]);
+          return { data: d[attr], attr, label:config.attributeScales.node[attr].legendLabels[valuePos] };
         })
       );
 
     let catGlyphsEnter = catGlyphs
       .enter()
-      .append("rect")
+      .append("g")
       .attr("class", "categorical");
+
+      catGlyphsEnter.append('text')
+      catGlyphsEnter.append('rect')
 
     catGlyphs.exit().remove();
 
     catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
-    catGlyphs
-      .attr("x", xPos - radius)
-      .attr("y", (d, i) => catYScale(i) - radius)
+    catGlyphs.attr('transform',(d,i)=>'translate(' + (xPos - radius) + ',' + (catYScale(i) - radius)  + ')' );
+      // .attr("x", xPos - radius)
+      // .attr("y", (d, i) => catYScale(i) - radius)
+
+      catGlyphs
+      .select('rect')
       .style("fill", d => catFill(d.attr, d.data))
-      .attr("width", radius * 2)
+      .attr("width", d=>config.attributeScales.node[d.attr].type === 'Text' ? 0 : radius * 2)
       .attr("height", radius * 2);
+
+      catGlyphs
+      .select('text')
+      .text(d=>config.attributeScales.node[d.attr].type === 'Text' ? d.label : '')
+      .attr('y',radius*2)
+      .attr('x',radius)
+      .style('text-anchor','middle')
   }
 
   d3.select("#exportGraph").on("click", () => {
@@ -1639,8 +1684,8 @@ function updateVis() {
     let radius = nodeMarkerLength / 2;
 
     d3.selectAll(".nodeGroup").attr("transform", d => {
-      d.x = Math.max(radius, Math.min(width - radius, d.x));
-      d.y = Math.max(radius, Math.min(height - radius, d.y));
+      d.x = Math.max(radius, Math.min(visDimensions.width, d.x));
+      d.y = Math.max(radius, Math.min(visDimensions.height, d.y));
       return "translate(" + d.x + "," + d.y + ")";
     });
   }
@@ -1767,13 +1812,19 @@ function applyConfig(configType) {
 function drawLegend() {
   //draw legend based on config;
 
-  legendElement = d3.select("#legend");
+  let legendElement = d3.select("#legend-svg").selectAll('.legendGroup').data(['upperGroup','lowerGroup']);
+  
+  let legendElementEnter = legendElement.enter().append('g').attr('class','legendGroup');
 
-  d3.select("#legend-svg").attr('height',150);
+  legendElement.exit().remove;
+
+  legendElement = legendElementEnter.merge(legendElement);
+  legendElement.attr('class',d=>d + ' legendGroup' ) ;
 
   let legend = {
     width: d3.select("#legend-svg").attr("width"),
-    height: d3.select("#legend-svg").attr("height")
+    height: d3.select("#legend-svg").attr("height"),
+    padding:10
   };
 
   let drawBars = config.nodeLink.drawBars;
@@ -1787,12 +1838,12 @@ function drawLegend() {
   let colorAttributeValues =  drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeFillAttr].legendLabels;
   let sizeAttributeValues = drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain;
 
-  let barWidth = 30;
-  let barPadding = 60;
+  let barWidth = 20;
+  let barPadding = 30;
   let barHeight = 70;
 
-  let circleRadius = 60;
-  let circlePadding = 20;
+  let circleRadius = 30;
+  let circlePadding = 10;
 
   let squarePadding = 10;
 
@@ -1822,11 +1873,15 @@ function drawLegend() {
 
     let circlesOffset =  colorAttributeValues.length * (circleRadius + circlePadding) + 5
 
-  legendElement.attr("transform", "translate(100," + (legend.height-35) + ")");
+  let upperGroup =  d3.select('.upperGroup');
+  let lowerGroup = d3.select('.lowerGroup')
+
+  let upperGroupElement;
+  let lowerGroupElement
 
   // draw nestedBars legend
-  {
-    let bars = legendElement
+  
+    let bars = upperGroup
       .selectAll(".legendBar")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
       .data(quantAttributes);
@@ -1864,39 +1919,45 @@ function drawLegend() {
       .select(".frame")
       .attr("height", barHeight)
       .attr("y", -barHeight)
+      .attr("x",18)
       .style("stroke", d => scales[d].fill);
 
     bars
       .select(".bar")
       .attr("height", barHeight *0.7)
       .attr("y", -barHeight *0.7)
+      .attr("x",18)
       .style("fill", d => scales[d].fill);
 
     bars
       .select(".legendLabel")
       .text(d => config.attributeScales.node[d].label)
       // .attr("transform", "translate(" + barWidth/2 + "," + (-barHeight-5) +")")
-      .attr("transform", "translate(-5,0) rotate(" + labelRotate + ")")
+      .attr("transform", "translate(10,0) rotate(" + labelRotate + ")")
       .style("text-anchor", "start")
       // .style("fill","white")
       .style("font-weight","bold")
       // .style("font-size",barWidth/2)
 
-      bars
-      .select(".domainStart")
-      .text(d => config.attributeScales.node[d].domain[0])
-      .attr("transform", "translate(" + (barWidth+3) + ",0)")
-      // .attr("transform", "translate(-5,0) rotate(" + labelRotate + ")")
-      .style("text-anchor", "start")
+    
+
+      // bars
+      // .select(".domainStart")
+      // .text(d => config.attributeScales.node[d].domain[0])
+      // // .attr("transform", "translate(" + (barWidth+3) + ",0)")
+      // .attr("transform", "translate(" + (barWidth/2) + ",-2)")
+      // .style("text-anchor", "middle")
+      // .style("fill","white")
+      // .style("font-weight","bold")
 
       bars
       .select(".domainEnd")
       .text(d => format(config.attributeScales.node[d].domain[1]))
-      .attr("transform", "translate(" + (barWidth+3) + "," + (-barHeight+10) +")")
-      // .attr("transform", "translate(-5,0) rotate(" + labelRotate + ")")
-      .style("text-anchor", "start")
+      // .attr("transform", "translate(" + (barWidth+3) + "," + (-barHeight+10) +")")
+      .attr("transform", "translate(" +  (barWidth/2+8) +  "," + (-barHeight-5) +")")
+      .style("text-anchor", "middle")
 
-    let squares = legendElement
+    let squares = lowerGroup
       .selectAll(".legendSquare")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
       .data(catAttributes);
@@ -1935,7 +1996,7 @@ function drawLegend() {
       // .style("text-anchor", "end");
 
 
-      let categoricalScales = legendElement
+      let categoricalScales = lowerGroup
       .selectAll(".categoricalScale")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
       .data(catAttributes);
@@ -1974,7 +2035,7 @@ function drawLegend() {
     .style("text-anchor",d=>d.pos === 0 ? "start":"end")
 
     catLegend.attr("transform", (d, i) => {
-      return "translate(" + (squareOffset + 120 + i*(squareSize + squarePadding))  + "," + (yScale(d.pos)-barHeight-squareSize/2) + ")";
+      return "translate(" + i*(squareSize + squarePadding) + "," + (yScale(d.pos)-barHeight-squareSize/2) + ")";
     });
 
     // catLegend.select('text')
@@ -1990,11 +2051,14 @@ function drawLegend() {
 
 
 
-  }
+  
 
   //draw color/size legend
-  {
-    let circles = legendElement
+
+
+    
+        
+    let circles = upperGroup
       .selectAll(".legendBarCircles")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
       .data(
@@ -2027,7 +2091,7 @@ function drawLegend() {
       .select(".circle")
       .attr("height", circleRadius)
       .attr("width", circleRadius)
-      .attr("y", -circleRadius-20)
+      // .attr("y", -circleRadius-20)
       .style("fill", d => d.fill)
       .attr('rx',circleRadius)
       .attr('ry',circleRadius);
@@ -2035,14 +2099,15 @@ function drawLegend() {
     circles
       .select(".legendLabel")
       .text(d => d.value)
-      .attr("transform", "translate(" + circleRadius/2 + "," + (-circleRadius-25) + ")")
+      .attr("transform", "translate(" + circleRadius/2 + ",0)")
       .style("text-anchor", "middle")
       .style("font-weight", "bold");
 
-      let axis = legendElement.selectAll('.axis').data(sizeAttribute);
+      //render lower group in legend.
+      let axis = lowerGroup.selectAll('.axis').data(sizeAttribute);
       
       let axisEnter = axis.enter().append('g').attr('class','axis');
-      axisEnter.append("line").attr("class", "axisLine");
+      // axisEnter.append("line").attr("class", "axisLine");
       axisEnter.append("text").attr("class", "axisLabel");
 
       axis.exit().remove();
@@ -2050,19 +2115,12 @@ function drawLegend() {
       axis = axisEnter.merge(axis);
 
       axis.select('.axisLine')
-      .attr('x1',circlesOffset + (circleScale(sizeAttributeValues[0]) + circlePadding) )
-      .attr('x2',circlesOffset + (circleScale(sizeAttributeValues[1]) + circlePadding) )
+      .attr('x1', (circleScale(sizeAttributeValues[0]) + circlePadding) )
+      .attr('x2', (circleScale(sizeAttributeValues[1]) + circlePadding) )
       .attr('y1',15)
       .attr('y2',15);
 
-      axis.select('.axisLabel')
-      .text(d=>config.attributeScales.node[sizeAttribute[0]].label)
-      .attr('x',(circlesOffset + 65))
-      .attr('y',-circleScale.range()[1]*1.5)
-      .style('text-anchor', 'middle')
-      .style('font-weight', 'bold')
-
-      let sizeCircles = legendElement
+      let sizeCircles = lowerGroup
       .selectAll(".sizeCircles")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
       .data(sizeAttributeValues);
@@ -2081,8 +2139,8 @@ function drawLegend() {
       sizeCircles = sizeCirclesEnter.merge(sizeCircles);
 
       sizeCircles.attr("transform", (d, i) => {
-      return "translate(" + (circlesOffset + i * (circleScale(d) + circlePadding) ) + ",0)";
-    });
+      return "translate(" + (i * (circleScale(d) + circlePadding) ) + ",0)";
+      });
 
     sizeCircles
       .select(".sizeCircle")
@@ -2095,13 +2153,30 @@ function drawLegend() {
       sizeCircles
       .select(".sizeCircleLabel")
       .text(d => d)
-      .attr("transform", d=>"translate(" + circleScale(d)/2 + "," + 15 + ")")
+      .attr("transform", d=>"translate(" + circleScale(d)/2 + ",0)")
       .style("text-anchor", "middle")
       .style("font-weight", "bold");
 
+      
+      
+      
+
+       //center group with circles; 
+       upperGroupElement = d3.select('.upperGroup').node().getBBox();
+       lowerGroupElement = d3.select('.lowerGroup').node().getBBox();
 
 
-  }
+  d3.select('.upperGroup').attr("transform","translate(" + (legend.width/2 - upperGroupElement.width/2) + "," +  (upperGroupElement.height+10) + ")");
+  d3.select('.lowerGroup').attr("transform","translate(" + (legend.width/2 - lowerGroupElement.width/2) + "," +  (eval(legend.height)-10) + ")");
+
+  lowerGroup.select('.axisLabel')
+      .style('text-anchor', 'middle')
+      .style('font-weight', 'bold')
+      .text(d=>config.attributeScales.node[sizeAttribute[0]].label)
+      .attr('x',lowerGroupElement.width/2)
+      .attr('y',-circleScale.range()[1]-25)
+
+
 }
 
 function loadNewGraph(fileName) {
