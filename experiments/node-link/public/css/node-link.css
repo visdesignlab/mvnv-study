@@ -21,7 +21,7 @@
     /* #visContent{
         /* margin:0px 50px; ; */
 
-    } */
+    /* } */ 
 
     #node-link-svg{
         display: inline-flex;
@@ -46,8 +46,9 @@
         text-decoration: underline;
     }
 
+
     #hit {
-        display: none;
+        /* display: none;  */
     }
 
     
@@ -80,7 +81,7 @@
 
 
     #legend-svg{
-        background-color:#e8e8e8;
+        background-color:rgb(154, 154, 154);
     }
 
     .pathLabel>textPath {
@@ -198,6 +199,17 @@
         /* height:100%; */
     /* } */
 
+    #vis{
+        display:flex;
+    }
+
+    .taskCard{
+        padding:10px 20px;
+        font-size:20px;
+    }
+
+
+
     #panelDiv .button {
         width:300px;
         
@@ -206,7 +218,8 @@
     #panelDiv{
         height:1500px;
         overflow-y: scroll;
-        display:none;
+        margin-top:50px;
+        /* display:none; */
     }
 
     
