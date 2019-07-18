@@ -18,12 +18,16 @@ input[type=text] {
   background-color: #f1f1f1;
   width: 150px;
 }
-input[type=button] {
+#searchButton {
   background-color: DodgerBlue;
   width: 70px;
   color: #fff;
   margin-bottom: 20px;
 }
+
+
+
+<input type="button" id ="clearButton" value="Clear Selections">
 .autocomplete-items {
   position: absolute;
   border: 1px solid #d4d4d4;
@@ -51,6 +55,13 @@ input[type=button] {
   color: #ffffff;
 }
 
+
+#clearButton{
+  background-color: #DC3445;
+  width: 110px;
+  color: #fff;
+  margin-bottom: 20px;
+}
 
 
 .selectedEdgeType {

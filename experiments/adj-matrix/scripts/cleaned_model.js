@@ -635,10 +635,10 @@ var View = /** @class */ (function () {
         })
             .on("click", function (cell, index, nodes) {
             var cellElement = d3.select(nodes[index]).selectAll('rect');
-            console.log(cellElement);
-            cellElement.classed('clickedCell', !cellElement.classed('clickedCell'));
-            console.log(cellElement.classed('clickedCell'));
             var cellID = cell.rowid + cell.colid;
+            console.log(cellElement);
+            cellElement.classed('clickedCell', !_this.controller.clickedCells.has(cellID));
+            console.log(cellElement.classed('clickedCell'));
             if (_this.controller.clickedCells.has(cellID)) {
                 _this.controller.clickedCells.delete(cellID);
                 that.removeHighlightNodesToDict(_this.controller.clickedRow, cell.rowid, cellID); // Add row (rowid)
@@ -1738,6 +1738,7 @@ var Controller = /** @class */ (function () {
         this.answerRow = {};
         this.hoverRow = {};
         this.hoverCol = {};
+        this.loadClearButton();
         this.loadTasks();
         this.loadConfigs();
         /*console.log(this.configuration);
@@ -1830,6 +1831,27 @@ var Controller = /** @class */ (function () {
                         return [2 /*return*/];
                 }
             });
+        });
+    };
+    Controller.prototype.loadClearButton = function () {
+        var _this = this;
+        d3.select('#clearButton').on('click', function () {
+            _this.clickedRow = {};
+            _this.clickedCol = {};
+            _this.answerRow = {};
+            _this.hoverRow = {};
+            _this.hoverCol = {};
+            _this.clickedCells = new Set();
+            var test = d3.selectAll('.clickedCell').classed('clickedCell', false);
+            d3.selectAll('.answer').classed('answer', false);
+            d3.selectAll('.clicked').classed('clicked', false);
+            console.log(test, _this.clickedCells);
+            _this.view.renderHighlightNodesFromDict(_this.clickedRow, 'clicked', 'Row');
+            _this.view.renderHighlightNodesFromDict(_this.clickedCol, 'clicked', 'Col');
+            _this.view.renderHighlightNodesFromDict(_this.answerRow, 'answer', 'Row');
+            //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+            //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+            //that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
         });
     };
     Controller.prototype.clearView = function () {

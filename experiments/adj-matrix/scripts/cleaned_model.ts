@@ -722,10 +722,12 @@ class View {
       })
       .on("click", (cell, index, nodes) => {
         let cellElement = d3.select(nodes[index]).selectAll('rect');
-        console.log(cellElement);
-        cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
-        console.log(cellElement.classed('clickedCell'));
         let cellID = cell.rowid + cell.colid;
+        console.log(cellElement);
+
+        cellElement.classed('clickedCell', !this.controller.clickedCells.has(cellID))
+        console.log(cellElement.classed('clickedCell'));
+
 
         if (this.controller.clickedCells.has(cellID)) {
           this.controller.clickedCells.delete(cellID);
@@ -2098,6 +2100,38 @@ class Controller {
     });
 
   }
+  private clickedCells : any;
+  loadClearButton(){
+    d3.select('#clearButton').on('click', ()=>{
+      this.clickedRow = {}
+      this.clickedCol = {}
+      this.answerRow = {}
+      this.hoverRow = {}
+      this.hoverCol = {};
+      this.clickedCells = new Set();
+      let test = d3.selectAll('.clickedCell').classed('clickedCell', false);
+      d3.selectAll('.answer').classed('answer', false);
+      d3.selectAll('.clicked').classed('clicked', false);
+
+      console.log(test,this.clickedCells)
+
+      this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+      this.view.renderHighlightNodesFromDict(this.clickedCol,'clicked','Col');
+      this.view.renderHighlightNodesFromDict(this.answerRow,'answer','Row');
+
+      //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+      //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+      //that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+
+    })
+  }
+
+  private clickedRow : any;
+  private clickedCol : any;
+  private answerRow : any;
+  private hoverRow : any;
+  private hoverCol : any;
+
   constructor() {
     this.clickedRow = {}
     this.clickedCol = {}
@@ -2105,6 +2139,7 @@ class Controller {
     this.hoverRow = {}
     this.hoverCol = {}
 
+    this.loadClearButton();
     this.loadTasks();
 
     this.loadConfigs();
