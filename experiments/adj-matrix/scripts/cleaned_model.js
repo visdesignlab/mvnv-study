@@ -1419,11 +1419,12 @@ var View = /** @class */ (function () {
         /*this.barWidthScale = d3.scaleLinear()
           .domain([0, 1400])
           .range([0, 140]);*/
+        var placementScale = {};
         this.columnScale.range(columnRange);
         for (var _i = 0, _a = Object.entries(attributeScales); _i < _a.length; _i++) {
             var _b = _a[_i], column = _b[0], scale = _b[1];
             if (categoricalAttributes.indexOf(column) > -1) {
-                this.generateCategoricalLegend(column, columnWidths[column]);
+                placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
             }
             else {
                 this.attributes.append("g")
@@ -1446,7 +1447,7 @@ var View = /** @class */ (function () {
             var columnPosition = _this.columnScale(column);
             if (categoricalAttributes.indexOf(column) > -1) { // if categorical
                 console.log("CATEGORICAL!");
-                _this.createUpsetPlot(column, columnWidths[index]);
+                _this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
                 return;
             }
             else { // if quantitative
@@ -1602,18 +1603,26 @@ var View = /** @class */ (function () {
         return widths;
         // add categorical column width
     };
-    View.prototype.createUpsetPlot = function (column, columnWidth) {
+    View.prototype.createUpsetPlot = function (column, columnWidth, placementScaleForAttr) {
         var _this = this;
         var columnPosition = this.columnScale(column);
         var topMargin = 1;
         var width = this.verticalScale.bandwidth() - 2 * topMargin;
-        this.attributeRows
-            .append('rect')
-            .attr('x', columnPosition + columnWidth / 2 - width / 2)
-            .attr('y', 1)
-            .attr('fill', function (d) { return _this.attributeScales[column](d[column]); })
-            .attr('width', width)
-            .attr('height', width);
+        var _loop_2 = function (i) {
+            this_2.attributeRows
+                .append('rect')
+                .attr('x', placementScaleForAttr[i].position)
+                .attr('y', 1)
+                .attr('fill', function (d) {
+                return d[column] == placementScaleForAttr[i].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+            })
+                .attr('width', width)
+                .attr('height', width);
+        };
+        var this_2 = this;
+        for (var i = 0; i < placementScaleForAttr.length; i++) {
+            _loop_2(i);
+        }
         return;
     };
     View.prototype.generateCategoricalLegend = function (attribute, legendWidth) {
@@ -1624,12 +1633,18 @@ var View = /** @class */ (function () {
         var legendItemSize = (legendWidth) / (dividers + 3);
         var margin = this.verticalScale.bandwidth() / dividers;
         console.log(margin);
+        var xRange = [];
         var rects = this.attributes.append("g")
             .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * legendItemSize) + "," + (-legendHeight) + ")"); //
         for (var i = 0; i < dividers; i++) {
             var rect1 = rects
                 .append('g')
                 .attr('transform', 'translate(' + (i * (legendItemSize + margin)) + ',0)');
+            xRange.push({
+                "attr": attribute,
+                "value": attributeInfo.domain[i],
+                "position": this.columnScale(attribute) + 1 * legendItemSize + (i * (legendItemSize + margin))
+            });
             rect1
                 .append('rect')
                 .attr('x', 0) //(legendItemSize + margin)/2 -this.verticalScale.bandwidth()
@@ -1646,6 +1661,7 @@ var View = /** @class */ (function () {
                 .style('font-size', 7.5)
                 .attr('transform', 'rotate(-90)');
         }
+        return xRange;
     };
     /**
      * [selectHighlight description]

@@ -119,6 +119,7 @@ font-weight: 650;
 }
 text.answer {
 font-weight: 800;
+fill:white;
 /*fill: #ea9b0f;*/
 }
 
@@ -142,7 +143,7 @@ opacity: 0.3;
         font-weight:bold;
     }
 
-    
+
 .svg-content {
   display: inline-block;
   position: absolute;

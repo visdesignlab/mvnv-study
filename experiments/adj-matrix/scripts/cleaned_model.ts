@@ -1633,13 +1633,13 @@ class View {
 
 
 
-
+    let placementScale = {};
 
     this.columnScale.range(columnRange);
 
     for (let [column, scale] of Object.entries(attributeScales)) {
       if (categoricalAttributes.indexOf(column) > -1) {
-        this.generateCategoricalLegend(column, columnWidths[column]);
+        placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
       } else {
         this.attributes.append("g")
           .attr("class", "attr-axis")
@@ -1667,7 +1667,7 @@ class View {
 
       if (categoricalAttributes.indexOf(column) > -1) { // if categorical
         console.log("CATEGORICAL!")
-        this.createUpsetPlot(column, columnWidths[index]);
+        this.createUpsetPlot(column, columnWidths[index],placementScale[column]);
         return;
       } else { // if quantitative
         this.attributeRows
@@ -1859,18 +1859,23 @@ class View {
 
 
 
-  createUpsetPlot(column, columnWidth) {
+  createUpsetPlot(column, columnWidth, placementScaleForAttr) {
     let columnPosition = this.columnScale(column);
     let topMargin = 1;
     let width = this.verticalScale.bandwidth() - 2 * topMargin;
 
-    this.attributeRows
-      .append('rect')
-      .attr('x', columnPosition + columnWidth / 2 - width / 2)
-      .attr('y', 1)
-      .attr('fill', (d) => this.attributeScales[column](d[column]))
-      .attr('width', width)
-      .attr('height', width);
+    for(let i = 0; i < placementScaleForAttr.length; i++){
+      this.attributeRows
+        .append('rect')
+        .attr('x', placementScaleForAttr[i].position)
+        .attr('y', 1)
+        .attr('fill', (d) => {
+          return d[column] == placementScaleForAttr[i].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+        })
+        .attr('width', width)
+        .attr('height', width);
+    }
+
 
     return;
   }
@@ -1886,6 +1891,8 @@ class View {
     let margin = this.verticalScale.bandwidth()/dividers;
     console.log(margin);
 
+    let xRange = [];
+
     let rects = this.attributes.append("g")
       .attr("transform", "translate(" + (this.columnScale(attribute)+ 1*legendItemSize)+ "," + (-legendHeight) + ")"); //
 
@@ -1893,6 +1900,12 @@ class View {
       let rect1 = rects
         .append('g')
         .attr('transform', 'translate('+ (i * (legendItemSize + margin))+',0)')
+
+      xRange.push({
+        "attr":attribute,
+        "value":attributeInfo.domain[i],
+        "position":this.columnScale(attribute)+ 1*legendItemSize + (i * (legendItemSize + margin))
+      });
 
       rect1
         .append('rect')
@@ -1910,8 +1923,9 @@ class View {
         .attr('text-anchor', 'start')
         .style('font-size', 7.5)
         .attr('transform','rotate(-90)')
-
     }
+
+    return xRange;
   }
 
   /**
