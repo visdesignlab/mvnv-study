@@ -118,6 +118,9 @@ class Model {
     autocomplete(document.getElementById("myInput"), names);
     d3.select('#searchButton').on('click',()=>{
       let name = document.getElementById("myInput").value;
+      if(names.indexOf(name) == -1){
+        return; 
+      }
       let cell = d3.selectAll('.cell')
         .filter(d=>(d.rowid==name && d.colid ==name))
 

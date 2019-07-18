@@ -153,6 +153,9 @@ var Model = /** @class */ (function () {
         autocomplete(document.getElementById("myInput"), names);
         d3.select('#searchButton').on('click', function () {
             var name = document.getElementById("myInput").value;
+            if (names.indexOf(name) == -1) {
+                return;
+            }
             var cell = d3.selectAll('.cell')
                 .filter(function (d) { return (d.rowid == name && d.colid == name); });
             console.log(cell);
