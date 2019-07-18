@@ -12,6 +12,7 @@ width:600px;
 float: left;
 display: inline-block;
 position: relative;
+/*width:1097.28px;*/
 width: 57.15%;
 /*padding-bottom: 100%;*/
 vertical-align: top;
@@ -27,6 +28,7 @@ width:600px;
 float: left;
 display: inline-block;
 position: relative;
+/*width:822.72px;*/
 width: 42.85%;
 /*padding-bottom: 100%;*/
 vertical-align: top;
@@ -77,19 +79,27 @@ body {
 line {
 pointer-events: none;
 }
+
 .hovered {
 fill: #fde8ca;
 fill-opacity:1 !important;
 }
 
-.neighborSelected{
-fill: #D3ECE9 !important;
+.clickedCell{
+  stroke-width:2.5;
+  stroke: #ee0000;
+  /*rx:5;*
+  width:10;
+  height:10;*/
+}
+
+.clicked{
+fill: #F8CF91 !important;
 fill-opacity:1 !important;
 }
 
 /* most specific */
-rect.selected{
-/*fill: #FFADA0 !important;*/
+rect.answer{
 fill :#ea9b0f !important;
 fill-opacity:1 !important;
 }
@@ -99,12 +109,15 @@ fill: red;
 font-weight: bold;
 }
 
-.column text.selected {
-font-weight: 800;
-/*fill: #D3ECE9;*/
+text.hovered {
+font-weight: 450;
+/*fill: #ea9b0f;*/
 }
-
-.row text.selected {
+text.clicked {
+font-weight: 650;
+/*fill: #ea9b0f;*/
+}
+text.answer {
 font-weight: 800;
 /*fill: #ea9b0f;*/
 }
@@ -115,11 +128,21 @@ opacity: 0.3;
 }
 
 #interactiveFreeFormMain{
-  width:70%;
+  width:95%;
   margin-left: auto;
   margin-right:auto;
 }
 
+#finished, #next, #previous{
+        margin:50px 0px 0px 0px;
+        padding:10px;
+        background-color:rgb(3, 93, 158);
+        color:white;
+        font-size:20px;
+        font-weight:bold;
+    }
+
+    
 .svg-content {
   display: inline-block;
   position: absolute;
