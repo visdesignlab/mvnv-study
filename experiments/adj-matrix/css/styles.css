@@ -16,11 +16,13 @@ input {
 }
 input[type=text] {
   background-color: #f1f1f1;
-  width: 100%;
+  width: 150px;
 }
-input[type=submit] {
+input[type=button] {
   background-color: DodgerBlue;
+  width: 70px;
   color: #fff;
+  margin-bottom: 20px;
 }
 .autocomplete-items {
   position: absolute;

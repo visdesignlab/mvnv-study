@@ -151,6 +151,16 @@ var Model = /** @class */ (function () {
     Model.prototype.populateSearchBox = function () {
         var names = this.nodes.map(function (node) { return node.screen_name; });
         autocomplete(document.getElementById("myInput"), names);
+        d3.select('#searchButton').on('click', function () {
+            var name = document.getElementById("myInput").value;
+            var cell = d3.selectAll('.cell')
+                .filter(function (d) { return (d.rowid == name && d.colid == name); });
+            console.log(cell);
+            var e = document.createEvent('UIEvents');
+            e.initUIEvent('click', true, true);
+            cell.select("rect").node().dispatchEvent(e);
+            console.log(cell.select("rect"));
+        });
     };
     Model.prototype.reload = function () {
         this.controller.loadData(this.nodes, this.edges, this.matrix);

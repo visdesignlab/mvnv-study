@@ -116,7 +116,20 @@ class Model {
   populateSearchBox(){
     let names =  this.nodes.map(node => node.screen_name);
     autocomplete(document.getElementById("myInput"), names);
+    d3.select('#searchButton').on('click',()=>{
+      let name = document.getElementById("myInput").value;
+      let cell = d3.selectAll('.cell')
+        .filter(d=>(d.rowid==name && d.colid ==name))
+
+      console.log(cell);
+
+      var e = document.createEvent('UIEvents');
+      e.initUIEvent('click', true, true, /* ... */);
+      cell.select("rect").node().dispatchEvent(e);
+      console.log(cell.select("rect"));
+    })
   }
+
   constructor(controller: any) {
     this.controller = controller;
     d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
