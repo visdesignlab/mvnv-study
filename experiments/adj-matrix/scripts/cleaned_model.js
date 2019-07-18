@@ -891,6 +891,19 @@ var View = /** @class */ (function () {
     };
     View.prototype.generateScaleLegend = function (type, numberOfEdge) {
         var _this = this;
+        if (this.controller.configuration.adjMatrixValues.edgeBars) {
+            var legendFile = 'assets/';
+            legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge';
+            legendFile += '.png';
+            console.log(legendFile);
+            d3.select('#legends').append('g').append("svg:image")
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', 170)
+                .attr('height', 170)
+                .attr("xlink:href", legendFile);
+            return;
+        }
         var yOffset = 10;
         var xOffset = 10;
         var rectWidth = 18;
