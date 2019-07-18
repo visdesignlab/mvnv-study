@@ -20,10 +20,7 @@
   <div class="column" id="visDiv">
     <div id="taskArea">
 
-      <a class="button" id="panelControl">Hide/Show Control Panel</a>
-      <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
-      <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
-      <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
+
       <div class="card">
         <header class="card-header">
           <p class="card-header-title">
@@ -39,21 +36,51 @@
         </header>
       </div>
     </div>
-    <div class="loadingGroup">
-      <div class="loading"></div>
-      <div class="loadingOverlay"></div>
-      <div id="interactiveFreeFormMain">
-        <div id="topology" class="topocontainer" height="700" width="700"> </div>
-        <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
-        <svg id="legends" height="60" width="575"> </svg>
+    <div class="columns">
+      <div class="column is-four-fifths">
+        <div class="loading"></div>
+        <div class="loadingOverlay"></div>
+        <div id="interactiveFreeFormMain">
+          <div id="topology" class="topocontainer" height="700" width="700"> </div>
+          <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
+
+        </div>
       </div>
 
-      <div>
+        <div class="column is-one-fifth">
+          <div class="card" id="visPanel">
 
-        <a href="#" id="next" class="button is-pulled-right">Next Task</a>
-        <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+            <div class="card-content">
+              <div class="content">
+                <svg id="legends" height="60" width="575"> </svg>
+              </div>
+            </div>
+            <header class="card-header">
+              <p class="card-header-title">
+                User Response
+              </p>
+              </a>
+            </header>
+            <footer class="card-footer">
+              <!--
+              <aclass="card-footer-item" id="panelControl">Hide/Show Control Panel</a>
+              <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
+              <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
+              <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
+              <a href="#" class="card-footer-item">Save</a>
+              <a href="#" class="card-footer-item">Edit</a>
+              <a href="#" class="card-footer-item">Delete</a>-->
+              <a class="card-footer-item" id="panelControl">Hide/Show Panel</a>
+              <a class="card-footer-item" id="saturatedConfig">10 Attr</a>
+              <a class="card-footer-item" id="nodeLinkConfig">5 Attr</a>
+              <a class="card-footer-item" id="optimalConfig">Optimal</a>
+            </footer>
+          </div>
+          <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+          <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+        </div>
+
       </div>
-
     </div>
   </div>
   <div class="column is-narrow" id="panelDiv">
@@ -229,6 +256,13 @@
       let panel = d3.select("#panelDiv");
       let isVisible = panel.style("display") === "block";
       panel.style("display", isVisible ? "none" : "block");
+      let button1 = d3.select("#saturatedConfig");
+      let button2 = d3.select("#nodeLinkConfig");
+      let button3 = d3.select("#optimalConfig");
+      button1.style("display", isVisible ? "none" : "block");
+      button2.style("display", isVisible ? "none" : "block");
+      button3.style("display", isVisible ? "none" : "block");
+
       //window.controller.reload();
     });
     d3.select("#panelControl").on("click")();

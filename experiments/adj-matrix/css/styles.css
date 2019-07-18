@@ -128,11 +128,21 @@ opacity: 0.3;
 }
 
 #interactiveFreeFormMain{
-  width:70%;
+  width:95%;
   margin-left: auto;
   margin-right:auto;
 }
 
+#finished, #next, #previous{
+        margin:50px 0px 0px 0px;
+        padding:10px;
+        background-color:rgb(3, 93, 158);
+        color:white;
+        font-size:20px;
+        font-weight:bold;
+    }
+
+    
 .svg-content {
   display: inline-block;
   position: absolute;
