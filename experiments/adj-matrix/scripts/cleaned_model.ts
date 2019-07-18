@@ -1662,17 +1662,10 @@ class View {
       let columnPosition = this.columnScale(column);
 
       if (categoricalAttributes.indexOf(column) > -1) { // if categorical
-        let topMargin = 1;
-        let width = this.verticalScale.bandwidth() - 2 * topMargin;
-        this.attributeRows
-          .append('rect')
-          .attr('x', columnPosition + columnWidth / 2 - width / 2)
-          .attr('y', 1)
-          .attr('fill', (d) => attributeScales[column](d[column]))
-          .attr('width', width)
-          .attr('height', width);
+        console.log("CATEGORICAL!")
+        this.createUpsetPlot(column,columnWidth);
         return;
-      } else {
+      } else { // if quantitative
         this.attributeRows
           .append("rect")
           .attr("class", "glyph")
@@ -1816,6 +1809,21 @@ class View {
 
 
   }
+  createUpsetPlot(column,columnWidth){
+    let columnPosition = this.columnScale(column);
+    let topMargin = 1;
+    let width = this.verticalScale.bandwidth() - 2 * topMargin;
+
+    this.attributeRows
+      .append('rect')
+      .attr('x', columnPosition + columnWidth / 2 - width / 2)
+      .attr('y', 1)
+      .attr('fill', (d) => this.attributeScales[column](d[column]))
+      .attr('width', width)
+      .attr('height', width);
+    return;
+  }
+
   generateCategoricalLegend(attribute) {
     let attributeInfo = this.controller.configuration.attributeScales.node[attribute];
     let dividers = attributeInfo.domain.length;

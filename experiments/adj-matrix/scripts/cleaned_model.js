@@ -1443,18 +1443,11 @@ var View = /** @class */ (function () {
         columns.forEach(function (column) {
             var columnPosition = _this.columnScale(column);
             if (categoricalAttributes.indexOf(column) > -1) { // if categorical
-                var topMargin = 1;
-                var width_1 = _this.verticalScale.bandwidth() - 2 * topMargin;
-                _this.attributeRows
-                    .append('rect')
-                    .attr('x', columnPosition + columnWidth / 2 - width_1 / 2)
-                    .attr('y', 1)
-                    .attr('fill', function (d) { return attributeScales[column](d[column]); })
-                    .attr('width', width_1)
-                    .attr('height', width_1);
+                console.log("CATEGORICAL!");
+                _this.createUpsetPlot(column, columnWidth);
                 return;
             }
-            else {
+            else { // if quantitative
                 _this.attributeRows
                     .append("rect")
                     .attr("class", "glyph")
@@ -1575,6 +1568,20 @@ var View = /** @class */ (function () {
         .classed("g-table-column-" + (sortOrder === d3.ascending ? "ascending" : "descending"), function(d) {
           return d === sortKey;
         });*/
+    };
+    View.prototype.createUpsetPlot = function (column, columnWidth) {
+        var _this = this;
+        var columnPosition = this.columnScale(column);
+        var topMargin = 1;
+        var width = this.verticalScale.bandwidth() - 2 * topMargin;
+        this.attributeRows
+            .append('rect')
+            .attr('x', columnPosition + columnWidth / 2 - width / 2)
+            .attr('y', 1)
+            .attr('fill', function (d) { return _this.attributeScales[column](d[column]); })
+            .attr('width', width)
+            .attr('height', width);
+        return;
     };
     View.prototype.generateCategoricalLegend = function (attribute) {
         var attributeInfo = this.controller.configuration.attributeScales.node[attribute];
