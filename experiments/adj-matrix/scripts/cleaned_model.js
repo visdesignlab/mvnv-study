@@ -949,7 +949,7 @@ var View = /** @class */ (function () {
             pluralType = "retweets";
         }
         else if (pluralType == "combined") {
-            pluralType = "combination";
+            pluralType = "interactions";
         }
         svg.append('text')
             .attr('x', boxWidth / 2)

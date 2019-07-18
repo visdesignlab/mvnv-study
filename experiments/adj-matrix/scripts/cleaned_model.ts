@@ -1060,7 +1060,7 @@ class View {
     if (pluralType == "retweet") {
       pluralType = "retweets";
     } else if (pluralType == "combined") {
-      pluralType = "combination";
+      pluralType = "interactions";
     }
 
     svg.append('text')
