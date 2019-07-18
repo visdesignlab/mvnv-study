@@ -25,14 +25,23 @@ var defaultDomains = { node: {}, edge: {} };
 //object to store scales as a function of attr name;
 var scales = {};
 
+var circleScale = d3
+.scaleLinear()
+.domain([0,1])
+
+var edgeScale = d3
+.scaleLinear()
+.domain([0,1])
+
+
 ///////////////////////////For Experiment End/////////////////////////////
-var colorRange = ["#5e3c99", "#b2abd2", "#fdb863", "#e66101"];
-var color = d3
-  .scaleQuantize()
-  //.range(["#156b87", "#876315", "#543510", "#872815"]); //Original
-  //.range(["#56ebd3", "#33837f", "#68c3ef", "#1c4585"]) //Colorgorical, blue-ish
-  //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
-  .range(colorRange);
+// var colorRange = ["#5e3c99", "#b2abd2", "#fdb863", "#e66101"];
+// var color = d3
+//   .scaleQuantize()
+//   //.range(["#156b87", "#876315", "#543510", "#872815"]); //Original
+//   //.range(["#56ebd3", "#33837f", "#68c3ef", "#1c4585"]) //Colorgorical, blue-ish
+//   //.range(['#016c59','#1c9099','#67a9cf','#bdc9e1']) //Colorbrewer2, blue-ish
+//   .range(colorRange);
 var height;
 var width;
 var visDimensions ={width:0,height:0};
@@ -153,10 +162,10 @@ function loadVis(id) {
    let taskBarHeight = 74;
   //  console.log(width2,height2)
 
-  visDimensions.width  = width*0.8 - 24;
+  visDimensions.width  = width*0.75 - 24;
   visDimensions.height  = height - taskBarHeight;
 
-  panelDimensions.width = width*0.2;
+  panelDimensions.width = width*0.25;
   panelDimensions.height  = height - taskBarHeight;
 
   console.log(panelDimensions.height);
@@ -192,7 +201,7 @@ function loadVis(id) {
     legend = d3
   .select("#legend-svg")
   .attr("width", parentWidth) //size + margin.left + margin.right)
-  .attr("height",200)
+  .attr("height",220)
   // .attr("height", panelDimensions.height);
 
 // legend.append("g").attr("id", "legend");
@@ -1102,6 +1111,30 @@ function updateVis() {
     return value;
   };
 
+  
+  let fakeSmallNode = {};
+  let fakeLargeNode = {};
+
+  let nodeSizeAttr = config.nodeLink.nodeSizeAttr;
+  let edgeWidthAttr = config.nodeLink.edgeWidthAttr;
+
+
+  fakeSmallNode[nodeSizeAttr] = config.attributeScales.node[nodeSizeAttr].domain[0];
+  fakeLargeNode[nodeSizeAttr] = config.attributeScales.node[nodeSizeAttr].domain[1];
+
+  fakeSmallNode[edgeWidthAttr] = config.attributeScales.edge[edgeWidthAttr].domain[0];
+  fakeLargeNode[edgeWidthAttr] = config.attributeScales.edge[edgeWidthAttr].domain[1];
+
+
+
+   circleScale
+   .range([nodeLength(fakeSmallNode),nodeLength(fakeLargeNode)]);
+
+   edgeScale
+   .range([edgeWidth(fakeSmallNode),edgeWidth(fakeLargeNode)]);
+
+
+
   //create scales for bars;
   let barAttributes = config.nodeAttributes.filter(isQuant);
 
@@ -1123,9 +1156,12 @@ function updateVis() {
     scales[b] = { scale, domainKey };
   });
 
+  let singleDomain = Object.keys(scaleColors).length === 1;
   //Assign one color per unique domain;
+
+  //if only using one domain, use light grey; otherwise, use colors;
   Object.keys(scaleColors).map((domainKey, i) => {
-    scaleColors[domainKey] = quantColors(i);
+    scaleColors[domainKey] = singleDomain ?  '#afafaf' : quantColors(i);
   });
 
   Object.keys(scales).map(
@@ -1205,10 +1241,10 @@ function updateVis() {
       .style("fill", nodeFill)
       .style("stroke", nodeStroke)
       .attr("rx", d =>
-        config.nodeIsRect ? nodeLength(d) / 20 : nodeLength(d) / 2
+        config.nodeIsRect ? nodeLength(d) / 20 : nodeLength(d) 
       )
       .attr("ry", d =>
-        config.nodeIsRect ? nodeHeight(d) / 20 : nodeHeight(d) / 2
+        config.nodeIsRect ? nodeHeight(d) / 20 : nodeHeight(d)
       );
 
     node
@@ -1385,8 +1421,9 @@ function updateVis() {
       .append("g")
       .attr("class", "categorical");
 
-      catGlyphsEnter.append('text')
       catGlyphsEnter.append('rect')
+      catGlyphsEnter.append('text')
+      
 
     catGlyphs.exit().remove();
 
@@ -1399,15 +1436,17 @@ function updateVis() {
       catGlyphs
       .select('rect')
       .style("fill", d => catFill(d.attr, d.data))
-      .attr("width", d=>config.attributeScales.node[d.attr].type === 'Text' ? 0 : radius * 2)
-      .attr("height", radius * 2);
+      .attr("width", d=>config.attributeScales.node[d.attr].type === 'Text' ? radius*2 : radius * 2)
+      .attr("height", radius * 2)
+      .attr('rx',d=>config.attributeScales.node[d.attr].glyph === 'square' ? 0 : radius * 2)
+      .attr('ry',d=>config.attributeScales.node[d.attr].glyph === 'square' ? 0 : radius * 2)
 
       catGlyphs
       .select('text')
-      .text(d=>config.attributeScales.node[d.attr].type === 'Text' ? d.label : '')
+      // .text(d=>config.attributeScales.node[d.attr].glyph === 'square' ? d.label : '')
       .attr('y',radius*2)
-      .attr('x',radius)
-      .style('text-anchor','middle')
+      .attr('x',radius*2)
+      .style('text-anchor','start')
   }
 
   d3.select("#exportGraph").on("click", () => {
@@ -1534,8 +1573,8 @@ function updateVis() {
 
   //set up simulation
   simulation.nodes(graph.nodes).on("tick", ticked);
-  simulation.force("link").links(graph.links);
-  simulation.force("collision", d3.forceCollide().radius(d => nodeLength(d)));
+  simulation.force("link").links(graph.links).distance(l=>l.count);
+  simulation.force("collision", d3.forceCollide().radius(d => d3.max([nodeLength(d),nodeHeight(d)])));
 
   //if source/target are still strings from the input file
   if (graph.links[0].source.id === undefined) {
@@ -1799,7 +1838,7 @@ async function loadConfigs(taskID) {
 }
 
 function applyConfig(configType) {
-  d3.select("#taskArea")
+  d3
     .selectAll(".button")
     .classed("clicked", false);
   d3.select("#" + configType).classed("clicked", true);
@@ -1833,7 +1872,16 @@ function drawLegend() {
   let catAttributes = drawBars ? config.nodeAttributes.filter(isCategorical) :[];
 
   let colorAttribute = config.nodeLink.nodeFillAttr
-  let sizeAttribute = drawBars ? [] : [config.nodeLink.nodeSizeAttr];
+  let sizeAttribute = drawBars ? [] : config.nodeLink.nodeSizeAttr;
+  let edgeAttribute =  drawBars ? [] : config.nodeLink.edgeWidthAttr;
+
+  let edgeStrokeScale =  drawBars ? null : d3.scaleOrdinal()
+  .domain(config.attributeScales.edge['type'].domain)
+  .range(config.attributeScales.edge['type'].range)
+
+
+  let edgeAttributeValues = drawBars ? [] : config.attributeScales.edge[edgeAttribute].domain;
+  let edgeTypes = drawBars ? [] : config.isMultiEdge ? ['mentions', 'retweet'] : []
 
   let colorAttributeValues =  drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeFillAttr].legendLabels;
   let sizeAttributeValues = drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain;
@@ -1842,7 +1890,7 @@ function drawLegend() {
   let barPadding = 30;
   let barHeight = 70;
 
-  let circleRadius = 30;
+  let circleRadius = 40;
   let circlePadding = 10;
 
   let squarePadding = 10;
@@ -1861,11 +1909,7 @@ function drawLegend() {
     .domain([0, catAttributes.length - 1])
     .range(yRange);
 
-   let circleScale = d3
-   .scaleLinear()
-   .domain(sizeAttributeValues)
-   .range([15,circleRadius]);
-
+   
     let format = d3.format('2.2s')
 
   let squareOffset =
@@ -1954,7 +1998,7 @@ function drawLegend() {
       .select(".domainEnd")
       .text(d => format(config.attributeScales.node[d].domain[1]))
       // .attr("transform", "translate(" + (barWidth+3) + "," + (-barHeight+10) +")")
-      .attr("transform", "translate(" +  (barWidth/2+8) +  "," + (-barHeight-5) +")")
+      .attr("transform", "translate(" +  (barWidth/2+18) +  "," + (-barHeight-5) +")")
       .style("text-anchor", "middle")
 
     let squares = lowerGroup
@@ -1962,12 +2006,15 @@ function drawLegend() {
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
       .data(catAttributes);
 
+      console.log(catAttributes)
+
+
     let squaresEnter = squares
       .enter()
       .append("g")
       .attr("class", "legendSquare");
 
-    squaresEnter.append("rect").attr("class", "square");
+    // squaresEnter.append("rect").attr("class", "square");
 
     squaresEnter.append("text").attr("class", "squareLabel");
 
@@ -1976,12 +2023,14 @@ function drawLegend() {
     squares = squaresEnter.merge(squares);
 
     squares
-      .selectAll("rect")
+      .select("rect")
       .attr("width", squareSize)
-      .attr("height", squareSize);
+      .attr("height", squareSize)
+      .attr('rx',d=>config.attributeScales.node[d].glyph === 'square' ? 0 : squareSize * 2)
+      .attr('ry',d=>config.attributeScales.node[d].glyph === 'square' ? 0 : squareSize * 2)
 
     squares.attr("transform", (d, i) => {
-      return "translate(" + squareOffset + "," + -barHeight + ")";
+      return "translate(0," + -barHeight + ")";
     });
 
     squares
@@ -1992,8 +2041,9 @@ function drawLegend() {
     squares
       .select(".squareLabel")
       .text(d => config.attributeScales.node[d].label)
-      .attr("transform", (d,i)=> "translate(" + (squareSize + squarePadding ) + "," + (yScale(i)+squareSize/2) +  ")")
-      // .style("text-anchor", "end");
+      .attr("transform", (d,i)=> "translate(0," + (yScale(i)+squareSize/4) +  ")")
+      .style('font-weight','bold')
+      .style("text-anchor", "end");
 
 
       let categoricalScales = lowerGroup
@@ -2004,7 +2054,8 @@ function drawLegend() {
     let categoricalScalesEnter = categoricalScales
       .enter()
       .append("g")
-      .attr("class", "categoricalScale");
+      .attr("class", "categoricalScale")
+      .attr('transform','translate(5,0)')
 
       categoricalScales.exit().remove();
 
@@ -2012,7 +2063,7 @@ function drawLegend() {
 
     let catLegend = categoricalScales.selectAll('.catLegend')
     .data((d,ii)=>config.attributeScales.node[d].domain.map((domain,i)=>{
-      return {'pos':ii, 'value':domain,'legendLabel':config.attributeScales.node[d].legendLabels[i],'fill':config.attributeScales.node[d].range[i]};
+      return {'pos':ii, 'attribute':d, 'value':domain,'legendLabel':config.attributeScales.node[d].legendLabels[i],'fill':config.attributeScales.node[d].range[i]};
     }));
 
     let catLegendEnter = catLegend.enter().append("g").attr('class','catLegend');
@@ -2027,12 +2078,15 @@ function drawLegend() {
     catLegend.select('rect')
     .attr('width',squareSize)
     .attr('height',squareSize)
+    .attr('rx',d=>config.attributeScales.node[d.attribute].glyph === 'square' ? 0 : squareSize * 2)
+    .attr('ry',d=>config.attributeScales.node[d.attribute].glyph === 'square' ? 0 : squareSize * 2)
+
     .attr('fill',d=>d.fill)
 
     catLegend.select('text')
     .text(d=>d.legendLabel)
-    .attr("transform",d=> "translate(" + squareSize + "," + (d.pos === 0 ? -5 : squareSize+5) + ") rotate(" + labelRotate + ")")
-    .style("text-anchor",d=>d.pos === 0 ? "start":"end")
+    .attr("transform",d=> "translate(" + (d.legendLabel.length<3?  0: squareSize) + "," + (d.pos === 0 ? -5 : d.legendLabel.length> 2 ? squareSize+5 : squareSize*1.7) + ") rotate(" + (d.legendLabel.length>2? labelRotate  : 0) + ")")
+    .style("text-anchor",d=>d.legendLabel.length>2 && d.pos === 1 ? "end":"start")
 
     catLegend.attr("transform", (d, i) => {
       return "translate(" + i*(squareSize + squarePadding) + "," + (yScale(d.pos)-barHeight-squareSize/2) + ")";
@@ -2099,31 +2153,53 @@ function drawLegend() {
     circles
       .select(".legendLabel")
       .text(d => d.value)
-      .attr("transform", "translate(" + circleRadius/2 + ",0)")
+      .attr("transform", "translate(" + circleRadius/2 + "," + (circleRadius/2+5) + ")")
       .style("text-anchor", "middle")
-      .style("font-weight", "bold");
-
+      .style("font-weight", "bold")
+      .style('fill','white')
       //render lower group in legend.
-      let axis = lowerGroup.selectAll('.axis').data(sizeAttribute);
+
+
+      let NLdata = drawBars ? [] : [{'label':config.attributeScales.node[sizeAttribute].label, 'domain':sizeAttributeValues, 'type':'node'},
+      {'label':config.attributeScales.edge[edgeAttribute].label, 'domain':edgeAttributeValues, 'type':'edgeWidth'}];
+
+      if (!drawBars && config.isMultiEdge){
+        NLdata.push({'label':config.attributeScales.edge.type.label, 'domain':edgeTypes, 'type':'edgeType'});
+      } 
+
+      let node_link_legend = lowerGroup.selectAll('.node_link_legend')
+      .data(NLdata)
+
+      let node_link_legendEnter = node_link_legend.enter().append('g').attr('class','node_link_legend');
+
+      node_link_legend.exit().remove();
+
+      node_link_legend = node_link_legendEnter.merge(node_link_legend);
+
+      node_link_legend.attr('transform',(d,i)=>'translate(' + (10 + i* legend.width*0.35) + ',0)');
+
+      //add label to each group
+
+      let label = node_link_legend.selectAll('.axisLabel').data(d=>[d.label]);
       
-      let axisEnter = axis.enter().append('g').attr('class','axis');
-      // axisEnter.append("line").attr("class", "axisLine");
-      axisEnter.append("text").attr("class", "axisLabel");
+      let labelEnter = label.enter().append('text').attr('class','axisLabel');
 
-      axis.exit().remove();
+      label.exit().remove();
 
-      axis = axisEnter.merge(axis);
+      label = labelEnter.merge(label);
 
-      axis.select('.axisLine')
-      .attr('x1', (circleScale(sizeAttributeValues[0]) + circlePadding) )
-      .attr('x2', (circleScale(sizeAttributeValues[1]) + circlePadding) )
-      .attr('y1',15)
-      .attr('y2',15);
+      label.text(d=>d.label)
 
-      let sizeCircles = lowerGroup
+      // label
+      // .attr('x1',d=> (circleScale(d.domain[0]) + circlePadding) )
+      // .attr('x2',d=> (circleScale(d.domain[1]) + circlePadding) )
+      // .attr('y1',15)
+      // .attr('y2',15);
+
+      let sizeCircles = node_link_legend
       .selectAll(".sizeCircles")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
-      .data(sizeAttributeValues);
+      .data(d=>d.domain.map(domain=>{return {data:domain, type:d.type}}));
 
     let sizeCirclesEnter = sizeCircles 
       .enter()
@@ -2139,25 +2215,38 @@ function drawLegend() {
       sizeCircles = sizeCirclesEnter.merge(sizeCircles);
 
       sizeCircles.attr("transform", (d, i) => {
-      return "translate(" + (i * (circleScale(d) + circlePadding) ) + ",0)";
+        let radius =  d.type === 'node'? 35 : 50;
+      return "translate(" + i*radius + ",0)";
       });
 
+
+      let findCenter = function (i){
+        return  -circleScale.range()[1]/2 -10 -circleScale(i)/2-10
+      }
     sizeCircles
       .select(".sizeCircle")
-      .attr("height", circleScale)
-      .attr("width", circleScale)
-      .attr("y", d=>-circleScale.range()[1]/2 -10 -circleScale(d)/2-10)
-      .attr('rx',circleScale)
-      .attr('ry',circleScale);
+      .attr("height", (d,i)=>d.type === 'edgeType' ? edgeScale(1)  : d.type === 'edgeWidth' ? edgeScale(i) : circleScale(i))
+      .attr("width", (d,i)=>d.type === 'node'? circleScale(i) : 30 )
+      .attr("y", (d,i)=> d.type === 'node' ? findCenter(i) : findCenter(0) )
+      .attr('rx',(d,i)=>d.type === 'node' ? circleScale(i) : 0)
+      .attr('ry',(d,i)=>d.type === 'node' ? circleScale(i) : 0)
+      .style('fill',d=>d.type === 'edgeType' ? edgeStrokeScale(d.data) : '');
 
       sizeCircles
       .select(".sizeCircleLabel")
-      .text(d => d)
-      .attr("transform", d=>"translate(" + circleScale(d)/2 + ",0)")
+      .text(d => d.data)
+      .attr("transform", (d,i)=>"translate(" + (d.type === 'node' ? circleScale(i)/2: edgeScale(i)) + ",0)")
       .style("text-anchor", "middle")
       .style("font-weight", "bold");
 
-      
+
+      node_link_legend.select('.axisLabel')
+      .style('text-anchor', 'start')
+      .style('font-weight', 'bold')
+      .text(d=>d.label)
+      // .text(d=>{return config.attributeScales.node[d.label].label})
+      // .attr('x',circleScale(sizeAttributeValues[1]))
+      .attr('y',-circleScale.range()[1]-25)
       
       
 
@@ -2166,15 +2255,20 @@ function drawLegend() {
        lowerGroupElement = d3.select('.lowerGroup').node().getBBox();
 
 
-  d3.select('.upperGroup').attr("transform","translate(" + (legend.width/2 - upperGroupElement.width/2) + "," +  (upperGroupElement.height+10) + ")");
-  d3.select('.lowerGroup').attr("transform","translate(" + (legend.width/2 - lowerGroupElement.width/2) + "," +  (eval(legend.height)-10) + ")");
+  // d3.select('.upperGroup').attr("transform","translate(" + (legend.width/2 - upperGroupElement.width/2) + "," +  (drawBars ? barHeight + 20 : 10) + ")");
+  // d3.select('.lowerGroup').attr("transform","translate(" + (legend.width/2 - lowerGroupElement.width/2) + "," +  (legend.height-10) + ")");
 
-  lowerGroup.select('.axisLabel')
-      .style('text-anchor', 'middle')
-      .style('font-weight', 'bold')
-      .text(d=>config.attributeScales.node[sizeAttribute[0]].label)
-      .attr('x',lowerGroupElement.width/2)
-      .attr('y',-circleScale.range()[1]-25)
+
+  let longerLabel = 15;
+  d3.selectAll('.squareLabel').each(function(){
+    longerLabel = d3.max([longerLabel,d3.select(this).node().getBBox().width+15]); 
+    })
+  let lowerTranslate = !drawBars ? 0 : longerLabel ;
+
+  // console.log(longerLabel)
+  d3.select('.upperGroup').attr("transform","translate(15," +  (drawBars ? barHeight + 20 : 10) + ")");
+  d3.select('.lowerGroup').attr("transform","translate(" + lowerTranslate + "," +  (legend.height-10) + ")");
+
 
 
 }
