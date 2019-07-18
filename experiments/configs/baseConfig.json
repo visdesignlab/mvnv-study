@@ -74,11 +74,11 @@
                 ],
                 "legendLabels": [
                     "Person",
-                    "Institution"
+                    "Inst."
                 ],
                 "range": [
                     "#e86b45",
-                    "#0191c2"
+                    "#514ed9"
                 ]
             },
             "continent": {
@@ -98,7 +98,7 @@
                 ],
                 "range": ["#5ba3d0",
                     "#7d6dcb",
-                   "#b9873b",
+                    "#ce9333",
                     "#6aa858"]
             }
         },
@@ -111,7 +111,7 @@
                 ]
             },
             "type": {
-                "label":"Type",
+                "label":"Edge Type",
                 "domain": [
                     "mentions",
                     "retweet",
