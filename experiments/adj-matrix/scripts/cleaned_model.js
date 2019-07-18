@@ -1391,9 +1391,11 @@ var View = /** @class */ (function () {
         // Calculate Column Scale
         var columnRange = [];
         var xRange = 0;
-        var columnWidth = 450 / columns.length;
+        var columnWidths = this.determineColumnWidths(columns);
+        console.log(columnWidths, columns);
+        //450 / columns.length;
         var categoricalAttributes = ["type", "continent"];
-        columns.forEach(function (col) {
+        columns.forEach(function (col, index) {
             // calculate range
             columnRange.push(xRange);
             var domain = _this.controller.configuration.attributeScales.node[col].domain;
@@ -1406,11 +1408,11 @@ var View = /** @class */ (function () {
                 attributeScales[col] = scale;
             }
             else {
-                var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidth - barMargin.right]);
+                var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
                 scale.clamp(true);
                 attributeScales[col] = scale;
             }
-            xRange += columnWidth;
+            xRange += columnWidths[col];
         });
         this.attributeScales = attributeScales;
         // need max and min of each column
@@ -1421,7 +1423,7 @@ var View = /** @class */ (function () {
         for (var _i = 0, _a = Object.entries(attributeScales); _i < _a.length; _i++) {
             var _b = _a[_i], column = _b[0], scale = _b[1];
             if (categoricalAttributes.indexOf(column) > -1) {
-                this.generateCategoricalLegend(column);
+                this.generateCategoricalLegend(column, columnWidths[column]);
             }
             else {
                 this.attributes.append("g")
@@ -1440,11 +1442,11 @@ var View = /** @class */ (function () {
             }
         }
         /* Create data columns data */
-        columns.forEach(function (column) {
+        columns.forEach(function (column, index) {
             var columnPosition = _this.columnScale(column);
             if (categoricalAttributes.indexOf(column) > -1) { // if categorical
                 console.log("CATEGORICAL!");
-                _this.createUpsetPlot(column, columnWidth);
+                _this.createUpsetPlot(column, columnWidths[index]);
                 return;
             }
             else { // if quantitative
@@ -1569,6 +1571,37 @@ var View = /** @class */ (function () {
           return d === sortKey;
         });*/
     };
+    View.prototype.isCategorical = function (column) {
+        return column == "type" || column == "continent";
+    };
+    View.prototype.determineColumnWidths = function (columns) {
+        var widths = {};
+        // set all column widths to 0
+        // set all categorical column width to their width, keep track of total width
+        // set all other columns widths based off width - categorical
+        var widthOffset = 450 / columns.length;
+        var totalCategoricalWidth = 0;
+        // fill in categorical column sizes
+        for (var i = 0; i < columns.length; i++) {
+            var column = columns[i];
+            // if column is categorical
+            if (this.isCategorical(column)) {
+                var width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3);
+                widths[column] = width;
+                totalCategoricalWidth += width; // add width
+            }
+        }
+        var quantitativeWidth = 450 - totalCategoricalWidth, quantitativeColumns = columns.length - Object.keys(widths).length, quantitativeColumnSize = quantitativeWidth / quantitativeColumns;
+        // fill in remaining columns based off the size remaining for quantitative variables
+        for (var i = 0; i < columns.length; i++) {
+            var column = columns[i];
+            if (!(column in widths)) {
+                widths[column] = quantitativeColumnSize;
+            }
+        }
+        return widths;
+        // add categorical column width
+    };
     View.prototype.createUpsetPlot = function (column, columnWidth) {
         var _this = this;
         var columnPosition = this.columnScale(column);
@@ -1583,32 +1616,35 @@ var View = /** @class */ (function () {
             .attr('height', width);
         return;
     };
-    View.prototype.generateCategoricalLegend = function (attribute) {
+    View.prototype.generateCategoricalLegend = function (attribute, legendWidth) {
         var attributeInfo = this.controller.configuration.attributeScales.node[attribute];
         var dividers = attributeInfo.domain.length;
-        var legendHeight = 35;
-        var legendItemSize = (legendHeight - 5) / dividers;
+        var legendHeight = 25;
+        //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
+        var legendItemSize = (legendWidth) / (dividers + 3);
+        var margin = this.verticalScale.bandwidth() / dividers;
+        console.log(margin);
         var rects = this.attributes.append("g")
-            .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
-        // if()
+            .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * legendItemSize) + "," + (-legendHeight) + ")"); //
         for (var i = 0; i < dividers; i++) {
             var rect1 = rects
                 .append('g')
-                .attr('transform', 'translate(10,' + i * legendItemSize + ')');
+                .attr('transform', 'translate(' + (i * (legendItemSize + margin)) + ',0)');
             rect1
                 .append('rect')
-                .attr('x', 0)
+                .attr('x', 0) //(legendItemSize + margin)/2 -this.verticalScale.bandwidth()
                 .attr('y', 0)
                 .attr('fill', attributeInfo.range[i])
-                .attr('width', legendItemSize - 1)
-                .attr('height', legendItemSize - 1);
+                .attr('width', legendItemSize)
+                .attr('height', legendItemSize);
             rect1
                 .append('text')
-                .text(attributeInfo.domain[i])
-                .attr('x', legendItemSize + 2)
-                .attr('y', legendItemSize / 2)
+                .text(attributeInfo.legendLabels[i])
+                .attr('x', 3)
+                .attr('y', legendItemSize)
                 .attr('text-anchor', 'start')
-                .style('font-size', 7.5);
+                .style('font-size', 7.5)
+                .attr('transform', 'rotate(-90)');
         }
     };
     /**
