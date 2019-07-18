@@ -56,6 +56,7 @@ var Model = /** @class */ (function () {
             _this.matrix = [];
             _this.scalarMatrix = [];
             _this.nodes = data.nodes;
+            _this.populateSearchBox();
             _this.idMap = {};
             _this.orderType = _this.controller.configuration.state.adjMatrix.sortKey;
             _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
@@ -146,6 +147,10 @@ var Model = /** @class */ (function () {
         else {
             return false;
         }
+    };
+    Model.prototype.populateSearchBox = function () {
+        var names = this.nodes.map(function (node) { return node.screen_name; });
+        autocomplete(document.getElementById("myInput"), names);
     };
     Model.prototype.reload = function () {
         this.controller.loadData(this.nodes, this.edges, this.matrix);

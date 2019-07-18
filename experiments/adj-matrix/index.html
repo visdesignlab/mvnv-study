@@ -47,22 +47,28 @@
         </div>
       </div>
 
-        <div class="column is-one-fifth">
-          <div class="card" id="visPanel">
+      <div class="column is-one-fifth">
+        <div class="card" id="visPanel">
 
-            <div class="card-content">
-              <div class="content">
-                <svg id="legends" height="180" width="200"> </svg>
-              </div>
+          <div class="card-content">
+            <div class="content">
+              <form autocomplete="off" action="/action_page.php">
+                <div class="autocomplete" style="width:300px;">
+                  <input id="myInput" type="text" name="myCountry" placeholder="Country">
+                </div>
+                <input type="submit">
+              </form>
+              <svg id="legends" height="180" width="200"> </svg>
             </div>
-            <header class="card-header">
-              <p class="card-header-title">
-                User Response
-              </p>
-              </a>
-            </header>
-            <footer class="card-footer">
-              <!--
+          </div>
+          <header class="card-header">
+            <p class="card-header-title">
+              User Response
+            </p>
+            </a>
+          </header>
+          <footer class="card-footer">
+            <!--
               <aclass="card-footer-item" id="panelControl">Hide/Show Control Panel</a>
               <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
               <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
@@ -70,228 +76,230 @@
               <a href="#" class="card-footer-item">Save</a>
               <a href="#" class="card-footer-item">Edit</a>
               <a href="#" class="card-footer-item">Delete</a>-->
-              <a class="card-footer-item" id="panelControl">Hide/Show Panel</a>
-              <a class="card-footer-item" id="saturatedConfig">10 Attr</a>
-              <a class="card-footer-item" id="nodeLinkConfig">5 Attr</a>
-              <a class="card-footer-item" id="optimalConfig">Optimal</a>
-            </footer>
-          </div>
-          <a href="#" id="next" class="button is-pulled-right">Next Task</a>
-          <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+            <a class="card-footer-item" id="panelControl">Hide/Show Panel</a>
+            <a class="card-footer-item" id="saturatedConfig">10 Attr</a>
+            <a class="card-footer-item" id="nodeLinkConfig">5 Attr</a>
+            <a class="card-footer-item" id="optimalConfig">Optimal</a>
+          </footer>
         </div>
-
+        <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+        <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
       </div>
+
     </div>
   </div>
-  <div class="column is-narrow" id="panelDiv">
+</div>
+<div class="column is-narrow" id="panelDiv">
 
-    <aside class="menu">
+  <aside class="menu">
 
 
 
 
-      <!-- <p class="menu-label">
+    <!-- <p class="menu-label">
                   Graph Settings
               </p> -->
-      <ul class="menu-list">
+    <ul class="menu-list">
 
-        <li id="graphSize">
-          <label>Graph Size</label>
+      <li id="graphSize">
+        <label>Graph Size</label>
 
-          <ul>
-            <div class="control">
-              <!-- <label class="radio">
+        <ul>
+          <div class="control">
+            <!-- <label class="radio">
                                               <input type="radio" name="graphSize" value="small" >
                                               Small [30]
                                           </label> -->
 
-              <label class="radio">
-                <input type="radio" name="graphSize" value="small">
-                Small [50]
-              </label>
+            <label class="radio">
+              <input type="radio" name="graphSize" value="small">
+              Small [50]
+            </label>
 
-              <label class="radio">
-                <input type="radio" name="graphSize" value="large" checked="checked">
-                Large [80]
-              </label>
-            </div>
-
-          </ul>
-        </li>
-
-        <li>
-          <!-- Set config.isDirected to true/false -->
-          <a>Graph Type</a>
-          <ul>
-            <div class="control">
-              <label class="radio">
-                <input type="radio" name="isDirected" value="true">
-                Directed
-              </label>
-
-              <label class="radio">
-                <input type="radio" name="isDirected" value="false">
-                Undirected
-              </label>
-            </div>
-
-          </ul>
-
-
-        </li>
-
-        <li>
-          <!-- Set config.isMultiEdge to true/false -->
-          <a>Graph Edges</a>
-          <ul>
-            <div class="control">
-              <label class="radio">
-                <input type="radio" name="isMultiEdge" value="true">
-                Multiple Types
-              </label>
-
-              <label class="radio">
-                <input type="radio" name="isMultiEdge" value="false">
-                Single Type
-              </label>
-            </div>
-
-          </ul>
-
-
-        </li>
-
-        <li id="labelSize">
-          <label>Node Label Font Size</label>
-          <ul>
-            <div class="control is-inline-flex">
-              <input class="slider" id="fontSlider" step="1" min="8" max="25" value="8" type="range">
-              <output id="fontSliderValue">14</output> </div>
-          </ul>
-        </li>
-
-
-        <ul class="menu-list">
-
-
-          <br />
-
-          <div class="field">
-            <input class="is-checkradio is-circle" id="renderBarsCheckbox" type="checkbox" name="renderBarsCheckbox" checked="checked">
-            <label for="renderBarsCheckbox">Render Edges as Bars</label>
+            <label class="radio">
+              <input type="radio" name="graphSize" value="large" checked="checked">
+              Large [80]
+            </label>
           </div>
 
-          <li>
-            <a>Attribute to Sort on</a>
-            <div class="select">
-              <select id="order">
-                <option value="screen_name">by Name</option>
-                <option value="followers_count">by Followers</option>
-                <option value="query_tweet_count">by Tweet Count</option>
-                <option value="friends_count">by Friends</option>
-                <option value="statuses_count">by Statuses</option>
-                <option value="listed_count">by Listed</option>
-                <option value="favourites_count">by Favourites</option>
-                <option value="count_followers_in_query">by Followers in Network</option>
-                <option value="continent">by Nationality</option>
-                <option value="type">by Account Type</option>
-                <option value="clusterLeaf"> by Cluster - Leaf </option>
-                <option value="clusterBary"> by Cluster - Bary </option>
-                <option value="clusterSpectral"> by Cluster - Spectral </option>
-              </select>
+        </ul>
+      </li>
 
-            </div>
-            <br></br>
-            <!--
+      <li>
+        <!-- Set config.isDirected to true/false -->
+        <a>Graph Type</a>
+        <ul>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="isDirected" value="true">
+              Directed
+            </label>
+
+            <label class="radio">
+              <input type="radio" name="isDirected" value="false">
+              Undirected
+            </label>
+          </div>
+
+        </ul>
+
+
+      </li>
+
+      <li>
+        <!-- Set config.isMultiEdge to true/false -->
+        <a>Graph Edges</a>
+        <ul>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="isMultiEdge" value="true">
+              Multiple Types
+            </label>
+
+            <label class="radio">
+              <input type="radio" name="isMultiEdge" value="false">
+              Single Type
+            </label>
+          </div>
+
+        </ul>
+
+
+      </li>
+
+      <li id="labelSize">
+        <label>Node Label Font Size</label>
+        <ul>
+          <div class="control is-inline-flex">
+            <input class="slider" id="fontSlider" step="1" min="8" max="25" value="8" type="range">
+            <output id="fontSliderValue">14</output> </div>
+        </ul>
+      </li>
+
+
+      <ul class="menu-list">
+
+
+        <br />
+
+        <div class="field">
+          <input class="is-checkradio is-circle" id="renderBarsCheckbox" type="checkbox" name="renderBarsCheckbox" checked="checked">
+          <label for="renderBarsCheckbox">Render Edges as Bars</label>
+        </div>
+
+        <li>
+          <a>Attribute to Sort on</a>
+          <div class="select">
+            <select id="order">
+              <option value="screen_name">by Name</option>
+              <option value="followers_count">by Followers</option>
+              <option value="query_tweet_count">by Tweet Count</option>
+              <option value="friends_count">by Friends</option>
+              <option value="statuses_count">by Statuses</option>
+              <option value="listed_count">by Listed</option>
+              <option value="favourites_count">by Favourites</option>
+              <option value="count_followers_in_query">by Followers in Network</option>
+              <option value="continent">by Nationality</option>
+              <option value="type">by Account Type</option>
+              <option value="clusterLeaf"> by Cluster - Leaf </option>
+              <option value="clusterBary"> by Cluster - Bary </option>
+              <option value="clusterSpectral"> by Cluster - Spectral </option>
+            </select>
+
+          </div>
+          <br></br>
+          <!--
             -->
-          </li>
+        </li>
 
-          <li id="nodeQuantSelect">
-            <a>Attribute for Nested Quant Attributes (Bars)</a>
-            <ul>
-            </ul>
-          </li>
+        <li id="nodeQuantSelect">
+          <a>Attribute for Nested Quant Attributes (Bars)</a>
+          <ul>
+          </ul>
+        </li>
 
-          <li id="nodeCatSelect">
-            <a>Attribute for Nested Cat Attributes</a>
-            <ul>
-            </ul>
-          </li>
-
-
-          <li id="nodeQuantAttributes">
-            <a>Node Attribute Inspector</a>
-            <ul>
-              <div class="select ">
-                <select>
-                </select>
-              </div>
-
-            </ul>
-          </li>
-
-          <br />
-          <br />
-
-          <a class="button is-light" id="exportConfig">Export Task Config</a>
-
-          <br />
-
-          <!-- <a class="button is-light" id="exportBaseConfig">Export Base Config</a>-->
-
-    </aside>
-
-  </div>
-
-  <!-- <script src="http://requirejs.org/docs/release/2.1.8/comments/require.js"></script> -->
-  <script type="text/javascript" src="scripts/d3.min.js"> </script>
-  <!-- Reorder references -->
-  <script src="libs/reorder/science.v1.js"></script>
-  <script src="libs/reorder/tiny-queue.js"></script>
-  <script src="libs/reorder/reorder.v1.js"></script>
+        <li id="nodeCatSelect">
+          <a>Attribute for Nested Cat Attributes</a>
+          <ul>
+          </ul>
+        </li>
 
 
-  <script>
-    d3.select("#panelControl").on("click", () => {
-      let panel = d3.select("#panelDiv");
-      let isVisible = panel.style("display") === "block";
-      panel.style("display", isVisible ? "none" : "block");
-      let button1 = d3.select("#saturatedConfig");
-      let button2 = d3.select("#nodeLinkConfig");
-      let button3 = d3.select("#optimalConfig");
-      button1.style("display", isVisible ? "none" : "block");
-      button2.style("display", isVisible ? "none" : "block");
-      button3.style("display", isVisible ? "none" : "block");
+        <li id="nodeQuantAttributes">
+          <a>Node Attribute Inspector</a>
+          <ul>
+            <div class="select ">
+              <select>
+              </select>
+            </div>
 
-      //window.controller.reload();
+          </ul>
+        </li>
+
+        <br />
+        <br />
+
+        <a class="button is-light" id="exportConfig">Export Task Config</a>
+
+        <br />
+
+        <!-- <a class="button is-light" id="exportBaseConfig">Export Base Config</a>-->
+
+  </aside>
+
+</div>
+
+<!-- <script src="http://requirejs.org/docs/release/2.1.8/comments/require.js"></script> -->
+<script type="text/javascript" src="scripts/d3.min.js"> </script>
+<!-- Reorder references -->
+<script src="libs/reorder/science.v1.js"></script>
+<script src="libs/reorder/tiny-queue.js"></script>
+<script src="libs/reorder/reorder.v1.js"></script>
+
+
+<script>
+  d3.select("#panelControl").on("click", () => {
+    let panel = d3.select("#panelDiv");
+    let isVisible = panel.style("display") === "block";
+    panel.style("display", isVisible ? "none" : "block");
+    let button1 = d3.select("#saturatedConfig");
+    let button2 = d3.select("#nodeLinkConfig");
+    let button3 = d3.select("#optimalConfig");
+    button1.style("display", isVisible ? "none" : "block");
+    button2.style("display", isVisible ? "none" : "block");
+    button3.style("display", isVisible ? "none" : "block");
+
+    //window.controller.reload();
+  });
+  d3.select("#panelControl").on("click")();
+</script>
+
+<script type="text/javascript" src="scripts/fill_config_settings.js"></script>
+<script type="text/javascript" src="scripts/autocomplete.js"></script>
+<script type="text/javascript" src="scripts/cleaned_model.js"> </script>
+
+<script>
+  window.onload = function() {
+    console.log(d3.select("#optimalConfig"));
+    d3.select("#optimalConfig").on("click", () => {
+      console.log("Clicked Optimal!")
+      window.controller.tenAttr = false;
+      window.controller.fiveAttr = false;
+      window.controller.loadConfigs();
     });
-    d3.select("#panelControl").on("click")();
-  </script>
+    console.log(d3.select("#nodeLinkConfig"));
+    d3.select("#nodeLinkConfig").on("click", () => { // 5 attr
+      console.log("Clicked 5");
+      window.controller.tenAttr = false;
+      window.controller.fiveAttr = true;
+      window.controller.loadConfigs();
+    });
 
-  <script type="text/javascript" src="scripts/fill_config_settings.js"></script>
-  <script type="text/javascript" src="scripts/cleaned_model.js"> </script>
-  <script>
-    window.onload = function() {
-      console.log(d3.select("#optimalConfig"));
-      d3.select("#optimalConfig").on("click", () => {
-        console.log("Clicked Optimal!")
-        window.controller.tenAttr = false;
-        window.controller.fiveAttr = false;
-        window.controller.loadConfigs();
-      });
-      console.log(d3.select("#nodeLinkConfig"));
-      d3.select("#nodeLinkConfig").on("click", () => { // 5 attr
-        console.log("Clicked 5");
-        window.controller.tenAttr = false;
-        window.controller.fiveAttr = true;
-        window.controller.loadConfigs();
-      });
-
-      d3.select("#saturatedConfig").on("click", () => { // 10 attr
-        console.log("Clicked 10")
-        window.controller.tenAttr = true;
-        window.controller.fiveAttr = false;
-        window.controller.loadConfigs();
-      });
-    }
-  </script>
+    d3.select("#saturatedConfig").on("click", () => { // 10 attr
+      console.log("Clicked 10")
+      window.controller.tenAttr = true;
+      window.controller.fiveAttr = false;
+      window.controller.loadConfigs();
+    });
+  }
+</script>

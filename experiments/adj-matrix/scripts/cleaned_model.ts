@@ -113,6 +113,10 @@ class Model {
     }
   }
   private scalarMatrix: any;
+  populateSearchBox(){
+    let names =  this.nodes.map(node => node.screen_name);
+    autocomplete(document.getElementById("myInput"), names);
+  }
   constructor(controller: any) {
     this.controller = controller;
     d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
@@ -125,6 +129,7 @@ class Model {
       this.scalarMatrix = [];
 
       this.nodes = data.nodes
+      this.populateSearchBox();
       this.idMap = {};
       this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
       this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
