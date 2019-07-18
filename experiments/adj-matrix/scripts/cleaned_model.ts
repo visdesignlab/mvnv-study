@@ -722,7 +722,7 @@ class View {
           if(cell.colid !== cell.rowid){
             that.addHighlightNodesToDict(this.controller.clickedRow, cell.colid, cellID);  // Add row (colid)
           }
-          
+
           that.addHighlightNodesToDict(this.controller.clickedCol, cell.colid, cellID);  // Add col (colid)
         }
 
@@ -1000,10 +1000,11 @@ class View {
   generateScaleLegend(type, numberOfEdge) {
     let yOffset = 10;
     let xOffset = 10;
-    let rectWidth = 25
+    let rectWidth = 18;
     let rectHeight = 10;
-    let legendWidth = 200;
-    xOffset += legendWidth * numberOfEdge;
+    let legendWidth = 175;
+    let legendHeight = 60;
+    yOffset += legendHeight * numberOfEdge;
 
     let scale = this.edgeScales[type];
     let extent = scale.domain();
