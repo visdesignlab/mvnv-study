@@ -7,9 +7,9 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(
 
     d3.json("../public/data/network_types.json", function(nodes) {
       d3.json("../../configs/baseConfig.json", function(config) {
+        d3.json("../public/data/network_backbone.json", function(mds) {
         d3.json("../public/data/userInfo.json", function(users) {
 
-          console.log('config is ', config)
           //iterate through all graph nodes and add more information:
           graph.nodes.map(node => {
             let moreInfo = users.find(n => n.screen_name === node.screen_name);
@@ -99,7 +99,8 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(
                   source_node.type = nodes[source_node.id].type;
                   source_node.continent = nodes[source_node.id].continent;
                   source_node.shortName = nodes[source_node.id].shortName;
-
+                  source_node.x = mds.nodes.find(m=>m.name === source_node.shortName).x;
+                  source_node.y = mds.nodes.find(m=>m.name === source_node.shortName).y;
                   // //Compute shorter string for name
                   // let nameString = source_node.name.split(' ');
                   // if (source_node.type === 'person'){
@@ -201,6 +202,7 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(
           });
         });
       });
+    });
     });
   });
 

@@ -155,8 +155,9 @@ function exportConfig(baseKeys, nodeLinkKeys, isTaskConfig) {
 function loadVis(id) {
 
   let targetDiv = d3.select('#targetSize')
-   width = targetDiv.style('width').replace(/\D/g, '')
-   height = targetDiv.style('height').replace(/\D/g, '')
+   width = targetDiv.style('width').replace('px', '')
+   height = targetDiv.style('height').replace('px', '');
+
 
     // height = height*0.75;
    let taskBarHeight = 74;
@@ -204,16 +205,16 @@ function loadVis(id) {
 
 // legend.append("g").attr("id", "legend");
 
-  // simulation = d3
-  //   .forceSimulation()
-  //   .force(
-  //     "link",
-  //     d3.forceLink().id(function(d) {
-  //       return d.id;
-  //     })
-  //   )
-  //   .force("charge", d3.forceManyBody()) //.strength(-800))
-  //   .force("center", d3.forceCenter(visDimensions.width / 2, visDimensions.height / 2));
+  simulation = d3
+    .forceSimulation()
+    .force(
+      "link",
+      d3.forceLink().id(function(d) {
+        return d.id;
+      })
+    )
+    .force("charge", d3.forceManyBody().strength(-1200))
+    .force("center", d3.forceCenter(visDimensions.width / 2, visDimensions.height / 2));
 
   // .force("y", d3.forceY().y(0));
 
@@ -1084,12 +1085,18 @@ function updateVis() {
 
   let edgeColor = function(edge) {
     let edgeStrokeScale = d3
-      .scaleOrdinal()
-      .domain(
-        config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].domain
-      )
-      .range(config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].range);
+      .scaleOrdinal();
 
+
+      if (config.nodeLink.edgeStrokeAttr){
+        edgeStrokeScale
+        .domain(
+          config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].domain
+        )
+        .range(config.attributeScales.edge[config.nodeLink.edgeStrokeAttr].range);
+  
+      }
+     
     let value = config.nodeLink.edgeStrokeAttr
       ? edgeStrokeScale(edge[config.nodeLink.edgeStrokeAttr])
       : config.nodeLink.noEdgeColor;
@@ -1451,23 +1458,61 @@ function updateVis() {
   d3.select("#exportGraph").on("click", () => {
     let graphCopy = JSON.parse(JSON.stringify(graph));
 
+    // graphCopy.links.map(l => {
+    //   l.index = undefined;
+    //   l.source = l.source.id;
+    //   l.target = l.target.id;
+    // });
+    // graphCopy.nodes.map(n => {
+    //   n.index = undefined;
+    //   n.vx = undefined;
+    //   n.vy = undefined;
+    //   n.fx = n.x;
+    //   n.fy = n.y;
+    // });
+
+    let newGraph={'nodes':[],'links':[]}
+
     graphCopy.links.map(l => {
+
+      newLink ={};
       l.index = undefined;
-      l.source = l.source.id;
-      l.target = l.target.id;
+      l.weight = l.count;
+      let source = graphCopy.nodes.find(n=>n.id === l.source.id);
+      newLink.source = graphCopy.nodes.indexOf(source);
+      
+      let target = graphCopy.nodes.find(n=>n.id === l.target.id);
+      newLink.target = graphCopy.nodes.indexOf(target);
+      newLink.id = newGraph.links.length;
+      l.id = newLink.id
+
+      newGraph.links.push(newLink)
+
     });
+
     graphCopy.nodes.map(n => {
-      n.index = undefined;
-      n.vx = undefined;
-      n.vy = undefined;
-      n.fx = n.x;
-      n.fy = n.y;
+
+      let newNode = {};
+      newNode.name = n.shortName;
+      newNode.id = n.id
+      newGraph.nodes.push(newNode)
+      
     });
+
+    console.log(graphCopy.links)
+    var items = graphCopy.links
+    const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+    const header = Object.keys(items[0]).filter(k=> k!== 'source' && k!== 'target')
+    let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+    csv.unshift(header.join(','))
+    csv = csv.join('\r\n')
+
+    console.log(csv)
 
     // let parseInputFilename =
     // let filename = config.isDirected ? config.directedGraph : config.undir_graph;
 
-    console.log(JSON.stringify(graphCopy));
+    console.log(JSON.stringify(newGraph));
   });
 
   d3.select("#clear-selection").on("click", () => {
@@ -1571,16 +1616,16 @@ function updateVis() {
   });
 
   //set up simulation
-  // simulation.nodes(graph.nodes).on("tick", ticked);
-  // simulation.force("link").links(graph.links).distance(l=>l.count);
-  // simulation.force("collision", d3.forceCollide().radius(d => d3.max([nodeLength(d),nodeHeight(d)])));
+  simulation.nodes(graph.nodes).on("tick", ticked);
+  simulation.force("link").links(graph.links).distance(l=>l.count);
+  simulation.force("collision", d3.forceCollide().radius(d => d3.max([nodeLength(d),nodeHeight(d)])));
 
   //if source/target are still strings from the input file
   if (graph.links[0].source.id === undefined) {
     //restablish link references to their source and target nodes;
     graph.links.map(l => {
-      l.source = graph.nodes.find(n => n.id === l.source) || l.source;
-      l.target = graph.nodes.find(n => n.id === l.target) || l.target;
+      l.source = graph.nodes.find(n => n.id === l.source) || graph.nodes[l.source] || l.source;
+      l.target = graph.nodes.find(n => n.id === l.target) || graph.nodes[l.target] ||  l.target;
     });
   }
   //check to see if there are already saved positions in the file, if not
@@ -1590,6 +1635,12 @@ function updateVis() {
   // simulation.force('collision',null);
 
   if (graph.nodes[0].fx === undefined) {
+
+    //scale node positions to this screen; 
+
+    let xPos = d3.scaleLinear().domain(d3.extent(graph.nodes,n=>n.x)).range([50,visDimensions.width-50]);
+    let yPos = d3.scaleLinear().domain(d3.extent(graph.nodes,n=>n.y)).range([50,visDimensions.height-50])
+
     // for (var i = 0; i < 2000; ++i) simulation.tick();
     // simulation.stop();
 
@@ -1602,14 +1653,18 @@ function updateVis() {
     // for (var i = 0; i < 1000; ++i) simulation.tick();
     //   simulation.stop();
 
+    // console.log(visDimensions)
     graph.nodes.map(n => {
-
-      n.x = Math.random()*visDimensions.width;
-      n.y = Math.random()*visDimensions.height
+      // console.log('here')
+      // n.x = Math.random()*visDimensions.width;
+      // n.y = Math.random()*visDimensions.height
+      n.x = xPos(n.x);
+      n.y = yPos(n.y);
       n.fx = n.x;
       n.fy = n.y;
       n.savedX = n.fx;
       n.savedY = n.fy;
+      // console.log(n.x,n.y)
     });
   } else {
     graph.nodes.map(n => {
@@ -1664,26 +1719,26 @@ function updateVis() {
     var x1 = leftHand ? d.source.x : d.target.x,
       y1 = leftHand ? d.source.y : d.target.y,
       x2 = leftHand ? d.target.x : d.source.x,
-      y2 = leftHand ? d.target.y : d.source.y,
+      y2 = leftHand ? d.target.y : d.source.y;
       dx = x2 - x1,
       dy = y2 - y1,
       dr = Math.sqrt(dx * dx + dy * dy),
       drx = dr,
       dry = dr,
       sweep = leftHand ? 0 : 1;
-    siblingCount = countSiblingLinks(graph, d.source, d.target);
+    // siblingCount = countSiblingLinks(graph, d.source, d.target);
     (xRotation = 0), (largeArc = 0);
 
-    if (siblingCount > 1) {
-      var siblings = getSiblingLinks(graph, d.source, d.target);
-      var arcScale = d3
-        .scaleOrdinal()
-        .domain(siblings)
-        .range([1, siblingCount]);
+    // if (siblingCount > 1) {
+    //   var siblings = getSiblingLinks(graph, d.source, d.target);
+    //   var arcScale = d3
+    //     .scaleOrdinal()
+    //     .domain(siblings)
+    //     .range([1, siblingCount]);
 
-      drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
-      dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
-    }
+    //   drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+    //   dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+    // }
 
     return (
       "M" +
@@ -1705,6 +1760,10 @@ function updateVis() {
       "," +
       y2
     );
+
+    // return ("M" + x1 + "," + y1
+    //    + "S" + x2 + "," + y2
+    //    + " " + x2 + "," + y2)
   }
 
   function ticked() {
@@ -1885,7 +1944,7 @@ function drawLegend() {
   let edgeAttributeValues = config.attributeScales.edge[edgeAttribute].domain;
   let edgeTypes = config.isMultiEdge ? ['mentions', 'retweet'] : []
 
-  let colorAttributeValues =  drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeFillAttr].legendLabels;
+  let colorAttributeValues =  drawBars  || !colorAttribute ? [] : config.attributeScales.node[config.nodeLink.nodeFillAttr].legendLabels;
   let sizeAttributeValues = drawBars ? [] : config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain;
 
   let barWidth = 20;
