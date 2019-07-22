@@ -7,7 +7,7 @@ d3.json("../public/twitter_data/Eurovis2019Network.json", function(
 
     d3.json("../public/data/network_types.json", function(nodes) {
       d3.json("../../configs/baseConfig.json", function(config) {
-        d3.json("../public/data/network_backbone.json", function(mds) {
+        d3.json("../public/data/network_mds.json", function(mds) {
         d3.json("../public/data/userInfo.json", function(users) {
 
           //iterate through all graph nodes and add more information:

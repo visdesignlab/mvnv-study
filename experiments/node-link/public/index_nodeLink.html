@@ -54,13 +54,7 @@
             <div id="targetSize">
                 <div class="column ">
 
-                    <div id="taskArea">
 
-
-                        <div class="card taskCard">
-                            <p class="card-header-title"></p>
-                        </div>
-                    </div>
 
 
                     <!-- 
@@ -79,26 +73,92 @@
 
                     <div id="vis">
 
-                        <svg id="node-link-svg"></svg>
+
+
+                       
+
+
                         <div class="card" id="visPanel">
 
-                            <div class="card-content">
-                                <div class="content">
-                                    <svg id="legend-svg"></svg>
+                            <div id="taskArea">
+
+
+                                <div class="card taskCard">
+                                    <p class="card-header-title"></p>
+
                                 </div>
                             </div>
-                            <header class="card-header">
+
+                            <div class="card">
+                                    <header class="card-header">
+                                        <p class="card-header-title">
+                                                Instructions on interactions available to the user
+                                        </p>
+        
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+                                                <svg id="legend-svg"></svg>
+                                        </div>
+                                    </div>
+        
+                                </div>
+
+                                <div class="card">
+                                        <header class="card-header">
+                                            <p class="card-header-title">
+                                                    Currently Selected Nodes
+                                            </p>
+            
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+                                                    <ul id="selectedNodeList">
+
+                                                        </ul>
+            
+                                            </div>
+                                        </div>
+            
+                                    </div>
+
+
+
+                            <!-- <div class="card-content">
+                                <div class="content">
+
+                                    <p class="card-header-title">Instructions on interactions available to the user</p>
+
+                                    <svg id="legend-svg"></svg>
+                                </div>
+                            </div> -->
+                            <!-- <header class="card-header">
                                 <p class="card-header-title">
-                                    User Response
+                                    Currently Selected Nodes
                                 </p>
-                                </a>
-                            </header>
-                            <footer class="card-footer">
-                                <a href="#" class="card-footer-item">Save</a>
-                                <a href="#" class="card-footer-item">Edit</a>
-                                <a href="#" class="card-footer-item">Delete</a>
-                            </footer>
+
+                                <div class="card-content">
+                                    <div class="content">
+                                        <ul id="selectedNodeList">
+
+                                        </ul>
+
+                                    </div>
+
+                                </div>
+
+
+                            </header> -->
+
+                            <a class="button is-pulled-right" id="clear-selection">Clear Selected Nodes</a>
+                            <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+                            <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+
+
                         </div>
+
+                        <svg id="node-link-svg"></svg>
+
 
 
                     </div>
@@ -107,17 +167,14 @@
 
 
 
-                    <a class="button" id="panelControl">Hide/Show Control Panel</a>
+                    <!-- <a class="button" id="panelControl">Hide/Show Control Panel</a> -->
                     <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
                     <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
                     <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
-                    <a class="button is-pulled-right" id="clear-selection">Clear Selected Nodes</a>
 
 
-                    <a href="#" id="next" class="button is-pulled-right">Next Task</a>
 
 
-                    <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
 
 
                 </div>

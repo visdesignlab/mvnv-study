@@ -1613,6 +1613,20 @@ function updateVis() {
       .select(".node")
       .style("fill", nodeFill)
       .style("stroke", nodeStroke);
+
+      //update the list of selected nodes in the answer panel. 
+
+      let selectedList = d3.select('#selectedNodeList')
+      .selectAll('li').data(graph.nodes.filter(n=>n.selected),n=>n.id);
+
+      let selectedListEnter = selectedList.enter().append('li');
+
+      selectedList.exit().remove();
+
+      selectedList = selectedListEnter.merge(selectedList);
+      selectedList.text(d=>d.shortName);
+
+
   });
 
   //set up simulation
