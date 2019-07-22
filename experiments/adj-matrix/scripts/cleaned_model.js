@@ -56,6 +56,7 @@ var Model = /** @class */ (function () {
             _this.matrix = [];
             _this.scalarMatrix = [];
             _this.nodes = data.nodes;
+            _this.populateSearchBox();
             _this.idMap = {};
             _this.orderType = _this.controller.configuration.state.adjMatrix.sortKey;
             _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
@@ -146,6 +147,23 @@ var Model = /** @class */ (function () {
         else {
             return false;
         }
+    };
+    Model.prototype.populateSearchBox = function () {
+        var names = this.nodes.map(function (node) { return node.screen_name; });
+        autocomplete(document.getElementById("myInput"), names);
+        d3.select('#searchButton').on('click', function () {
+            var name = document.getElementById("myInput").value;
+            if (names.indexOf(name) == -1) {
+                return;
+            }
+            var cell = d3.selectAll('.cell')
+                .filter(function (d) { return (d.rowid == name && d.colid == name); });
+            console.log(cell);
+            var e = document.createEvent('UIEvents');
+            e.initUIEvent('click', true, true);
+            cell.select("rect").node().dispatchEvent(e);
+            console.log(cell.select("rect"));
+        });
     };
     Model.prototype.reload = function () {
         this.controller.loadData(this.nodes, this.edges, this.matrix);
@@ -620,10 +638,10 @@ var View = /** @class */ (function () {
         })
             .on("click", function (cell, index, nodes) {
             var cellElement = d3.select(nodes[index]).selectAll('rect');
-            console.log(cellElement);
-            cellElement.classed('clickedCell', !cellElement.classed('clickedCell'));
-            console.log(cellElement.classed('clickedCell'));
             var cellID = cell.rowid + cell.colid;
+            console.log(cellElement);
+            cellElement.classed('clickedCell', !_this.controller.clickedCells.has(cellID));
+            console.log(cellElement.classed('clickedCell'));
             if (_this.controller.clickedCells.has(cellID)) {
                 _this.controller.clickedCells.delete(cellID);
                 that.removeHighlightNodesToDict(_this.controller.clickedRow, cell.rowid, cellID); // Add row (rowid)
@@ -763,14 +781,18 @@ var View = /** @class */ (function () {
             console.log(d[i]);
             var nodeID = d[0].rowid;
             // will add or remove node
+            console.log(d);
+            // will add or remove node
             console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
-            that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row (rowid)
+            that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row or remove if already in
+            console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
+            d3.selectAll('.answer').classed('answer', false);
             d3.selectAll('.answer').classed('answer', nodeID in _this.controller.answerRow);
             that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
             // selects row text
-            d3.select(nodes[i]).classed('answer', function (data) {
-                return !_this.controller.configuration.state.selectedNodes.includes(data[0].rowid);
-            });
+            //d3.select(nodes[i]).classed('answer', (data) => {
+            //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
+            //});
             // classes row
             //this.classHighlights(d.screen_name, 'Row', 'answer');
             //this.selectNode(d[0].rowid);
@@ -949,7 +971,7 @@ var View = /** @class */ (function () {
             pluralType = "retweets";
         }
         else if (pluralType == "combined") {
-            pluralType = "combination";
+            pluralType = "interactions";
         }
         svg.append('text')
             .attr('x', boxWidth / 2)
@@ -1391,9 +1413,11 @@ var View = /** @class */ (function () {
         // Calculate Column Scale
         var columnRange = [];
         var xRange = 0;
-        var columnWidth = 450 / columns.length;
+        var columnWidths = this.determineColumnWidths(columns);
+        console.log(columnWidths, columns);
+        //450 / columns.length;
         var categoricalAttributes = ["type", "continent"];
-        columns.forEach(function (col) {
+        columns.forEach(function (col, index) {
             // calculate range
             columnRange.push(xRange);
             var domain = _this.controller.configuration.attributeScales.node[col].domain;
@@ -1406,22 +1430,23 @@ var View = /** @class */ (function () {
                 attributeScales[col] = scale;
             }
             else {
-                var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidth - barMargin.right]);
+                var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
                 scale.clamp(true);
                 attributeScales[col] = scale;
             }
-            xRange += columnWidth;
+            xRange += columnWidths[col];
         });
         this.attributeScales = attributeScales;
         // need max and min of each column
         /*this.barWidthScale = d3.scaleLinear()
           .domain([0, 1400])
           .range([0, 140]);*/
+        var placementScale = {};
         this.columnScale.range(columnRange);
         for (var _i = 0, _a = Object.entries(attributeScales); _i < _a.length; _i++) {
             var _b = _a[_i], column = _b[0], scale = _b[1];
             if (categoricalAttributes.indexOf(column) > -1) {
-                this.generateCategoricalLegend(column);
+                placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
             }
             else {
                 this.attributes.append("g")
@@ -1440,21 +1465,14 @@ var View = /** @class */ (function () {
             }
         }
         /* Create data columns data */
-        columns.forEach(function (column) {
+        columns.forEach(function (column, index) {
             var columnPosition = _this.columnScale(column);
             if (categoricalAttributes.indexOf(column) > -1) { // if categorical
-                var topMargin = 1;
-                var width_1 = _this.verticalScale.bandwidth() - 2 * topMargin;
-                _this.attributeRows
-                    .append('rect')
-                    .attr('x', columnPosition + columnWidth / 2 - width_1 / 2)
-                    .attr('y', 1)
-                    .attr('fill', function (d) { return attributeScales[column](d[column]); })
-                    .attr('width', width_1)
-                    .attr('height', width_1);
+                console.log("CATEGORICAL!");
+                _this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
                 return;
             }
-            else {
+            else { // if quantitative
                 _this.attributeRows
                     .append("rect")
                     .attr("class", "glyph")
@@ -1576,33 +1594,96 @@ var View = /** @class */ (function () {
           return d === sortKey;
         });*/
     };
-    View.prototype.generateCategoricalLegend = function (attribute) {
+    View.prototype.isCategorical = function (column) {
+        return column == "type" || column == "continent";
+    };
+    View.prototype.determineColumnWidths = function (columns) {
+        var widths = {};
+        // set all column widths to 0
+        // set all categorical column width to their width, keep track of total width
+        // set all other columns widths based off width - categorical
+        var widthOffset = 450 / columns.length;
+        var totalCategoricalWidth = 0;
+        // fill in categorical column sizes
+        for (var i = 0; i < columns.length; i++) {
+            var column = columns[i];
+            // if column is categorical
+            if (this.isCategorical(column)) {
+                var width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3);
+                widths[column] = width;
+                totalCategoricalWidth += width; // add width
+            }
+        }
+        var quantitativeWidth = 450 - totalCategoricalWidth, quantitativeColumns = columns.length - Object.keys(widths).length, quantitativeColumnSize = quantitativeWidth / quantitativeColumns;
+        // fill in remaining columns based off the size remaining for quantitative variables
+        for (var i = 0; i < columns.length; i++) {
+            var column = columns[i];
+            if (!(column in widths)) {
+                widths[column] = quantitativeColumnSize;
+            }
+        }
+        return widths;
+        // add categorical column width
+    };
+    View.prototype.createUpsetPlot = function (column, columnWidth, placementScaleForAttr) {
+        var _this = this;
+        var columnPosition = this.columnScale(column);
+        var topMargin = 1;
+        var width = this.verticalScale.bandwidth() - 2 * topMargin;
+        var _loop_2 = function (i) {
+            this_2.attributeRows
+                .append('rect')
+                .attr('x', placementScaleForAttr[i].position)
+                .attr('y', 1)
+                .attr('fill', function (d) {
+                return d[column] == placementScaleForAttr[i].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+            })
+                .attr('width', width)
+                .attr('height', width);
+        };
+        var this_2 = this;
+        for (var i = 0; i < placementScaleForAttr.length; i++) {
+            _loop_2(i);
+        }
+        return;
+    };
+    View.prototype.generateCategoricalLegend = function (attribute, legendWidth) {
         var attributeInfo = this.controller.configuration.attributeScales.node[attribute];
         var dividers = attributeInfo.domain.length;
-        var legendHeight = 35;
-        var legendItemSize = (legendHeight - 5) / dividers;
+        var legendHeight = 25;
+        //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
+        var legendItemSize = (legendWidth) / (dividers + 3);
+        var margin = this.verticalScale.bandwidth() / dividers;
+        console.log(margin);
+        var xRange = [];
         var rects = this.attributes.append("g")
-            .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
-        // if()
+            .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * legendItemSize) + "," + (-legendHeight) + ")"); //
         for (var i = 0; i < dividers; i++) {
             var rect1 = rects
                 .append('g')
-                .attr('transform', 'translate(10,' + i * legendItemSize + ')');
+                .attr('transform', 'translate(' + (i * (legendItemSize + margin)) + ',0)');
+            xRange.push({
+                "attr": attribute,
+                "value": attributeInfo.domain[i],
+                "position": this.columnScale(attribute) + 1 * legendItemSize + (i * (legendItemSize + margin))
+            });
             rect1
                 .append('rect')
-                .attr('x', 0)
+                .attr('x', 0) //(legendItemSize + margin)/2 -this.verticalScale.bandwidth()
                 .attr('y', 0)
                 .attr('fill', attributeInfo.range[i])
-                .attr('width', legendItemSize - 1)
-                .attr('height', legendItemSize - 1);
+                .attr('width', legendItemSize)
+                .attr('height', legendItemSize);
             rect1
                 .append('text')
-                .text(attributeInfo.domain[i])
-                .attr('x', legendItemSize + 2)
-                .attr('y', legendItemSize / 2)
+                .text(attributeInfo.legendLabels[i])
+                .attr('x', 3)
+                .attr('y', legendItemSize)
                 .attr('text-anchor', 'start')
-                .style('font-size', 7.5);
+                .style('font-size', 7.5)
+                .attr('transform', 'rotate(-90)');
         }
+        return xRange;
     };
     /**
      * [selectHighlight description]
@@ -1664,6 +1745,7 @@ var Controller = /** @class */ (function () {
         this.answerRow = {};
         this.hoverRow = {};
         this.hoverCol = {};
+        this.loadClearButton();
         this.loadTasks();
         this.loadConfigs();
         /*console.log(this.configuration);
@@ -1756,6 +1838,27 @@ var Controller = /** @class */ (function () {
                         return [2 /*return*/];
                 }
             });
+        });
+    };
+    Controller.prototype.loadClearButton = function () {
+        var _this = this;
+        d3.select('#clearButton').on('click', function () {
+            _this.clickedRow = {};
+            _this.clickedCol = {};
+            _this.answerRow = {};
+            _this.hoverRow = {};
+            _this.hoverCol = {};
+            _this.clickedCells = new Set();
+            var test = d3.selectAll('.clickedCell').classed('clickedCell', false);
+            d3.selectAll('.answer').classed('answer', false);
+            d3.selectAll('.clicked').classed('clicked', false);
+            console.log(test, _this.clickedCells);
+            _this.view.renderHighlightNodesFromDict(_this.clickedRow, 'clicked', 'Row');
+            _this.view.renderHighlightNodesFromDict(_this.clickedCol, 'clicked', 'Col');
+            _this.view.renderHighlightNodesFromDict(_this.answerRow, 'answer', 'Row');
+            //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+            //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+            //that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
         });
     };
     Controller.prototype.clearView = function () {

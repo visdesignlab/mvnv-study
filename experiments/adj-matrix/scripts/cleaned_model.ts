@@ -113,6 +113,26 @@ class Model {
     }
   }
   private scalarMatrix: any;
+  populateSearchBox(){
+    let names =  this.nodes.map(node => node.screen_name);
+    autocomplete(document.getElementById("myInput"), names);
+    d3.select('#searchButton').on('click',()=>{
+      let name = document.getElementById("myInput").value;
+      if(names.indexOf(name) == -1){
+        return;
+      }
+      let cell = d3.selectAll('.cell')
+        .filter(d=>(d.rowid==name && d.colid ==name))
+
+      console.log(cell);
+
+      var e = document.createEvent('UIEvents');
+      e.initUIEvent('click', true, true, /* ... */);
+      cell.select("rect").node().dispatchEvent(e);
+      console.log(cell.select("rect"));
+    })
+  }
+
   constructor(controller: any) {
     this.controller = controller;
     d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
@@ -125,6 +145,7 @@ class Model {
       this.scalarMatrix = [];
 
       this.nodes = data.nodes
+      this.populateSearchBox();
       this.idMap = {};
       this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
       this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
@@ -166,22 +187,22 @@ class Model {
     let order;
     this.orderType = type;
     this.controller.configuration.state.adjMatrix.sortKey = type;
-    if (type=="clusterSpectral" || type=="clusterBary" || type=="clusterLeaf"){
+    if (type == "clusterSpectral" || type == "clusterBary" || type == "clusterLeaf") {
       /*var graph = reorder.graph()
     	  .nodes(this.nodes)
     	  .links(this.edges)
     	  .init();*/
       var graph = reorder.graph()
-    	  .nodes(this.nodes)
-    	  .links(this.edges)
-    	  .init();
+        .nodes(this.nodes)
+        .links(this.edges)
+        .init();
 
-      if(type=="clusterBary"){
+      if (type == "clusterBary") {
         var barycenter = reorder.barycenter_order(graph);
-        order = reorder.adjacent_exchange(graph,barycenter[0],barycenter[1])[1];
-      } else if(type=="clusterSpectral"){
-        order =  reorder.spectral_order(graph);
-      } else if(type=="clusterLeaf"){
+        order = reorder.adjacent_exchange(graph, barycenter[0], barycenter[1])[1];
+      } else if (type == "clusterSpectral") {
+        order = reorder.spectral_order(graph);
+      } else if (type == "clusterLeaf") {
         let mat = reorder.graph2mat(graph);
         order = reorder.optimal_leaf_order()(mat);
       }
@@ -225,9 +246,9 @@ class Model {
       this.scalarMatrix[i] = this.nodes.map(function(colNode) { return 0; });
 
     });
-    function checkEdge(edge){
+    function checkEdge(edge) {
       if (typeof edge.source !== "number") return false
-	    if (typeof edge.target !== "number") return false;
+      if (typeof edge.target !== "number") return false;
       return true
     }
     console.log(this.edges)
@@ -680,7 +701,7 @@ class View {
 
         let cellID = cell.rowid + cell.colid;
         that.addHighlightNodesToDict(this.controller.hoverRow, cell.rowid, cellID);  // Add row (rowid)
-        if(cell.colid !== cell.rowid){
+        if (cell.colid !== cell.rowid) {
           that.addHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);  // Add row (colid)
         }
         that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
@@ -693,33 +714,35 @@ class View {
 
         let cellID = cell.rowid + cell.colid;
         that.removeHighlightNodesToDict(this.controller.hoverRow, cell.rowid, cellID);  // Add row (rowid)
-        if(cell.colid !== cell.rowid){
+        if (cell.colid !== cell.rowid) {
           that.removeHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);
         }
-          // Add row (colid)
+        // Add row (colid)
         that.removeHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
-      .on("click", (cell,index,nodes) => {
+      .on("click", (cell, index, nodes) => {
         let cellElement = d3.select(nodes[index]).selectAll('rect');
-        console.log(cellElement);
-        cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
-        console.log(cellElement.classed('clickedCell'));
         let cellID = cell.rowid + cell.colid;
+        console.log(cellElement);
 
-        if(this.controller.clickedCells.has(cellID)){
+        cellElement.classed('clickedCell', !this.controller.clickedCells.has(cellID))
+        console.log(cellElement.classed('clickedCell'));
+
+
+        if (this.controller.clickedCells.has(cellID)) {
           this.controller.clickedCells.delete(cellID);
           that.removeHighlightNodesToDict(this.controller.clickedRow, cell.rowid, cellID);  // Add row (rowid)
-          if(cell.colid !== cell.rowid){
+          if (cell.colid !== cell.rowid) {
             that.removeHighlightNodesToDict(this.controller.clickedRow, cell.colid, cellID);  // Add row (colid)
           }
           that.removeHighlightNodesToDict(this.controller.clickedCol, cell.colid, cellID);  // Add col (colid)
         } else {
           this.controller.clickedCells.add(cellID);
           that.addHighlightNodesToDict(this.controller.clickedRow, cell.rowid, cellID);  // Add row (rowid)
-          if(cell.colid !== cell.rowid){
+          if (cell.colid !== cell.rowid) {
             that.addHighlightNodesToDict(this.controller.clickedRow, cell.colid, cellID);  // Add row (colid)
           }
 
@@ -845,8 +868,8 @@ class View {
 
 
     this.edgeRows.append("text")
-      .attr('class','nodeLabel')
-      .attr("id", (d,i)=>{
+      .attr('class', 'nodeLabel')
+      .attr("id", (d, i) => {
         return "nodeLabelRow" + d[i].rowid;
       })
       .attr('z-index', 30)
@@ -866,15 +889,20 @@ class View {
         console.log(d[i]);
         let nodeID = d[0].rowid;
         // will add or remove node
-        console.log(nodeID,this.controller.answerRow,nodeID in this.controller.answerRow)
-        that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
-        d3.selectAll('.answer').classed('answer',nodeID in this.controller.answerRow);
+        console.log(d);
+        // will add or remove node
+        console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+
+        that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row or remove if already in
+        console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+        d3.selectAll('.answer').classed('answer', false);
+        d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
         that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
 
         // selects row text
-        d3.select(nodes[i]).classed('answer', (data) => {
-          return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
-        });
+        //d3.select(nodes[i]).classed('answer', (data) => {
+        //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
+        //});
         // classes row
         //this.classHighlights(d.screen_name, 'Row', 'answer');
         //this.selectNode(d[0].rowid);
@@ -882,10 +910,10 @@ class View {
 
 
     this.edgeColumns.append("text")
-      .attr("id", (d,i)=>{
+      .attr("id", (d, i) => {
         return "nodeLabelCol" + d[i].rowid;
       })
-      .attr('class','nodeLabel')
+      .attr('class', 'nodeLabel')
       .attr('z-index', 30)
       .attr("y", 3)
       .attr('x', 2)
@@ -894,12 +922,12 @@ class View {
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
       .on('click', (d, index, nodes) => {
-        console.log( d[index]);
+        console.log(d[index]);
         let nodeID = d[0].rowid;
         // will add or remove node
-        console.log(nodeID,this.controller.clickedCol,nodeID in this.controller.clickedCol)
+        console.log(nodeID, this.controller.clickedCol, nodeID in this.controller.clickedCol)
         that.addHighlightNodesToDict(this.controller.clickedCol, nodeID, nodeID);  // Add row (rowid)
-        d3.selectAll('.clicked').classed('clicked',false);
+        d3.selectAll('.clicked').classed('clicked', false);
         that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
         that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
 
@@ -998,7 +1026,7 @@ class View {
   }
 
   generateScaleLegend(type, numberOfEdge) {
-    if(this.controller.configuration.adjMatrixValues.edgeBars){
+    if (this.controller.configuration.adjMatrixValues.edgeBars) {
       let legendFile = 'assets/';
       legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge'
       legendFile += '.png';
@@ -1060,7 +1088,7 @@ class View {
     if (pluralType == "retweet") {
       pluralType = "retweets";
     } else if (pluralType == "combined") {
-      pluralType = "combination";
+      pluralType = "interactions";
     }
 
     svg.append('text')
@@ -1292,15 +1320,15 @@ class View {
         cssSelector += '#highlight' + rowOrCol + nodeID + ','
       }
 
-      if(classToRender == 'answer' && rowOrCol == "Row"){
-        cssSelector += '#nodeLabelRow'+nodeID+','
+      if (classToRender == 'answer' && rowOrCol == "Row") {
+        cssSelector += '#nodeLabelRow' + nodeID + ','
       }
 
     }
     // remove last comma
     cssSelector = cssSelector.substring(0, cssSelector.length - 1);
     console.log(cssSelector);
-    if(cssSelector==''){
+    if (cssSelector == '') {
       return;
     }
     d3.selectAll(cssSelector).classed(classToRender, true);
@@ -1561,9 +1589,9 @@ class View {
         console.log(d);
         let nodeID = d.screen_name;
         // will add or remove node
-        console.log(nodeID,this.controller.answerRow,nodeID in this.controller.answerRow)
+        console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
         that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
-        d3.selectAll('.answer').classed('answer',nodeID in this.controller.answerRow);
+        d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
         that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
 
         // classes row
@@ -1589,12 +1617,17 @@ class View {
     // Calculate Column Scale
     let columnRange = []
     let xRange = 0;
-    let columnWidth = 450 / columns.length;
+
+
+    let columnWidths = this.determineColumnWidths(columns);
+    console.log(columnWidths,columns)
+    //450 / columns.length;
 
 
     let categoricalAttributes = ["type", "continent"]
 
-    columns.forEach(col => {
+
+    columns.forEach((col, index) => {
       // calculate range
       columnRange.push(xRange);
       let domain = this.controller.configuration.attributeScales.node[col].domain;
@@ -1608,12 +1641,12 @@ class View {
         attributeScales[col] = scale;
       } else {
 
-        let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidth - barMargin.right]);
+        let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
         scale.clamp(true);
         attributeScales[col] = scale;
       }
 
-      xRange += columnWidth;
+      xRange += columnWidths[col];
     })
     this.attributeScales = attributeScales;
 
@@ -1628,14 +1661,13 @@ class View {
 
 
 
-
+    let placementScale = {};
 
     this.columnScale.range(columnRange);
 
     for (let [column, scale] of Object.entries(attributeScales)) {
       if (categoricalAttributes.indexOf(column) > -1) {
-        this.generateCategoricalLegend(column);
-
+        placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
       } else {
         this.attributes.append("g")
           .attr("class", "attr-axis")
@@ -1658,21 +1690,14 @@ class View {
 
 
     /* Create data columns data */
-    columns.forEach((column) => {
+    columns.forEach((column, index) => {
       let columnPosition = this.columnScale(column);
 
       if (categoricalAttributes.indexOf(column) > -1) { // if categorical
-        let topMargin = 1;
-        let width = this.verticalScale.bandwidth() - 2 * topMargin;
-        this.attributeRows
-          .append('rect')
-          .attr('x', columnPosition + columnWidth / 2 - width / 2)
-          .attr('y', 1)
-          .attr('fill', (d) => attributeScales[column](d[column]))
-          .attr('width', width)
-          .attr('height', width);
+        console.log("CATEGORICAL!")
+        this.createUpsetPlot(column, columnWidths[index],placementScale[column]);
         return;
-      } else {
+      } else { // if quantitative
         this.attributeRows
           .append("rect")
           .attr("class", "glyph")
@@ -1816,38 +1841,119 @@ class View {
 
 
   }
-  generateCategoricalLegend(attribute) {
+
+  isCategorical(column) {
+    return column == "type" || column == "continent";
+  }
+
+  determineColumnWidths(columns) {
+
+    let widths = {};
+    // set all column widths to 0
+    // set all categorical column width to their width, keep track of total width
+    // set all other columns widths based off width - categorical
+
+    let widthOffset = 450 / columns.length;
+
+    let totalCategoricalWidth = 0;
+
+    // fill in categorical column sizes
+    for (let i = 0; i < columns.length; i++) {
+      let column = columns[i];
+      // if column is categorical
+      if (this.isCategorical(column)) {
+        let width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3)
+        widths[column] = width;
+        totalCategoricalWidth += width; // add width
+      }
+    }
+
+    let quantitativeWidth = 450 - totalCategoricalWidth,
+      quantitativeColumns = columns.length - Object.keys(widths).length,
+      quantitativeColumnSize = quantitativeWidth / quantitativeColumns;
+
+    // fill in remaining columns based off the size remaining for quantitative variables
+    for (let i = 0; i < columns.length; i++) {
+      let column = columns[i];
+      if (!(column in widths)) {
+        widths[column] = quantitativeColumnSize;
+      }
+    }
+    return widths;
+
+
+    // add categorical column width
+  }
+
+
+
+  createUpsetPlot(column, columnWidth, placementScaleForAttr) {
+    let columnPosition = this.columnScale(column);
+    let topMargin = 1;
+    let width = this.verticalScale.bandwidth() - 2 * topMargin;
+
+    for(let i = 0; i < placementScaleForAttr.length; i++){
+      this.attributeRows
+        .append('rect')
+        .attr('x', placementScaleForAttr[i].position)
+        .attr('y', 1)
+        .attr('fill', (d) => {
+          return d[column] == placementScaleForAttr[i].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+        })
+        .attr('width', width)
+        .attr('height', width);
+    }
+
+
+    return;
+  }
+
+  generateCategoricalLegend(attribute, legendWidth) {
     let attributeInfo = this.controller.configuration.attributeScales.node[attribute];
     let dividers = attributeInfo.domain.length;
-    let legendHeight = 35;
-    let legendItemSize = (legendHeight - 5) / dividers;
+    let legendHeight = 25;
+
+
+    //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
+    let legendItemSize = (legendWidth) / (dividers+3);
+    let margin = this.verticalScale.bandwidth()/dividers;
+    console.log(margin);
+
+    let xRange = [];
+
     let rects = this.attributes.append("g")
-      .attr("transform", "translate(" + this.columnScale(attribute) + "," + (-legendHeight) + ")");
-    // if()
+      .attr("transform", "translate(" + (this.columnScale(attribute)+ 1*legendItemSize)+ "," + (-legendHeight) + ")"); //
+
     for (let i = 0; i < dividers; i++) {
-
-
       let rect1 = rects
         .append('g')
-        .attr('transform', 'translate(10,' + i * legendItemSize + ')')
+        .attr('transform', 'translate('+ (i * (legendItemSize + margin))+',0)')
+
+      xRange.push({
+        "attr":attribute,
+        "value":attributeInfo.domain[i],
+        "position":this.columnScale(attribute)+ 1*legendItemSize + (i * (legendItemSize + margin))
+      });
 
       rect1
         .append('rect')
-        .attr('x', 0)
+        .attr('x', 0)//(legendItemSize + margin)/2 -this.verticalScale.bandwidth()
         .attr('y', 0)
         .attr('fill', attributeInfo.range[i])
-        .attr('width', legendItemSize - 1)
-        .attr('height', legendItemSize - 1)
+        .attr('width', legendItemSize)
+        .attr('height', legendItemSize)
 
       rect1
         .append('text')
-        .text(attributeInfo.domain[i])
-        .attr('x', legendItemSize + 2)
-        .attr('y', legendItemSize / 2)
+        .text(attributeInfo.legendLabels[i])
+        .attr('x', 3)
+        .attr('y', legendItemSize)
         .attr('text-anchor', 'start')
         .style('font-size', 7.5)
-
+        .attr('transform','rotate(-90)')
     }
+
+    return xRange;
   }
 
   /**
@@ -2002,6 +2108,38 @@ class Controller {
     });
 
   }
+  private clickedCells : any;
+  loadClearButton(){
+    d3.select('#clearButton').on('click', ()=>{
+      this.clickedRow = {}
+      this.clickedCol = {}
+      this.answerRow = {}
+      this.hoverRow = {}
+      this.hoverCol = {};
+      this.clickedCells = new Set();
+      let test = d3.selectAll('.clickedCell').classed('clickedCell', false);
+      d3.selectAll('.answer').classed('answer', false);
+      d3.selectAll('.clicked').classed('clicked', false);
+
+      console.log(test,this.clickedCells)
+
+      this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+      this.view.renderHighlightNodesFromDict(this.clickedCol,'clicked','Col');
+      this.view.renderHighlightNodesFromDict(this.answerRow,'answer','Row');
+
+      //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+      //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
+      //that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+
+    })
+  }
+
+  private clickedRow : any;
+  private clickedCol : any;
+  private answerRow : any;
+  private hoverRow : any;
+  private hoverCol : any;
+
   constructor() {
     this.clickedRow = {}
     this.clickedCol = {}
@@ -2009,6 +2147,7 @@ class Controller {
     this.hoverRow = {}
     this.hoverCol = {}
 
+    this.loadClearButton();
     this.loadTasks();
 
     this.loadConfigs();
