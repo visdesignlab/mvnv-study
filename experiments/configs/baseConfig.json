@@ -67,22 +67,22 @@
             },
             "type": {
                 "label":"Type",
-                "type":"Color",
+                "glyph":"circle",
                 "domain": [
                     "person",
                     "institution"
                 ],
                 "legendLabels": [
                     "Person",
-                    "Institution"
+                    "Inst."
                 ],
                 "range": [
                     "#e86b45",
-                    "#0191c2"
+                    "#514ed9"
                 ]
             },
             "continent": {
-                "type":"Text",
+                "glyph":"square",
                 "label":"Continent",
                 "domain": [
                     "North America",
@@ -96,16 +96,15 @@
                     "EU",
                     "AS"
                 ],
-                "range": [
-                    "#39a512",
-                    "#6d6ad7",
-                    "#e86b45",
-                    "#0191c2"]
+                "range": ["#5ba3d0",
+                    "#7d6dcb",
+                    "#ce9333",
+                    "#6aa858"]
             }
         },
         "edge": {
             "count": {
-                "label":"Edge Count",
+                "label":"# Interactions",
                 "domain": [
                     1,
                     5
@@ -133,7 +132,7 @@
     "nodeLink": {
         "noEdgeColor": "white",
         "noNodeFill": "white",
-        "noNodeStroke": "white",
+        "noNodeStroke": "#c8c8c8",
         "quantColors":["#7b7cb1",
             "#01a068",
             "#bf8531",

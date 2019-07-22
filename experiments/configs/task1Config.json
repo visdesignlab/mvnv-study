@@ -22,16 +22,10 @@
         "noEdgeColor": "white",
         "noNodeFill": "white",
         "noNodeStroke": "white",
-        "quantColors": [
-            "#7b7cb1",
-            "#01a068",
-            "#bf8531",
-            "#5472cf",
-            "#4d8615",
-            "#d63d61",
-            "#ae76ed",
-            "#f26336"
-        ]
+        "quantColors": ["#5ba3d0",
+            "#b9873b",
+            "#7d6dcb",
+            "#6aa858"]
     },
     "taskID": "task1",
     "loadedGraph": "large_undirected_singleEdge",

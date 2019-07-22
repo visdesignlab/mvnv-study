@@ -13,7 +13,7 @@
     #targetSize{
         width:1920px;
         height:1080px;
-        background-color:rgb(207, 207, 207);
+        /* background-color:rgb(207, 207, 207); */
         /* border-style:solid; */
         /* border-color:rgb(100, 100, 100); */
     }
@@ -81,7 +81,7 @@
 
 
     #legend-svg{
-        background-color:rgb(154, 154, 154);
+        /* background-color:rgb(203, 203, 203); */
     }
 
     .pathLabel>textPath {
@@ -152,7 +152,7 @@
     } */
 
     .node {
-        stroke-width: 3px;
+        stroke-width: 1px;
     }
 
     .node.clicked{
