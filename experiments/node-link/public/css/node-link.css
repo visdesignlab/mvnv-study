@@ -78,6 +78,11 @@
 
     }
 
+    .errorMsg{
+        color:red;
+        font-style:italic;
+    }
+
 
 
     #legend-svg{

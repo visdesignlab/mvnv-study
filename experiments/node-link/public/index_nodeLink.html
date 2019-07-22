@@ -107,20 +107,51 @@
                                 <div class="card">
                                         <header class="card-header">
                                             <p class="card-header-title">
-                                                    Currently Selected Nodes
+                                                    Selected Answer
                                             </p>
             
                                         </header>
                                         <div class="card-content">
                                             <div class="content">
+
+                                                    <a class="button is-pulled-right" id="submit" disabled>Submit</a>
+
                                                     <ul id="selectedNodeList">
+                                                        <li>No Nodes Selected</li>
 
                                                         </ul>
+                                                        <p class = 'errorMsg'>This is an error message that will be displayed if the user tries to submit an answer that does not conform with the instructions.</p>
+
+
+
             
                                             </div>
                                         </div>
             
                                     </div>
+
+
+                                    <div class="card">
+                                            <header class="card-header">
+                                                <p class="card-header-title">
+                                                        Enter your answer below 
+                                                </p>
+                
+                                            </header>
+                                            <div class="card-content">
+                                                <div class="content">
+                                                        <input class="input" type="text" placeholder="answer text">
+
+                                                        
+                                                        <a class="button is-pulled-right" id="submit" disabled>Submit</a>
+                                                        <p class = 'errorMsg'>This is an error message that will be displayed if the user tries to submit an answer that does not conform with the instructions.</p>
+
+
+                                                </div>
+                                            </div>
+                
+                                        </div>
+
 
 
 
@@ -150,9 +181,6 @@
 
                             </header> -->
 
-                            <a class="button is-pulled-right" id="clear-selection">Clear Selected Nodes</a>
-                            <a href="#" id="next" class="button is-pulled-right">Next Task</a>
-                            <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
 
 
                         </div>
@@ -168,6 +196,13 @@
 
 
                     <!-- <a class="button" id="panelControl">Hide/Show Control Panel</a> -->
+
+
+                    <a class="button is-pulled-right" id="clear-selection">Clear Highlighted Nodes</a>
+                    <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+                    <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+
+
                     <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
                     <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
                     <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
