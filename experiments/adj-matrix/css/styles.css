@@ -27,7 +27,7 @@ input[type=text] {
 
 
 
-<input type="button" id ="clearButton" value="Clear Selections">
+/*<input type="button" id ="clearButton" value="Clear Selections">*/
 .autocomplete-items {
   position: absolute;
   border: 1px solid #d4d4d4;

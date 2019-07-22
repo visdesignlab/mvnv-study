@@ -781,14 +781,18 @@ var View = /** @class */ (function () {
             console.log(d[i]);
             var nodeID = d[0].rowid;
             // will add or remove node
+            console.log(d);
+            // will add or remove node
             console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
-            that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row (rowid)
+            that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row or remove if already in
+            console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
+            d3.selectAll('.answer').classed('answer', false);
             d3.selectAll('.answer').classed('answer', nodeID in _this.controller.answerRow);
             that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
             // selects row text
-            d3.select(nodes[i]).classed('answer', function (data) {
-                return !_this.controller.configuration.state.selectedNodes.includes(data[0].rowid);
-            });
+            //d3.select(nodes[i]).classed('answer', (data) => {
+            //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
+            //});
             // classes row
             //this.classHighlights(d.screen_name, 'Row', 'answer');
             //this.selectNode(d[0].rowid);
