@@ -879,6 +879,29 @@ class View {
       .attr("text-anchor", "end")
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
+      .on("mouseout", (d,i,nodes) => {
+        //let func = this.removeHighlightNodesToDict;
+
+        let rowID = d[0].rowid;
+
+        that.removeHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      })
+      .on('mouseover', (d,i,nodes)=>{
+        let rowID = d[0].rowid;
+
+        that.addHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+      })
       .on('click', (d, i, nodes) => {
 
         /*let cellElement = d3.select(nodes[index]).selectAll('rect');
@@ -939,6 +962,30 @@ class View {
         //this.classHighlights(d.screen_name, 'Col', 'clicked');
         //this.selectNeighborNodes(d[index].rowid);
 
+      })
+      .on("mouseout", (d,i,nodes) => {
+        //let func = this.removeHighlightNodesToDict;
+
+        let colID = d[0].rowid; // as rows and columns are flipped
+
+        that.removeHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+        //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      })
+      .on('mouseover', (d,i,nodes)=>{
+        let colID = d[0].rowid;
+        console.log(colID,d);
+
+        that.addHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       });
 
 
