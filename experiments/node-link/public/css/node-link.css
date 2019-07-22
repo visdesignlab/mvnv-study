@@ -83,6 +83,25 @@
         font-style:italic;
     }
 
+    .selectBox{
+        stroke:rgb(94, 94, 94);
+        fill:white;
+        stroke-width:2px;
+    }
+
+    .selectBox.selected{
+                fill:rgb(255, 111, 0);
+                stroke:rgb(255, 111, 0);;
+    }
+
+    .label.selected{
+        fill:rgb(255, 111, 0);
+    }
+
+    .label, .selectBox{
+        cursor:pointer;
+    }
+
 
 
     #legend-svg{

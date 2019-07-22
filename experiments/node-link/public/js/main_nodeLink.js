@@ -1232,6 +1232,9 @@ function updateVis() {
 
     nodeEnter.append("text").classed("label", true);
 
+    nodeEnter.append("rect").classed("selectBox", true);
+
+
     node.exit().remove();
 
     node = nodeEnter.merge(node);
@@ -1267,7 +1270,8 @@ function updateVis() {
             .node()
             .getBBox().width / 2
         );
-      });
+      })
+      .on('click',selectNode)
 
     node
       .select(".labelBackground")
@@ -1296,6 +1300,32 @@ function updateVis() {
         config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 16 : "-.5em"
       );
 
+      node
+      .select(".selectBox")
+      .attr("width", "1em")
+      .attr("height", "1em")
+      .attr("x", function(d) {
+
+        let nodeLabel = d3
+        .select(d3.select(this).node().parentNode)
+        .select("text");
+
+
+        let textWidth = nodeLabel
+          .node()
+          .getBBox().width;
+
+          return -textWidth/2 - 20;
+      })
+      .attr("y", d =>
+        config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 16 : "-.5em"
+      )
+      .on('click',selectNode)
+
+  
+
+
+
     node.call(
       d3
         .drag()
@@ -1304,6 +1334,38 @@ function updateVis() {
         .on("end", dragended)
     );
   }
+
+  function selectNode(d){
+    d3.event.stopPropagation();
+     d3.select(this).classed('selected',!d3.select(this).classed('selected'))
+    
+      d.hardSelect = d3.select(this).classed('selected');
+
+      let nodeLabel = d3
+      .select(d3.select(this).node().parentNode)
+      .select("text");
+
+      let selectBox = d3
+      .select(d3.select(this).node().parentNode)
+      .select(".selectBox");
+
+      nodeLabel.classed('selected',d.hardSelect);
+      selectBox.classed('selected',d.hardSelect)
+
+
+
+  //update the list of selected nodes in the answer panel. 
+
+  let selectedList = d3.select('#selectedNodeList')
+  .selectAll('li').data(graph.nodes.filter(n=>n.hardSelect));
+
+  let selectedListEnter = selectedList.enter().append('li');
+
+  selectedList.exit().remove();
+
+  selectedList = selectedListEnter.merge(selectedList);
+  selectedList.text(d=>d.shortName);
+};
 
   //Drawing Nested Bar Charts
   {
@@ -1545,6 +1607,10 @@ function updateVis() {
   });
 
   node.on("click", function(currentData) {
+
+    console.log('is selectbox', d3.select(this).classed('selectBox'))
+
+    console.log('clicked')
     let isClicked = d3
       .select(this)
       .select(".node")
@@ -1614,17 +1680,6 @@ function updateVis() {
       .style("fill", nodeFill)
       .style("stroke", nodeStroke);
 
-      //update the list of selected nodes in the answer panel. 
-
-      let selectedList = d3.select('#selectedNodeList')
-      .selectAll('li').data(graph.nodes.filter(n=>n.selected),n=>n.id);
-
-      let selectedListEnter = selectedList.enter().append('li');
-
-      selectedList.exit().remove();
-
-      selectedList = selectedListEnter.merge(selectedList);
-      selectedList.text(d=>d.shortName);
 
 
   });
