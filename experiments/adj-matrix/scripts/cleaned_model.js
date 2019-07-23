@@ -1674,7 +1674,7 @@ var View = /** @class */ (function () {
         });
         console.log(columnHeaders.selectAll('.header'));
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
-        answerColumn.attr('y', 30).attr('x', 10).attr('font-weight', 650);
+        answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
         console.log(answerColumn);
         d3.select('.loading').style('display', 'none');
         // Append g's for table headers
@@ -1894,7 +1894,16 @@ var Controller = /** @class */ (function () {
             that.setupExports(configComponents[0], configComponents[1]);
             var components = [configComponents[0], configComponents[1], configComponents[2]];
             var result = deepmerge.all(components);
+            var obj = {
+                "domain": [true, false],
+                "range": ["#e86b45", '#fff'],
+                "labels": ['answer', 'not answer'],
+                'glyph': 'rect',
+                'label': 'selected'
+            };
             that.configuration = result;
+            that.configuration.attributeScales.node['selected'] = obj;
+            console.log(that.configuration.attributeScales);
             that.reload();
             //that.finishConstructing(result);
         });

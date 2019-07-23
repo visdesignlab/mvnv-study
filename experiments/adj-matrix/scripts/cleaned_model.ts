@@ -2180,7 +2180,17 @@ class Controller {
       let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);
 
+      // added selected attribute scale 
+      let obj = {
+        "domain":[true, false],
+        "range":["#e86b45",'#fff'],
+        "labels":['answer','not answer'],
+        'glyph':'rect',
+        'label':'selected'
+      }
       that.configuration = result;
+      that.configuration.attributeScales.node['selected'] = obj;
+      console.log(that.configuration.attributeScales)
       that.reload();
       //that.finishConstructing(result);
     })
@@ -2189,6 +2199,9 @@ class Controller {
 
   finishConstructing(config) {
     this.configuration = config;
+
+
+
     this.view = new View(this); // initalize view,
     this.model = new Model(this); // start reading in data
 

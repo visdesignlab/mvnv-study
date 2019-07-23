@@ -51,9 +51,11 @@ input[type=text] {
 }
 
 .nodeLabel{
-  cursor: pointer
+  cursor: pointer;
 }
-
+.answerBox{
+  cursor: pointer;
+}
 .autocomplete-active {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
