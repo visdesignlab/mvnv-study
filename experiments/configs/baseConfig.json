@@ -129,6 +129,7 @@
     },
     "style": {
         "selectedNodeColor": "#e86b45",
+        "selectedEdgeColor": "#e86b45",
         "hoveredNodeColor": "#fde8ca"
     },
     "nodeLink": {

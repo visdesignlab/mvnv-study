@@ -1097,10 +1097,16 @@ function updateVis() {
   
       }
      
+    
     let value = config.nodeLink.edgeStrokeAttr
       ? edgeStrokeScale(edge[config.nodeLink.edgeStrokeAttr])
       : config.nodeLink.noEdgeColor;
-    return value;
+
+      return value;
+      
+      // edge.selected
+      // ? config.style.selectedEdgeColor
+      // : value;
   };
 
   let edgeWidth = function(edge) {
@@ -1365,7 +1371,41 @@ function updateVis() {
 
   selectedList = selectedListEnter.merge(selectedList);
   selectedList.text(d=>d.shortName);
+
+
+  d3.select('.submit').on('click',()=>{
+
+    //Unselect to actually send data to the database;
+    // fb.addDocument({"task":config,'selectedAnswer':graph.nodes.filter(n=>n.hardSelect).map(n=>n.shortName)},collection = "users") 
+  })
+  //either enable or disable the submit button; 
+d3.select('#submitNode').attr('disabled',()=>{
+
+  let hasAnswer = graph.nodes.filter(n=>n.hardSelect).length>0;
+
+
+  //function that checks if the selected answer is acceptable. 
+  return hasAnswer ? null : true;
+})
+
 };
+
+  //set callback for free form answer input box
+
+  d3.select('#answerBox').on("input",function(){
+
+      //either enable or disable the submit button; 
+d3.select('#submitText').attr('disabled',()=>{
+
+  let hasAnswer = d3.select(this).property('value').length>0;
+
+
+  //function that checks if the selected answer is acceptable. 
+  return hasAnswer ? null : true;
+})
+
+  })
+
 
   //Drawing Nested Bar Charts
   {
@@ -1673,7 +1713,9 @@ function updateVis() {
       .classed(
         "muted",
         d => config.nodeLink.selectNeighbors && hasUserSelection && !d.selected
-      );
+      )
+      // .select('path')
+      // .style("stroke", edgeColor);
 
     node
       .select(".node")

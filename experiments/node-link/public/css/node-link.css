@@ -102,6 +102,12 @@
         cursor:pointer;
     }
 
+    .submit{
+
+        background-color:lightgrey;
+    }
+
+
 
 
     #legend-svg{
@@ -122,7 +128,7 @@
     }
 
     .muted {
-        opacity: .2;
+        opacity: .5;
     }
 
     .hideLabel {

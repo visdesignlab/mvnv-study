@@ -32,7 +32,6 @@
 <script src="js/libs/extData.js" type="text/javascript"></script>
 
 <!-- <script src="js/generateTwitterGraph.js" type="text/javascript"></script> -->
-<script src="js/main_nodeLink.js" type="text/javascript"></script>
 
 <!-- Libs for autocomplete -->
 <link rel="stylesheet" href="css/easy-autocomplete.css">
@@ -75,7 +74,7 @@
 
 
 
-                       
+
 
 
                         <div class="card" id="visPanel">
@@ -90,67 +89,69 @@
                             </div>
 
                             <div class="card">
-                                    <header class="card-header">
-                                        <p class="card-header-title">
-                                                Instructions on interactions available to the user
-                                        </p>
-        
-                                    </header>
-                                    <div class="card-content">
-                                        <div class="content">
-                                                <svg id="legend-svg"></svg>
-                                        </div>
+                                <header class="card-header">
+                                    <p class="card-header-title">
+                                        Instructions on interactions available to the user
+                                    </p>
+
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
+                                        <svg id="legend-svg"></svg>
                                     </div>
-        
                                 </div>
 
-                                <div class="card">
-                                        <header class="card-header">
-                                            <p class="card-header-title">
-                                                    Selected Answer
-                                            </p>
-            
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
+                            </div>
 
-                                                    <a class="button is-pulled-right" id="submit" disabled>Submit</a>
+                            <div class="card">
+                                <header class="card-header">
+                                    <p class="card-header-title">
+                                        Selected Answer
+                                    </p>
 
-                                                    <ul id="selectedNodeList">
-                                                        <li>No Nodes Selected</li>
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
 
-                                                        </ul>
-                                                        <p class = 'errorMsg'>This is an error message that will be displayed if the user tries to submit an answer that does not conform with the instructions.</p>
+                                        <a class="button is-pulled-right submit" id="submitNode" disabled>Submit</a>
+
+                                        <ul id="selectedNodeList">
+                                            <li>No Nodes Selected</li>
+
+                                        </ul>
+                                        <p class='errorMsg'>This is an error message that will be displayed if the user
+                                            tries to submit an answer that does not conform with the instructions.</p>
 
 
 
-            
-                                            </div>
-                                        </div>
-            
+
                                     </div>
+                                </div>
+
+                            </div>
 
 
-                                    <div class="card">
-                                            <header class="card-header">
-                                                <p class="card-header-title">
-                                                        Enter your answer below 
-                                                </p>
-                
-                                            </header>
-                                            <div class="card-content">
-                                                <div class="content">
-                                                        <input class="input" type="text" placeholder="answer text">
+                            <div class="card">
+                                <header class="card-header">
+                                    <p class="card-header-title">
+                                        Enter your answer below
+                                    </p>
 
-                                                        
-                                                        <a class="button is-pulled-right" id="submit" disabled>Submit</a>
-                                                        <p class = 'errorMsg'>This is an error message that will be displayed if the user tries to submit an answer that does not conform with the instructions.</p>
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
+                                        <input class="input" type="text" placeholder="answer text" id="answerBox">
 
 
-                                                </div>
-                                            </div>
-                
-                                        </div>
+                                        <a class="button is-pulled-right submit" id="submitText" disabled>Submit</a>
+                                        <p class='errorMsg'>This is an error message that will be displayed if the user
+                                            tries to submit an answer that does not conform with the instructions.</p>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
 
 
 
@@ -473,6 +474,46 @@
     <!--! end of #container -->
 
 </body>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-firestore.js"></script>
+
+
+<script src="js/firebaseApi.js" type="text/javascript"></script>
+
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+<script>
+    fb.connect();
+
+    fb.addDocument({
+            first: "Carolina",
+            last: "Nobre",
+            born: 1984
+        }
+    )
+
+    async function getCollection(){
+        let collection =  await fb.getCollection();
+        console.log('collection', collection);
+
+        
+
+    };
+
+    getCollection();
+
+
+</script>
+
+
+
+
+<script src="js/main_nodeLink.js" type="text/javascript"></script>
+
 
 <script>
     experimentr.sequence([
