@@ -879,6 +879,29 @@ class View {
       .attr("text-anchor", "end")
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
+      .on("mouseout", (d,i,nodes) => {
+        //let func = this.removeHighlightNodesToDict;
+
+        let rowID = d[0].rowid;
+
+        that.removeHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      })
+      .on('mouseover', (d,i,nodes)=>{
+        let rowID = d[0].rowid;
+
+        that.addHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+      })
       .on('click', (d, i, nodes) => {
 
         /*let cellElement = d3.select(nodes[index]).selectAll('rect');
@@ -891,13 +914,18 @@ class View {
         // will add or remove node
         console.log(d);
         // will add or remove node
-        console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
-
-        that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row or remove if already in
+        /*
+        that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // FOR ANSWER
         console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
         d3.selectAll('.answer').classed('answer', false);
         d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
-        that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+        that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
+
+        that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
+        console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
+        d3.selectAll('.clicked').classed('clicked', false);
+        d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
+        that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
 
         // selects row text
         //d3.select(nodes[i]).classed('answer', (data) => {
@@ -939,6 +967,30 @@ class View {
         //this.classHighlights(d.screen_name, 'Col', 'clicked');
         //this.selectNeighborNodes(d[index].rowid);
 
+      })
+      .on("mouseout", (d,i,nodes) => {
+        //let func = this.removeHighlightNodesToDict;
+
+        let colID = d[0].rowid; // as rows and columns are flipped
+
+        that.removeHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+        //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+      })
+      .on('mouseover', (d,i,nodes)=>{
+        let colID = d[0].rowid;
+        console.log(colID,d);
+
+        that.addHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
+
+        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
+        d3.selectAll('.hovered').classed('hovered', false);
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+        //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       });
 
 
@@ -1588,11 +1640,19 @@ class View {
         let cellID = cell.rowid + cell.colid;*/
         console.log(d);
         let nodeID = d.screen_name;
+        /*
         // will add or remove node
         console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
         that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
         d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
-        that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+        that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
+
+
+        that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
+        console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
+        //d3.selectAll('.answer').classed('answer', false);
+        d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
+        that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
 
         // classes row
         //this.classHighlights(d.screen_name, 'Row', 'answer');
@@ -1602,10 +1662,7 @@ class View {
 
     let columns = this.controller.configuration.nodeAttributes;
 
-    // Based on the data type set widths
-    // numerical are 50, bool are a verticle bandwidth * 2
-    //
-
+    columns.unshift('selected'); // ANSWER COLUMNS
 
     var formatCurrency = d3.format("$,.0f"),
       formatNumber = d3.format(",.0f");
@@ -1619,30 +1676,33 @@ class View {
     let xRange = 0;
 
 
-    let columnWidths = this.determineColumnWidths(columns);
+    let columnWidths = this.determineColumnWidths(columns); // ANSWER COLUMNS
     console.log(columnWidths,columns)
     //450 / columns.length;
 
 
     let categoricalAttributes = ["type", "continent"]
+    let quantitativeAttributes = ["followers_count","friends_count","statuses_count","count_followers_in_query","favourites_count","listed_count","memberFor_days","query_tweet_count"]
 
 
     columns.forEach((col, index) => {
       // calculate range
       columnRange.push(xRange);
+      console.log(col);
       let domain = this.controller.configuration.attributeScales.node[col].domain;
-      if (categoricalAttributes.indexOf(col) > -1) { //if categorical
+
+      if( quantitativeAttributes.indexOf(col)> -1){
+
+        let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
+        scale.clamp(true);
+        attributeScales[col] = scale;
+      } else {
         // append colored blocks
         // placeholder scale
         let range = this.controller.configuration.attributeScales.node[col].range;
         let scale = d3.scaleOrdinal().domain(domain).range(range);
         //.domain([true,false]).range([barMargin.left, colWidth-barMargin.right]);
 
-        attributeScales[col] = scale;
-      } else {
-
-        let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
-        scale.clamp(true);
         attributeScales[col] = scale;
       }
 
@@ -1666,9 +1726,10 @@ class View {
     this.columnScale.range(columnRange);
 
     for (let [column, scale] of Object.entries(attributeScales)) {
-      if (categoricalAttributes.indexOf(column) > -1) {
-        placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
-      } else {
+      if (categoricalAttributes.indexOf(column) > -1) { // if not selected categorical
+          placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
+
+      } else if (quantitativeAttributes.indexOf(column) > -1){
         this.attributes.append("g")
           .attr("class", "attr-axis")
           .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
@@ -1697,7 +1758,7 @@ class View {
         console.log("CATEGORICAL!")
         this.createUpsetPlot(column, columnWidths[index],placementScale[column]);
         return;
-      } else { // if quantitative
+      } else if(quantitativeAttributes.indexOf(column) > -1) { // if quantitative
         this.attributeRows
           .append("rect")
           .attr("class", "glyph")
@@ -1717,6 +1778,53 @@ class View {
           .text(function(d, i) {
             return (i ? formatNumber : formatCurrency)(d);
           });
+      } else {
+        barMargin.left = 1;
+        let answerBox = this.attributeRows
+          .append('g')
+          .attr("class", "answerBox")
+          .attr('transform','translate('+(columnPosition + barMargin.left)+','+0+')');
+
+        let rect = answerBox.append("rect")
+              .attr("x", barMargin.left)
+              .attr("y", barMargin.top)
+              .attr("rx", barHeight/2)
+              .attr("ry", barHeight/2)
+              .style("fill", "lightgray")
+              .attr("width", columnWidths[column] - barMargin.left - barMargin.right)
+              .attr("height", barHeight)
+              .attr('stroke','lightgray')
+
+        let circle = answerBox.append("circle")
+              .attr("cx", barHeight/2  + barMargin.left)
+              .attr("cy", barHeight/2 + barMargin.top)
+              .attr("r", barHeight/2)
+              .style("fill", "white");
+
+        answerBox
+          .on('click',(d,i,nodes)=>{
+            let color = this.controller.configuration.attributeScales.node.selected.range[0];
+            //if already answer
+            let nodeID = d.screen_name;
+            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+
+            that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row or remove if already in
+            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+            d3.selectAll('.answer').classed('answer', false);
+            that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+
+            /*Visual chagne */
+            let answerStatus = nodeID in this.controller.answerRow;
+            d3.select(nodes[i]).selectAll('circle').transition().duration(500)
+                .attr("cx", (answerStatus? (columnWidths[column]-barHeight/2 -barMargin.right) : (barHeight/2  + barMargin.left)))
+                .style("fill", answerStatus? color : "white");
+            d3.select(nodes[i]).selectAll('rect').transition().duration(500)
+                .style("fill", answerStatus? "#8B8B8B" : "lightgray");
+
+
+            //d3.select(nodes[i]).transition().duration(500).attr('fill',)
+          })
+
       }
     });
 
@@ -1747,7 +1855,8 @@ class View {
       "continent": "",
       "type": "",
       "memberFor_days": "Account Age",
-      "listed_count": "In Lists"
+      "listed_count": "In Lists",
+      "selected": "Answer"
     }
     let that = this;
     function calculateMaxChars(numColumns) {
@@ -1818,8 +1927,10 @@ class View {
         that.tooltip.transition().duration(250).style("opacity", 0);
       });
 
-    //
-    columnHeaders.selectAll('.legend')
+    console.log(columnHeaders.selectAll('.header'))
+    let answerColumn = columnHeaders.selectAll('.header').filter(d=>{return d=='selected'})
+    answerColumn.attr('y',35).attr('x',10).attr('font-weight',650);
+    console.log(answerColumn);
 
     d3.select('.loading').style('display', 'none');
 
@@ -1843,7 +1954,7 @@ class View {
   }
 
   isCategorical(column) {
-    return column == "type" || column == "continent";
+    return column == "type" || column == "continent" || column == "selected";
   }
 
   determineColumnWidths(columns) {
@@ -1863,6 +1974,9 @@ class View {
       // if column is categorical
       if (this.isCategorical(column)) {
         let width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3)
+        if(column == "selected"){
+          width = 60;
+        }
         widths[column] = width;
         totalCategoricalWidth += width; // add width
       }
@@ -2066,7 +2180,17 @@ class Controller {
       let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);
 
+      // added selected attribute scale 
+      let obj = {
+        "domain":[true, false],
+        "range":["#e86b45",'#fff'],
+        "labels":['answer','not answer'],
+        'glyph':'rect',
+        'label':'selected'
+      }
       that.configuration = result;
+      that.configuration.attributeScales.node['selected'] = obj;
+      console.log(that.configuration.attributeScales)
       that.reload();
       //that.finishConstructing(result);
     })
@@ -2075,6 +2199,9 @@ class Controller {
 
   finishConstructing(config) {
     this.configuration = config;
+
+
+
     this.view = new View(this); // initalize view,
     this.model = new Model(this); // start reading in data
 

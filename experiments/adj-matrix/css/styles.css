@@ -49,16 +49,22 @@ input[type=text] {
   /*when hovering an item:*/
   background-color: #e9e9e9;
 }
+
+.nodeLabel{
+  cursor: pointer;
+}
+.answerBox{
+  cursor: pointer;
+}
 .autocomplete-active {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
 
-
 #clearButton{
   background-color: #DC3445;
-  width: 110px;
+  width: 140px;
   color: #fff;
   margin-bottom: 20px;
 }
