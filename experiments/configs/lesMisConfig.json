@@ -1,0 +1,48 @@
+{
+    "nodeLink": {
+        "drawBars": false,
+        "selectNeighbors": false,
+        "nodeHeight": {
+            "large": 5,
+            "small": 60
+        },
+        "nodeWidth": {
+            "large": 5,
+            "small": 80
+        },
+        "labelSize": {
+            "large": 0,
+            "small": 14
+        },
+        "labelAttr": "name",
+        "nodeFillAttr": null,
+        "nodeSizeAttr": "group",
+        "edgeWidthAttr": "value",
+        "edgeStrokeAttr": null,
+        "noEdgeColor": "white",
+        "noNodeFill": "white",
+        "noNodeStroke": "white",
+        "quantColors": ["#5ba3d0",
+            "#b9873b",
+            "#7d6dcb",
+            "#6aa858"]
+    },
+    "taskID": "task1",
+    "loadedGraph": "lesMis",
+    "isDirected": false,
+    "isMultiEdge": false,
+    "graphSize": "large",
+    "nodeAttributes": [
+        "group"
+    ],
+    "edgeAttributes": [
+        "value"
+    ],
+    "adjMatrixValues": {
+        "edgeBars": false,
+        "labelSize": {
+            "large": 14,
+            "small": 8
+        }
+    }
+}

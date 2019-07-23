@@ -1,11 +1,11 @@
 {
     "nodes": [
         {
-            "followers_count": 1092.76412475886,
+            "followers_count": 954.681018860465,
             "query_tweet_count": 9,
             "friends_count": 687,
             "statuses_count": 4731,
-            "listed_count": 98.19873377334994,
+            "listed_count": 100.48678576679274,
             "utc_offset": null,
             "favourites_count": 2924,
             "count_followers_in_query": 16,
@@ -17,10 +17,12 @@
             "memberSince": "2009-11-19T19:12:34.000Z",
             "name": "John A Guerra Gómez",
             "location": "Bogotá, Colombia",
-            "memberFor_days": 3528,
+            "memberFor_days": 3529,
             "type": "person",
             "continent": "South America",
             "shortName": "J.Gómez",
+            "x": 804.4579634512668,
+            "y": 356.88951657917585,
             "neighbors": [
                 208312922,
                 208312922,
@@ -65,6 +67,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "R.Gove",
+            "x": 1436.1392158159026,
+            "y": 1445.3455867213097,
             "neighbors": [
                 91169926,
                 91169926,
@@ -129,6 +133,8 @@
             "type": "institution",
             "continent": "Europe",
             "shortName": "Antarctic Design",
+            "x": 125.024635715064,
+            "y": 710.2478451938758,
             "neighbors": [
                 208312922,
                 81658145,
@@ -144,7 +150,7 @@
         },
         {
             "followers_count": 124,
-            "query_tweet_count": 8.468164660460364,
+            "query_tweet_count": 8.51211360110516,
             "friends_count": 80,
             "statuses_count": 44,
             "listed_count": 4,
@@ -159,10 +165,12 @@
             "memberSince": "2019-01-15T15:38:00.000Z",
             "name": "EuroVis2019",
             "location": "Oporto, Portugal",
-            "memberFor_days": 184,
+            "memberFor_days": 185,
             "type": "institution",
             "continent": "Europe",
             "shortName": "EuroVis2019",
+            "x": 1205.9359575333017,
+            "y": 1229.0667424895823,
             "neighbors": [
                 208312922,
                 4058687172,
@@ -227,10 +235,12 @@
             "memberSince": "2015-10-29T15:12:37.000Z",
             "name": "Rina",
             "location": "",
-            "memberFor_days": 1358,
+            "memberFor_days": 1359,
             "type": "person",
             "continent": "Asia",
             "shortName": "R.Rina",
+            "x": 1170.3683320422645,
+            "y": 1484.1801278534022,
             "neighbors": [
                 1085199426837188600
             ],
@@ -245,7 +255,7 @@
             "query_tweet_count": 8,
             "friends_count": 937,
             "statuses_count": 2122,
-            "listed_count": 119.19691397013136,
+            "listed_count": 108.51327106574698,
             "utc_offset": null,
             "favourites_count": 409,
             "count_followers_in_query": 25,
@@ -261,6 +271,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Roberts",
+            "x": 673.1803715736121,
+            "y": 664.1938781200648,
             "neighbors": [
                 1085199426837188600,
                 78865306,
@@ -288,7 +300,7 @@
         },
         {
             "followers_count": 1048,
-            "query_tweet_count": 9.348048741535926,
+            "query_tweet_count": 9.847186644758882,
             "friends_count": 757,
             "statuses_count": 1412,
             "listed_count": 79,
@@ -303,10 +315,12 @@
             "memberSince": "2009-10-11T18:47:54.000Z",
             "name": "Alexander Lex",
             "location": "Salt Lake City, UT",
-            "memberFor_days": 3567,
+            "memberFor_days": 3568,
             "type": "person",
             "continent": "North America",
             "shortName": "A.Lex",
+            "x": 899.9006806749398,
+            "y": 1114.2452559683525,
             "neighbors": [
                 91169926,
                 10414152,
@@ -365,7 +379,7 @@
         {
             "followers_count": 1130,
             "query_tweet_count": 7,
-            "friends_count": 1143.5110653139338,
+            "friends_count": 1095.7571435877696,
             "statuses_count": 1099,
             "listed_count": 102,
             "utc_offset": null,
@@ -383,6 +397,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "C.Kinkeldey",
+            "x": 980.0161566986471,
+            "y": 581.0783400579021,
             "neighbors": [
                 201277609,
                 16112517,
@@ -405,14 +421,14 @@
             "selected": false
         },
         {
-            "followers_count": 991.8605589432143,
-            "query_tweet_count": 8.10731373560898,
+            "followers_count": 1054.6674788414666,
+            "query_tweet_count": 8.132430702398311,
             "friends_count": 884,
-            "statuses_count": 5372.322140455058,
-            "listed_count": 104.21730639126777,
+            "statuses_count": 4085.482781936442,
+            "listed_count": 94.4213497548665,
             "utc_offset": null,
             "favourites_count": 3764,
-            "count_followers_in_query": 29.74511163495943,
+            "count_followers_in_query": 27.585896728981172,
             "screen_name": "eagereyes",
             "id": 16112517,
             "profile_image_url": "http://pbs.twimg.com/profile_images/925567815829950464/-GsyOVeo_normal.jpg",
@@ -425,6 +441,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "R.Kosara",
+            "x": 942.4397522234153,
+            "y": 859.9896319831313,
             "neighbors": [
                 201277609,
                 78865306,
@@ -497,7 +515,7 @@
             "selected": false
         },
         {
-            "followers_count": 1108.569781354658,
+            "followers_count": 948.445571402867,
             "query_tweet_count": 2,
             "friends_count": 763,
             "statuses_count": 4338,
@@ -513,10 +531,12 @@
             "memberSince": "2007-11-20T15:02:19.000Z",
             "name": "Lane Harrison",
             "location": "Worcester, MA",
-            "memberFor_days": 4258,
+            "memberFor_days": 4259,
             "type": "person",
             "continent": "North America",
             "shortName": "L.Harrison",
+            "x": 222.62486886924955,
+            "y": 967.3569012424722,
             "neighbors": [
                 81658145,
                 191257554,
@@ -543,7 +563,7 @@
             "selected": false
         },
         {
-            "followers_count": 989.0682741924545,
+            "followers_count": 1164.238449359727,
             "query_tweet_count": 0,
             "friends_count": 1077,
             "statuses_count": 770,
@@ -559,10 +579,12 @@
             "memberSince": "2007-03-16T21:25:12.000Z",
             "name": "Eytan Adar",
             "location": "",
-            "memberFor_days": 4096.6172863676165,
+            "memberFor_days": 3641.137318291864,
             "type": "person",
             "continent": "North America",
             "shortName": "E.Adar",
+            "x": 960.4227860831515,
+            "y": 665.2317225754764,
             "neighbors": [
                 16112517
             ],
@@ -573,11 +595,11 @@
             "selected": false
         },
         {
-            "followers_count": 1076.1330342317785,
+            "followers_count": 1139.576851443858,
             "query_tweet_count": 2,
             "friends_count": 657,
             "statuses_count": 983,
-            "listed_count": 97.66643478213095,
+            "listed_count": 99.59323727836714,
             "utc_offset": null,
             "favourites_count": 2650,
             "count_followers_in_query": 32,
@@ -589,10 +611,12 @@
             "memberSince": "2011-02-05T22:33:03.000Z",
             "name": "Jeffrey Heer",
             "location": "Seattle, WA",
-            "memberFor_days": 3085,
+            "memberFor_days": 3086,
             "type": "person",
             "continent": "North America",
             "shortName": "J.Heer",
+            "x": 1210.3708278033107,
+            "y": 943.7349198565772,
             "neighbors": [
                 16112517,
                 78865306,
@@ -657,11 +681,11 @@
             "selected": false
         },
         {
-            "followers_count": 1161.1586065228562,
+            "followers_count": 907.0066677363884,
             "query_tweet_count": 5,
             "friends_count": 278,
             "statuses_count": 367,
-            "listed_count": 108.35375009132756,
+            "listed_count": 89.65280177223931,
             "utc_offset": null,
             "favourites_count": 809,
             "count_followers_in_query": 23,
@@ -673,10 +697,12 @@
             "memberSince": "2013-09-16T22:55:12.000Z",
             "name": "Interactive Data Lab",
             "location": "Seattle, WA",
-            "memberFor_days": 2131,
+            "memberFor_days": 2132,
             "type": "institution",
             "continent": "North America",
             "shortName": "Interactive Data Lab",
+            "x": 910.950172219696,
+            "y": 581.3531552352547,
             "neighbors": [
                 16112517,
                 247943631,
@@ -713,10 +739,12 @@
             "memberSince": "2009-04-09T15:58:27.000Z",
             "name": "James Scott-Brown",
             "location": "",
-            "memberFor_days": 3752,
+            "memberFor_days": 3753,
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Scott-Brown",
+            "x": 719.308006612518,
+            "y": 960.9271798148583,
             "neighbors": [
                 81658145,
                 1085199426837188600,
@@ -744,7 +772,7 @@
         },
         {
             "followers_count": 610,
-            "query_tweet_count": 8.65821013174714,
+            "query_tweet_count": 9.744065194316416,
             "friends_count": 1,
             "statuses_count": 3302,
             "listed_count": 47,
@@ -759,10 +787,12 @@
             "memberSince": "2009-01-21T18:21:31.000Z",
             "name": "jason  dykes",
             "location": "",
-            "memberFor_days": 3830,
+            "memberFor_days": 3831,
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Dykes",
+            "x": 1554.1907203009232,
+            "y": 1112.2526818446777,
             "neighbors": [
                 247943631,
                 2873695769,
@@ -821,6 +851,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "R.Scheepens",
+            "x": 1397.4087353000014,
+            "y": 1175.9491766131405,
             "neighbors": [
                 19299318,
                 208312922,
@@ -855,6 +887,8 @@
             "type": "institution",
             "continent": "Europe",
             "shortName": "CSEE Bangor Uni",
+            "x": 574.1962419180132,
+            "y": 1144.485468043873,
             "neighbors": [
                 201277609,
                 30009655
@@ -868,7 +902,7 @@
         },
         {
             "followers_count": 552,
-            "query_tweet_count": 9.061309455968143,
+            "query_tweet_count": 8.480216884858502,
             "friends_count": 539,
             "statuses_count": 1322,
             "listed_count": 18,
@@ -887,6 +921,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "N.Noeska",
+            "x": 1571.8942809581254,
+            "y": 584.5796878860928,
             "neighbors": [
                 1085199426837188600,
                 19299318,
@@ -947,10 +983,12 @@
             "memberSince": "2011-03-22T16:18:02.000Z",
             "name": "Klaus",
             "location": "Linz, Austria",
-            "memberFor_days": 3040,
+            "memberFor_days": 3041,
             "type": "person",
             "continent": "Europe",
             "shortName": "K.Klaus",
+            "x": 1682.7842625369485,
+            "y": 824.5156494056172,
             "neighbors": [
                 19299318,
                 16112517,
@@ -989,6 +1027,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Liem",
+            "x": 1431.3119688078862,
+            "y": 1014.114092076286,
             "neighbors": [
                 19299318,
                 19283433,
@@ -1021,10 +1061,12 @@
             "memberSince": "2011-01-21T16:52:37.000Z",
             "name": "Fritz Lekschas",
             "location": "Cambridge, MA",
-            "memberFor_days": 3100,
+            "memberFor_days": 3101,
             "type": "person",
             "continent": "North America",
             "shortName": "F.Lekschas",
+            "x": 874.3784808953765,
+            "y": 1343.7492754628247,
             "neighbors": [
                 81658145,
                 395853499
@@ -1057,6 +1099,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "S.Mickaël",
+            "x": 1141.3914954171141,
+            "y": 373.16708408233524,
             "neighbors": [
                 78865306,
                 78865306,
@@ -1087,10 +1131,12 @@
             "memberSince": "2009-06-01T19:39:25.000Z",
             "name": "Jo Wood",
             "location": "London",
-            "memberFor_days": 3699,
+            "memberFor_days": 3700,
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Wood",
+            "x": 1752.677631422631,
+            "y": 981.9206611295468,
             "neighbors": [
                 19299318
             ],
@@ -1101,13 +1147,13 @@
             "selected": false
         },
         {
-            "followers_count": 1191.3704293273381,
+            "followers_count": 939.1901200448101,
             "query_tweet_count": 4,
-            "friends_count": 1153.2883760559826,
-            "statuses_count": 5492.933422501186,
-            "listed_count": 114.52917448627954,
+            "friends_count": 940.5224628795074,
+            "statuses_count": 4598.982172686724,
+            "listed_count": 105.57667643961805,
             "utc_offset": null,
-            "favourites_count": 7644.187131248519,
+            "favourites_count": 7511.731491494125,
             "count_followers_in_query": 11,
             "screen_name": "micahstubbs",
             "id": 84043985,
@@ -1121,6 +1167,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "M.Stubbs",
+            "x": 64.1118175324549,
+            "y": 792.7251728791545,
             "neighbors": [
                 81658145,
                 208312922,
@@ -1137,11 +1185,11 @@
             "selected": false
         },
         {
-            "followers_count": 1133.4465092721932,
+            "followers_count": 1049.3136400396215,
             "query_tweet_count": 4,
             "friends_count": 822,
             "statuses_count": 3835,
-            "listed_count": 114.64818709645805,
+            "listed_count": 102.56242480301523,
             "utc_offset": null,
             "favourites_count": 3200,
             "count_followers_in_query": 20,
@@ -1157,6 +1205,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "N.Gehlenborg",
+            "x": 1050.887254098742,
+            "y": 1090.590064295382,
             "neighbors": [
                 81658145,
                 247943631
@@ -1169,13 +1219,13 @@
             "selected": false
         },
         {
-            "followers_count": 1111.9978441873984,
+            "followers_count": 1148.3768311088077,
             "query_tweet_count": 3,
-            "friends_count": 1173.1750932408834,
-            "statuses_count": 5406.2516241372305,
-            "listed_count": 96.22707087519788,
+            "friends_count": 1020.2665064553921,
+            "statuses_count": 4037.895598117815,
+            "listed_count": 109.89079684288981,
             "utc_offset": null,
-            "favourites_count": 7232.354335024053,
+            "favourites_count": 6042.35675093848,
             "count_followers_in_query": 19,
             "screen_name": "arnicas",
             "id": 6146692,
@@ -1185,10 +1235,12 @@
             "memberSince": "2007-05-18T20:32:44.000Z",
             "name": "Lynn Cherny",
             "location": "Lyon, France",
-            "memberFor_days": 4444,
+            "memberFor_days": 4445,
             "type": "person",
             "continent": "Europe",
             "shortName": "L.Cherny",
+            "x": 797.256502065152,
+            "y": 1336.2372552564948,
             "neighbors": [
                 81658145,
                 16112517
@@ -1221,6 +1273,8 @@
             "type": "person",
             "continent": "Asia",
             "shortName": "M.Aupetit",
+            "x": 812.4066666923718,
+            "y": 657.7109332306442,
             "neighbors": [
                 16112517
             ],
@@ -1232,7 +1286,7 @@
         },
         {
             "followers_count": 558,
-            "query_tweet_count": 9.015218792274986,
+            "query_tweet_count": 9.651473443518713,
             "friends_count": 16,
             "statuses_count": 339,
             "listed_count": 24,
@@ -1251,6 +1305,8 @@
             "type": "institution",
             "continent": "Europe",
             "shortName": "giCentre",
+            "x": 1801.7381930220258,
+            "y": 1185.6754470282594,
             "neighbors": [
                 2889052877,
                 19283433,
@@ -1311,6 +1367,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "C.Turkay",
+            "x": 1712.7757051451185,
+            "y": 1259.8200924457915,
             "neighbors": [
                 19283433,
                 188046229,
@@ -1329,7 +1387,7 @@
             "selected": false
         },
         {
-            "followers_count": 1106.5477455499285,
+            "followers_count": 970.8112878996274,
             "query_tweet_count": 2,
             "friends_count": 838,
             "statuses_count": 1578,
@@ -1345,10 +1403,12 @@
             "memberSince": "2010-09-07T20:11:04.000Z",
             "name": "Benjamin Bach",
             "location": "Edinburgh, Scotland",
-            "memberFor_days": 3236,
+            "memberFor_days": 3237,
             "type": "person",
             "continent": "Europe",
             "shortName": "B.Bach",
+            "x": 1975.3751653515453,
+            "y": 1263.935584578469,
             "neighbors": [
                 19283433,
                 1667081238,
@@ -1379,10 +1439,12 @@
             "memberSince": "2013-08-09T20:51:50.000Z",
             "name": "mirela reljan-delane",
             "location": "London, England",
-            "memberFor_days": 2169,
+            "memberFor_days": 2170,
             "type": "person",
             "continent": "Europe",
             "shortName": "M.Reljan-delane",
+            "x": 2030.1438204251265,
+            "y": 1086.3789860037364,
             "neighbors": [
                 19283433
             ],
@@ -1394,8 +1456,8 @@
         },
         {
             "followers_count": 354,
-            "query_tweet_count": 9.907548272774449,
-            "friends_count": 1082.2408167253975,
+            "query_tweet_count": 8.147854928008323,
+            "friends_count": 952.4162322596592,
             "statuses_count": 5087,
             "listed_count": 6,
             "utc_offset": null,
@@ -1409,10 +1471,12 @@
             "memberSince": "2010-09-14T17:52:28.000Z",
             "name": "Eurovision",
             "location": "",
-            "memberFor_days": 3229,
+            "memberFor_days": 3230,
             "type": "institution",
             "continent": "Europe",
             "shortName": "Eurovision",
+            "x": 1944.4307133129644,
+            "y": 1394.5877383585848,
             "neighbors": [
                 19283433
             ],
@@ -1439,10 +1503,12 @@
             "memberSince": "2014-12-09T22:32:36.000Z",
             "name": "Lonni Besançon",
             "location": "Norrköping, Sverige",
-            "memberFor_days": 1682,
+            "memberFor_days": 1683,
             "type": "person",
             "continent": "Europe",
             "shortName": "L.Besançon",
+            "x": 1405.6099533088395,
+            "y": 371.13822478408883,
             "neighbors": [
                 40219508,
                 1055379531731796000
@@ -1455,11 +1521,11 @@
             "selected": false
         },
         {
-            "followers_count": 1175.6354825241458,
+            "followers_count": 1062.2279062854022,
             "query_tweet_count": 5,
             "friends_count": 971,
-            "statuses_count": 4767.614926443372,
-            "listed_count": 103.5695278268426,
+            "statuses_count": 4081.3344084998225,
+            "listed_count": 87.74534772055144,
             "utc_offset": null,
             "favourites_count": 7458,
             "count_followers_in_query": 16,
@@ -1471,10 +1537,12 @@
             "memberSince": "2011-06-15T21:45:20.000Z",
             "name": "Krist Wongsuphasawat",
             "location": "From Bangkok, now in SF",
-            "memberFor_days": 2955,
+            "memberFor_days": 2956,
             "type": "person",
             "continent": "Asia",
             "shortName": "K.Wongsuphasawat",
+            "x": 1300.887174167824,
+            "y": 1222.9631448171604,
             "neighbors": [
                 208312922,
                 247943631,
@@ -1509,6 +1577,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "M.Streit",
+            "x": 997.058464390172,
+            "y": 1451.2064678646843,
             "neighbors": [
                 40219508,
                 241173920,
@@ -1553,10 +1623,12 @@
             "memberSince": "2009-10-28T15:44:39.000Z",
             "name": "Holger Stitz",
             "location": "Linz, Austria",
-            "memberFor_days": 3550,
+            "memberFor_days": 3551,
             "type": "person",
             "continent": "Europe",
             "shortName": "H.Stitz",
+            "x": 735.4996381535998,
+            "y": 1294.343576749185,
             "neighbors": [
                 81658145
             ],
@@ -1567,13 +1639,13 @@
             "selected": false
         },
         {
-            "followers_count": 1121.8351395414563,
+            "followers_count": 1089.971354703982,
             "query_tweet_count": 4,
-            "friends_count": 1174.588338550591,
-            "statuses_count": 4881.932667042684,
-            "listed_count": 118.00096493567331,
+            "friends_count": 984.3446493050233,
+            "statuses_count": 5026.990046960311,
+            "listed_count": 103.34061677969848,
             "utc_offset": null,
-            "favourites_count": 6790.72021562312,
+            "favourites_count": 7802.822608920529,
             "count_followers_in_query": 1,
             "screen_name": "dogvile",
             "id": 18406335,
@@ -1587,6 +1659,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "P.Teo",
+            "x": 886.0260490178864,
+            "y": 1683.1174277366563,
             "neighbors": [
                 395853499,
                 16112517,
@@ -1621,6 +1695,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "S.Latif",
+            "x": 1117.692491095276,
+            "y": 1195.5904794648554,
             "neighbors": [
                 395853499,
                 247943631
@@ -1649,10 +1725,12 @@
             "memberSince": "2013-04-03T19:55:46.000Z",
             "name": "eagereyes.org feed",
             "location": "The Web",
-            "memberFor_days": 2297,
+            "memberFor_days": 2298,
             "type": "institution",
             "continent": "North America",
             "shortName": "Eagereyes Feed",
+            "x": 767.4910085491015,
+            "y": 761.2901075818178,
             "neighbors": [
                 16112517
             ],
@@ -1683,6 +1761,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "T.Höllt",
+            "x": 1860.6846474331298,
+            "y": 241.743645130578,
             "neighbors": [
                 40219508,
                 446672281,
@@ -1729,10 +1809,12 @@
             "memberSince": "2016-02-09T20:58:40.000Z",
             "name": "Christophe Hurter",
             "location": "Toulouse, France",
-            "memberFor_days": 1255,
+            "memberFor_days": 1256,
             "type": "person",
             "continent": "Europe",
             "shortName": "C.Hurter",
+            "x": 1386.6411450993205,
+            "y": 694.2326372820336,
             "neighbors": [
                 40219508,
                 247943631
@@ -1765,6 +1847,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "A.Vilanova",
+            "x": 1728.9020994637312,
+            "y": 422.0179765261654,
             "neighbors": [
                 2527017636,
                 2527017636,
@@ -1801,6 +1885,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "N.Pezzotti",
+            "x": 1878.125883087798,
+            "y": 15,
             "neighbors": [
                 2527017636,
                 2527017636,
@@ -1835,6 +1921,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "H.Hauser",
+            "x": 2078.0242595471736,
+            "y": 188.74387951215328,
             "neighbors": [
                 2527017636
             ],
@@ -1845,11 +1933,11 @@
             "selected": false
         },
         {
-            "followers_count": 1107.2945088925112,
+            "followers_count": 923.7108035654657,
             "query_tweet_count": 1,
             "friends_count": 469,
             "statuses_count": 3452,
-            "listed_count": 106.35810373887483,
+            "listed_count": 91.3408046460621,
             "utc_offset": null,
             "favourites_count": 23,
             "count_followers_in_query": 16,
@@ -1861,10 +1949,12 @@
             "memberSince": "2012-12-12T18:00:31.000Z",
             "name": "Christophe Viau",
             "location": "Montreal",
-            "memberFor_days": 2409,
+            "memberFor_days": 2410,
             "type": "person",
             "continent": "North America",
             "shortName": "C.Viau",
+            "x": 1291.6759997235254,
+            "y": 1667.3467004615168,
             "neighbors": [
                 208312922
             ],
@@ -1891,10 +1981,12 @@
             "memberSince": "2010-12-17T23:11:34.000Z",
             "name": "Sophie Engle",
             "location": "San Francisco, California",
-            "memberFor_days": 3135,
+            "memberFor_days": 3136,
             "type": "person",
             "continent": "North America",
             "shortName": "S.Engle",
+            "x": 1375.689542818545,
+            "y": 1690.117900232843,
             "neighbors": [
                 208312922
             ],
@@ -1925,6 +2017,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "B.Kwon",
+            "x": 1466.2426484630778,
+            "y": 1671.5815529144043,
             "neighbors": [
                 208312922
             ],
@@ -1935,11 +2029,11 @@
             "selected": false
         },
         {
-            "followers_count": 1192.0530897582119,
+            "followers_count": 939.9177738786242,
             "query_tweet_count": 0,
             "friends_count": 1,
             "statuses_count": 134,
-            "listed_count": 110.62458190889137,
+            "listed_count": 89.69595878271363,
             "utc_offset": null,
             "favourites_count": 37,
             "count_followers_in_query": 20,
@@ -1951,10 +2045,12 @@
             "memberSince": "2015-12-18T23:14:29.000Z",
             "name": "D3.js",
             "location": "San Francisco, CA",
-            "memberFor_days": 1308,
+            "memberFor_days": 1309,
             "type": "institution",
             "continent": "North America",
             "shortName": "D3.js",
+            "x": 1557.7582511641497,
+            "y": 1642.240950605917,
             "neighbors": [
                 208312922
             ],
@@ -1985,6 +2081,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "M.Keck",
+            "x": 1409.0872918106102,
+            "y": 810.2642768545446,
             "neighbors": [
                 1085199426837188600,
                 247943631,
@@ -2001,13 +2099,13 @@
             "selected": false
         },
         {
-            "followers_count": 1120.1373869291906,
+            "followers_count": 1174.6431876175477,
             "query_tweet_count": 1,
-            "friends_count": 1080.2465943587524,
-            "statuses_count": 4421.1436071843455,
-            "listed_count": 106.05250740875545,
+            "friends_count": 955.2677318782204,
+            "statuses_count": 4288.60110573444,
+            "listed_count": 107.26814189446395,
             "utc_offset": null,
-            "favourites_count": 7377.088067304274,
+            "favourites_count": 7068.106325196104,
             "count_followers_in_query": 17,
             "screen_name": "cybunk",
             "id": 14905766,
@@ -2021,6 +2119,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "S.Huron",
+            "x": 1316.1675706443755,
+            "y": 741.5461535043461,
             "neighbors": [
                 247943631
             ],
@@ -2031,7 +2131,7 @@
             "selected": false
         },
         {
-            "followers_count": 1187.5447402977734,
+            "followers_count": 1079.0312531426416,
             "query_tweet_count": 2,
             "friends_count": 334,
             "statuses_count": 265,
@@ -2047,10 +2147,12 @@
             "memberSince": "2017-01-26T18:25:45.000Z",
             "name": "Lace Padilla",
             "location": "Merced, CA",
-            "memberFor_days": 903,
+            "memberFor_days": 904,
             "type": "person",
             "continent": "North America",
             "shortName": "L.Padilla",
+            "x": 1416.0715742397276,
+            "y": 885.9056614988029,
             "neighbors": [
                 247943631
             ],
@@ -2077,10 +2179,12 @@
             "memberSince": "2009-06-21T22:57:22.000Z",
             "name": "Nam Wook Kim",
             "location": "Cambridge, MA",
-            "memberFor_days": 3679,
+            "memberFor_days": 3680,
             "type": "person",
             "continent": "North America",
             "shortName": "N.Kim",
+            "x": 1355.1137471148136,
+            "y": 949.4424577382205,
             "neighbors": [
                 247943631
             ],
@@ -2111,6 +2215,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "A.Notroff",
+            "x": 1289.0456361539348,
+            "y": 826.2161862611232,
             "neighbors": [
                 247943631,
                 201277609,
@@ -2145,6 +2251,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "A.Sarikaya",
+            "x": 553.2977310717138,
+            "y": 1041.1489272816048,
             "neighbors": [
                 30009655
             ],
@@ -2155,7 +2263,7 @@
             "selected": false
         },
         {
-            "followers_count": 984.2270251274003,
+            "followers_count": 1145.519511359065,
             "query_tweet_count": 2,
             "friends_count": 384,
             "statuses_count": 841,
@@ -2171,10 +2279,12 @@
             "memberSince": "2013-06-29T17:13:09.000Z",
             "name": "Jessica Hullman",
             "location": "Chicago, IL",
-            "memberFor_days": 2210,
+            "memberFor_days": 2211,
             "type": "person",
             "continent": "North America",
             "shortName": "J.Hullman",
+            "x": 1085.2122754965503,
+            "y": 829.5263300737862,
             "neighbors": [
                 247943631,
                 16112517
@@ -2190,7 +2300,7 @@
             "followers_count": 974,
             "query_tweet_count": 2,
             "friends_count": 189,
-            "statuses_count": 4898.358230341948,
+            "statuses_count": 5238.920006344856,
             "listed_count": 117,
             "utc_offset": null,
             "favourites_count": 7868,
@@ -2207,6 +2317,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "T.Jankun-Kelly",
+            "x": 1067.7658998098311,
+            "y": 897.4137291885398,
             "neighbors": [
                 247943631,
                 16112517
@@ -2219,13 +2331,13 @@
             "selected": false
         },
         {
-            "followers_count": 1188.6317853708892,
-            "query_tweet_count": 9.215911894311704,
+            "followers_count": 1059.4437402746505,
+            "query_tweet_count": 8.326352099861667,
             "friends_count": 337,
             "statuses_count": 2873,
-            "listed_count": 100.06622546604657,
+            "listed_count": 111.24203974247182,
             "utc_offset": null,
-            "favourites_count": 7714.827411232231,
+            "favourites_count": 6755.543235521982,
             "count_followers_in_query": 32,
             "screen_name": "tamaramunzner",
             "id": 1652270612,
@@ -2239,6 +2351,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "T.Munzner",
+            "x": 460.61614112836935,
+            "y": 950.9113040552528,
             "neighbors": [
                 247943631,
                 10414152,
@@ -2277,6 +2391,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "R.Wesslen",
+            "x": 1043.347055993878,
+            "y": 961.578232366153,
             "neighbors": [
                 247943631,
                 247943631,
@@ -2291,13 +2407,13 @@
             "selected": false
         },
         {
-            "followers_count": 1135.896847042739,
+            "followers_count": 979.2560858778951,
             "query_tweet_count": 1,
             "friends_count": 1129,
             "statuses_count": 4812,
-            "listed_count": 98.3828004935436,
+            "listed_count": 98.4290875292394,
             "utc_offset": null,
-            "favourites_count": 7246.106073359114,
+            "favourites_count": 5905.24587286106,
             "count_followers_in_query": 20,
             "screen_name": "arvindsatya1",
             "id": 9527212,
@@ -2307,10 +2423,12 @@
             "memberSince": "2007-10-18T18:43:59.000Z",
             "name": "Arvind Satyanarayan",
             "location": "Boston, MA",
-            "memberFor_days": 4291,
+            "memberFor_days": 4292,
             "type": "person",
             "continent": "North America",
             "shortName": "A.Satyanarayan",
+            "x": 1294.7485326694898,
+            "y": 1052.6507004924006,
             "neighbors": [
                 247943631
             ],
@@ -2321,11 +2439,11 @@
             "selected": false
         },
         {
-            "followers_count": 972.2569768512441,
+            "followers_count": 1091.754228247839,
             "query_tweet_count": 3,
-            "friends_count": 1051.603068107476,
+            "friends_count": 1057.7948546489722,
             "statuses_count": 4139,
-            "listed_count": 116.73984068916553,
+            "listed_count": 113.60114113497214,
             "utc_offset": null,
             "favourites_count": 3624,
             "count_followers_in_query": 11,
@@ -2337,10 +2455,12 @@
             "memberSince": "2010-04-23T21:12:19.000Z",
             "name": "Matthew Conlen",
             "location": "Los Angeles, CA",
-            "memberFor_days": 3373,
+            "memberFor_days": 3374,
             "type": "person",
             "continent": "North America",
             "shortName": "M.Conlen",
+            "x": 1157.3160691773794,
+            "y": 681.2619249524088,
             "neighbors": [
                 247943631,
                 16112517,
@@ -2357,7 +2477,7 @@
             "selected": false
         },
         {
-            "followers_count": 1169.7455412426743,
+            "followers_count": 1146.2663607763304,
             "query_tweet_count": 1,
             "friends_count": 525,
             "statuses_count": 3699,
@@ -2377,6 +2497,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "D.Moritz",
+            "x": 1244.1631380885656,
+            "y": 721.2921360028603,
             "neighbors": [
                 247943631
             ],
@@ -2387,11 +2509,11 @@
             "selected": false
         },
         {
-            "followers_count": 1179.5030694471516,
+            "followers_count": 1066.1711799531458,
             "query_tweet_count": 1,
             "friends_count": 463,
-            "statuses_count": 5201.272332615773,
-            "listed_count": 117.11711556555373,
+            "statuses_count": 5327.256298865946,
+            "listed_count": 118.34882800308672,
             "utc_offset": null,
             "favourites_count": 3061,
             "count_followers_in_query": 23,
@@ -2403,10 +2525,12 @@
             "memberSince": "2009-06-02T20:09:53.000Z",
             "name": "Carlos Scheidegger",
             "location": "Tucson, AZ",
-            "memberFor_days": 3698,
+            "memberFor_days": 3699,
             "type": "person",
             "continent": "North America",
             "shortName": "C.Scheidegger",
+            "x": 1203.229515079171,
+            "y": 1096.1044227475668,
             "neighbors": [
                 247943631
             ],
@@ -2417,13 +2541,13 @@
             "selected": false
         },
         {
-            "followers_count": 1023.468056982794,
+            "followers_count": 1035.9089544073593,
             "query_tweet_count": 1,
-            "friends_count": 1143.342641382982,
-            "statuses_count": 4668.654002025798,
-            "listed_count": 104.99812877364823,
+            "friends_count": 1188.4656378144236,
+            "statuses_count": 4338.181005267176,
+            "listed_count": 108.29641876871854,
             "utc_offset": null,
-            "favourites_count": 7471.600109521496,
+            "favourites_count": 7764.139092262665,
             "count_followers_in_query": 17,
             "screen_name": "dataandme",
             "id": 3230388598,
@@ -2437,6 +2561,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "M.Averick",
+            "x": 548.5616087277132,
+            "y": 816.5261817858128,
             "neighbors": [
                 30009655
             ],
@@ -2447,11 +2573,11 @@
             "selected": false
         },
         {
-            "followers_count": 1051.7830957890976,
+            "followers_count": 918.4171431867896,
             "query_tweet_count": 1,
             "friends_count": 1054,
             "statuses_count": 3133,
-            "listed_count": 113.92928329718701,
+            "listed_count": 93.26302988368532,
             "utc_offset": null,
             "favourites_count": 7276,
             "count_followers_in_query": 19,
@@ -2467,6 +2593,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "T.Nagel",
+            "x": 133.6011573646054,
+            "y": 1228.8374483643966,
             "neighbors": [
                 10414152
             ],
@@ -2493,10 +2621,12 @@
             "memberSince": "2011-11-02T19:22:30.000Z",
             "name": "Stef van den Elzen",
             "location": "Eindhoven, Nederland",
-            "memberFor_days": 2815,
+            "memberFor_days": 2816,
             "type": "person",
             "continent": "Europe",
             "shortName": "S.Elzen",
+            "x": 1678.8683909074352,
+            "y": 1501.8193581681148,
             "neighbors": [
                 208312922
             ],
@@ -2510,7 +2640,7 @@
             "followers_count": 1072,
             "query_tweet_count": 1,
             "friends_count": 878,
-            "statuses_count": 5243.679652320441,
+            "statuses_count": 4163.374488968791,
             "listed_count": 77,
             "utc_offset": null,
             "favourites_count": 5746,
@@ -2523,10 +2653,12 @@
             "memberSince": "2008-06-23T16:45:09.000Z",
             "name": "Jo Vermeulen",
             "location": "Aarhus, Denmark",
-            "memberFor_days": 4042,
+            "memberFor_days": 4043,
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Vermeulen",
+            "x": 70.41280443610572,
+            "y": 1149.7473262924964,
             "neighbors": [
                 10414152
             ],
@@ -2557,6 +2689,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "D.Gotz",
+            "x": 1632.8617525550792,
+            "y": 1580.9694579748343,
             "neighbors": [
                 208312922
             ],
@@ -2567,10 +2701,10 @@
             "selected": false
         },
         {
-            "followers_count": 1196.494328595042,
+            "followers_count": 1195.6469838538628,
             "query_tweet_count": 1,
             "friends_count": 889,
-            "statuses_count": 4647.601694671906,
+            "statuses_count": 4899.097335069301,
             "listed_count": 110,
             "utc_offset": null,
             "favourites_count": 2951,
@@ -2587,6 +2721,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "E.Peck",
+            "x": 25.724610392009936,
+            "y": 1039.279926605846,
             "neighbors": [
                 10414152
             ],
@@ -2613,10 +2749,12 @@
             "memberSince": "2008-03-14T18:44:45.000Z",
             "name": "Stephen North",
             "location": "Oldwick",
-            "memberFor_days": 4143,
+            "memberFor_days": 4144,
             "type": "person",
             "continent": "North America",
             "shortName": "S.North",
+            "x": 23,
+            "y": 906.286101242208,
             "neighbors": [
                 10414152
             ],
@@ -2647,6 +2785,8 @@
             "type": "institution",
             "continent": "Europe",
             "shortName": "EuroVis2018",
+            "x": 1737.7938812235964,
+            "y": 1080.372030360813,
             "neighbors": [
                 19299318,
                 81658145
@@ -2679,6 +2819,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "K.Reinhardt",
+            "x": 815.297736299214,
+            "y": 962.1138099431233,
             "neighbors": [
                 16112517
             ],
@@ -2689,13 +2831,13 @@
             "selected": false
         },
         {
-            "followers_count": 1025.7847216449572,
+            "followers_count": 1039.3563560052196,
             "query_tweet_count": 1,
             "friends_count": 933,
-            "statuses_count": 4886.844240700092,
-            "listed_count": 114.73875691768026,
+            "statuses_count": 4117.355461461825,
+            "listed_count": 101.31122421407223,
             "utc_offset": null,
-            "favourites_count": 7120.456332320284,
+            "favourites_count": 7104.079673872684,
             "count_followers_in_query": 15,
             "screen_name": "JanWillemTulp",
             "id": 21084111,
@@ -2709,6 +2851,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Tulp",
+            "x": 774.3212357294321,
+            "y": 846.4233669055983,
             "neighbors": [
                 16112517
             ],
@@ -2739,6 +2883,8 @@
             "type": "institution",
             "continent": "North America",
             "shortName": "MV:Vis Research Explained",
+            "x": 858.0183110527366,
+            "y": 715.885448265714,
             "neighbors": [
                 16112517
             ],
@@ -2765,10 +2911,12 @@
             "memberSince": "2016-06-16T15:41:15.000Z",
             "name": "Menna El-Assady",
             "location": "",
-            "memberFor_days": 1127,
+            "memberFor_days": 1128,
             "type": "person",
             "continent": "Europe",
             "shortName": "M.El-Assady",
+            "x": 706.9758188483383,
+            "y": 158.05466778265628,
             "neighbors": [
                 91169926
             ],
@@ -2795,10 +2943,12 @@
             "memberSince": "2012-07-17T16:46:44.000Z",
             "name": "SCI Institute",
             "location": "Salt Lake City, UT",
-            "memberFor_days": 2557,
+            "memberFor_days": 2558,
             "type": "institution",
             "continent": "North America",
             "shortName": "SCI",
+            "x": 724.9524506496881,
+            "y": 1218.9848151489605,
             "neighbors": [
                 81658145
             ],

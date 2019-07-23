@@ -1,11 +1,13 @@
 {
     "graphFiles": {
-        "small_directed_multiEdge": "../public/data/network_small_directed_multiEdge.json",
-        "large_directed_multiEdge": "../public/data/network_large_directed_multiEdge.json",
-        "small_undirected_multiEdge": "../public/data/network_small_undirected_multiEdge.json",
-        "large_undirected_multiEdge": "../public/data/network_large_undirected_multiEdge.json",
-        "small_undirected_singleEdge": "../public/data/network_small_undirected_singleEdge.json",
-        "large_undirected_singleEdge": "../public/data/network_large_undirected_singleEdge.json"
+        "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
+        "large_directed_multiEdge": "../../data/network_large_directed_multiEdge.json",
+        "small_undirected_multiEdge": "../../data/network_small_undirected_multiEdge.json",
+        "large_undirected_multiEdge": "../../data/network_large_undirected_multiEdge.json",
+        "small_undirected_singleEdge": "../../data/network_small_undirected_singleEdge.json",
+        "large_undirected_singleEdge": "../../data/network_large_undirected_singleEdge.json",
+        "lesMis": "../public/data/lesMis.json"
+
     },
     "attributeScales": {
         "node": {
@@ -127,10 +129,11 @@
     },
     "style": {
         "selectedNodeColor": "#e86b45",
+        "selectedEdgeColor": "#e86b45",
         "hoveredNodeColor": "#fde8ca"
     },
     "nodeLink": {
-        "noEdgeColor": "white",
+        "noEdgeColor": "black",
         "noNodeFill": "white",
         "noNodeStroke": "#c8c8c8",
         "quantColors":["#7b7cb1",
