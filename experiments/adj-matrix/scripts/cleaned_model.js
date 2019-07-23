@@ -801,12 +801,17 @@ var View = /** @class */ (function () {
             // will add or remove node
             console.log(d);
             // will add or remove node
-            console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
-            that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row or remove if already in
-            console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
+            /*
+            that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // FOR ANSWER
+            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
             d3.selectAll('.answer').classed('answer', false);
-            d3.selectAll('.answer').classed('answer', nodeID in _this.controller.answerRow);
-            that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
+            d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
+            that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
+            that.addHighlightNodesToDict(_this.controller.clickedRow, nodeID, nodeID); // FOR ANSWER
+            console.log(nodeID, _this.controller.clickedRow, nodeID in _this.controller.clickedRow);
+            d3.selectAll('.clicked').classed('clicked', false);
+            d3.selectAll('.clicked').classed('clicked', nodeID in _this.controller.clickedRow);
+            that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
             // selects row text
             //d3.select(nodes[i]).classed('answer', (data) => {
             //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
@@ -1430,11 +1435,17 @@ var View = /** @class */ (function () {
             let cellID = cell.rowid + cell.colid;*/
             console.log(d);
             var nodeID = d.screen_name;
+            /*
             // will add or remove node
-            console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
-            that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row (rowid)
-            d3.selectAll('.answer').classed('answer', nodeID in _this.controller.answerRow);
-            that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
+            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+            that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
+            d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
+            that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
+            that.addHighlightNodesToDict(_this.controller.clickedRow, nodeID, nodeID); // FOR ANSWER
+            console.log(nodeID, _this.controller.clickedRow, nodeID in _this.controller.clickedRow);
+            //d3.selectAll('.answer').classed('answer', false);
+            d3.selectAll('.clicked').classed('clicked', nodeID in _this.controller.clickedRow);
+            that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
             // classes row
             //this.classHighlights(d.screen_name, 'Row', 'answer');
             //this.selectNode(d[0].rowid);
