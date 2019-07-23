@@ -1894,6 +1894,7 @@ var Controller = /** @class */ (function () {
             that.setupExports(configComponents[0], configComponents[1]);
             var components = [configComponents[0], configComponents[1], configComponents[2]];
             var result = deepmerge.all(components);
+            // added selected attribute scale 
             var obj = {
                 "domain": [true, false],
                 "range": ["#e86b45", '#fff'],

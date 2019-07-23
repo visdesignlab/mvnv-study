@@ -140,7 +140,7 @@ class Model {
       //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
       console.log("data/network_" + controller.configuration.loadedGraph + ".json");
-      setPanelValuesFromFile(controller.configuration, data);
+      //setPanelValuesFromFile(controller.configuration, data);
       this.matrix = [];
       this.scalarMatrix = [];
 
@@ -2180,7 +2180,7 @@ class Controller {
       let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);
 
-      // added selected attribute scale 
+      // added selected attribute scale
       let obj = {
         "domain":[true, false],
         "range":["#e86b45",'#fff'],

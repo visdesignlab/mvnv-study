@@ -32,6 +32,8 @@ function autocomplete(inp, arr) {
               inp.value = this.getElementsByTagName("input")[0].value;
               /*close the list of autocompleted values,
               (or any other open lists of autocompleted values:*/
+              console.log(d3.select('#searchButton').on('click'));
+              d3.select('#searchButton').on('click')();
               closeAllLists();
           });
           a.appendChild(b);
@@ -57,9 +59,12 @@ function autocomplete(inp, arr) {
       } else if (e.keyCode == 13) {
         /*If the ENTER key is pressed, prevent the form from being submitted,*/
         e.preventDefault();
+        console.log(x);
         if (currentFocus > -1) {
           /*and simulate a click on the "active" item:*/
           if (x) x[currentFocus].click();
+        } else {
+          if(x && x.length == 1) x[0].click();
         }
       }
   });
