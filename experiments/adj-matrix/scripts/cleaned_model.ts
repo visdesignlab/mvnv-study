@@ -1649,10 +1649,7 @@ class View {
 
     let columns = this.controller.configuration.nodeAttributes;
 
-    // Based on the data type set widths
-    // numerical are 50, bool are a verticle bandwidth * 2
-    //
-
+    columns.unshift('selected'); // ANSWER COLUMNS
 
     var formatCurrency = d3.format("$,.0f"),
       formatNumber = d3.format(",.0f");
@@ -1666,30 +1663,33 @@ class View {
     let xRange = 0;
 
 
-    let columnWidths = this.determineColumnWidths(columns);
+    let columnWidths = this.determineColumnWidths(columns); // ANSWER COLUMNS
     console.log(columnWidths,columns)
     //450 / columns.length;
 
 
     let categoricalAttributes = ["type", "continent"]
+    let quantitativeAttributes = ["followers_count","friends_count","statuses_count","count_followers_in_query","favourites_count","listed_count","memberFor_days","query_tweet_count"]
 
 
     columns.forEach((col, index) => {
       // calculate range
       columnRange.push(xRange);
+      console.log(col);
       let domain = this.controller.configuration.attributeScales.node[col].domain;
-      if (categoricalAttributes.indexOf(col) > -1) { //if categorical
+
+      if( quantitativeAttributes.indexOf(col)> -1){
+
+        let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
+        scale.clamp(true);
+        attributeScales[col] = scale;
+      } else {
         // append colored blocks
         // placeholder scale
         let range = this.controller.configuration.attributeScales.node[col].range;
         let scale = d3.scaleOrdinal().domain(domain).range(range);
         //.domain([true,false]).range([barMargin.left, colWidth-barMargin.right]);
 
-        attributeScales[col] = scale;
-      } else {
-
-        let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
-        scale.clamp(true);
         attributeScales[col] = scale;
       }
 
@@ -1713,9 +1713,10 @@ class View {
     this.columnScale.range(columnRange);
 
     for (let [column, scale] of Object.entries(attributeScales)) {
-      if (categoricalAttributes.indexOf(column) > -1) {
-        placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
-      } else {
+      if (categoricalAttributes.indexOf(column) > -1) { // if not selected categorical
+          placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
+
+      } else if (quantitativeAttributes.indexOf(column) > -1){
         this.attributes.append("g")
           .attr("class", "attr-axis")
           .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
@@ -1744,7 +1745,7 @@ class View {
         console.log("CATEGORICAL!")
         this.createUpsetPlot(column, columnWidths[index],placementScale[column]);
         return;
-      } else { // if quantitative
+      } else if(quantitativeAttributes.indexOf(column) > -1) { // if quantitative
         this.attributeRows
           .append("rect")
           .attr("class", "glyph")
@@ -1764,6 +1765,53 @@ class View {
           .text(function(d, i) {
             return (i ? formatNumber : formatCurrency)(d);
           });
+      } else {
+
+        let answerBox = this.attributeRows
+          .append('g')
+          .attr("class", "answerBox")
+          .attr('transform','translate('+(columnPosition + barMargin.left)+','+0+')');
+
+        let rect = answerBox.append("rect")
+              .attr("x", barMargin.left)
+              .attr("y", barMargin.top)
+              .attr("rx", barHeight/2)
+              .attr("ry", barHeight/2)
+              .style("fill", "lightgray")
+              .attr("width", columnWidths[column] - barMargin.left - barMargin.right)
+              .attr("height", barHeight)
+              .attr('stroke','lightgray')
+
+        let circle = answerBox.append("circle")
+              .attr("cx", barHeight/2  + barMargin.left)
+              .attr("cy", barHeight/2 + barMargin.top)
+              .attr("r", barHeight/2)
+              .style("fill", "white");
+
+        answerBox
+          .on('click',(d,i,nodes)=>{
+            let color = this.controller.configuration.attributeScales.node.selected.range[0];
+            //if already answer
+            let nodeID = d.screen_name;
+            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+
+            that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row or remove if already in
+            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+            d3.selectAll('.answer').classed('answer', false);
+            that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+
+            /*Visualchagne */
+            let answerStatus = nodeID in this.controller.answerRow;
+            d3.select(nodes[i]).selectAll('circle').transition().duration(500)
+                .attr("cx", (answerStatus? (columnWidths[column]-barHeight/2 -barMargin.right) : (barHeight/2  + barMargin.left)))
+                .style("fill", answerStatus? color : "white");
+            d3.select(nodes[i]).selectAll('rect').transition().duration(500)
+                .style("fill", answerStatus? "#8B8B8B" : "lightgray");
+
+
+            //d3.select(nodes[i]).transition().duration(500).attr('fill',)
+          })
+
       }
     });
 
@@ -1890,7 +1938,7 @@ class View {
   }
 
   isCategorical(column) {
-    return column == "type" || column == "continent";
+    return column == "type" || column == "continent" || column == "selected";
   }
 
   determineColumnWidths(columns) {

@@ -1440,9 +1440,7 @@ var View = /** @class */ (function () {
             //this.selectNode(d[0].rowid);
         });
         var columns = this.controller.configuration.nodeAttributes;
-        // Based on the data type set widths
-        // numerical are 50, bool are a verticle bandwidth * 2
-        //
+        columns.unshift('selected'); // ANSWER COLUMNS
         var formatCurrency = d3.format("$,.0f"), formatNumber = d3.format(",.0f");
         // generate scales for each
         var attributeScales = {};
@@ -1450,25 +1448,27 @@ var View = /** @class */ (function () {
         // Calculate Column Scale
         var columnRange = [];
         var xRange = 0;
-        var columnWidths = this.determineColumnWidths(columns);
+        var columnWidths = this.determineColumnWidths(columns); // ANSWER COLUMNS
         console.log(columnWidths, columns);
         //450 / columns.length;
         var categoricalAttributes = ["type", "continent"];
+        var quantitativeAttributes = ["followers_count", "friends_count", "statuses_count", "count_followers_in_query", "favourites_count", "listed_count", "memberFor_days", "query_tweet_count"];
         columns.forEach(function (col, index) {
             // calculate range
             columnRange.push(xRange);
+            console.log(col);
             var domain = _this.controller.configuration.attributeScales.node[col].domain;
-            if (categoricalAttributes.indexOf(col) > -1) { //if categorical
+            if (quantitativeAttributes.indexOf(col) > -1) {
+                var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
+                scale.clamp(true);
+                attributeScales[col] = scale;
+            }
+            else {
                 // append colored blocks
                 // placeholder scale
                 var range = _this.controller.configuration.attributeScales.node[col].range;
                 var scale = d3.scaleOrdinal().domain(domain).range(range);
                 //.domain([true,false]).range([barMargin.left, colWidth-barMargin.right]);
-                attributeScales[col] = scale;
-            }
-            else {
-                var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
-                scale.clamp(true);
                 attributeScales[col] = scale;
             }
             xRange += columnWidths[col];
@@ -1482,10 +1482,10 @@ var View = /** @class */ (function () {
         this.columnScale.range(columnRange);
         for (var _i = 0, _a = Object.entries(attributeScales); _i < _a.length; _i++) {
             var _b = _a[_i], column = _b[0], scale = _b[1];
-            if (categoricalAttributes.indexOf(column) > -1) {
+            if (categoricalAttributes.indexOf(column) > -1) { // if not selected categorical
                 placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
             }
-            else {
+            else if (quantitativeAttributes.indexOf(column) > -1) {
                 this.attributes.append("g")
                     .attr("class", "attr-axis")
                     .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
@@ -1509,7 +1509,7 @@ var View = /** @class */ (function () {
                 _this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
                 return;
             }
-            else { // if quantitative
+            else if (quantitativeAttributes.indexOf(column) > -1) { // if quantitative
                 _this.attributeRows
                     .append("rect")
                     .attr("class", "glyph")
@@ -1526,6 +1526,45 @@ var View = /** @class */ (function () {
                     .attr("class", "glyphLabel")
                     .text(function (d, i) {
                     return (i ? formatNumber : formatCurrency)(d);
+                });
+            }
+            else {
+                var answerBox = _this.attributeRows
+                    .append('g')
+                    .attr("class", "answerBox")
+                    .attr('transform', 'translate(' + (columnPosition + barMargin.left) + ',' + 0 + ')');
+                var rect = answerBox.append("rect")
+                    .attr("x", barMargin.left)
+                    .attr("y", barMargin.top)
+                    .attr("rx", barHeight / 2)
+                    .attr("ry", barHeight / 2)
+                    .style("fill", "lightgray")
+                    .attr("width", columnWidths[column] - barMargin.left - barMargin.right)
+                    .attr("height", barHeight)
+                    .attr('stroke', 'lightgray');
+                var circle = answerBox.append("circle")
+                    .attr("cx", barHeight / 2 + barMargin.left)
+                    .attr("cy", barHeight / 2 + barMargin.top)
+                    .attr("r", barHeight / 2)
+                    .style("fill", "white");
+                answerBox
+                    .on('click', function (d, i, nodes) {
+                    var color = _this.controller.configuration.attributeScales.node.selected.range[0];
+                    //if already answer
+                    var nodeID = d.screen_name;
+                    console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
+                    that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row or remove if already in
+                    console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
+                    d3.selectAll('.answer').classed('answer', false);
+                    that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
+                    /*Visualchagne */
+                    var answerStatus = nodeID in _this.controller.answerRow;
+                    d3.select(nodes[i]).selectAll('circle').transition().duration(500)
+                        .attr("cx", (answerStatus ? (columnWidths[column] - barHeight / 2 - barMargin.right) : (barHeight / 2 + barMargin.left)))
+                        .style("fill", answerStatus ? color : "white");
+                    d3.select(nodes[i]).selectAll('rect').transition().duration(500)
+                        .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
+                    //d3.select(nodes[i]).transition().duration(500).attr('fill',)
                 });
             }
         });
@@ -1632,7 +1671,7 @@ var View = /** @class */ (function () {
         });*/
     };
     View.prototype.isCategorical = function (column) {
-        return column == "type" || column == "continent";
+        return column == "type" || column == "continent" || column == "selected";
     };
     View.prototype.determineColumnWidths = function (columns) {
         var widths = {};
