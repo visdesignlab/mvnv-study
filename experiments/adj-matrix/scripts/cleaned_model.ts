@@ -1779,7 +1779,7 @@ class View {
             return (i ? formatNumber : formatCurrency)(d);
           });
       } else {
-
+        barMargin.left = 1;
         let answerBox = this.attributeRows
           .append('g')
           .attr("class", "answerBox")
@@ -1855,7 +1855,8 @@ class View {
       "continent": "",
       "type": "",
       "memberFor_days": "Account Age",
-      "listed_count": "In Lists"
+      "listed_count": "In Lists",
+      "selected": "Answer"
     }
     let that = this;
     function calculateMaxChars(numColumns) {
@@ -1926,8 +1927,10 @@ class View {
         that.tooltip.transition().duration(250).style("opacity", 0);
       });
 
-    //
-    columnHeaders.selectAll('.legend')
+    console.log(columnHeaders.selectAll('.header'))
+    let answerColumn = columnHeaders.selectAll('.header').filter(d=>{return d=='selected'})
+    answerColumn.attr('y',35).attr('x',10).attr('font-weight',650);
+    console.log(answerColumn);
 
     d3.select('.loading').style('display', 'none');
 
@@ -1971,6 +1974,9 @@ class View {
       // if column is categorical
       if (this.isCategorical(column)) {
         let width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3)
+        if(column == "selected"){
+          width = 60;
+        }
         widths[column] = width;
         totalCategoricalWidth += width; // add width
       }

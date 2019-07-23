@@ -1540,6 +1540,7 @@ var View = /** @class */ (function () {
                 });
             }
             else {
+                barMargin.left = 1;
                 var answerBox = _this.attributeRows
                     .append('g')
                     .attr("class", "answerBox")
@@ -1568,7 +1569,7 @@ var View = /** @class */ (function () {
                     console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
                     d3.selectAll('.answer').classed('answer', false);
                     that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
-                    /*Visualchagne */
+                    /*Visual chagne */
                     var answerStatus = nodeID in _this.controller.answerRow;
                     d3.select(nodes[i]).selectAll('circle').transition().duration(500)
                         .attr("cx", (answerStatus ? (columnWidths[column] - barHeight / 2 - barMargin.right) : (barHeight / 2 + barMargin.left)))
@@ -1603,7 +1604,8 @@ var View = /** @class */ (function () {
             "continent": "",
             "type": "",
             "memberFor_days": "Account Age",
-            "listed_count": "In Lists"
+            "listed_count": "In Lists",
+            "selected": "Answer"
         };
         var that = this;
         function calculateMaxChars(numColumns) {
@@ -1670,8 +1672,10 @@ var View = /** @class */ (function () {
             .on('mouseout', function (d) {
             that.tooltip.transition().duration(250).style("opacity", 0);
         });
-        //
-        columnHeaders.selectAll('.legend');
+        console.log(columnHeaders.selectAll('.header'));
+        var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
+        answerColumn.attr('y', 30).attr('x', 10).attr('font-weight', 650);
+        console.log(answerColumn);
         d3.select('.loading').style('display', 'none');
         // Append g's for table headers
         // For any data row, add
@@ -1697,6 +1701,9 @@ var View = /** @class */ (function () {
             // if column is categorical
             if (this.isCategorical(column)) {
                 var width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3);
+                if (column == "selected") {
+                    width = 60;
+                }
                 widths[column] = width;
                 totalCategoricalWidth += width; // add width
             }
