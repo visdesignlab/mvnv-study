@@ -984,6 +984,33 @@ function isQuant(attr) {
       provenance.addObserver(stateField, callback       
     );
   }
+
+
+  //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
+  function updateState(label,searchId){
+
+
+
+    provenance.applyAction({
+      label,
+      action: (nodes) => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        currentState.nodes = nodes; 
+        //If node was searched, push him to the search array
+        if (searchId){
+          currentState.search.push(searchId)
+        }
+        return currentState;
+      },
+      args: [getNodeState(graph.nodes)]
+    });
+
+    let state = app.currentState();
+    // fb.addDocument(state)
+
+  }
   
   async function loadNewGraph(fileName) {
     graph = await d3.json(fileName);
@@ -1014,28 +1041,6 @@ function isQuant(attr) {
 
   }
 
-  
-  }
-
-
-  //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
-  function updateState(label,searchId){
-
-    provenance.applyAction({
-      label,
-      action: (nodes) => {
-        const currentState = app.currentState();
-        //add time stamp to the state graph
-        currentState.time = Date.now();
-        currentState.nodes = nodes; 
-        //If node was searched, push him to the search array
-        if (searchId){
-          currentState.search.push(searchId)
-        }
-        return currentState;
-      },
-      args: [getNodeState(graph.nodes)]
-    });
-
 
   }
+
