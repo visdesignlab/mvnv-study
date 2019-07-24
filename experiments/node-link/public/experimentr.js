@@ -121,24 +121,27 @@ experimentr = function() {
     clearModule();
     experimentr.hold();
 
-    if(x === sequence.length-1){
+    if (x === sequence.length - 1) {
       removeNextButton();
       experimentr.end();
     }
 
-    console.log('here', x)
 
-    let domElement = await d3.text(sequence[x]);
-    var range = document.createRange();
+    // let domElement = await d3.text(sequence[x]);
+    // var range = document.createRange();
 
-    var documentFragment = range.createContextualFragment(domElement);
-    d3.select('#module').node().appendChild(documentFragment);
-    // d3.html(sequence[x], function(err, d) {
-    //   if(err) console.log(err);
-    //   console.log('never here', d)
-    //   d3.select('#module').node().appendChild(d);
-    // });
-    console.log('here2')
+    // var documentFragment = range.createContextualFragment(domElement);
+    // d3.select('#module').node().appendChild(documentFragment);
+    
+    // TODO do better than this serializer hack, if possible https://stackoverflow.com/a/49894968
+    d3.html(sequence[x]).then((d) => {
+      const serializer = new XMLSerializer();
+      const document_fragment_string = serializer.serializeToString(d);
+      var range = document.createRange();
+      range.setStart(document.getElementById("module"), 0);
+      var documentFragment = range.createContextualFragment(document_fragment_string);
+      d3.select('#module').node().appendChild(documentFragment);
+    });
   }
 
   // Remove the next button entirely (TODO ensure this is actually used).
