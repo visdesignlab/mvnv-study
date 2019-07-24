@@ -127,11 +127,16 @@ experimentr = function() {
     }
 
 
+    //Carolina's solution to d3.html not working the same when upgrading to d3 v5;
+
     // let domElement = await d3.text(sequence[x]);
     // var range = document.createRange();
 
     // var documentFragment = range.createContextualFragment(domElement);
     // d3.select('#module').node().appendChild(documentFragment);
+    
+
+    //Lane's Solution to the same problem 
     
     // TODO do better than this serializer hack, if possible https://stackoverflow.com/a/49894968
     d3.html(sequence[x]).then((d) => {

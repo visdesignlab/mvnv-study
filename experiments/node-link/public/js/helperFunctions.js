@@ -883,15 +883,13 @@ function isQuant(attr) {
     let baseConfig = await d3.json("../../configs/baseConfig.json");
     let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
 
-    setConfigCallbacks(baseConfig,taskConfig)
+    setConfigCallbacks(baseConfig,taskConfig);
 
-    loadNewGraph(config.graphFiles[config.loadedGraph]).then(()=>{
-      let stateNodes = graph.nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
-      [app,provenance] = setUpProvenance(stateNodes);
-  
-      applyConfig("optimalConfig");
-      
-    });
+    await loadNewGraph(config.graphFiles[config.loadedGraph]);     
+  }
+
+  function getNodeState(nodes){
+    return nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
   }
 
   function setConfigCallbacks(baseConfig,taskConfig){
@@ -935,15 +933,15 @@ function isQuant(attr) {
             applyConfig("saturatedConfig")
           );
     
-          d3.select("#next").on("click", () => {
+          d3.select("#next").on("click", async () => {
             taskNum = d3.min([taskNum + 1, tasks.length - 1]);
-            loadConfigs(tasks[taskNum].id);
+            await loadConfigs(tasks[taskNum].id);
             applyConfig("optimalConfig");
           });
     
-          d3.select("#previous").on("click", () => {
+          d3.select("#previous").on("click", async () => {
             taskNum = d3.max([taskNum - 1, 0]);
-            loadConfigs(tasks[taskNum].id);
+            await loadConfigs(tasks[taskNum].id);
             applyConfig("optimalConfig");
           });
 
@@ -958,7 +956,6 @@ function isQuant(attr) {
   
     // setPanelValuesFromFile();
     update();
-  
   }
 
   function setUpProvenance(nodes){
@@ -966,9 +963,9 @@ function isQuant(attr) {
     const initialState = {
        
        nodes,//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
-       search:'', //field to store the id of a searched node;
+       search:[], //field to store the id of a searched node;
        startTime:Date.now(), //time this provenance graph was created and the task initialized;
-       endTime:'', // time the submit button was pressed and the task ended;
+      //  endTime:'', // time the submit button was pressed and the task ended;
        time:Date.now() //timestamp for the current state of the graph;
       };
       
@@ -978,20 +975,67 @@ function isQuant(attr) {
         };
       }
       
-      const provenance = ProvenanceLibrary.initProvenance(initialState);
-      const app = nodeLink(provenance);
-
-      return [app,provenance];
+      //set global variables
+      provenance = ProvenanceLibrary.initProvenance(initialState);
+      app = nodeLink(provenance);
   }
 
-  function setUpObservers(app){
-    provenance.addObserver("count.count2.count4", state => {
-    console.log("Only once", state.count);
-  });
-
-
+  function setUpObserver(stateField,callback){
+      provenance.addObserver(stateField, callback       
+    );
   }
   
   async function loadNewGraph(fileName) {
     graph = await d3.json(fileName);
+
+    {
+      d3.select("#search-input").attr("list", "characters");
+      let inputParent = d3.select("#search-input").node().parentNode;
+
+      let datalist = d3
+      .select(inputParent).selectAll('#characters').data([0]);
+
+      let enterSelection = datalist.enter()
+      .append("datalist")
+      .attr("id", "characters");
+
+      datalist.exit().remove();
+
+      datalist= enterSelection.merge(datalist);
+
+      let options = datalist.selectAll("option").data(graph.nodes);
+
+      let optionsEnter = options.enter().append("option");
+      options.exit().remove();
+
+      options = optionsEnter.merge(options);
+      options.attr("value", d => d.shortName);
+      options.attr("id", d => d.id);
+
+  }
+
+  
+  }
+
+
+  //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
+  function updateState(label,searchId){
+
+    provenance.applyAction({
+      label,
+      action: (nodes) => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        currentState.nodes = nodes; 
+        //If node was searched, push him to the search array
+        if (searchId){
+          currentState.search.push(searchId)
+        }
+        return currentState;
+      },
+      args: [getNodeState(graph.nodes)]
+    });
+
+
   }
