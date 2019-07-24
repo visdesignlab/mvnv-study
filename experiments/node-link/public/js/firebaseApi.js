@@ -40,7 +40,7 @@ let fb = {
             querySnapshot.forEach(doc => {
               console.log(`${doc.id} => ${doc.data()}`);
             });
-
+            
             return querySnapshot
           });
       }

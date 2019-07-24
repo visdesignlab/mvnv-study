@@ -118,22 +118,25 @@ function loadVis(id) {
   //   await loadConfigs(tasks[0].id);
   // });
    
-  (async function() { // async anonymouse function
+  (async function() { // async annonymous function
     const taskObj = await d3.json("../../configs/tasks.json");
     tasks = taskObj.tasks;
     loadConfigs(taskObj.tasks[0].id);
+
+    let baseConfig = await d3.json("../../configs/baseConfig.json");
+  let nodeLinkConfig = await d3.json("../../configs/baseConfig.json");
+  let saturatedConfig = await d3.json("../../configs/10AttrConfig.json");
+
+  allConfigs.nodeLinkConfig = mergeConfigs(baseConfig, nodeLinkConfig);
+  allConfigs.saturatedConfig = mergeConfigs(baseConfig, saturatedConfig);
+
+
   })()
   
 
-  //load in the 5Attr and 10Attr configs as well;
-  d3.json("../../configs/baseConfig.json", function(baseConfig) {
-    d3.json("../../configs/5AttrConfig.json", function(nodeLinkConfig) {
-      d3.json("../../configs/10AttrConfig.json", function(saturatedConfig) {
-        allConfigs.nodeLinkConfig = mergeConfigs(baseConfig, nodeLinkConfig);
-        allConfigs.saturatedConfig = mergeConfigs(baseConfig, saturatedConfig);
-      });
-    });
-  });
+  
+  
+
 }
 
 function updateVis() {

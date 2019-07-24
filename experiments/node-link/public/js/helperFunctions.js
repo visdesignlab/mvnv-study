@@ -883,16 +883,15 @@ function isQuant(attr) {
     let baseConfig = await d3.json("../../configs/baseConfig.json");
     let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
 
-    // setConfigCallbacks(baseConfig,taskConfig)
+    setConfigCallbacks(baseConfig,taskConfig)
 
-    let a = await loadNewGraph(config.graphFiles[config.loadedGraph]);
-
-           //make pared down version of graph.nodes
-          let stateNodes = graph.nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
-        //   [app,provenance] = setUpProvenance(stateNodes);
-
-          applyConfig("optimalConfig");
-
+    loadNewGraph(config.graphFiles[config.loadedGraph]).then(()=>{
+      let stateNodes = graph.nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
+      [app,provenance] = setUpProvenance(stateNodes);
+  
+      applyConfig("optimalConfig");
+      
+    });
   }
 
   function setConfigCallbacks(baseConfig,taskConfig){
