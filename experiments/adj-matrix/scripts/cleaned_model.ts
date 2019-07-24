@@ -25,83 +25,7 @@ class Model {
   public graph: any;
 
 
-  grabTwitterData(graph, tweets) {
-    let toRemove = [];
-    let newGraph = { 'nodes': [], 'links': [] };
-    this.graph = graph;
-    //create edges from tweets.
 
-    tweets = tweets.tweets;
-
-    tweets.map((tweet) => {
-
-      //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
-      if (this.controller.configuration.attributeScales.edge.type.domain.includes("mentions")) {
-        tweet.entities.user_mentions.map(mention => {
-          let source = graph.nodes.find(n => n.id === tweet.user.id);
-          let target = graph.nodes.find(n => n.id === mention.id);
-
-
-          if (source && target) {
-            let link = { 'source': source.id, 'target': target.id, 'type': 'mentions' }
-
-            newGraph.links.push(link);
-            if (!newGraph.nodes.find(n => n === source)) {
-              newGraph.nodes.push(source);
-            }
-            if (!newGraph.nodes.find(n => n === target)) {
-              newGraph.nodes.push(target);
-            }
-          }
-          // console.log('link',link)
-
-        })
-      }
-
-
-
-
-      //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-      if (tweet.retweeted_status && this.controller.configuration.attributeScales.edge.type.domain.includes("retweet")) {
-        let source = graph.nodes.find(n => n.id === tweet.user.id);
-        let target = graph.nodes.find(n => n.id === tweet.retweeted_status.user.id);
-
-
-        if (source && target) {
-          let link = { 'source': source.id, 'target': target.id, 'type': 'retweet' }
-
-          newGraph.links.push(link);
-          if (!newGraph.nodes.find(n => n === source)) {
-            newGraph.nodes.push(source);
-          }
-          if (!newGraph.nodes.find(n => n === target)) {
-            newGraph.nodes.push(target);
-          }
-        }
-
-      }
-
-      //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
-      if (tweet.in_reply_to_user_id_str && this.controller.configuration.attributeScales.edge.type.domain.includes("reply")) {
-        let source = graph.nodes.find(n => n.id === tweet.user.id);
-        let target = graph.nodes.find(n => n.id === tweet.in_reply_to_user_id);
-
-        if (source && target) {
-          let link = { 'source': source.id, 'target': target.id, 'type': 'reply' }
-
-          newGraph.links.push(link);
-          if (!newGraph.nodes.find(n => n === source)) {
-            newGraph.nodes.push(source);
-          }
-          if (!newGraph.nodes.find(n => n === target)) {
-            newGraph.nodes.push(target);
-          }
-        }
-      }
-
-    })
-    return newGraph;
-  }
   isQuant(attr) {
     // if not in list
     if (!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)) {
@@ -109,20 +33,21 @@ class Model {
     } else if (this.controller.configuration.attributeScales.node[attr].range === undefined) {
       return true;
     } else {
-      return false
+      return false;
     }
   }
+
   private scalarMatrix: any;
-  populateSearchBox(){
-    let names =  this.nodes.map(node => node.screen_name);
+  populateSearchBox() {
+    let names = this.nodes.map(node => node.screen_name);
     autocomplete(document.getElementById("myInput"), names);
-    d3.select('#searchButton').on('click',()=>{
+    d3.select('#searchButton').on('click', () => {
       let name = document.getElementById("myInput").value;
-      if(names.indexOf(name) == -1){
+      if (names.indexOf(name) == -1) {
         return;
       }
       let cell = d3.selectAll('.cell')
-        .filter(d=>(d.rowid==name && d.colid ==name))
+        .filter(d => (d.rowid == name && d.colid == name))
 
       console.log(cell);
 
@@ -879,7 +804,7 @@ class View {
       .attr("text-anchor", "end")
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
-      .on("mouseout", (d,i,nodes) => {
+      .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
 
         let rowID = d[0].rowid;
@@ -892,7 +817,7 @@ class View {
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
-      .on('mouseover', (d,i,nodes)=>{
+      .on('mouseover', (d, i, nodes) => {
         let rowID = d[0].rowid;
 
         that.addHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
@@ -968,7 +893,7 @@ class View {
         //this.selectNeighborNodes(d[index].rowid);
 
       })
-      .on("mouseout", (d,i,nodes) => {
+      .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
 
         let colID = d[0].rowid; // as rows and columns are flipped
@@ -981,9 +906,9 @@ class View {
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
-      .on('mouseover', (d,i,nodes)=>{
+      .on('mouseover', (d, i, nodes) => {
         let colID = d[0].rowid;
-        console.log(colID,d);
+        console.log(colID, d);
 
         that.addHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
 
@@ -1677,12 +1602,12 @@ class View {
 
 
     let columnWidths = this.determineColumnWidths(columns); // ANSWER COLUMNS
-    console.log(columnWidths,columns)
+    console.log(columnWidths, columns)
     //450 / columns.length;
 
 
     let categoricalAttributes = ["type", "continent"]
-    let quantitativeAttributes = ["followers_count","friends_count","statuses_count","count_followers_in_query","favourites_count","listed_count","memberFor_days","query_tweet_count"]
+    let quantitativeAttributes = ["followers_count", "friends_count", "statuses_count", "count_followers_in_query", "favourites_count", "listed_count", "memberFor_days", "query_tweet_count"]
 
 
     columns.forEach((col, index) => {
@@ -1691,7 +1616,7 @@ class View {
       console.log(col);
       let domain = this.controller.configuration.attributeScales.node[col].domain;
 
-      if( quantitativeAttributes.indexOf(col)> -1){
+      if (quantitativeAttributes.indexOf(col) > -1) {
 
         let scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
         scale.clamp(true);
@@ -1727,9 +1652,9 @@ class View {
 
     for (let [column, scale] of Object.entries(attributeScales)) {
       if (categoricalAttributes.indexOf(column) > -1) { // if not selected categorical
-          placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
+        placementScale[column] = this.generateCategoricalLegend(column, columnWidths[column]);
 
-      } else if (quantitativeAttributes.indexOf(column) > -1){
+      } else if (quantitativeAttributes.indexOf(column) > -1) {
         this.attributes.append("g")
           .attr("class", "attr-axis")
           .attr("transform", "translate(" + this.columnScale(column) + "," + -15 + ")")
@@ -1756,9 +1681,9 @@ class View {
 
       if (categoricalAttributes.indexOf(column) > -1) { // if categorical
         console.log("CATEGORICAL!")
-        this.createUpsetPlot(column, columnWidths[index],placementScale[column]);
+        this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
         return;
-      } else if(quantitativeAttributes.indexOf(column) > -1) { // if quantitative
+      } else if (quantitativeAttributes.indexOf(column) > -1) { // if quantitative
         this.attributeRows
           .append("rect")
           .attr("class", "glyph")
@@ -1783,26 +1708,26 @@ class View {
         let answerBox = this.attributeRows
           .append('g')
           .attr("class", "answerBox")
-          .attr('transform','translate('+(columnPosition + barMargin.left)+','+0+')');
+          .attr('transform', 'translate(' + (columnPosition + barMargin.left) + ',' + 0 + ')');
 
         let rect = answerBox.append("rect")
-              .attr("x", barMargin.left)
-              .attr("y", barMargin.top)
-              .attr("rx", barHeight/2)
-              .attr("ry", barHeight/2)
-              .style("fill", "lightgray")
-              .attr("width", columnWidths[column] - barMargin.left - barMargin.right)
-              .attr("height", barHeight)
-              .attr('stroke','lightgray')
+          .attr("x", (columnWidths[column]/4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
+          .attr("y", barMargin.top)
+          .attr("rx", barHeight / 2)
+          .attr("ry", barHeight / 2)
+          .style("fill", "lightgray")
+          .attr("width", columnWidths[column]/2)
+          .attr("height", barHeight)
+          .attr('stroke', 'lightgray')
 
         let circle = answerBox.append("circle")
-              .attr("cx", barHeight/2  + barMargin.left)
-              .attr("cy", barHeight/2 + barMargin.top)
-              .attr("r", barHeight/2)
-              .style("fill", "white");
+          .attr("cx", (1.15*columnWidths[column]/4))
+          .attr("cy", barHeight / 2 + barMargin.top)
+          .attr("r", barHeight / 2)
+          .style("fill", "white");
 
         answerBox
-          .on('click',(d,i,nodes)=>{
+          .on('click', (d, i, nodes) => {
             let color = this.controller.configuration.attributeScales.node.selected.range[0];
             //if already answer
             let nodeID = d.screen_name;
@@ -1816,10 +1741,10 @@ class View {
             /*Visual chagne */
             let answerStatus = nodeID in this.controller.answerRow;
             d3.select(nodes[i]).selectAll('circle').transition().duration(500)
-                .attr("cx", (answerStatus? (columnWidths[column]-barHeight/2 -barMargin.right) : (barHeight/2  + barMargin.left)))
-                .style("fill", answerStatus? color : "white");
+              .attr("cx", (answerStatus ? 3*columnWidths[column]/4 : 1.15*columnWidths[column]/4))
+              .style("fill", answerStatus ? color : "white");
             d3.select(nodes[i]).selectAll('rect').transition().duration(500)
-                .style("fill", answerStatus? "#8B8B8B" : "lightgray");
+              .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
 
 
             //d3.select(nodes[i]).transition().duration(500).attr('fill',)
@@ -1928,8 +1853,8 @@ class View {
       });
 
     console.log(columnHeaders.selectAll('.header'))
-    let answerColumn = columnHeaders.selectAll('.header').filter(d=>{return d=='selected'})
-    answerColumn.attr('y',35).attr('x',10).attr('font-weight',650);
+    let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
+    answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
     console.log(answerColumn);
 
     d3.select('.loading').style('display', 'none');
@@ -1974,7 +1899,7 @@ class View {
       // if column is categorical
       if (this.isCategorical(column)) {
         let width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3)
-        if(column == "selected"){
+        if (column == "selected") {
           width = 60;
         }
         widths[column] = width;
@@ -2006,7 +1931,7 @@ class View {
     let topMargin = 1;
     let width = this.verticalScale.bandwidth() - 2 * topMargin;
 
-    for(let i = 0; i < placementScaleForAttr.length; i++){
+    for (let i = 0; i < placementScaleForAttr.length; i++) {
       this.attributeRows
         .append('rect')
         .attr('x', placementScaleForAttr[i].position)
@@ -2029,24 +1954,24 @@ class View {
 
 
     //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
-    let legendItemSize = (legendWidth) / (dividers+3);
-    let margin = this.verticalScale.bandwidth()/dividers;
+    let legendItemSize = (legendWidth) / (dividers + 3);
+    let margin = this.verticalScale.bandwidth() / dividers;
     console.log(margin);
 
     let xRange = [];
 
     let rects = this.attributes.append("g")
-      .attr("transform", "translate(" + (this.columnScale(attribute)+ 1*legendItemSize)+ "," + (-legendHeight) + ")"); //
+      .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * legendItemSize) + "," + (-legendHeight) + ")"); //
 
     for (let i = 0; i < dividers; i++) {
       let rect1 = rects
         .append('g')
-        .attr('transform', 'translate('+ (i * (legendItemSize + margin))+',0)')
+        .attr('transform', 'translate(' + (i * (legendItemSize + margin)) + ',0)')
 
       xRange.push({
-        "attr":attribute,
-        "value":attributeInfo.domain[i],
-        "position":this.columnScale(attribute)+ 1*legendItemSize + (i * (legendItemSize + margin))
+        "attr": attribute,
+        "value": attributeInfo.domain[i],
+        "position": this.columnScale(attribute) + 1 * legendItemSize + (i * (legendItemSize + margin))
       });
 
       rect1
@@ -2064,7 +1989,7 @@ class View {
         .attr('y', legendItemSize)
         .attr('text-anchor', 'start')
         .style('font-size', 7.5)
-        .attr('transform','rotate(-90)')
+        .attr('transform', 'rotate(-90)')
     }
 
     return xRange;
@@ -2182,11 +2107,11 @@ class Controller {
 
       // added selected attribute scale
       let obj = {
-        "domain":[true, false],
-        "range":["#e86b45",'#fff'],
-        "labels":['answer','not answer'],
-        'glyph':'rect',
-        'label':'selected'
+        "domain": [true, false],
+        "range": ["#e86b45", '#fff'],
+        "labels": ['answer', 'not answer'],
+        'glyph': 'rect',
+        'label': 'selected'
       }
       that.configuration = result;
       that.configuration.attributeScales.node['selected'] = obj;
@@ -2235,9 +2160,9 @@ class Controller {
     });
 
   }
-  private clickedCells : any;
-  loadClearButton(){
-    d3.select('#clearButton').on('click', ()=>{
+  private clickedCells: any;
+  loadClearButton() {
+    d3.select('#clearButton').on('click', () => {
       this.clickedRow = {}
       this.clickedCol = {}
       this.answerRow = {}
@@ -2248,11 +2173,11 @@ class Controller {
       d3.selectAll('.answer').classed('answer', false);
       d3.selectAll('.clicked').classed('clicked', false);
 
-      console.log(test,this.clickedCells)
+      console.log(test, this.clickedCells)
 
-      this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
-      this.view.renderHighlightNodesFromDict(this.clickedCol,'clicked','Col');
-      this.view.renderHighlightNodesFromDict(this.answerRow,'answer','Row');
+      this.view.renderHighlightNodesFromDict(this.clickedRow, 'clicked', 'Row');
+      this.view.renderHighlightNodesFromDict(this.clickedCol, 'clicked', 'Col');
+      this.view.renderHighlightNodesFromDict(this.answerRow, 'answer', 'Row');
 
       //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
       //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
@@ -2261,11 +2186,11 @@ class Controller {
     })
   }
 
-  private clickedRow : any;
-  private clickedCol : any;
-  private answerRow : any;
-  private hoverRow : any;
-  private hoverCol : any;
+  private clickedRow: any;
+  private clickedCol: any;
+  private answerRow: any;
+  private hoverRow: any;
+  private hoverCol: any;
 
   constructor() {
     this.clickedRow = {}

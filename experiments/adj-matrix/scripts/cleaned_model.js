@@ -52,7 +52,7 @@ var Model = /** @class */ (function () {
             //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
             console.log("data/network_" + controller.configuration.loadedGraph + ".json");
-            setPanelValuesFromFile(controller.configuration, data);
+            //setPanelValuesFromFile(controller.configuration, data);
             _this.matrix = [];
             _this.scalarMatrix = [];
             _this.nodes = data.nodes;
@@ -77,65 +77,6 @@ var Model = /** @class */ (function () {
             //})
         });
     }
-    Model.prototype.grabTwitterData = function (graph, tweets) {
-        var _this = this;
-        var toRemove = [];
-        var newGraph = { 'nodes': [], 'links': [] };
-        this.graph = graph;
-        //create edges from tweets.
-        tweets = tweets.tweets;
-        tweets.map(function (tweet) {
-            //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
-            if (_this.controller.configuration.attributeScales.edge.type.domain.includes("mentions")) {
-                tweet.entities.user_mentions.map(function (mention) {
-                    var source = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
-                    var target = graph.nodes.find(function (n) { return n.id === mention.id; });
-                    if (source && target) {
-                        var link = { 'source': source.id, 'target': target.id, 'type': 'mentions' };
-                        newGraph.links.push(link);
-                        if (!newGraph.nodes.find(function (n) { return n === source; })) {
-                            newGraph.nodes.push(source);
-                        }
-                        if (!newGraph.nodes.find(function (n) { return n === target; })) {
-                            newGraph.nodes.push(target);
-                        }
-                    }
-                    // console.log('link',link)
-                });
-            }
-            //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-            if (tweet.retweeted_status && _this.controller.configuration.attributeScales.edge.type.domain.includes("retweet")) {
-                var source_1 = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
-                var target_1 = graph.nodes.find(function (n) { return n.id === tweet.retweeted_status.user.id; });
-                if (source_1 && target_1) {
-                    var link = { 'source': source_1.id, 'target': target_1.id, 'type': 'retweet' };
-                    newGraph.links.push(link);
-                    if (!newGraph.nodes.find(function (n) { return n === source_1; })) {
-                        newGraph.nodes.push(source_1);
-                    }
-                    if (!newGraph.nodes.find(function (n) { return n === target_1; })) {
-                        newGraph.nodes.push(target_1);
-                    }
-                }
-            }
-            //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
-            if (tweet.in_reply_to_user_id_str && _this.controller.configuration.attributeScales.edge.type.domain.includes("reply")) {
-                var source_2 = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
-                var target_2 = graph.nodes.find(function (n) { return n.id === tweet.in_reply_to_user_id; });
-                if (source_2 && target_2) {
-                    var link = { 'source': source_2.id, 'target': target_2.id, 'type': 'reply' };
-                    newGraph.links.push(link);
-                    if (!newGraph.nodes.find(function (n) { return n === source_2; })) {
-                        newGraph.nodes.push(source_2);
-                    }
-                    if (!newGraph.nodes.find(function (n) { return n === target_2; })) {
-                        newGraph.nodes.push(target_2);
-                    }
-                }
-            }
-        });
-        return newGraph;
-    };
     Model.prototype.isQuant = function (attr) {
         // if not in list
         if (!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)) {
@@ -1546,16 +1487,16 @@ var View = /** @class */ (function () {
                     .attr("class", "answerBox")
                     .attr('transform', 'translate(' + (columnPosition + barMargin.left) + ',' + 0 + ')');
                 var rect = answerBox.append("rect")
-                    .attr("x", barMargin.left)
+                    .attr("x", (columnWidths[column] / 4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
                     .attr("y", barMargin.top)
                     .attr("rx", barHeight / 2)
                     .attr("ry", barHeight / 2)
                     .style("fill", "lightgray")
-                    .attr("width", columnWidths[column] - barMargin.left - barMargin.right)
+                    .attr("width", columnWidths[column] / 2)
                     .attr("height", barHeight)
                     .attr('stroke', 'lightgray');
                 var circle = answerBox.append("circle")
-                    .attr("cx", barHeight / 2 + barMargin.left)
+                    .attr("cx", (1.15 * columnWidths[column] / 4))
                     .attr("cy", barHeight / 2 + barMargin.top)
                     .attr("r", barHeight / 2)
                     .style("fill", "white");
@@ -1572,7 +1513,7 @@ var View = /** @class */ (function () {
                     /*Visual chagne */
                     var answerStatus = nodeID in _this.controller.answerRow;
                     d3.select(nodes[i]).selectAll('circle').transition().duration(500)
-                        .attr("cx", (answerStatus ? (columnWidths[column] - barHeight / 2 - barMargin.right) : (barHeight / 2 + barMargin.left)))
+                        .attr("cx", (answerStatus ? 3 * columnWidths[column] / 4 : 1.15 * columnWidths[column] / 4))
                         .style("fill", answerStatus ? color : "white");
                     d3.select(nodes[i]).selectAll('rect').transition().duration(500)
                         .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
@@ -1894,7 +1835,7 @@ var Controller = /** @class */ (function () {
             that.setupExports(configComponents[0], configComponents[1]);
             var components = [configComponents[0], configComponents[1], configComponents[2]];
             var result = deepmerge.all(components);
-            // added selected attribute scale 
+            // added selected attribute scale
             var obj = {
                 "domain": [true, false],
                 "range": ["#e86b45", '#fff'],
