@@ -117,7 +117,7 @@ experimentr = function() {
   }
 
   // Activate (load) a given module.
-  function activate(x) {
+  async function activate(x) {
     clearModule();
     experimentr.hold();
 
@@ -126,10 +126,19 @@ experimentr = function() {
       experimentr.end();
     }
 
-    d3.html(sequence[x], function(err, d) {
-      if(err) console.log(err);
-      d3.select('#module').node().appendChild(d);
-    });
+    console.log('here', x)
+
+    let domElement = await d3.text(sequence[x]);
+    var range = document.createRange();
+
+    var documentFragment = range.createContextualFragment(domElement);
+    d3.select('#module').node().appendChild(documentFragment);
+    // d3.html(sequence[x], function(err, d) {
+    //   if(err) console.log(err);
+    //   console.log('never here', d)
+    //   d3.select('#module').node().appendChild(d);
+    // });
+    console.log('here2')
   }
 
   // Remove the next button entirely (TODO ensure this is actually used).

@@ -879,15 +879,23 @@ function isQuant(attr) {
   }
   
   async function loadConfigs(taskID) {
-    return new Promise(resolve => {
-    //load base configuration for all tasks
-    d3.json("../../configs/baseConfig.json", async function(baseConfig) {
-        //load task specific configuration
-    
-        let taskConfigFile = "../../configs/" + taskID + "Config.json";
-  
-      await d3.json(taskConfigFile, async function(taskConfig) {
-        {
+
+    let baseConfig = await d3.json("../../configs/baseConfig.json");
+    let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
+
+    // setConfigCallbacks(baseConfig,taskConfig)
+
+    let a = await loadNewGraph(config.graphFiles[config.loadedGraph]);
+
+           //make pared down version of graph.nodes
+          let stateNodes = graph.nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
+        //   [app,provenance] = setUpProvenance(stateNodes);
+
+          applyConfig("optimalConfig");
+
+  }
+
+  function setConfigCallbacks(baseConfig,taskConfig){
         
         d3.select("#exportBaseConfig").on("click", function() {
             exportConfig(
@@ -940,20 +948,6 @@ function isQuant(attr) {
             applyConfig("optimalConfig");
           });
 
-        }  
-          await loadNewGraph(config.graphFiles[config.loadedGraph]);
-
-           //make pared down version of graph.nodes
-          let stateNodes = graph.nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
-        //   [app,provenance] = setUpProvenance(stateNodes);
-
-          applyConfig("optimalConfig");
-        });
-        resolve();
-      });
-        
-    });
-
   }
   
   function applyConfig(configType) {
@@ -992,8 +986,6 @@ function isQuant(attr) {
   }
 
   function setUpObservers(app){
-
-
     provenance.addObserver("count.count2.count4", state => {
     console.log("Only once", state.count);
   });
@@ -1001,43 +993,6 @@ function isQuant(attr) {
 
   }
   
-  function loadNewGraph(fileName) {
-    return new Promise(resolve => {
-      //load in actual graph data
-      d3.json(fileName, function(fileGraph) {
-        //save as global variable
-        graph = fileGraph;
-
-        //Update search box 
-           //set datalist property for search box:
-            {
-                d3.select("#search-input").attr("list", "characters");
-                let inputParent = d3.select("#search-input").node().parentNode;
-
-                let datalist = d3
-                .select(inputParent).selectAll('#characters').data([0]);
-
-                let enterSelection = datalist.enter()
-                .append("datalist")
-                .attr("id", "characters");
-
-                datalist.exit().remove();
-
-                datalist= enterSelection.merge(datalist);
-
-                let options = datalist.selectAll("option").data(graph.nodes);
-
-                let optionsEnter = options.enter().append("option");
-                options.exit().remove();
-
-                options = optionsEnter.merge(options);
-                options.attr("value", d => d.shortName);
-                options.attr("id", d => d.id);
-
-            }
-            console.log('done loading new Graph (1)')
-        
-        resolve();
-      });
-    });
+  async function loadNewGraph(fileName) {
+    graph = await d3.json(fileName);
   }

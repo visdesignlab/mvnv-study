@@ -112,17 +112,17 @@ function loadVis(id) {
   // .force("y", d3.forceY().y(0));
 
 
-  //load list of tasks
-  d3.json("../../configs/tasks.json", async function(taskObj) {
-    tasks = taskObj.tasks;
-    await loadConfigs(tasks[0].id);
-  });
+  // //load list of tasks
+  // d3.json("../../configs/tasks.json", async function(taskObj) {
+  //   tasks = taskObj.tasks;
+  //   await loadConfigs(tasks[0].id);
+  // });
    
-  // (async function() { // async anonymouse function
-  //   const taskObj = await d3.json("../../configs/tasks.json");
-  //   console.log(taskObj.JSON)
-  //   loadConfigs(taskObj.tasks[0].id);
-  // })()
+  (async function() { // async anonymouse function
+    const taskObj = await d3.json("../../configs/tasks.json");
+    tasks = taskObj.tasks;
+    loadConfigs(taskObj.tasks[0].id);
+  })()
   
 
   //load in the 5Attr and 10Attr configs as well;
