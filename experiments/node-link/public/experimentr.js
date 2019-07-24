@@ -117,18 +117,30 @@ experimentr = function() {
   }
 
   // Activate (load) a given module.
-  function activate(x) {
+  async function activate(x) {
     clearModule();
     experimentr.hold();
 
-    if(x === sequence.length-1){
+    if (x === sequence.length - 1) {
       removeNextButton();
       experimentr.end();
     }
 
-    d3.html(sequence[x], function(err, d) {
-      if(err) console.log(err);
-      d3.select('#module').node().appendChild(d);
+
+    // let domElement = await d3.text(sequence[x]);
+    // var range = document.createRange();
+
+    // var documentFragment = range.createContextualFragment(domElement);
+    // d3.select('#module').node().appendChild(documentFragment);
+    
+    // TODO do better than this serializer hack, if possible https://stackoverflow.com/a/49894968
+    d3.html(sequence[x]).then((d) => {
+      const serializer = new XMLSerializer();
+      const document_fragment_string = serializer.serializeToString(d);
+      var range = document.createRange();
+      range.setStart(document.getElementById("module"), 0);
+      var documentFragment = range.createContextualFragment(document_fragment_string);
+      d3.select('#module').node().appendChild(documentFragment);
     });
   }
 

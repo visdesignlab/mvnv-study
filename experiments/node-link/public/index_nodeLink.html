@@ -25,17 +25,17 @@
 <!-- Adding Provenance Library  -->
 <script src="./libs/provenance.min.js"></script>
 
-<script src="js/libs/jquery.min.js" type="text/javascript"></script>
-<script src="https://d3js.org/d3.v4.min.js" type="text/javascript"></script>
-<script src="js/libs/queue.min.js" type="text/javascript"></script>
-<script src="js/libs/underscore-min.js" type="text/javascript"></script>
-<script src="js/libs/extData.js" type="text/javascript"></script>
+<!-- <script src="js/libs/jquery.min.js" type="text/javascript"></script> -->
+<script src="https://d3js.org/d3.v5.min.js" type="text/javascript"></script>
+<!-- <script src="js/libs/queue.min.js" type="text/javascript"></script> -->
+<!-- <script src="js/libs/underscore-min.js" type="text/javascript"></script> -->
+<!-- <script src="js/libs/extData.js" type="text/javascript"></script> -->
 
 <!-- <script src="js/generateTwitterGraph.js" type="text/javascript"></script> -->
 
 <!-- Libs for autocomplete -->
-<link rel="stylesheet" href="css/easy-autocomplete.css">
-<script src="js/libs/jquery.easy-autocomplete.js"></script>
+<!-- <link rel="stylesheet" href="css/easy-autocomplete.css"> -->
+<!-- <script src="js/libs/jquery.easy-autocomplete.js"></script> -->
 
 <body>
 
@@ -52,56 +52,36 @@
         <div class="columns" id="visContent">
             <div id="targetSize">
                 <div class="column ">
-
-
-
-
-                    <!-- 
-                            <div id="search-box">
-                                <span><strong>Search: </strong></span>
-                                <input id="search-input" type="text" placeholder="Search for person..." value="" style="width:300px">
-                                <button id="search-reset">Reset Search</button>
-                
-                                <figure class="image is-pulled-right">
-                                    <img src="img/legend.png" style="width:200px">
-                                </figure>
-                
-                            </div> -->
-
-
-
                     <div id="vis">
-
-
-
-
-
-
                         <div class="card" id="visPanel">
-
                             <div id="taskArea">
-
-
                                 <div class="card taskCard">
                                     <p class="card-header-title"></p>
 
                                 </div>
                             </div>
-
                             <div class="card">
-                                <header class="card-header">
-                                    <p class="card-header-title">
-                                        Instructions on interactions available to the user
-                                    </p>
-
-                                </header>
                                 <div class="card-content">
                                     <div class="content">
-                                        <svg id="legend-svg"></svg>
+                                            <input class="input searchInput" type="text" placeholder="Search for node" id="search-input"></input>
+                                            <a class="button is-pulled-right submit" id="searchButton">Search</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                    <header class="card-header">
+                                        <p class="card-header-title">
+                                            Instructions on interactions available to the user
+                                        </p>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">      
+    
+                                            <svg id="legend-svg"></svg>
+                                        </div>
                                     </div>
                                 </div>
 
-                            </div>
 
                             <div class="card">
                                 <header class="card-header">
@@ -116,15 +96,9 @@
                                         <a class="button is-pulled-right submit" id="submitNode" disabled>Submit</a>
 
                                         <ul id="selectedNodeList">
-                                            <li>No Nodes Selected</li>
-
                                         </ul>
                                         <p class='errorMsg'>This is an error message that will be displayed if the user
                                             tries to submit an answer that does not conform with the instructions.</p>
-
-
-
-
                                     </div>
                                 </div>
 
@@ -136,68 +110,22 @@
                                     <p class="card-header-title">
                                         Enter your answer below
                                     </p>
-
                                 </header>
                                 <div class="card-content">
                                     <div class="content">
                                         <input class="input" type="text" placeholder="answer text" id="answerBox">
-
-
                                         <a class="button is-pulled-right submit" id="submitText" disabled>Submit</a>
                                         <p class='errorMsg'>This is an error message that will be displayed if the user
                                             tries to submit an answer that does not conform with the instructions.</p>
-
-
                                     </div>
                                 </div>
-
                             </div>
-
-
-
-
-                            <!-- <div class="card-content">
-                                <div class="content">
-
-                                    <p class="card-header-title">Instructions on interactions available to the user</p>
-
-                                    <svg id="legend-svg"></svg>
-                                </div>
-                            </div> -->
-                            <!-- <header class="card-header">
-                                <p class="card-header-title">
-                                    Currently Selected Nodes
-                                </p>
-
-                                <div class="card-content">
-                                    <div class="content">
-                                        <ul id="selectedNodeList">
-
-                                        </ul>
-
-                                    </div>
-
-                                </div>
-
-
-                            </header> -->
-
-
-
                         </div>
 
                         <svg id="node-link-svg"></svg>
-
-
-
                     </div>
 
-
-
-
-
                     <!-- <a class="button" id="panelControl">Hide/Show Control Panel</a> -->
-
 
                     <a class="button is-pulled-right" id="clear-selection">Clear Highlighted Nodes</a>
                     <a href="#" id="next" class="button is-pulled-right">Next Task</a>
@@ -207,12 +135,6 @@
                     <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
                     <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
                     <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
-
-
-
-
-
-
                 </div>
 
             </div>
@@ -488,31 +410,14 @@
 
 <script>
     fb.connect();
-
-    fb.addDocument({
-            first: "Carolina",
-            last: "Nobre",
-            born: 1984
-        }
-    )
-
-    async function getCollection(){
-        let collection =  await fb.getCollection();
-        console.log('collection', collection);
-
-        
-
-    };
-
-    getCollection();
-
-
 </script>
 
 
 
 
 <script src="js/main_nodeLink.js" type="text/javascript"></script>
+<script src="js/helperFunctions.js" type="text/javascript"></script>
+
 
 
 <script>

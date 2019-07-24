@@ -94,9 +94,9 @@
                 stroke:rgb(255, 111, 0);;
     }
 
-    .label.selected{
+    /* .label.selected{
         fill:rgb(255, 111, 0);
-    }
+    } */
 
     .label, .selectBox{
         cursor:pointer;
@@ -153,6 +153,12 @@
     .input {
         width:60% !important;
     }
+
+    .input.searchInput {
+        width:80% !important;
+    }
+
+
 
     /* #taskArea{
         width:100%;
