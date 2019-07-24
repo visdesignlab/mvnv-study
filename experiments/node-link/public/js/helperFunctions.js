@@ -879,68 +879,81 @@ function isQuant(attr) {
   }
   
   async function loadConfigs(taskID) {
+    return new Promise(resolve => {
     //load base configuration for all tasks
-    d3.json("../../configs/baseConfig.json", function(baseConfig) {
-      //load task specific configuration
+    d3.json("../../configs/baseConfig.json", async function(baseConfig) {
+        //load task specific configuration
+    
+        let taskConfigFile = "../../configs/" + taskID + "Config.json";
   
-      let taskConfigFile = "../../configs/" + taskID + "Config.json";
-  
-      d3.json(taskConfigFile, async function(taskConfig) {
+      await d3.json(taskConfigFile, async function(taskConfig) {
+        {
+        
         d3.select("#exportBaseConfig").on("click", function() {
-          exportConfig(
-            Object.keys(baseConfig),
-            Object.keys(baseConfig.nodeLink),
-            false
+            exportConfig(
+              Object.keys(baseConfig),
+              Object.keys(baseConfig.nodeLink),
+              false
+            );
+          });
+    
+          d3.select("#exportConfig").on("click", function() {
+            exportConfig(
+              Object.keys(taskConfig),
+              Object.keys(taskConfig.nodeLink),
+              true
+            );
+          });
+    
+          // rehape relevant config values into a single dictionary.
+          config = mergeConfigs(baseConfig, taskConfig);
+    
+          allConfigs.optimalConfig = config;
+    
+          let task = tasks[taskNum];
+    
+          d3.select("#taskArea")
+            .select(".card-header-title")
+            .text("Task " + (taskNum + 1) + " - " + task.prompt);
+    
+          d3.select("#optimalConfig").on("click", () =>
+            applyConfig("optimalConfig")
           );
-        });
-  
-        d3.select("#exportConfig").on("click", function() {
-          exportConfig(
-            Object.keys(taskConfig),
-            Object.keys(taskConfig.nodeLink),
-            true
+    
+          d3.select("#nodeLinkConfig").on("click", () =>
+            applyConfig("nodeLinkConfig")
           );
-        });
-  
-        // rehape relevant config values into a single dictionary.
-        config = mergeConfigs(baseConfig, taskConfig);
-  
-        allConfigs.optimalConfig = config;
-  
-        let task = tasks[taskNum];
-  
-        d3.select("#taskArea")
-          .select(".card-header-title")
-          .text("Task " + (taskNum + 1) + " - " + task.prompt);
-  
-        d3.select("#optimalConfig").on("click", () =>
-          applyConfig("optimalConfig")
-        );
-  
-        d3.select("#nodeLinkConfig").on("click", () =>
-          applyConfig("nodeLinkConfig")
-        );
-  
-        d3.select("#saturatedConfig").on("click", () =>
-          applyConfig("saturatedConfig")
-        );
-  
-        d3.select("#next").on("click", () => {
-          taskNum = d3.min([taskNum + 1, tasks.length - 1]);
-          loadConfigs(tasks[taskNum].id);
+    
+          d3.select("#saturatedConfig").on("click", () =>
+            applyConfig("saturatedConfig")
+          );
+    
+          d3.select("#next").on("click", () => {
+            taskNum = d3.min([taskNum + 1, tasks.length - 1]);
+            loadConfigs(tasks[taskNum].id);
+            applyConfig("optimalConfig");
+          });
+    
+          d3.select("#previous").on("click", () => {
+            taskNum = d3.max([taskNum - 1, 0]);
+            loadConfigs(tasks[taskNum].id);
+            applyConfig("optimalConfig");
+          });
+
+        }  
+          await loadNewGraph(config.graphFiles[config.loadedGraph]);
+
+           //make pared down version of graph.nodes
+          let stateNodes = graph.nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
+        //   [app,provenance] = setUpProvenance(stateNodes);
+
           applyConfig("optimalConfig");
         });
-  
-        d3.select("#previous").on("click", () => {
-          taskNum = d3.max([taskNum - 1, 0]);
-          loadConfigs(tasks[taskNum].id);
-          applyConfig("optimalConfig");
-        });
-  
-        await loadNewGraph(config.graphFiles[config.loadedGraph]);
-        applyConfig("optimalConfig");
+        resolve();
       });
+        
     });
+
   }
   
   function applyConfig(configType) {
@@ -953,6 +966,39 @@ function isQuant(attr) {
     // setPanelValuesFromFile();
     update();
   
+  }
+
+  function setUpProvenance(nodes){
+
+    const initialState = {
+       
+       nodes,//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
+       search:'', //field to store the id of a searched node;
+       startTime:Date.now(), //time this provenance graph was created and the task initialized;
+       endTime:'', // time the submit button was pressed and the task ended;
+       time:Date.now() //timestamp for the current state of the graph;
+      };
+      
+      function nodeLink(provenance) {
+        return {
+          currentState: () => provenance.graph().current.state
+        };
+      }
+      
+      const provenance = ProvenanceLibrary.initProvenance(initialState);
+      const app = nodeLink(provenance);
+
+      return [app,provenance];
+  }
+
+  function setUpObservers(app){
+
+
+    provenance.addObserver("count.count2.count4", state => {
+    console.log("Only once", state.count);
+  });
+
+
   }
   
   function loadNewGraph(fileName) {
@@ -989,6 +1035,8 @@ function isQuant(attr) {
                 options.attr("id", d => d.id);
 
             }
+            console.log('done loading new Graph (1)')
+        
         resolve();
       });
     });

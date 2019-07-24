@@ -25,6 +25,9 @@ var defaultDomains = { node: {}, edge: {} };
 //object to store scales as a function of attr name;
 var scales = {};
 
+//global app and provenance objects; 
+let app,provenance; 
+
 
 //Legend Scales
 var circleScale = d3
@@ -110,10 +113,17 @@ function loadVis(id) {
 
 
   //load list of tasks
-  d3.json("../../configs/tasks.json", function(taskObj) {
+  d3.json("../../configs/tasks.json", async function(taskObj) {
     tasks = taskObj.tasks;
-    loadConfigs(tasks[0].id);
+    await loadConfigs(tasks[0].id);
   });
+   
+  // (async function() { // async anonymouse function
+  //   const taskObj = await d3.json("../../configs/tasks.json");
+  //   console.log(taskObj.JSON)
+  //   loadConfigs(taskObj.tasks[0].id);
+  // })()
+  
 
   //load in the 5Attr and 10Attr configs as well;
   d3.json("../../configs/baseConfig.json", function(baseConfig) {
@@ -127,7 +137,6 @@ function loadVis(id) {
 }
 
 function updateVis() {
-  //choose which graph to render;
 
   let nodeMarkerLength = config.nodeLink.nodeWidth[config.graphSize] || 60;
   let nodeMarkerHeight = config.nodeLink.nodeHeight[config.graphSize] || 35;
@@ -324,7 +333,7 @@ function updateVis() {
     let link = d3
       .select(".links")
       .selectAll(".linkGroup")
-      .data(graph.links);
+      .data(graph.links,l=>l.id);
 
     let linkEnter = link
       .enter()
@@ -363,7 +372,7 @@ function updateVis() {
     var node = d3
       .select(".nodes")
       .selectAll(".nodeGroup")
-      .data(graph.nodes);
+      .data(graph.nodes,n=>n.id);
 
     let nodeEnter = node
       .enter()
@@ -460,7 +469,7 @@ function updateVis() {
           return -textWidth/2 - checkboxSize - 5;
       })
       .attr("y", d =>
-        config.nodeLink.drawBars ? - (nodeHeight(d)/2 + 4 + checkboxSize) : "-.5em"
+        config.nodeLink.drawBars ? - (nodeHeight(d)/2 + 4 + checkboxSize) : -checkboxSize/2
       )
       .on('click',selectNode)
 
@@ -495,7 +504,7 @@ function updateVis() {
   //update the list of selected nodes in the answer panel. 
 
   let selectedList = d3.select('#selectedNodeList')
-  .selectAll('li').data(graph.nodes.filter(n=>n.hardSelect));
+  .selectAll('li').data(graph.nodes.filter(n=>n.hardSelect),n=>n.id);
 
   let selectedListEnter = selectedList.enter().append('li');
 
@@ -541,18 +550,24 @@ d3.select('#submitText').attr('disabled',()=>{
   d3.select("#search-input").on("change",function (){
     
     let selectedOption = d3.select(this).property('value');
-    //find the right nodeObject; 
+    //find the right nodeObject
+
+    //empty search box;
+    if (selectedOption.length === 0 ){
+      return; 
+    }
 
   
     let nodeSelection = d3.selectAll('.nodeGroup').filter(n=>n.shortName === selectedOption).select('.node');
+    
+    let isSelected = !nodeSelection || nodeSelection.classed('clicked')
     let data = graph.nodes.find(n=>n.shortName === selectedOption)
 
-    console.log(nodeSelection,data)
-    clickNode(nodeSelection,data)
+    //Only 'click' node if it isn't already selected;
+    if (!isSelected){
+      clickNode(nodeSelection,data)
+    }
 
-   
-
-    console.log(selectedOption);
   })
 
 
@@ -588,8 +603,7 @@ d3.select('#submitText').attr('disabled',()=>{
       .data(d =>
         barAttrs.map(b => {
           return { data: d[b], attr: b };
-        })
-      );
+        }),d=>d.attr);
 
     let barsEnter = bars
       .enter()
@@ -670,7 +684,7 @@ d3.select('#submitText').attr('disabled',()=>{
         catAttrs.map(attr => {
           let valuePos = config.attributeScales.node[attr].domain.indexOf(d[attr]);
           return { data: d[attr], attr, label:config.attributeScales.node[attr].legendLabels[valuePos] };
-        })
+        }),d=>d.attr
       );
 
     let catGlyphsEnter = catGlyphs
@@ -1062,13 +1076,20 @@ d3.select('#submitText').attr('disabled',()=>{
     updatePos();
   }
   function dragended(d) {
-    // dragging = false;
-    // simulation.stop();
-    // simulation.velocityDecay(0.9)
-    // console.log(simulation.alpha())
-    //   if (simulation.apha()>3) simulation.alphaTarget(0);
-    //   d.fx = null;
-    //   d.fy = null;
+    //update node position in state graph;
+    provenance.applyAction({
+      label: "Dragged Node",
+      action: (nodes) => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        currentState.nodes = nodes; 
+        return currentState;
+      },
+      args: [graph.nodes]
+    });
+
+    console.log(app.currentState())
   }
 
   drawLegend();
@@ -1079,7 +1100,7 @@ d3.select('#submitText').attr('disabled',()=>{
 function drawLegend() {
   //draw legend based on config;
 
-  let legendElement = d3.select("#legend-svg").selectAll('.legendGroup').data(['upperGroup','lowerGroup']);
+  let legendElement = d3.select("#legend-svg").selectAll('.legendGroup').data(['upperGroup','lowerGroup'],d=>d);
   
   let legendElementEnter = legendElement.enter().append('g').attr('class','legendGroup');
 
@@ -1127,15 +1148,15 @@ function drawLegend() {
 
   let squareSize = barHeight*0.3;
 
-  let yRange =
-      catAttributes.length < 2
-      ? [barHeight/2, barHeight/2]
-      : [barHeight/4, barHeight*0.75];
+  // let yRange =
+  //     catAttributes.length < 2
+  //     ? [barHeight/2, barHeight/2]
+  //     : [barHeight/4, barHeight*0.75];
 
-  let yScale = d3
-    .scaleLinear()
-    .domain([0, catAttributes.length - 1])
-    .range(yRange);
+  // let yScale = d3
+  //   .scaleLinear()
+  //   .domain([0, catAttributes.length - 1])
+  //   .range(yRange);
 
    
     let format = d3.format('2.2s')
@@ -1144,14 +1165,14 @@ function drawLegend() {
   let lowerGroup = d3.select('.lowerGroup')
 
   let upperGroupElement;
-  let lowerGroupElement
+  // let lowerGroupElement
 
   // draw nestedBars legend
   
     let bars = upperGroup
       .selectAll(".legendBar")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
-      .data(quantAttributes);
+      .data(quantAttributes,d=>d);
 
     let barsEnter = bars
       .enter()
@@ -1213,7 +1234,7 @@ function drawLegend() {
     let catLegend = lowerGroup
       .selectAll(".catLegend")
       //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
-      .data(catAttributes);
+      .data(catAttributes,d=>d);
 
 
     let catLegendEnter = catLegend
@@ -1242,7 +1263,7 @@ function drawLegend() {
     let catGlyphs = catLegend.select('.categoricalScale').selectAll('.catGlyphs')
     .data((d,ii)=>config.attributeScales.node[d].domain.map((domain,i)=>{
       return {'pos':ii, 'attribute':d, 'value':domain,'legendLabel':config.attributeScales.node[d].legendLabels[i],'fill':config.attributeScales.node[d].range[i]};
-    }));
+    },d=>d.attribute));
 
     let catGlyphsEnter = catGlyphs.enter().append("g").attr('class','catGlyphs');
 
