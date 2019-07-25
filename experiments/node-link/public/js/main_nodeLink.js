@@ -257,9 +257,6 @@ function loadVis(id) {
     tasks = taskObj.tasks;
     await loadConfigs(taskObj.tasks[0].id);
 
-    // update global variables from config;
-    setGlobalScales();
-
     //apply configs to visualization
     applyConfig("optimalConfig");
 
@@ -271,7 +268,7 @@ function loadVis(id) {
 
 
     let baseConfig = await d3.json("../../configs/baseConfig.json");
-    let nodeLinkConfig = await d3.json("../../configs/baseConfig.json");
+    let nodeLinkConfig = await d3.json("../../configs/5AttrConfig.json");
     let saturatedConfig = await d3.json("../../configs/10AttrConfig.json");
 
     allConfigs.nodeLinkConfig = mergeConfigs(baseConfig, nodeLinkConfig);
@@ -346,7 +343,6 @@ function selectNode(d) {
 
   d3.select(".submit").on("click", () => {
     //Unselect to actually send data to the database;
-    // fb.addDocument({"task":config,'selectedAnswer':graph.nodes.filter(n=>n.hardSelect).map(n=>n.shortName)},collection = "interaction-collection")
   });
   //either enable or disable the submit button;
   d3.select("#submitNode").attr("disabled", () => {
@@ -366,6 +362,7 @@ function updateVis() {
   let nodeSizeAttr = config.nodeLink.nodeSizeAttr;
   let edgeWidthAttr = config.nodeLink.edgeWidthAttr;
 
+  console.log( config.attributeScales.node, nodeSizeAttr)
   fakeSmallNode[nodeSizeAttr] =
     config.attributeScales.node[nodeSizeAttr].domain[0];
   fakeLargeNode[nodeSizeAttr] =
@@ -623,6 +620,9 @@ function updateVis() {
 
     let scaleStart = -nodeMarkerLength / 2 + barPadding;
     let scaleEnd = scaleStart + (numBars - 1) * (barWidth + barPadding);
+
+    console.log('nodeMarkerLength', nodeMarkerLength)
+    console.log('barWidth', barWidth)
 
     let barXScale = d3
       .scaleLinear()

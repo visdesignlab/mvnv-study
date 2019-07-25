@@ -122,7 +122,7 @@ function countSiblingLinks(graph, source, target) {
 function setPanelValuesFromFile() {
     //create internal dictionary of defaultDomains for each attribute;
 
-    return;
+    // return;
   
     [["node", "nodes"], ["edge", "links"]].map(node_edge => {
       Object.keys(config.attributeScales[node_edge[0]]).map(attr => {
@@ -161,6 +161,8 @@ function setPanelValuesFromFile() {
       config.nodeLink.labelSize[config.graphSize] = eval(this.value);
     });
   
+    console.log('config', config, config.graphSize, config.nodeLink.labelSize)
+
     d3.select("#fontSlider").property(
       "value",
       config.nodeLink.labelSize[config.graphSize]
@@ -953,8 +955,10 @@ function isQuant(attr) {
       .classed("clicked", false);
     d3.select("#" + configType).classed("clicked", true);
     config = JSON.parse(JSON.stringify(allConfigs[configType]));
-  
-    // setPanelValuesFromFile();
+
+     // update global variables from config;
+     setGlobalScales();
+
     update();
   }
 
