@@ -873,7 +873,7 @@ function updateVis() {
     tagNeighbors(d);
 
     //update state graph;
-    updateState("Selected Node");
+    updateState(d.selected ? 'Selected Node' : 'Unselected Node');
   });
 
   function tagNeighbors(clickedNode) {
@@ -1096,8 +1096,8 @@ function updateVis() {
     });
   }
 
-  //set all nodes to fixed positions.
-  // graph.nodes.map(d=>{d.fx = d.x; d.fy = d.y;});
+  //Flag to distinguish a drag from a click. 
+  let wasDragged = false; 
 
   function dragstarted(d) {
     // if (!d3.event.active) simulation.alphaTarget(0.1).restart();
@@ -1111,11 +1111,18 @@ function updateVis() {
     d.x = d3.event.x;
     d.y = d3.event.y;
     updatePos();
+    wasDragged = true;
+
+    console.log('dragged')
   }
   function dragended(d) {
-    //update node position in state graph;
+    if (wasDragged){
+      //update node position in state graph;
     updateState("Dragged Node");
     console.log(app.currentState());
+    }
+    wasDragged = false;
+    
   }
   drawLegend();
 }

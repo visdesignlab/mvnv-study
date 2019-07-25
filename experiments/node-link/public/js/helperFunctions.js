@@ -969,6 +969,7 @@ function isQuant(attr) {
        nodes,//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
        search:[], //field to store the id of a searched node;
        startTime:Date.now(), //time this provenance graph was created and the task initialized;
+       event:'startedProvenance',//string describing what event triggered this state update; same as the label in provenance.applyAction
       //  endTime:'', // time the submit button was pressed and the task ended;
        time:Date.now() //timestamp for the current state of the graph;
       };
@@ -994,13 +995,16 @@ function isQuant(attr) {
   function updateState(label,searchId){
 
 
-
+    console.log('calling update state with ', label)
     provenance.applyAction({
       label,
-      action: (nodes) => {
+      action: (nodes,label) => {
         const currentState = app.currentState();
         //add time stamp to the state graph
         currentState.time = Date.now();
+        //Add label describing what the event was
+        currentState.event = label;
+        //Update actual node data
         currentState.nodes = nodes; 
         //If node was searched, push him to the search array
         if (searchId){
@@ -1008,7 +1012,7 @@ function isQuant(attr) {
         }
         return currentState;
       },
-      args: [getNodeState(graph.nodes)]
+      args: [getNodeState(graph.nodes),label]
     });
 
     let state = app.currentState();
@@ -1018,6 +1022,8 @@ function isQuant(attr) {
   
   async function loadNewGraph(fileName) {
     graph = await d3.json(fileName);
+
+    //update the datalist associated to the search box (in case the nodes in the new graph have changed)
 
     {
       d3.select("#search-input").attr("list", "characters");
