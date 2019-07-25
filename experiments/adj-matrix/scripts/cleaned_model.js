@@ -51,7 +51,6 @@ var Model = /** @class */ (function () {
             //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
             //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
-            console.log("data/network_" + controller.configuration.loadedGraph + ".json");
             //setPanelValuesFromFile(controller.configuration, data);
             _this.matrix = [];
             _this.scalarMatrix = [];
@@ -99,12 +98,57 @@ var Model = /** @class */ (function () {
             }
             var cell = d3.selectAll('.cell')
                 .filter(function (d) { return (d.rowid == name && d.colid == name); });
-            console.log(cell);
             var e = document.createEvent('UIEvents');
             e.initUIEvent('click', true, true);
             cell.select("rect").node().dispatchEvent(e);
             console.log(cell.select("rect"));
         });
+    };
+    Model.prototype.getApplicationState = function () {
+        var _this = this;
+        return {
+            currentState: function () { return _this.provenance.graph().current.state; }
+        };
+    };
+    Model.prototype.setUpProvenance = function () {
+        var initialState = {
+            nodes: '',
+            search: '',
+            startTime: Date.now(),
+            endTime: '',
+            time: Date.now(),
+            count: 0,
+            clicked: [],
+            selections: {
+                hardSelected: new Set(),
+                softSelected: {
+                    attrRow: [],
+                    rowLabel: [],
+                    columnLabel: [],
+                    cell: {},
+                    search: []
+                }
+            }
+        };
+        var provenance = ProvenanceLibrary.initProvenance(initialState);
+        this.provenance = provenance;
+        var app = this.getApplicationState();
+        this.app = app;
+        var rowHighlightElements = d3.selectAll('.highlightTopoRow,.highlightAttrRow,.nodeLabel');
+        function setUpObservers() {
+            provenance.addObserver("selections.softSelected.rowLabel", function (state) {
+                console.log(state, rowHighlightElements);
+                var currentlyClicked = rowHighlightElements.classed('answer', function (d, i, nodes) {
+                    if (d.screen_name) {
+                        return state.selections.softSelected.rowLabel.includes(d.screen_name);
+                    }
+                    return state.selections.softSelected.rowLabel.includes(d[0].rowid);
+                });
+                console.log("Only once", state.count, currentlyClicked);
+            });
+        }
+        setUpObservers();
+        return [app, provenance];
     };
     Model.prototype.reload = function () {
         this.controller.loadData(this.nodes, this.edges, this.matrix);
@@ -581,6 +625,8 @@ var View = /** @class */ (function () {
             var cellElement = d3.select(nodes[index]).selectAll('rect');
             var cellID = cell.rowid + cell.colid;
             console.log(cellElement);
+            if (cell.combined != 0 || cell.mentions != 0 || cell.retweets != 0) {
+            }
             cellElement.classed('clickedCell', !_this.controller.clickedCells.has(cellID));
             console.log(cellElement.classed('clickedCell'));
             if (_this.controller.clickedCells.has(cellID)) {
@@ -737,10 +783,21 @@ var View = /** @class */ (function () {
             cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
             console.log(cellElement.classed('clickedCell'));
             let cellID = cell.rowid + cell.colid;*/
-            console.log(d[i]);
+            console.log(_this.controller.model.provenance);
             var nodeID = d[0].rowid;
+            _this.controller.model.provenance.applyAction({
+                label: "Dragged Node",
+                action: function (nodeID) {
+                    console.log(nodeID, _this.controller.model.app);
+                    var currentState = _this.controller.model.app.currentState();
+                    //add time stamp to the state graph
+                    currentState.time = Date.now();
+                    currentState.selections.softSelected.rowLabel.push(nodeID);
+                    return currentState;
+                },
+                args: [nodeID]
+            });
             // will add or remove node
-            console.log(d);
             // will add or remove node
             /*
             that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // FOR ANSWER
@@ -749,9 +806,9 @@ var View = /** @class */ (function () {
             d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
             that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
             that.addHighlightNodesToDict(_this.controller.clickedRow, nodeID, nodeID); // FOR ANSWER
-            console.log(nodeID, _this.controller.clickedRow, nodeID in _this.controller.clickedRow);
             d3.selectAll('.clicked').classed('clicked', false);
             d3.selectAll('.clicked').classed('clicked', nodeID in _this.controller.clickedRow);
+            that.renderHighlightNodesFromDict(_this.controller.clickedCol, 'clicked', 'Col');
             that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
             // selects row text
             //d3.select(nodes[i]).classed('answer', (data) => {
@@ -774,10 +831,8 @@ var View = /** @class */ (function () {
             .style("font-size", 7.5 + "px")
             .text(function (d, i) { return _this.nodes[i].name; })
             .on('click', function (d, index, nodes) {
-            console.log(d[index]);
             var nodeID = d[0].rowid;
             // will add or remove node
-            console.log(nodeID, _this.controller.clickedCol, nodeID in _this.controller.clickedCol);
             that.addHighlightNodesToDict(_this.controller.clickedCol, nodeID, nodeID); // Add row (rowid)
             d3.selectAll('.clicked').classed('clicked', false);
             that.renderHighlightNodesFromDict(_this.controller.clickedCol, 'clicked', 'Col');
@@ -802,7 +857,6 @@ var View = /** @class */ (function () {
         })
             .on('mouseover', function (d, i, nodes) {
             var colID = d[0].rowid;
-            console.log(colID, d);
             that.addHighlightNodesToDict(_this.controller.hoverCol, colID, colID); // Add row (rowid)
             //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
             d3.selectAll('.hovered').classed('hovered', false);
@@ -900,7 +954,6 @@ var View = /** @class */ (function () {
             var legendFile = 'assets/';
             legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge';
             legendFile += '.png';
-            console.log(legendFile);
             d3.select('#legends').append('g').append("svg:image")
                 .attr('x', 0)
                 .attr('y', 0)
@@ -1137,10 +1190,8 @@ var View = /** @class */ (function () {
         if (rowOrCol === void 0) { rowOrCol = 'Row'; }
         //highlight correct nodes
         var cssSelector = '';
-        console.log(dict);
         for (var nodeID in dict) {
             if (rowOrCol == 'Row') {
-                console.log(dict, nodeID, cssSelector);
                 cssSelector += '#highlight' + 'Attr' + rowOrCol + nodeID + ',' + '#highlight' + 'Topo' + rowOrCol + nodeID + ',';
             }
             else {
@@ -1152,7 +1203,6 @@ var View = /** @class */ (function () {
         }
         // remove last comma
         cssSelector = cssSelector.substring(0, cssSelector.length - 1);
-        console.log(cssSelector);
         if (cssSelector == '') {
             return;
         }
@@ -1386,6 +1436,7 @@ var View = /** @class */ (function () {
             console.log(nodeID, _this.controller.clickedRow, nodeID in _this.controller.clickedRow);
             //d3.selectAll('.answer').classed('answer', false);
             d3.selectAll('.clicked').classed('clicked', nodeID in _this.controller.clickedRow);
+            that.renderHighlightNodesFromDict(_this.controller.clickedCol, 'clicked', 'Col');
             that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
             // classes row
             //this.classHighlights(d.screen_name, 'Row', 'answer');
@@ -1401,14 +1452,12 @@ var View = /** @class */ (function () {
         var columnRange = [];
         var xRange = 0;
         var columnWidths = this.determineColumnWidths(columns); // ANSWER COLUMNS
-        console.log(columnWidths, columns);
         //450 / columns.length;
         var categoricalAttributes = ["type", "continent"];
         var quantitativeAttributes = ["followers_count", "friends_count", "statuses_count", "count_followers_in_query", "favourites_count", "listed_count", "memberFor_days", "query_tweet_count"];
         columns.forEach(function (col, index) {
             // calculate range
             columnRange.push(xRange);
-            console.log(col);
             var domain = _this.controller.configuration.attributeScales.node[col].domain;
             if (quantitativeAttributes.indexOf(col) > -1) {
                 var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
@@ -1457,7 +1506,6 @@ var View = /** @class */ (function () {
         columns.forEach(function (column, index) {
             var columnPosition = _this.columnScale(column);
             if (categoricalAttributes.indexOf(column) > -1) { // if categorical
-                console.log("CATEGORICAL!");
                 _this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
                 return;
             }
@@ -1505,9 +1553,7 @@ var View = /** @class */ (function () {
                     var color = _this.controller.configuration.attributeScales.node.selected.range[0];
                     //if already answer
                     var nodeID = d.screen_name;
-                    console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
                     that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row or remove if already in
-                    console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
                     d3.selectAll('.answer').classed('answer', false);
                     that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
                     /*Visual chagne */
@@ -1597,7 +1643,6 @@ var View = /** @class */ (function () {
             return _this.columnNames[d];
         })
             .on('mouseover', function (d) {
-            console.log(that.columnNames[d].length, maxcharacters, that.columnNames[d].length > maxcharacters);
             if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
                 that.tooltip.transition().duration(200).style("opacity", .9);
                 var matrix = this.getScreenCTM()
@@ -1613,11 +1658,11 @@ var View = /** @class */ (function () {
             .on('mouseout', function (d) {
             that.tooltip.transition().duration(250).style("opacity", 0);
         });
-        console.log(columnHeaders.selectAll('.header'));
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
-        console.log(answerColumn);
         d3.select('.loading').style('display', 'none');
+        this.controller.model.setUpProvenance();
+        window.focus();
         // Append g's for table headers
         // For any data row, add
         /*.on("click", clicked)
@@ -1689,7 +1734,6 @@ var View = /** @class */ (function () {
         //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
         var legendItemSize = (legendWidth) / (dividers + 3);
         var margin = this.verticalScale.bandwidth() / dividers;
-        console.log(margin);
         var xRange = [];
         var rects = this.attributes.append("g")
             .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * legendItemSize) + "," + (-legendHeight) + ")"); //
@@ -1845,7 +1889,6 @@ var Controller = /** @class */ (function () {
             };
             that.configuration = result;
             that.configuration.attributeScales.node['selected'] = obj;
-            console.log(that.configuration.attributeScales);
             that.reload();
             //that.finishConstructing(result);
         });
@@ -1897,7 +1940,6 @@ var Controller = /** @class */ (function () {
             var test = d3.selectAll('.clickedCell').classed('clickedCell', false);
             d3.selectAll('.answer').classed('answer', false);
             d3.selectAll('.clicked').classed('clicked', false);
-            console.log(test, _this.clickedCells);
             _this.view.renderHighlightNodesFromDict(_this.clickedRow, 'clicked', 'Row');
             _this.view.renderHighlightNodesFromDict(_this.clickedCol, 'clicked', 'Col');
             _this.view.renderHighlightNodesFromDict(_this.answerRow, 'answer', 'Row');

@@ -49,7 +49,6 @@ class Model {
       let cell = d3.selectAll('.cell')
         .filter(d => (d.rowid == name && d.colid == name))
 
-      console.log(cell);
 
       var e = document.createEvent('UIEvents');
       e.initUIEvent('click', true, true, /* ... */);
@@ -64,7 +63,6 @@ class Model {
       //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
       //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
-      console.log("data/network_" + controller.configuration.loadedGraph + ".json");
       //setPanelValuesFromFile(controller.configuration, data);
       this.matrix = [];
       this.scalarMatrix = [];
@@ -94,10 +92,73 @@ class Model {
 
 
 
+
       this.controller.loadData(this.nodes, this.edges, this.matrix);
       //})
     })
   }
+
+  getApplicationState(){
+    return {
+      currentState: () => this.provenance.graph().current.state;
+    };
+  }
+
+  private provenance : any;
+  private app : any;
+
+  setUpProvenance(){
+    const initialState = {
+
+      nodes:'',//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
+      search: '', //field to store the id of a searched node;
+      startTime: Date.now(), //time this provenance graph was created and the task initialized;
+      endTime: '', // time the submit button was pressed and the task ended;
+      time: Date.now(), //timestamp for the current state of the graph;
+      count: 0,
+      clicked: [],
+      selections: {
+        hardSelected: new Set(),
+        softSelected: {
+          attrRow:[],
+          rowLabel:[],
+          columnLabel:[],
+          cell:{},
+          search:[]
+        }
+      }
+    };
+
+    const provenance = ProvenanceLibrary.initProvenance(initialState);
+
+    this.provenance = provenance;
+
+    const app = this.getApplicationState();
+    this.app = app;
+    const rowHighlightElements = d3.selectAll('.highlightTopoRow,.highlightAttrRow,.nodeLabel')
+    function setUpObservers() {
+      provenance.addObserver("selections.softSelected.rowLabel", state => {
+        console.log(state,rowHighlightElements);
+
+        let currentlyClicked = rowHighlightElements.classed('answer',(d,i,nodes)=>{ //
+          if(d.screen_name){
+            return state.selections.softSelected.rowLabel.includes(d.screen_name);
+          }
+          return state.selections.softSelected.rowLabel.includes(d[0].rowid);
+        })
+        console.log("Only once", state.count,currentlyClicked);
+      });
+    }
+    setUpObservers();
+
+
+    return [app, provenance];
+
+
+  }
+
+
+
 
   reload() {
     this.controller.loadData(this.nodes, this.edges, this.matrix);
@@ -653,6 +714,10 @@ class View {
         let cellID = cell.rowid + cell.colid;
         console.log(cellElement);
 
+        if (cell.combined != 0 || cell.mentions != 0 || cell.retweets != 0) {
+
+        }
+
         cellElement.classed('clickedCell', !this.controller.clickedCells.has(cellID))
         console.log(cellElement.classed('clickedCell'));
 
@@ -834,10 +899,22 @@ class View {
         cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
         console.log(cellElement.classed('clickedCell'));
         let cellID = cell.rowid + cell.colid;*/
-        console.log(d[i]);
+        console.log(this.controller.model.provenance);
         let nodeID = d[0].rowid;
+        this.controller.model.provenance.applyAction({
+          label: "Dragged Node",
+          action: (nodeID) => {
+            console.log( nodeID,this.controller.model.app);
+            const currentState = this.controller.model.app.currentState();
+            //add time stamp to the state graph
+            currentState.time = Date.now();
+            currentState.selections.softSelected.rowLabel.push(nodeID);
+            return currentState;
+          },
+          args: [nodeID]
+        });
+
         // will add or remove node
-        console.log(d);
         // will add or remove node
         /*
         that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // FOR ANSWER
@@ -847,9 +924,10 @@ class View {
         that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
 
         that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
-        console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
         d3.selectAll('.clicked').classed('clicked', false);
         d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
+
+        that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
         that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
 
         // selects row text
@@ -875,10 +953,8 @@ class View {
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
       .on('click', (d, index, nodes) => {
-        console.log(d[index]);
         let nodeID = d[0].rowid;
         // will add or remove node
-        console.log(nodeID, this.controller.clickedCol, nodeID in this.controller.clickedCol)
         that.addHighlightNodesToDict(this.controller.clickedCol, nodeID, nodeID);  // Add row (rowid)
         d3.selectAll('.clicked').classed('clicked', false);
         that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
@@ -908,7 +984,6 @@ class View {
       })
       .on('mouseover', (d, i, nodes) => {
         let colID = d[0].rowid;
-        console.log(colID, d);
 
         that.addHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
 
@@ -1007,7 +1082,6 @@ class View {
       let legendFile = 'assets/';
       legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge'
       legendFile += '.png';
-      console.log(legendFile);
       d3.select('#legends').append('g').append("svg:image")
         .attr('x', 0)
         .attr('y', 0)
@@ -1288,10 +1362,8 @@ class View {
 
     //highlight correct nodes
     let cssSelector = '';
-    console.log(dict);
     for (let nodeID in dict) {
       if (rowOrCol == 'Row') {
-        console.log(dict, nodeID, cssSelector);
         cssSelector += '#highlight' + 'Attr' + rowOrCol + nodeID + ',' + '#highlight' + 'Topo' + rowOrCol + nodeID + ','
       } else {
         cssSelector += '#highlight' + rowOrCol + nodeID + ','
@@ -1304,7 +1376,6 @@ class View {
     }
     // remove last comma
     cssSelector = cssSelector.substring(0, cssSelector.length - 1);
-    console.log(cssSelector);
     if (cssSelector == '') {
       return;
     }
@@ -1577,6 +1648,8 @@ class View {
         console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
         //d3.selectAll('.answer').classed('answer', false);
         d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
+
+        that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
         that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
 
         // classes row
@@ -1602,7 +1675,6 @@ class View {
 
 
     let columnWidths = this.determineColumnWidths(columns); // ANSWER COLUMNS
-    console.log(columnWidths, columns)
     //450 / columns.length;
 
 
@@ -1613,7 +1685,6 @@ class View {
     columns.forEach((col, index) => {
       // calculate range
       columnRange.push(xRange);
-      console.log(col);
       let domain = this.controller.configuration.attributeScales.node[col].domain;
 
       if (quantitativeAttributes.indexOf(col) > -1) {
@@ -1680,7 +1751,6 @@ class View {
       let columnPosition = this.columnScale(column);
 
       if (categoricalAttributes.indexOf(column) > -1) { // if categorical
-        console.log("CATEGORICAL!")
         this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
         return;
       } else if (quantitativeAttributes.indexOf(column) > -1) { // if quantitative
@@ -1711,17 +1781,17 @@ class View {
           .attr('transform', 'translate(' + (columnPosition + barMargin.left) + ',' + 0 + ')');
 
         let rect = answerBox.append("rect")
-          .attr("x", (columnWidths[column]/4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
+          .attr("x", (columnWidths[column] / 4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
           .attr("y", barMargin.top)
           .attr("rx", barHeight / 2)
           .attr("ry", barHeight / 2)
           .style("fill", "lightgray")
-          .attr("width", columnWidths[column]/2)
+          .attr("width", columnWidths[column] / 2)
           .attr("height", barHeight)
           .attr('stroke', 'lightgray')
 
         let circle = answerBox.append("circle")
-          .attr("cx", (1.15*columnWidths[column]/4))
+          .attr("cx", (1.15 * columnWidths[column] / 4))
           .attr("cy", barHeight / 2 + barMargin.top)
           .attr("r", barHeight / 2)
           .style("fill", "white");
@@ -1731,17 +1801,15 @@ class View {
             let color = this.controller.configuration.attributeScales.node.selected.range[0];
             //if already answer
             let nodeID = d.screen_name;
-            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
 
             that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row or remove if already in
-            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
             d3.selectAll('.answer').classed('answer', false);
             that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
 
             /*Visual chagne */
             let answerStatus = nodeID in this.controller.answerRow;
             d3.select(nodes[i]).selectAll('circle').transition().duration(500)
-              .attr("cx", (answerStatus ? 3*columnWidths[column]/4 : 1.15*columnWidths[column]/4))
+              .attr("cx", (answerStatus ? 3 * columnWidths[column] / 4 : 1.15 * columnWidths[column] / 4))
               .style("fill", answerStatus ? color : "white");
             d3.select(nodes[i]).selectAll('rect').transition().duration(500)
               .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
@@ -1832,7 +1900,6 @@ class View {
         return this.columnNames[d];
       })
       .on('mouseover', function(d) {
-        console.log(that.columnNames[d].length, maxcharacters, that.columnNames[d].length > maxcharacters)
         if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
           that.tooltip.transition().duration(200).style("opacity", .9);
 
@@ -1852,12 +1919,13 @@ class View {
         that.tooltip.transition().duration(250).style("opacity", 0);
       });
 
-    console.log(columnHeaders.selectAll('.header'))
     let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
     answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
-    console.log(answerColumn);
+
 
     d3.select('.loading').style('display', 'none');
+    this.controller.model.setUpProvenance();
+    window.focus();
 
 
 
@@ -1956,7 +2024,6 @@ class View {
     //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
     let legendItemSize = (legendWidth) / (dividers + 3);
     let margin = this.verticalScale.bandwidth() / dividers;
-    console.log(margin);
 
     let xRange = [];
 
@@ -2115,7 +2182,6 @@ class Controller {
       }
       that.configuration = result;
       that.configuration.attributeScales.node['selected'] = obj;
-      console.log(that.configuration.attributeScales)
       that.reload();
       //that.finishConstructing(result);
     })
@@ -2173,7 +2239,6 @@ class Controller {
       d3.selectAll('.answer').classed('answer', false);
       d3.selectAll('.clicked').classed('clicked', false);
 
-      console.log(test, this.clickedCells)
 
       this.view.renderHighlightNodesFromDict(this.clickedRow, 'clicked', 'Row');
       this.view.renderHighlightNodesFromDict(this.clickedCol, 'clicked', 'Col');
@@ -2203,6 +2268,8 @@ class Controller {
     this.loadTasks();
 
     this.loadConfigs();
+
+
 
     /*console.log(this.configuration);
 
