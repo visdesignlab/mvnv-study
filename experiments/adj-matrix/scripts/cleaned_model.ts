@@ -43,23 +43,27 @@ class Model {
     autocomplete(document.getElementById("myInput"), names);
     d3.select('#searchButton').classed('search', true);
     d3.select('#searchButton')
-      .on('click', this.controller.view.clickFunction);
-
-    /*
-    .on('click', () => {
-      let name = document.getElementById("myInput").value;
-      if (names.indexOf(name) == -1) {
-        return;
-      }
-      let cell = d3.selectAll('.cell')
-        .filter(d => (d.rowid == name && d.colid == name))
+      //.on('click', this.controller.view.clickFunction);
 
 
-      var e = document.createEvent('UIEvents');
-      e.initUIEvent('click', true, true, /* ... */ /*);
-    cell.select("rect").node().dispatchEvent(e);
-    console.log(cell.select("rect"));
-  })*/
+      .on('click', () => {
+        let nodeID = document.getElementById("myInput").value;
+        if (names.indexOf(nodeID) == -1) {
+          return;
+        }
+        let action = this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
+        this.controller.model.provenance.applyAction(action);
+
+        /*
+        let cell = d3.selectAll('#' + nodeID + nodeID)
+        //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
+
+
+        var e = document.createEvent('UIEvents');
+        e.initUIEvent('click', true, true, /* ... *//*);
+        cell.select("rect").node().dispatchEvent(e);
+        console.log(cell.select("rect"));*/
+      })
   }
 
 
@@ -169,7 +173,7 @@ class Model {
           selectionElement = elementNamesFromSelection[selectionType][selectionElement];
           console.log(selectionElement);
           for (let node in state.selections[selectionType]) {
-            if(selectionType == 'answerBox'){
+            if (selectionType == 'answerBox') {
               answerElements.add('#' + selectionElement + node)
             } else {
               clickedElements.add('#' + selectionElement + node)
@@ -186,8 +190,8 @@ class Model {
       console.log(clickedSelectorQuery);
       console.log(answerSelectorQuery);
 
-      clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true):null;
-      answerSelectorQuery != [] ?   d3.selectAll(answerSelectorQuery).classed('answer', true):null;
+      clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
+      answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
 
 
       return;
@@ -199,15 +203,15 @@ class Model {
         d3.selectAll('.' + className).classed(className, false);
         classAllHighlights(state);
       };
-      let updateCellClicks = (state)=>{
+      let updateCellClicks = (state) => {
         let cellNames = [];
-        Object.keys(state.selections.cellcol).map(key=>{
-          cellNames= cellNames.concat(state.selections.cellcol[key])
+        Object.keys(state.selections.cellcol).map(key => {
+          cellNames = cellNames.concat(state.selections.cellcol[key])
         })
         let cellSelectorQuery = '#' + cellNames.join(',#')
-        d3.selectAll('.clickedCell').classed('clickedCell',false);
-        console.log(cellSelectorQuery,d3.selectAll(cellSelectorQuery))
-        d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell',true)
+        d3.selectAll('.clickedCell').classed('clickedCell', false);
+        console.log(cellSelectorQuery, d3.selectAll(cellSelectorQuery))
+        d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true)
 
       }
 
@@ -400,9 +404,7 @@ class View {
     this.clickFunction = (d, i, nodes) => {
 
       let nodeID = this.controller.view.determineID(d);
-
-
-      let action = this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
+      let action = this.controller.view.changeInteractionWrapper(nodeID, nodes[i], d3.select(nodes[i]).attr('class'));
       this.controller.model.provenance.applyAction(action);
 
 
@@ -708,7 +710,7 @@ class View {
       .data(d => { return d/*.filter(item => item.z > 0)*/ })
       .enter().append('g')
       .attr("class", "cell")
-      .attr('id',d=>d.colid+d.rowid);
+      .attr('id', d => d.colid + d.rowid);
 
     if (this.controller.configuration.adjMatrixValues.edgeBars) {
       // bind squares to cells for the mouse over effect
@@ -796,7 +798,9 @@ class View {
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
-      .on('click', this.clickFunction)
+      .on('click', (d,i,nodes)=>{
+        this.clickFunction(d,i,nodes);
+      })
     /*(d, i, nodes) => {
 
       let nodeID = this.determineID(d);
@@ -1056,34 +1060,31 @@ class View {
   /**
    * [changeInteractionWrapper description]
    * @param  nodeID ID of the node being interacted with
-   * @param  i      index of node being interacted with (from d3 select)
-   * @param  nodes  nodes corresponding to the element class interacted with (from d3 select)
+   * @param  node   nodes corresponding to the element class interacted with (from d3 select nodes[i])
+   * @param  interactionType class name of element interacted with
    * @return        [description]
    */
-  changeInteractionWrapper(nodeID, i, nodes) {
+  changeInteractionWrapper(nodeID, node, interactionType) {
     return {
-      label: d3.select(nodes[i]).attr('class'),
+      label: interactionType,
       action: (nodeID) => {
         const currentState = this.controller.model.app.currentState();
         //add time stamp to the state graph
         currentState.time = Date.now();
-        let interactionName = d3.select(nodes[i]).attr('class')
-        let interactedElement = d3.select(nodes[i]).attr('class')
+        let interactionName = interactionType //cell, search, etc
+        let interactedElement = interactionType
         if (interactionName == 'cell') {
-          let cellData = d3.select(nodes[i]).data()[0];
+          let cellData = d3.select(node).data()[0]; //
           nodeID = cellData.colid;
           interactedElement = cellData.colid + cellData.rowid;
 
-          console.log(currentState)
           this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
           this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
 
           nodeID = cellData.rowid;
           interactionName = interactionName + 'row'
         }
-        console.log(currentState, nodeID, interactionName, interactedElement)
         this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
-        console.log(currentState)
         return currentState;
       },
       args: [nodeID]

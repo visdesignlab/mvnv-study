@@ -89,26 +89,29 @@ var Model = /** @class */ (function () {
         }
     };
     Model.prototype.populateSearchBox = function () {
+        var _this = this;
         var names = this.nodes.map(function (node) { return node.screen_name; });
         autocomplete(document.getElementById("myInput"), names);
         d3.select('#searchButton').classed('search', true);
         d3.select('#searchButton')
-            .on('click', this.controller.view.clickFunction);
-        /*
-        .on('click', () => {
-          let name = document.getElementById("myInput").value;
-          if (names.indexOf(name) == -1) {
-            return;
-          }
-          let cell = d3.selectAll('.cell')
-            .filter(d => (d.rowid == name && d.colid == name))
+            //.on('click', this.controller.view.clickFunction);
+            .on('click', function () {
+            var nodeID = document.getElementById("myInput").value;
+            if (names.indexOf(nodeID) == -1) {
+                return;
+            }
+            var action = _this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
+            _this.controller.model.provenance.applyAction(action);
+            /*
+            let cell = d3.selectAll('#' + nodeID + nodeID)
+            //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
     
     
-          var e = document.createEvent('UIEvents');
-          e.initUIEvent('click', true, true, /* ... */ /*);
-      cell.select("rect").node().dispatchEvent(e);
-      console.log(cell.select("rect"));
-    })*/
+            var e = document.createEvent('UIEvents');
+            e.initUIEvent('click', true, true, /* ... */ /*);
+            cell.select("rect").node().dispatchEvent(e);
+            console.log(cell.select("rect"));*/
+        });
     };
     Model.prototype.getApplicationState = function () {
         var _this = this;
@@ -343,7 +346,7 @@ var View = /** @class */ (function () {
         this.datumID = 'screen_name';
         this.clickFunction = function (d, i, nodes) {
             var nodeID = _this.controller.view.determineID(d);
-            var action = _this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
+            var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], d3.select(nodes[i]).attr('class'));
             _this.controller.model.provenance.applyAction(action);
         };
         // set up load
@@ -914,33 +917,30 @@ var View = /** @class */ (function () {
     /**
      * [changeInteractionWrapper description]
      * @param  nodeID ID of the node being interacted with
-     * @param  i      index of node being interacted with (from d3 select)
-     * @param  nodes  nodes corresponding to the element class interacted with (from d3 select)
+     * @param  node   nodes corresponding to the element class interacted with (from d3 select nodes[i])
+     * @param  interactionType class name of element interacted with
      * @return        [description]
      */
-    View.prototype.changeInteractionWrapper = function (nodeID, i, nodes) {
+    View.prototype.changeInteractionWrapper = function (nodeID, node, interactionType) {
         var _this = this;
         return {
-            label: d3.select(nodes[i]).attr('class'),
+            label: interactionType,
             action: function (nodeID) {
                 var currentState = _this.controller.model.app.currentState();
                 //add time stamp to the state graph
                 currentState.time = Date.now();
-                var interactionName = d3.select(nodes[i]).attr('class');
-                var interactedElement = d3.select(nodes[i]).attr('class');
+                var interactionName = interactionType; //cell, search, etc
+                var interactedElement = interactionType;
                 if (interactionName == 'cell') {
-                    var cellData = d3.select(nodes[i]).data()[0];
+                    var cellData = d3.select(node).data()[0]; //
                     nodeID = cellData.colid;
                     interactedElement = cellData.colid + cellData.rowid;
-                    console.log(currentState);
                     _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
                     _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
                     nodeID = cellData.rowid;
                     interactionName = interactionName + 'row';
                 }
-                console.log(currentState, nodeID, interactionName, interactedElement);
                 _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
-                console.log(currentState);
                 return currentState;
             },
             args: [nodeID]
