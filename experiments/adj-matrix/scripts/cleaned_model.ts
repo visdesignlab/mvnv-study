@@ -799,7 +799,11 @@ class View {
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
       .on('click', (d,i,nodes)=>{
-        this.clickFunction(d,i,nodes);
+        // only trigger click if edge exists
+        if(d.combined != 0 || d.retweet != 0 || d.mentions != 0){
+          this.clickFunction(d,i,nodes);
+        }
+        return;
       })
     /*(d, i, nodes) => {
 
