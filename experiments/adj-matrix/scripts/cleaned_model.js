@@ -134,7 +134,7 @@ var Model = /** @class */ (function () {
                 answerBox: {},
                 attrRow: {},
                 rowLabel: {},
-                columnLabel: {},
+                colLabel: {},
                 cell: {},
                 search: {}
             }
@@ -863,7 +863,8 @@ var View = /** @class */ (function () {
                 currentState.time = Date.now();
                 var interactionName = d3.select(nodes[i]).attr('class');
                 if (interactionName == 'cell') {
-                    var cellData = d3.select(nodes[i]).data();
+                    var cellData = d3.select(nodes[i]).data()[0];
+                    console.log(cellData, interactionName);
                     interactionName = cellData.colid + cellData.rowid;
                 }
                 _this.changeInteraction(currentState, nodeID, d3.select(nodes[i]).attr('class'), interactionName);

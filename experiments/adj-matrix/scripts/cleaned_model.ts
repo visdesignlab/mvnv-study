@@ -997,9 +997,14 @@ class View {
         //add time stamp to the state graph
         currentState.time = Date.now();
         let interactionName = d3.select(nodes[i]).attr('class')
+
         if (interactionName == 'cell') {
-          let cellData = d3.select(nodes[i]).data();
+          let cellData = d3.select(nodes[i]).data()[0];
+          console.log(cellData,interactionName);
           interactionName = cellData.colid + cellData.rowid;
+          // PROBLEM TODO: cell are storing according to cell name (can't map to physical element);
+          this.changeInteraction(currentState, nodeID, d3.select(nodes[i]).attr('class'), interactionName);
+
         }
         this.changeInteraction(currentState, nodeID, d3.select(nodes[i]).attr('class'), interactionName);
         console.log(currentState);
