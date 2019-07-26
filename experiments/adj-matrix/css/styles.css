@@ -156,8 +156,10 @@ pointer-events: none;
 }
 
 .hovered {
-fill: #fde8ca;
-fill-opacity:1 !important;
+  -webkit-transition: fill 0.1s, -webkit-transform 0.1s;
+   transition: fill 0.1s, transform 0.1s;
+  fill: #fde8ca;
+  fill-opacity:1 !important;
 }
 
 .clickedCell{
@@ -169,14 +171,21 @@ fill-opacity:1 !important;
 }
 
 .clicked{
-fill: #F8CF91 !important;
-fill-opacity:1 !important;
+  -webkit-transition: fill 0.5s, -webkit-transform 0.5s;
+   transition: fill 0.5s, transform 0.5s;
+  fill: #F8CF91 !important;
+  fill-opacity:1 !important;
 }
-
+.clickedCell {
+  stroke:red;
+  stroke-width:3;
+}
 /* most specific */
 rect.answer{
-fill :#ea9b0f !important;
-fill-opacity:1 !important;
+  -webkit-transition: fill 0.5s, -webkit-transform 0.5s;
+   transition: fill 0.5s, transform 0.5s;
+  fill :#ea9b0f !important;
+  fill-opacity:1 !important;
 }
 
 text.active {

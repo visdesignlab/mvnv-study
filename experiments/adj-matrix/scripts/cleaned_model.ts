@@ -41,17 +41,10 @@ class Model {
   populateSearchBox() {
     let names = this.nodes.map(node => node.screen_name);
     autocomplete(document.getElementById("myInput"), names);
-    d3.select('#searchButton').classed('search',true);
+    d3.select('#searchButton').classed('search', true);
     d3.select('#searchButton')
-    .on('click', (d, i, nodes) => {
+      .on('click', this.controller.view.clickFunction);
 
-      let nodeID = this.controller.view.determineID(d);
-
-      let action = this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
-      this.controller.model.provenance.applyAction(action);
-
-
-    });
     /*
     .on('click', () => {
       let name = document.getElementById("myInput").value;
@@ -64,9 +57,9 @@ class Model {
 
       var e = document.createEvent('UIEvents');
       e.initUIEvent('click', true, true, /* ... */ /*);
-      cell.select("rect").node().dispatchEvent(e);
-      console.log(cell.select("rect"));
-    })*/
+    cell.select("rect").node().dispatchEvent(e);
+    console.log(cell.select("rect"));
+  })*/
   }
 
 
@@ -120,6 +113,8 @@ class Model {
   private provenance: any;
   private app: any;
 
+
+
   setUpProvenance() {
     const initialState = {
 
@@ -136,7 +131,8 @@ class Model {
         attrRow: {},
         rowLabel: {},
         colLabel: {},
-        cell: {},
+        cellcol: {},
+        cellrow: {},
         search: {}
 
       }
@@ -149,19 +145,81 @@ class Model {
     const app = this.getApplicationState();
     this.app = app;
     const rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel')
-    function setUpObservers() {
-      provenance.addObserver("selections.rowLabel", state => {
-        /*console.log(state, rowHighlightElements);
+    let columnElements = ['colLabel', 'topoCol'];
+    let rowElements = ['rowLabel', 'topoRow', 'attrRow']
 
-        let currentlyClicked = rowHighlightElements.classed('answer', (d, i, nodes) => { //
-          if (d.screen_name) {
-            return state.selections.rowLabel.includes(d.screen_name);
+    let elementNamesFromSelection = {
+      cellcol: columnElements,
+      colLabel: columnElements,
+      rowLabel: rowElements,
+      attrRow: rowElements,
+      cellrow: rowElements,
+      answerBox: rowElements,
+      search: rowElements.concat(columnElements)
+    }
+
+    function classAllHighlights(state) {
+      let clickedElements = new Set();
+      let answerElements = new Set();
+
+      for (let selectionType in state.selections) {
+        console.log(selectionType);
+        for (let selectionElement in elementNamesFromSelection[selectionType]) {
+          console.log(selectionElement);
+          selectionElement = elementNamesFromSelection[selectionType][selectionElement];
+          console.log(selectionElement);
+          for (let node in state.selections[selectionType]) {
+            if(selectionType == 'answerBox'){
+              answerElements.add('#' + selectionElement + node)
+            } else {
+              clickedElements.add('#' + selectionElement + node)
+            }
           }
-          return state.selections.rowLabel.includes(d[0].rowid);
-        })*/
+        }
+      }
 
-        //console.log("Only once", state.count, currentlyClicked);
-      });
+
+
+      let clickedSelectorQuery = Array.from(clickedElements).join(',')
+      let answerSelectorQuery = Array.from(answerElements).join(',')
+
+      console.log(clickedSelectorQuery);
+      console.log(answerSelectorQuery);
+
+      clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true):null;
+      answerSelectorQuery != [] ?   d3.selectAll(answerSelectorQuery).classed('answer', true):null;
+
+
+      return;
+    }
+
+    function setUpObservers() {
+      let updateHighlights = (state) => {
+        let className = 'clicked';
+        d3.selectAll('.' + className).classed(className, false);
+        classAllHighlights(state);
+      };
+      let updateCellClicks = (state)=>{
+        let cellNames = [];
+        Object.keys(state.selections.cellcol).map(key=>{
+          cellNames= cellNames.concat(state.selections.cellcol[key])
+        })
+        let cellSelectorQuery = '#' + cellNames.join(',#')
+        d3.selectAll('.clickedCell').classed('clickedCell',false);
+        console.log(cellSelectorQuery,d3.selectAll(cellSelectorQuery))
+        d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell',true)
+
+      }
+
+      provenance.addObserver("selections.rowLabel", updateHighlights)
+      provenance.addObserver("selections.colLabel", updateHighlights)
+      provenance.addObserver("selections.cellcol", updateHighlights)
+      provenance.addObserver("selections.cellrow", updateHighlights)
+      provenance.addObserver("selections.cellcol", updateCellClicks)
+
+      provenance.addObserver("selections.search", updateHighlights)
+      provenance.addObserver("selections.answerBox", updateHighlights)
+
     }
     setUpObservers();
 
@@ -322,6 +380,7 @@ class View {
   private attributeHeight: number;
   private datumID: string;
   private mouseoverEvents: Array<any>;
+  private clickFunction: any;
   /*
   private edgeSVGWidth: number;
   private edgeSVGHeight: number;
@@ -338,6 +397,16 @@ class View {
     this.controller = controller;
     this.controller.clickedCells = new Set();
     this.datumID = 'screen_name';
+    this.clickFunction = (d, i, nodes) => {
+
+      let nodeID = this.controller.view.determineID(d);
+
+
+      let action = this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
+      this.controller.model.provenance.applyAction(action);
+
+
+    };
     // set up load
     this.renderLoading();
     this.mouseoverEvents = [];
@@ -551,7 +620,7 @@ class View {
       .append('rect')
       .classed('topoCol', true)
       .attr('id', (d, i) => {
-        return "highlightCol" + d[i].colid;
+        return "topoCol" + d[i].colid;
       })
       .attr('x', -this.edgeHeight - this.margins.bottom)
       .attr('y', 0)
@@ -638,7 +707,8 @@ class View {
     var cells = this.edgeRows.selectAll(".cell")
       .data(d => { return d/*.filter(item => item.z > 0)*/ })
       .enter().append('g')
-      .attr("class", "cell");
+      .attr("class", "cell")
+      .attr('id',d=>d.colid+d.rowid);
 
     if (this.controller.configuration.adjMatrixValues.edgeBars) {
       // bind squares to cells for the mouse over effect
@@ -726,15 +796,16 @@ class View {
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
-      .on('click', (d, i, nodes) => {
+      .on('click', this.clickFunction)
+    /*(d, i, nodes) => {
 
-        let nodeID = this.determineID(d);
+      let nodeID = this.determineID(d);
 
-        let action = this.changeInteractionWrapper(nodeID, i, nodes);
-        this.controller.model.provenance.applyAction(action);
+      let action = this.changeInteractionWrapper(nodeID, i, nodes);
+      this.controller.model.provenance.applyAction(action);
 
 
-      });
+    });*/
 
     /*      .on("click", (cell, index, nodes) => {
             let cellElement = d3.select(nodes[index]).selectAll('rect');
@@ -919,7 +990,7 @@ class View {
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       })
-      .on('click', (d, i, nodes) => {
+      .on('click', this.clickFunction)/*(d, i, nodes) => {
 
         let nodeID = this.determineID(d);
 
@@ -927,7 +998,7 @@ class View {
         this.controller.model.provenance.applyAction(action);
 
 
-      });
+      });*/
 
 
     this.edgeColumns.append("text")
@@ -942,7 +1013,7 @@ class View {
       .attr("text-anchor", "start")
       .style("font-size", 7.5 + "px")
       .text((d, i) => this.nodes[i].name)
-      .on('click', (d, i, nodes) => {
+      .on('click', this.clickFunction)/*(d, i, nodes) => {
 
         let nodeID = this.determineID(d);
 
@@ -950,7 +1021,7 @@ class View {
         this.controller.model.provenance.applyAction(action);
 
 
-      })
+      })*/
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
 
@@ -997,17 +1068,22 @@ class View {
         //add time stamp to the state graph
         currentState.time = Date.now();
         let interactionName = d3.select(nodes[i]).attr('class')
-
+        let interactedElement = d3.select(nodes[i]).attr('class')
         if (interactionName == 'cell') {
           let cellData = d3.select(nodes[i]).data()[0];
-          console.log(cellData,interactionName);
-          interactionName = cellData.colid + cellData.rowid;
-          // PROBLEM TODO: cell are storing according to cell name (can't map to physical element);
-          this.changeInteraction(currentState, nodeID, d3.select(nodes[i]).attr('class'), interactionName);
+          nodeID = cellData.colid;
+          interactedElement = cellData.colid + cellData.rowid;
 
+          console.log(currentState)
+          this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
+          this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+
+          nodeID = cellData.rowid;
+          interactionName = interactionName + 'row'
         }
-        this.changeInteraction(currentState, nodeID, d3.select(nodes[i]).attr('class'), interactionName);
-        console.log(currentState);
+        console.log(currentState, nodeID, interactionName, interactedElement)
+        this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
+        console.log(currentState)
         return currentState;
       },
       args: [nodeID]
@@ -1044,7 +1120,9 @@ class View {
       state.selections.previousMouseovers = this.mouseoverEvents;
       this.mouseoverEvents = [];
     }
-    console.log(interaction,state.selections);
+
+    console.log(interaction, state.selections, nodeID, nodeID in state.selections[interaction], state.selections);
+
     if (nodeID in state.selections[interaction]) {
       // Remove element if in list, if list is empty, delete key
       let currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
@@ -1688,44 +1766,38 @@ class View {
           .classed('hovered', false)
         d3.selectAll('.topoRow')
           .classed('hovered', false)
-      }).on('click', (d, i, nodes) => {
-
-          let nodeID = this.controller.view.determineID(d);
-
-          let action = this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
-          this.controller.model.provenance.applyAction(action);
+      }).on('click', this.clickFunction);
 
 
-        });
-      /*.on('click', (d, i, nodes) => {
+    /*.on('click', (d, i, nodes) => {
 
-        /*let cellElement = d3.select(nodes[index]).selectAll('rect');
-        console.log(cellElement);
-        cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
-        console.log(cellElement.classed('clickedCell'));
-        let cellID = cell.rowid + cell.colid;
-        console.log(d);
-        let nodeID = d.screen_name;
-        /*
-        // will add or remove node
-        console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
-        that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
-        d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
-        that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+      /*let cellElement = d3.select(nodes[index]).selectAll('rect');
+      console.log(cellElement);
+      cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
+      console.log(cellElement.classed('clickedCell'));
+      let cellID = cell.rowid + cell.colid;
+      console.log(d);
+      let nodeID = d.screen_name;
+      /*
+      // will add or remove node
+      console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+      that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
+      d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
+      that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
 
 
-        that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
-        console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
-        //d3.selectAll('.answer').classed('answer', false);
-        d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
+      that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
+      console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
+      //d3.selectAll('.answer').classed('answer', false);
+      d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
 
-        that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
-        that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
+      that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
+      that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
 
-        // classes row
-        //this.classHighlights(d.screen_name, 'Row', 'answer');
-        //this.selectNode(d[0].rowid);
-      });*/
+      // classes row
+      //this.classHighlights(d.screen_name, 'Row', 'answer');
+      //this.selectNode(d[0].rowid);
+    });*/
 
 
     let columns = this.controller.configuration.nodeAttributes;
@@ -1884,10 +1956,10 @@ class View {
             d3.select(nodes[i]).selectAll('rect').transition().duration(500)
               .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
 
+            this.clickFunction(d, i, nodes);
 
-
-            let action = this.changeInteractionWrapper(nodeID, i, nodes);
-            this.controller.model.provenance.applyAction(action);
+            //let action = this.changeInteractionWrapper(nodeID, i, nodes);
+            //this.controller.model.provenance.applyAction(action);
 
 
 

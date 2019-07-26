@@ -89,16 +89,11 @@ var Model = /** @class */ (function () {
         }
     };
     Model.prototype.populateSearchBox = function () {
-        var _this = this;
         var names = this.nodes.map(function (node) { return node.screen_name; });
         autocomplete(document.getElementById("myInput"), names);
         d3.select('#searchButton').classed('search', true);
         d3.select('#searchButton')
-            .on('click', function (d, i, nodes) {
-            var nodeID = _this.controller.view.determineID(d);
-            var action = _this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
-            _this.controller.model.provenance.applyAction(action);
-        });
+            .on('click', this.controller.view.clickFunction);
         /*
         .on('click', () => {
           let name = document.getElementById("myInput").value;
@@ -111,9 +106,9 @@ var Model = /** @class */ (function () {
     
           var e = document.createEvent('UIEvents');
           e.initUIEvent('click', true, true, /* ... */ /*);
-        cell.select("rect").node().dispatchEvent(e);
-        console.log(cell.select("rect"));
-      })*/
+      cell.select("rect").node().dispatchEvent(e);
+      console.log(cell.select("rect"));
+    })*/
     };
     Model.prototype.getApplicationState = function () {
         var _this = this;
@@ -135,7 +130,8 @@ var Model = /** @class */ (function () {
                 attrRow: {},
                 rowLabel: {},
                 colLabel: {},
-                cell: {},
+                cellcol: {},
+                cellrow: {},
                 search: {}
             }
         };
@@ -144,18 +140,67 @@ var Model = /** @class */ (function () {
         var app = this.getApplicationState();
         this.app = app;
         var rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel');
+        var columnElements = ['colLabel', 'topoCol'];
+        var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
+        var elementNamesFromSelection = {
+            cellcol: columnElements,
+            colLabel: columnElements,
+            rowLabel: rowElements,
+            attrRow: rowElements,
+            cellrow: rowElements,
+            answerBox: rowElements,
+            search: rowElements.concat(columnElements)
+        };
+        function classAllHighlights(state) {
+            var clickedElements = new Set();
+            var answerElements = new Set();
+            for (var selectionType in state.selections) {
+                console.log(selectionType);
+                for (var selectionElement in elementNamesFromSelection[selectionType]) {
+                    console.log(selectionElement);
+                    selectionElement = elementNamesFromSelection[selectionType][selectionElement];
+                    console.log(selectionElement);
+                    for (var node in state.selections[selectionType]) {
+                        if (selectionType == 'answerBox') {
+                            answerElements.add('#' + selectionElement + node);
+                        }
+                        else {
+                            clickedElements.add('#' + selectionElement + node);
+                        }
+                    }
+                }
+            }
+            var clickedSelectorQuery = Array.from(clickedElements).join(',');
+            var answerSelectorQuery = Array.from(answerElements).join(',');
+            console.log(clickedSelectorQuery);
+            console.log(answerSelectorQuery);
+            clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
+            answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
+            return;
+        }
         function setUpObservers() {
-            provenance.addObserver("selections.rowLabel", function (state) {
-                /*console.log(state, rowHighlightElements);
-        
-                let currentlyClicked = rowHighlightElements.classed('answer', (d, i, nodes) => { //
-                  if (d.screen_name) {
-                    return state.selections.rowLabel.includes(d.screen_name);
-                  }
-                  return state.selections.rowLabel.includes(d[0].rowid);
-                })*/
-                //console.log("Only once", state.count, currentlyClicked);
-            });
+            var updateHighlights = function (state) {
+                var className = 'clicked';
+                d3.selectAll('.' + className).classed(className, false);
+                classAllHighlights(state);
+            };
+            var updateCellClicks = function (state) {
+                var cellNames = [];
+                Object.keys(state.selections.cellcol).map(function (key) {
+                    cellNames = cellNames.concat(state.selections.cellcol[key]);
+                });
+                var cellSelectorQuery = '#' + cellNames.join(',#');
+                d3.selectAll('.clickedCell').classed('clickedCell', false);
+                console.log(cellSelectorQuery, d3.selectAll(cellSelectorQuery));
+                d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true);
+            };
+            provenance.addObserver("selections.rowLabel", updateHighlights);
+            provenance.addObserver("selections.colLabel", updateHighlights);
+            provenance.addObserver("selections.cellcol", updateHighlights);
+            provenance.addObserver("selections.cellrow", updateHighlights);
+            provenance.addObserver("selections.cellcol", updateCellClicks);
+            provenance.addObserver("selections.search", updateHighlights);
+            provenance.addObserver("selections.answerBox", updateHighlights);
         }
         setUpObservers();
         return [app, provenance];
@@ -292,9 +337,15 @@ var View = /** @class */ (function () {
     private orders: any;
   */
     function View(controller) {
+        var _this = this;
         this.controller = controller;
         this.controller.clickedCells = new Set();
         this.datumID = 'screen_name';
+        this.clickFunction = function (d, i, nodes) {
+            var nodeID = _this.controller.view.determineID(d);
+            var action = _this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
+            _this.controller.model.provenance.applyAction(action);
+        };
         // set up load
         this.renderLoading();
         this.mouseoverEvents = [];
@@ -478,7 +529,7 @@ var View = /** @class */ (function () {
             .append('rect')
             .classed('topoCol', true)
             .attr('id', function (d, i) {
-            return "highlightCol" + d[i].colid;
+            return "topoCol" + d[i].colid;
         })
             .attr('x', -this.edgeHeight - this.margins.bottom)
             .attr('y', 0)
@@ -556,7 +607,8 @@ var View = /** @class */ (function () {
         var cells = this.edgeRows.selectAll(".cell")
             .data(function (d) { return d; /*.filter(item => item.z > 0)*/ })
             .enter().append('g')
-            .attr("class", "cell");
+            .attr("class", "cell")
+            .attr('id', function (d) { return d.colid + d.rowid; });
         if (this.controller.configuration.adjMatrixValues.edgeBars) {
             // bind squares to cells for the mouse over effect
             cells
@@ -633,11 +685,16 @@ var View = /** @class */ (function () {
             //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
             //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
         })
-            .on('click', function (d, i, nodes) {
-            var nodeID = _this.determineID(d);
-            var action = _this.changeInteractionWrapper(nodeID, i, nodes);
-            _this.controller.model.provenance.applyAction(action);
-        });
+            .on('click', this.clickFunction);
+        /*(d, i, nodes) => {
+    
+          let nodeID = this.determineID(d);
+    
+          let action = this.changeInteractionWrapper(nodeID, i, nodes);
+          this.controller.model.provenance.applyAction(action);
+    
+    
+        });*/
         /*      .on("click", (cell, index, nodes) => {
                 let cellElement = d3.select(nodes[index]).selectAll('rect');
                 let cellID = cell.rowid + cell.colid;
@@ -801,11 +858,15 @@ var View = /** @class */ (function () {
             that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
             //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
         })
-            .on('click', function (d, i, nodes) {
-            var nodeID = _this.determineID(d);
-            var action = _this.changeInteractionWrapper(nodeID, i, nodes);
-            _this.controller.model.provenance.applyAction(action);
-        });
+            .on('click', this.clickFunction); /*(d, i, nodes) => {
+  
+          let nodeID = this.determineID(d);
+  
+          let action = this.changeInteractionWrapper(nodeID, i, nodes);
+          this.controller.model.provenance.applyAction(action);
+  
+  
+        });*/
         this.edgeColumns.append("text")
             .attr("id", function (d, i) {
             return "nodeLabelCol" + d[i].rowid;
@@ -818,11 +879,15 @@ var View = /** @class */ (function () {
             .attr("text-anchor", "start")
             .style("font-size", 7.5 + "px")
             .text(function (d, i) { return _this.nodes[i].name; })
-            .on('click', function (d, i, nodes) {
-            var nodeID = _this.determineID(d);
-            var action = _this.changeInteractionWrapper(nodeID, i, nodes);
-            _this.controller.model.provenance.applyAction(action);
-        })
+            .on('click', this.clickFunction) /*(d, i, nodes) => {
+  
+          let nodeID = this.determineID(d);
+  
+          let action = this.changeInteractionWrapper(nodeID, i, nodes);
+          this.controller.model.provenance.applyAction(action);
+  
+  
+        })*/
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
             var colID = d[0].rowid; // as rows and columns are flipped
@@ -862,12 +927,19 @@ var View = /** @class */ (function () {
                 //add time stamp to the state graph
                 currentState.time = Date.now();
                 var interactionName = d3.select(nodes[i]).attr('class');
+                var interactedElement = d3.select(nodes[i]).attr('class');
                 if (interactionName == 'cell') {
                     var cellData = d3.select(nodes[i]).data()[0];
-                    console.log(cellData, interactionName);
-                    interactionName = cellData.colid + cellData.rowid;
+                    nodeID = cellData.colid;
+                    interactedElement = cellData.colid + cellData.rowid;
+                    console.log(currentState);
+                    _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
+                    _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+                    nodeID = cellData.rowid;
+                    interactionName = interactionName + 'row';
                 }
-                _this.changeInteraction(currentState, nodeID, d3.select(nodes[i]).attr('class'), interactionName);
+                console.log(currentState, nodeID, interactionName, interactedElement);
+                _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
                 console.log(currentState);
                 return currentState;
             },
@@ -906,7 +978,7 @@ var View = /** @class */ (function () {
             state.selections.previousMouseovers = this.mouseoverEvents;
             this.mouseoverEvents = [];
         }
-        console.log(interaction, state.selections);
+        console.log(interaction, state.selections, nodeID, nodeID in state.selections[interaction], state.selections);
         if (nodeID in state.selections[interaction]) {
             // Remove element if in list, if list is empty, delete key
             var currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
@@ -1475,13 +1547,9 @@ var View = /** @class */ (function () {
                 .classed('hovered', false);
             d3.selectAll('.topoRow')
                 .classed('hovered', false);
-        }).on('click', function (d, i, nodes) {
-            var nodeID = _this.controller.view.determineID(d);
-            var action = _this.controller.view.changeInteractionWrapper(nodeID, i, nodes);
-            _this.controller.model.provenance.applyAction(action);
-        });
+        }).on('click', this.clickFunction);
         /*.on('click', (d, i, nodes) => {
-  
+    
           /*let cellElement = d3.select(nodes[index]).selectAll('rect');
           console.log(cellElement);
           cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
@@ -1495,16 +1563,16 @@ var View = /** @class */ (function () {
           that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
           d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
           that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
-  
-  
+    
+    
           that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
           console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
           //d3.selectAll('.answer').classed('answer', false);
           d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
-  
+    
           that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
           that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
-  
+    
           // classes row
           //this.classHighlights(d.screen_name, 'Row', 'answer');
           //this.selectNode(d[0].rowid);
@@ -1630,8 +1698,9 @@ var View = /** @class */ (function () {
                         .style("fill", answerStatus ? color : "white");
                     d3.select(nodes[i]).selectAll('rect').transition().duration(500)
                         .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
-                    var action = _this.changeInteractionWrapper(nodeID, i, nodes);
-                    _this.controller.model.provenance.applyAction(action);
+                    _this.clickFunction(d, i, nodes);
+                    //let action = this.changeInteractionWrapper(nodeID, i, nodes);
+                    //this.controller.model.provenance.applyAction(action);
                     //d3.select(nodes[i]).transition().duration(500).attr('fill',)
                 });
             }
