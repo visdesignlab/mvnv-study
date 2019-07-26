@@ -666,6 +666,7 @@ var View = /** @class */ (function () {
         cells
             .on("mouseover", function (cell) {
             var cellID = cell.rowid + cell.colid;
+            console.log(_this.controller.hoverRow, cell.rowid, cellID);
             that.addHighlightNodesToDict(_this.controller.hoverRow, cell.rowid, cellID); // Add row (rowid)
             if (cell.colid !== cell.rowid) {
                 that.addHighlightNodesToDict(_this.controller.hoverRow, cell.colid, cellID); // Add row (colid)
@@ -688,7 +689,13 @@ var View = /** @class */ (function () {
             //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
             //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
         })
-            .on('click', this.clickFunction);
+            .on('click', function (d, i, nodes) {
+            // only trigger click if edge exists
+            if (d.combined != 0 || d.retweet != 0 || d.mentions != 0) {
+                _this.clickFunction(d, i, nodes);
+            }
+            return;
+        });
         /*(d, i, nodes) => {
     
           let nodeID = this.determineID(d);
@@ -1320,7 +1327,7 @@ var View = /** @class */ (function () {
         var cssSelector = '';
         for (var nodeID in dict) {
             if (rowOrCol == 'Row') {
-                cssSelector += '.attr' + rowOrCol + nodeID + ',' + '.topo' + rowOrCol + nodeID + ',';
+                cssSelector += '#attr' + rowOrCol + nodeID + ',' + '#topo' + rowOrCol + nodeID + ',';
             }
             else {
                 cssSelector += rowOrCol + nodeID + ',';

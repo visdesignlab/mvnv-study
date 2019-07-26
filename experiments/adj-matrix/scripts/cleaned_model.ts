@@ -775,6 +775,7 @@ class View {
       .on("mouseover", (cell) => {
 
         let cellID = cell.rowid + cell.colid;
+        console.log(this.controller.hoverRow, cell.rowid, cellID)
         that.addHighlightNodesToDict(this.controller.hoverRow, cell.rowid, cellID);  // Add row (rowid)
         if (cell.colid !== cell.rowid) {
           that.addHighlightNodesToDict(this.controller.hoverRow, cell.colid, cellID);  // Add row (colid)
@@ -1508,7 +1509,7 @@ class View {
     let cssSelector = '';
     for (let nodeID in dict) {
       if (rowOrCol == 'Row') {
-        cssSelector += '.attr' + rowOrCol + nodeID + ',' + '.topo' + rowOrCol + nodeID + ','
+        cssSelector += '#attr' + rowOrCol + nodeID + ',' + '#topo' + rowOrCol + nodeID + ','
       } else {
         cssSelector += rowOrCol + nodeID + ','
       }
