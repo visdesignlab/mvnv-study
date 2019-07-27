@@ -1958,7 +1958,7 @@ var Controller = /** @class */ (function () {
         this.hoverCol = {};
         this.loadClearButton();
         this.loadTasks();
-        this.loadConfigs();
+        //this.loadConfigs();
         /*console.log(this.configuration);
     
         this.configuration.then(data => {
@@ -1993,38 +1993,6 @@ var Controller = /** @class */ (function () {
           sheet.addRule(".rect.selected", ruleString, 1);
           */
     };
-    Controller.prototype.loadConfigs = function () {
-        var taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
-        if (this.tenAttr) {
-            taskConfig = "../configs/10AttrConfig.json";
-        }
-        else if (this.fiveAttr) {
-            taskConfig = "../configs/5AttrConfig.json";
-        }
-        var that = this;
-        Promise.all([
-            d3.json("../configs/baseConfig.json"),
-            d3.json(taskConfig),
-            d3.json("../configs/state.json")
-        ]).then(function (configComponents) {
-            that.setupCSS(configComponents[0]);
-            that.setupExports(configComponents[0], configComponents[1]);
-            var components = [configComponents[0], configComponents[1], configComponents[2]];
-            var result = deepmerge.all(components);
-            // added selected attribute scale
-            var obj = {
-                "domain": [true, false],
-                "range": ["#e86b45", '#fff'],
-                "labels": ['answer', 'not answer'],
-                'glyph': 'rect',
-                'label': 'selected'
-            };
-            that.configuration = result;
-            that.configuration.attributeScales.node['selected'] = obj;
-            that.reload();
-            //that.finishConstructing(result);
-        });
-    };
     Controller.prototype.finishConstructing = function (config) {
         this.configuration = config;
         this.view = new View(this); // initalize view,
@@ -2032,17 +2000,55 @@ var Controller = /** @class */ (function () {
     };
     Controller.prototype.loadTasks = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var task;
+            var taskConfigs, task;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.taskNum = 0;
-                        return [4 /*yield*/, d3.json("./../configs/tasks.json").then(function (data) {
-                                _this.tasks = data.tasks;
+                        return [4 /*yield*/, d3.json("./../taskLists/am_large.json").then(function (data) {
+                                //this.tasks = data.tasks;
+                                _this.configuration = data.task1.config;
+                                _this.tasks = [data.task1];
+                                var obj = {
+                                    "domain": [true, false],
+                                    "range": ["#e86b45", '#fff'],
+                                    "labels": ['answer', 'not answer'],
+                                    'glyph': 'rect',
+                                    'label': 'selected'
+                                };
+                                //this.configuration = result;
+                                _this.configuration.attributeScales.node['selected'] = obj;
+                                _this.configuration.state = {};
+                                _this.configuration.state.adjMatrix = {};
+                                _this.configuration.state.adjMatrix.sortKey = 'shortName';
+                                //configuration.state.adjMatrix.sortKey
+                                _this.reload();
                             })];
                     case 1:
-                        _a.sent();
+                        taskConfigs = _a.sent();
+                        //let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
+                        //if (this.tenAttr) {
+                        //  taskConfig = "../configs/10AttrConfig.json"
+                        //} else if (this.fiveAttr) {
+                        //  taskConfig = "../configs/5AttrConfig.json"
+                        //}
+                        //let that = this;
+                        /*
+                        Promise.all([
+                          d3.json("../configs/baseConfig.json"),
+                          d3.json(taskConfig),
+                          d3.json("../configs/state.json")
+                        ]).then((configComponents) => {
+                          /*that.setupCSS(configComponents[0]);
+                          that.setupExports(configComponents[0], configComponents[1]);
+                          let components = [configComponents[0], configComponents[1], configComponents[2]];
+                          let result = deepmerge.all(components);
+                    */
+                        // added selected attribute scale
+                        //that.finishConstructing(result);
+                        //})
+                        this.taskNum = 0;
                         task = this.tasks[this.taskNum];
                         d3.select("#taskArea")
                             .select(".card-header-title")
