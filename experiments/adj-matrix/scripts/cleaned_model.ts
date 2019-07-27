@@ -170,9 +170,16 @@ class Model {
         for (let selectionElement in elementNamesFromSelection[selectionType]) {
           selectionElement = elementNamesFromSelection[selectionType][selectionElement];
           for (let node in state.selections[selectionType]) {
+
             if (selectionType == 'answerBox') {
               answerElements.add('#' + selectionElement + node)
             } else {
+              if(selectionType =='attrRow' || selectionType =='rowLabel'){
+                // if both in attrRow and rowLabel, don't highlight element
+                node in state.selections['attrRow'] && node in state.selections['rowLabel'] ? continue; : null;
+
+
+              }
               clickedElements.add('#' + selectionElement + node)
             }
           }
@@ -475,7 +482,7 @@ class View {
     d3.select('.loading').style('display', 'block').style('opacity', 1);
     this.viewWidth = 1000;
 
-    this.margins = { left: 85, top: 85, right: 0, bottom: 10 };
+    this.margins = { left: 90, top: 90, right: 0, bottom: 10 };
 
     this.initalizeEdges();
     this.initalizeAttributes();
@@ -962,7 +969,7 @@ class View {
       .attr("dy", ".32em")
       .attr("text-anchor", "end")
       .style("font-size", 7.5 + "px")
-      .text((d, i) => this.nodes[i].name)
+      .text((d, i) => this.nodes[i].shortName)
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
 
@@ -1009,7 +1016,7 @@ class View {
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
       .style("font-size", 7.5 + "px")
-      .text((d, i) => this.nodes[i].name)
+      .text((d, i) => this.nodes[i].shortName)
       .on('click', this.clickFunction)
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
@@ -1114,6 +1121,7 @@ class View {
       // Remove element if in list, if list is empty, delete key
       let currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
       if (currentIndex > -1) {
+
         state.selections[interaction][nodeID].splice(currentIndex, 1);
         if (state.selections[interaction][nodeID].length == 0) delete state.selections[interaction][nodeID];
       } else {

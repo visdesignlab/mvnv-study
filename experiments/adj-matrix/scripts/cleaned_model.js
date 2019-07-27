@@ -395,7 +395,7 @@ var View = /** @class */ (function () {
     View.prototype.renderView = function () {
         d3.select('.loading').style('display', 'block').style('opacity', 1);
         this.viewWidth = 1000;
-        this.margins = { left: 85, top: 85, right: 0, bottom: 10 };
+        this.margins = { left: 90, top: 90, right: 0, bottom: 10 };
         this.initalizeEdges();
         this.initalizeAttributes();
         d3.select('.loading').style('display', 'none');
@@ -832,7 +832,7 @@ var View = /** @class */ (function () {
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
             .style("font-size", 7.5 + "px")
-            .text(function (d, i) { return _this.nodes[i].name; })
+            .text(function (d, i) { return _this.nodes[i].shortName; })
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
             var rowID = d[0].rowid;
@@ -872,7 +872,7 @@ var View = /** @class */ (function () {
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
             .style("font-size", 7.5 + "px")
-            .text(function (d, i) { return _this.nodes[i].name; })
+            .text(function (d, i) { return _this.nodes[i].shortName; })
             .on('click', this.clickFunction)
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
