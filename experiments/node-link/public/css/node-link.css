@@ -49,14 +49,6 @@
         cursor:pointer;
     }
 
-    .submit{
-
-        background-color:lightgrey;
-    }
-
-
-
-
     #legend-svg{
         /* background-color:rgb(203, 203, 203); */
     }
@@ -160,23 +152,6 @@
         font-weight:bold;
     }
 
-    #taskArea .taskCard{
-        background-color:rgb(64, 64, 64);
-    }
-
-    #taskArea .taskCard .card-header-title{
-        color:white;
-    }
-
-     #nextTask{
-        margin:10px 0px;
-
-        padding:10px;
-        background-color:rgb(73, 82, 100);
-        color:white;
-        font-size:18px;
-        font-weight:bold;
-    }
 
     .button.clicked{
         color:rgb(217, 99, 3) !important;    }

@@ -280,14 +280,17 @@ function loadVis(id) {
     //set up callback for 'next Task';
 
     d3.select('#nextTask').on("click",()=>{
-      //increment current task;
-      if (currentTask < tasks.length-1){
-        currentTask = currentTask + 1;
-        loadTask(taskList[currentTask])
-      } else {
-        console.log('finished Tasks')
-        experimenter.next();
-      }
+      d3.select('.hit').style('display', 'none');
+      experimentr.next();
+
+      // //increment current task;
+      // if (currentTask < tasks.length-1){
+      //   currentTask = currentTask + 1;
+      //   loadTask(taskList[currentTask])
+      // } else {
+      //   console.log('finished Tasks')
+      //   experimentr.next();
+      // }
     })
   //TODO combine these two variables into one; 
 
@@ -329,9 +332,6 @@ async function loadTask(task){
 
       config = task.config;
 
-      //reset disabled search/submit/answer boxes;
-      //remove vis cover;
-
       // clear any values in the feedback or search box; 
       d3.select('#feedback').select('.textarea').property('value', '');
       //hide feedback box
@@ -342,11 +342,14 @@ async function loadTask(task){
       d3.select('#search-input').attr('disabled', null)
       d3.select('#answerBox').attr('disabled', null) 
       d3.select('#answerBox').property('value', '')
-      d3.selectAll('.submit').attr('disabled', null); 
+      d3.selectAll('.submit').attr('disabled', true); 
 
       //Clear Selected Node List
       d3.select('#selectedNodeList')
       .selectAll('li').remove();
+
+      //clear any selected Radio buttons in the feedback box;
+      d3.select('#feedback').selectAll('input').property('checked',false);
  
       //set div of correct display type to visible; 
       d3.selectAll('.answerCard').style('display', 'none');
@@ -367,9 +370,7 @@ async function loadTask(task){
           // code block
       } 
 
-      
-  
-
+    
       d3.select("#taskArea")
       .select(".card-header-title")
       .text(task.prompt + " (" + task.taskID + ")");

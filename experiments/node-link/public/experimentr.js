@@ -173,7 +173,7 @@ experimentr = function() {
     console.log('ending timer: '+x);
     data['time_end_'+x] = Date.now(); 
     data['time_diff_'+x] = parseFloat(data['time_end_'+x]) - parseFloat(data['time_start_'+x]); 
-    experimentr.save();
+    // experimentr.save();
   }
 
   // attachTimer lets you show participants a visual countdown before advancing the experiment.
