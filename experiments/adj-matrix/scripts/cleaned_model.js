@@ -189,9 +189,9 @@ var Model = /** @class */ (function () {
                 });
                 var cellSelectorQuery = '#' + cellNames.join(',#');
                 // if no cells selected, return
+                d3.selectAll('.clickedCell').classed('clickedCell', false);
                 if (cellSelectorQuery == '#')
                     return;
-                d3.selectAll('.clickedCell').classed('clickedCell', false);
                 d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true);
             };
             var updateAnswerBox = function (state) {

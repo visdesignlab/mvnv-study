@@ -206,8 +206,9 @@ class Model {
         })
         let cellSelectorQuery = '#' + cellNames.join(',#')
         // if no cells selected, return
-        if(cellSelectorQuery=='#') return;
+
         d3.selectAll('.clickedCell').classed('clickedCell', false);
+        if(cellSelectorQuery=='#') return;
         d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true)
 
       }
