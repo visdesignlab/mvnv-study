@@ -1,58 +1,5 @@
 
-    * {
-        color: #333;
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    }
-
-    body {
-        margin: 0px;
-        /* width: 90%; */
-    }
-    
-
-    #targetSize{
-        width:1920px;
-        height:1080px;
-        /* background-color:rgb(207, 207, 207); */
-        /* border-style:solid; */
-        /* border-color:rgb(100, 100, 100); */
-    }
-
-    /* #visContent{
-        /* margin:0px 50px; ; */
-
-    /* } */ 
-
-    #node-link-svg{
-        display: inline-flex;
-    }
-
-    #experimentr {
-        margin: 4em auto 1em auto;
-        width: 720px;
-    }
-
-    #control {
-        margin-top: 1em;
-    }
-
-    #next-button {
-        float: right;
-    }
-
-    .placeholder {
-        color: #7A378B;
-        font-weight: bold;
-        text-decoration: underline;
-    }
-
-
-    #hit {
-        /* display: none;  */
-    }
-
-    
-
+     
     .links,
     .textpath {
         fill: none;
@@ -102,14 +49,6 @@
         cursor:pointer;
     }
 
-    .submit{
-
-        background-color:lightgrey;
-    }
-
-
-
-
     #legend-svg{
         /* background-color:rgb(203, 203, 203); */
     }
@@ -148,6 +87,15 @@
         stroke:white;
         fill:rgb(167, 197, 158);
 
+    }
+
+    #node-link-svg{
+        display: inline-flex;
+    }
+
+    #disableInteraction{
+        fill:white;
+        opacity:.7;
     }
 
     .input {
@@ -203,6 +151,7 @@
         font-size:20px;
         font-weight:bold;
     }
+
 
     .button.clicked{
         color:rgb(217, 99, 3) !important;    }

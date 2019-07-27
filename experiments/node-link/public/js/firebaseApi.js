@@ -2,8 +2,8 @@
 
 
 let db;
-
-let fb = {
+ 
+let fireStore = {
 
     connect() {
         // Your web app's Firebase configuration
@@ -21,8 +21,8 @@ let fb = {
       
         db = firebase.firestore(app);
       },
-      
-      addDocument(data,collection = "users") {
+
+      addDocument(data,collection = "tasks") {
         db.collection(collection)
           .add(data)
           .then(function(docRef) {
@@ -33,7 +33,7 @@ let fb = {
           });
       },
       
-      async getCollection(name = "users") {
+      async getCollection(name = "tasks") {
         db.collection(name)
           .get()
           .then(querySnapshot => {

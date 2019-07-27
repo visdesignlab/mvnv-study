@@ -71,7 +71,7 @@ Thank you! Before you submit, please fill out the following demographics form.
 </div>
 
 <br>
-<div class="submit">
+<div class="submitArea">
   <p>Please share anything else you'd like to tell us here:</p>
   <textarea name="comment_additional" rows="4" cols="80"></textarea>
 </div>
@@ -109,7 +109,7 @@ In order to submit successfully, please be sure to answer all the questions with
   }
 </style>
 
-<script>
+<!-- <script>
 (function() {
 
   var postId  = experimentr.postId
@@ -121,8 +121,8 @@ In order to submit successfully, please be sure to answer all the questions with
   
   d3.select('#submitComments')
     .on('click', function () { 
-          $.each($(':checked, textarea'), function(d){
-                        data[$(this).attr('name')] = $(this).val()
+          d3.selectAll(':checked, textarea').each(function(d){
+                        data[d3.select(this).attr('name')] = d3.select(this).node().val()
                 })
           validate(); 
       });
@@ -135,7 +135,7 @@ In order to submit successfully, please be sure to answer all the questions with
     if( isValid ) {
       
       //console.log(data)
-      experimentr.addData(data);
+      // experimentr.addData(data);
       d3.select('#submitComments').attr('disabled', 'true');
       d3.select('#submitFeedback').text('Submit Successful');
       d3.select("#codebox")
@@ -147,4 +147,4 @@ In order to submit successfully, please be sure to answer all the questions with
     }
   }
 }());
-</script>
+</script> -->

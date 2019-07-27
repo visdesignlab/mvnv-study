@@ -122,7 +122,7 @@ function countSiblingLinks(graph, source, target) {
 function setPanelValuesFromFile() {
     //create internal dictionary of defaultDomains for each attribute;
 
-    return;
+    // return;
   
     [["node", "nodes"], ["edge", "links"]].map(node_edge => {
       Object.keys(config.attributeScales[node_edge[0]]).map(attr => {
@@ -148,7 +148,7 @@ function setPanelValuesFromFile() {
     });
   
     //ser values for radioButtons
-    d3.selectAll("input[type='radio']").property("checked", function() {
+    d3.select('#panelDiv').selectAll("input[type='radio']").property("checked", function() {
       if (this.name === "graphSize") {
         return config[this.name] === this.value;
       } else {
@@ -211,7 +211,7 @@ function setPanelValuesFromFile() {
       })
       .property("checked", "checked");
   
-    d3.selectAll("input[type='radio']").on("change", async function() {
+      d3.select('#panelDiv').selectAll("input[type='radio']").on("change", async function() {
   
       if (this.name === 'selectNeighbors'){
         config.nodeLink[this.name] = eval(this.value);
@@ -883,15 +883,13 @@ function isQuant(attr) {
     let baseConfig = await d3.json("../../configs/baseConfig.json");
     let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
 
-    setConfigCallbacks(baseConfig,taskConfig)
+    setConfigCallbacks(baseConfig,taskConfig);
 
-    loadNewGraph(config.graphFiles[config.loadedGraph]).then(()=>{
-      let stateNodes = graph.nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
-      [app,provenance] = setUpProvenance(stateNodes);
-  
-      applyConfig("optimalConfig");
-      
-    });
+    await loadNewGraph(config.graphFiles[config.loadedGraph]);     
+  }
+
+  function getNodeState(nodes){
+    return nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
   }
 
   function setConfigCallbacks(baseConfig,taskConfig){
@@ -919,10 +917,7 @@ function isQuant(attr) {
     
           let task = tasks[taskNum];
     
-          d3.select("#taskArea")
-            .select(".card-header-title")
-            .text("Task " + (taskNum + 1) + " - " + task.prompt);
-    
+
           d3.select("#optimalConfig").on("click", () =>
             applyConfig("optimalConfig")
           );
@@ -935,15 +930,15 @@ function isQuant(attr) {
             applyConfig("saturatedConfig")
           );
     
-          d3.select("#next").on("click", () => {
+          d3.select("#next").on("click", async () => {
             taskNum = d3.min([taskNum + 1, tasks.length - 1]);
-            loadConfigs(tasks[taskNum].id);
+            await loadConfigs(tasks[taskNum].id);
             applyConfig("optimalConfig");
           });
     
-          d3.select("#previous").on("click", () => {
+          d3.select("#previous").on("click", async () => {
             taskNum = d3.max([taskNum - 1, 0]);
-            loadConfigs(tasks[taskNum].id);
+            await loadConfigs(tasks[taskNum].id);
             applyConfig("optimalConfig");
           });
 
@@ -955,20 +950,27 @@ function isQuant(attr) {
       .classed("clicked", false);
     d3.select("#" + configType).classed("clicked", true);
     config = JSON.parse(JSON.stringify(allConfigs[configType]));
-  
-    // setPanelValuesFromFile();
+
+
+    //Update Task Header and Answer type 
+
+     // update global variables from config;
+     setGlobalScales();
+
     update();
-  
   }
 
-  function setUpProvenance(nodes){
+  function setUpProvenance(nodes,taskID = 'noID', order = 'noOrder'){
 
     const initialState = {
-       
+       workerID, //gets value from global workerID variable
+       taskID,
+       order,
        nodes,//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
-       search:'', //field to store the id of a searched node;
+       search:[], //field to store the id of a searched node;
        startTime:Date.now(), //time this provenance graph was created and the task initialized;
-       endTime:'', // time the submit button was pressed and the task ended;
+       event:'startedProvenance',//string describing what event triggered this state update; same as the label in provenance.applyAction
+      //  endTime:'', // time the submit button was pressed and the task ended;
        time:Date.now() //timestamp for the current state of the graph;
       };
       
@@ -978,20 +980,77 @@ function isQuant(attr) {
         };
       }
       
-      const provenance = ProvenanceLibrary.initProvenance(initialState);
-      const app = nodeLink(provenance);
-
-      return [app,provenance];
+      //set global variables
+      provenance = ProvenanceLibrary.initProvenance(initialState);
+      app = nodeLink(provenance);
   }
 
-  function setUpObservers(app){
-    provenance.addObserver("count.count2.count4", state => {
-    console.log("Only once", state.count);
-  });
+  function setUpObserver(stateField,callback){
+      provenance.addObserver(stateField, callback       
+    );
+  }
 
+
+  //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
+  function updateState(label,searchId){
+
+    console.log('calling update state with ', label)
+    provenance.applyAction({
+      label,
+      action: (nodes,label) => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        //Add label describing what the event was
+        currentState.event = label;
+        //Update actual node data
+        currentState.nodes = nodes; 
+        //If node was searched, push him to the search array
+        if (searchId){
+          currentState.search.push(searchId)
+        }
+        return currentState;
+      },
+      args: [getNodeState(graph.nodes),label]
+    });
+
+    let state = app.currentState();
+    console.log('state size: ',JSON.stringify(state).length);
+    // fb.addDocument(state)
 
   }
   
   async function loadNewGraph(fileName) {
     graph = await d3.json(fileName);
+
+    //update the datalist associated to the search box (in case the nodes in the new graph have changed)
+
+    {
+      d3.select("#search-input").attr("list", "characters");
+      let inputParent = d3.select("#search-input").node().parentNode;
+
+      let datalist = d3
+      .select(inputParent).selectAll('#characters').data([0]);
+
+      let enterSelection = datalist.enter()
+      .append("datalist")
+      .attr("id", "characters");
+
+      datalist.exit().remove();
+
+      datalist= enterSelection.merge(datalist);
+
+      let options = datalist.selectAll("option").data(graph.nodes);
+
+      let optionsEnter = options.enter().append("option");
+      options.exit().remove();
+
+      options = optionsEnter.merge(options);
+      options.attr("value", d => d.shortName);
+      options.attr("id", d => d.id);
+
   }
+
+
+  }
+
