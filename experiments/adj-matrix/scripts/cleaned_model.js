@@ -165,6 +165,11 @@ var Model = /** @class */ (function () {
                             answerElements.add('#' + selectionElement + node);
                         }
                         else {
+                            if (selectionType == 'attrRow' || selectionType == 'rowLabel') {
+                                // if both in attrRow and rowLabel, don't highlight element
+                                if (node in state.selections['attrRow'] && node in state.selections['rowLabel'])
+                                    continue;
+                            }
                             clickedElements.add('#' + selectionElement + node);
                         }
                     }

@@ -176,7 +176,7 @@ class Model {
             } else {
               if(selectionType =='attrRow' || selectionType =='rowLabel'){
                 // if both in attrRow and rowLabel, don't highlight element
-                node in state.selections['attrRow'] && node in state.selections['rowLabel'] ? continue; : null;
+                if(node in state.selections['attrRow'] && node in state.selections['rowLabel']) continue;
 
 
               }
