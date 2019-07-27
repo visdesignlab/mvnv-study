@@ -231,10 +231,13 @@ function loadVis(id) {
     .node()
     .getBoundingClientRect().width;
 
+    //parentWidth is 0 because the div is hidden at the point this code is run? 
   legend = d3
     .select("#legend-svg")
     .attr("width", parentWidth) //size + margin.left + margin.right)
     .attr("height", 250);
+
+    console.log('legend width', parentWidth)
 
   simulation = d3
     .forceSimulation()
@@ -252,15 +255,26 @@ function loadVis(id) {
   // .force("y", d3.forceY().y(0));
 
   (async function() {
+
+    // debugger
     // async annonymous function
-    const taskObj = await d3.json("../../configs/tasks.json");
-    tasks = taskObj.tasks;
-    await loadConfigs(taskObj.tasks[0].id);
+    // const taskObj = await d3.json("../../configs/tasks.json");
+    // tasks = taskObj.tasks;
+    // await loadConfigs(taskObj.tasks[0].id);
+
+
+    tasks = taskList;
+    await loadConfigs(tasks[0].taskID);
+
+
 
     //apply configs to visualization
     applyConfig("optimalConfig");
 
+
+    //pass in workerID to setupProvenance
     setUpProvenance(getNodeState(graph.nodes));
+
 
     //Set up observers for provenance graph
     setUpObserver("nodes", highlightSelectedNodes);
@@ -866,11 +880,13 @@ function updateVis() {
   });
 
   node.on("click", function(d) {
+
     //modify graph.nodes to reflect the 'clicked' state of this node;
-    d.selected = !d.selected;
+    d.selected =  d.selected ? false: true; 
 
     //update neighbors
     tagNeighbors(d);
+
 
     //update state graph;
     updateState(d.selected ? 'Selected Node' : 'Unselected Node');

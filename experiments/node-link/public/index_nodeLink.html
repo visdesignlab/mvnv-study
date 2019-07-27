@@ -7,17 +7,12 @@
 <!-- <link rel="shortcut icon" href="favicon.ico" /> -->
 <link rel="shortcut icon" href="#" />
 
-<!-- <script src="components/d3js/d3.v4.min.js"></script> -->
 <script src="experimentr.js"></script>
+<link rel="stylesheet" href="css/base.css">
 
-<!-- Libs -->
-<!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
-<!-- <link rel="stylesheet" href="css/style.css"> -->
-<!-- libraries for vis -->
-<!-- <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" /> -->
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css">
-<link rel="stylesheet" href="css/node-link.css">
 <link rel="stylesheet" href="css/bulma-slider.min.css">
 <link rel="stylesheet" href="css/bulma-checkradio.min.css">
 
@@ -25,28 +20,16 @@
 <!-- Adding Provenance Library  -->
 <script src="./libs/provenance.min.js"></script>
 
-<!-- <script src="js/libs/jquery.min.js" type="text/javascript"></script> -->
 <script src="https://d3js.org/d3.v5.min.js" type="text/javascript"></script>
-<!-- <script src="js/libs/queue.min.js" type="text/javascript"></script> -->
-<!-- <script src="js/libs/underscore-min.js" type="text/javascript"></script> -->
-<!-- <script src="js/libs/extData.js" type="text/javascript"></script> -->
 
+
+<!-- Helper scripts to generate graphs and complete task Configurations -->
 <!-- <script src="js/generateTwitterGraph.js" type="text/javascript"></script> -->
+<!-- <script src="js/createTaskConfig.js" type="text/javascript"></script> -->
 
-<!-- Libs for autocomplete -->
-<!-- <link rel="stylesheet" href="css/easy-autocomplete.css"> -->
-<!-- <script src="js/libs/jquery.easy-autocomplete.js"></script> -->
 
 <body>
-
-    <!-- <div class="columns">
-        <div class="column is-full
-                ">
-            Task Instructions go here
-        </div>
-    </div> -->
-
-    <div id="hit">
+    <div id="nodeLink" class="hit" style=display:none>
 
 
         <div class="columns" id="visContent">
@@ -63,25 +46,26 @@
                             <div class="card">
                                 <div class="card-content">
                                     <div class="content">
-                                            <label class="label">Search for Nodes</label>
-                                            <input class="input searchInput" type="text" placeholder="Search for node" id="search-input"></input>
-                                            <!-- <a class="button is-pulled-right submit" id="searchButton">Search</a> -->
+                                        <label class="label">Search for Nodes</label>
+                                        <input class="input searchInput" type="text" placeholder="Search for node"
+                                            id="search-input"></input>
+                                        <!-- <a class="button is-pulled-right submit" id="searchButton">Search</a> -->
                                     </div>
                                 </div>
                             </div>
                             <div class="card">
-                                    <header class="card-header">
-                                        <p class="card-header-title">
-                                            Instructions on interactions available to the user
-                                        </p>
-                                    </header>
-                                    <div class="card-content">
-                                        <div class="content">      
-    
-                                            <svg id="legend-svg"></svg>
-                                        </div>
+                                <header class="card-header">
+                                    <p class="card-header-title">
+                                        Instructions on interactions available to the user
+                                    </p>
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
+
+                                        <svg id="legend-svg"></svg>
                                     </div>
                                 </div>
+                            </div>
 
 
                             <div class="card">
@@ -393,9 +377,74 @@
 
 
     </div>
-    </div>
-    <!--! end of #container -->
 
+    <div id="adjMatrix" class="hit" style=display:none>
+        <div class="column" id="visDiv">
+            <div id="taskArea">
+
+
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                        </p>
+
+
+
+                        <a href="#" class="card-header-icon" aria-label="more options">
+                            <span class="icon">
+                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                            </span>
+                        </a>
+                    </header>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-four-fifths">
+                    <div class="loading"></div>
+                    <div class="loadingOverlay"></div>
+                    <div id="interactiveFreeFormMain">
+                        <div id="topology" class="topocontainer" height="700" width="700"> </div>
+                        <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
+
+                    </div>
+                </div>
+
+                <div class="column is-one-fifth">
+                    <div class="card" id="visPanel">
+
+                        <div class="card-content">
+                            <div class="content">
+                                <form autocomplete="off" onsubmit="return searchForNode(this);">
+                                    <div class="autocomplete" style="width:300px;">
+                                        <input id="myInput" type="text" name="twitterNames"
+                                            placeholder="Search for Name">
+                                    </div>
+                                    <input type="button" id="searchButton" value="Search">
+                                </form>
+                                <input type="button" id="clearButton" value="Clear Selections">
+                                <svg id="legends" height="180" width="200"> </svg>
+                            </div>
+                        </div>
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                User Response
+                            </p>
+                            </a>
+                        </header>
+                        <footer class="card-footer">
+                            <a class="card-footer-item" id="panelControl">Hide/Show Panel</a>
+                            <a class="card-footer-item" id="saturatedConfig">10 Attr</a>
+                            <a class="card-footer-item" id="nodeLinkConfig">5 Attr</a>
+                            <a class="card-footer-item" id="optimalConfig">Optimal</a>
+                        </footer>
+                    </div>
+                    <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+                    <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -404,30 +453,30 @@
 
 
 <script src="js/firebaseApi.js" type="text/javascript"></script>
+<script src="js/loadTasks.js" type="text/javascript"></script>
 
 
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#config-web-app -->
-
-<script>
-    fb.connect();
-</script>
-
-
-
-
-<script src="js/main_nodeLink.js" type="text/javascript"></script>
-<script src="js/helperFunctions.js" type="text/javascript"></script>
-
-
+<!-- These are dynamically loaded now -->
+<!-- <script src="js/main_nodeLink.js" type="text/javascript"></script>
+<script src="js/helperFunctions.js" type="text/javascript"></script> -->
+<!-- <link rel="stylesheet" href="css/node-link.css"> -->
 
 <script>
+
+    //connect to firestore;
+    fireStore.connect();
+    loadTasks();
+
     experimentr.sequence([
-        // 'modules/consent.html',
+        'modules/consent.html',
         // 'modules/training_collegeFake.html',
         'modules/hit.html',
         'modules/findings.html',
         'modules/strategy.html',
         'modules/submit.html'
     ]).start();
+
+
+
 </script>
+

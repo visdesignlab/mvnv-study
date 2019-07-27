@@ -1,24 +1,52 @@
 {
-  "tasks": [
+  "task1": 
     {
-      "id": "task1",
-      "prompt": "Select the European account with the highest number of followers."
+      "workerID":null,
+      "order":null,
+      "timeToCompletion":"",
+      "answer":"",
+      "feedback":"",
+      "prompt": "Select the European account with the highest number of followers.",
+      "config":{}
     },
+    "task2": 
     {
-      "id": "task2",
-      "prompt": "Find 3 nodes that are people and have more friends than followers."
+      "workerID":null,
+      "order":null,
+      "timeToCompletion":"",
+      "answer":"",
+      "feedback":"",
+      "prompt": "Find 3 nodes that are people and have more friends than followers.",
+      "config":{}
     },
+    "task3": 
     {
-      "id": "task3",
-      "prompt": "Which of the european people who has interacted with R.Kosara has tweeted the most?"
+      "workerID":null,
+      "order":null,
+      "timeToCompletion":"",
+      "answer":"",
+      "feedback":"",
+      "prompt": "Which of the european people who has interacted with R.Kosara has tweeted the most?",
+      "config":{}
     },
+    "task4": 
     {
-      "id": "task4",
-      "prompt": "What is the approximate combined # of followers of all the people who have interacted with  A. Lex?"
+      "workerID":null,
+      "order":null,
+      "timeToCompletion":"",
+      "answer":"",
+      "feedback":"",
+      "prompt": "What is the approximate combined # of followers of all the people who have interacted with  A. Lex?",
+      "config":{}
     },
+    "task5": 
     {
-      "id":"task5",
-      "prompt":"How many europeans are on the path that connects L.Harrison and R.Gove ? "
+      "workerID":null,
+      "order":null,
+      "timeToCompletion":"",
+      "answer":"",
+      "feedback":"",
+      "prompt": "How many europeans are on the path that connects L.Harrison and R.Gove ?",
+      "config":{}
     }
-  ]
-}
+  }

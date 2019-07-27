@@ -962,10 +962,12 @@ function isQuant(attr) {
     update();
   }
 
-  function setUpProvenance(nodes){
+  function setUpProvenance(nodes,workerID='test',taskID = 'noID', order = 'noOrder'){
 
     const initialState = {
-       
+       workerID,
+       taskID,
+       order,
        nodes,//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
        search:[], //field to store the id of a searched node;
        startTime:Date.now(), //time this provenance graph was created and the task initialized;
@@ -994,7 +996,6 @@ function isQuant(attr) {
   //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
   function updateState(label,searchId){
 
-
     console.log('calling update state with ', label)
     provenance.applyAction({
       label,
@@ -1016,6 +1017,7 @@ function isQuant(attr) {
     });
 
     let state = app.currentState();
+    console.log('state size: ',JSON.stringify(state).length);
     // fb.addDocument(state)
 
   }

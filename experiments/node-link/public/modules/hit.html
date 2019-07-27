@@ -1,9 +1,26 @@
 
   <div>
-    HEY
   </div>
 
   <script>
+      
+      d3.select('.hit').style('display', 'inline');
+
+      experimentr.hideNext();
+      console.log('loading vis')
+
+      if (vis === 'nodeLink'){
+        loadVis("vis");
+      } else {
+        d3.select('.card-header-title').text('YOU WON THE ADJACENCY MATRIX! PLEASE RELOAD TO PLAY WITH THE NODE-LINK');
+      }
+      experimentr.startTimer('exploration');
+
+</script>
+
+  <!-- <script>
+
+   
   ( function() {
     var data  = {};
 
@@ -24,10 +41,11 @@
     function init() {
 
       experimentr.hideNext();
+
       console.log('loading vis')
       loadVis("vis");
 
-      d3.select('#hit').style('display', 'inline');
+      d3.select('.hit').style('display', 'inline');
 
       experimentr.startTimer('exploration');
 
@@ -76,6 +94,6 @@
 
     }
 
-  }());
-  </script>
+  });
+  </script> -->
 
