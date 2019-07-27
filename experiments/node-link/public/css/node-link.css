@@ -1,58 +1,5 @@
 
-    * {
-        color: #333;
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    }
-
-    body {
-        margin: 0px;
-        /* width: 90%; */
-    }
-    
-
-    #targetSize{
-        width:1920px;
-        height:1080px;
-        /* background-color:rgb(207, 207, 207); */
-        /* border-style:solid; */
-        /* border-color:rgb(100, 100, 100); */
-    }
-
-    /* #visContent{
-        /* margin:0px 50px; ; */
-
-    /* } */ 
-
-    #node-link-svg{
-        display: inline-flex;
-    }
-
-    #experimentr {
-        margin: 4em auto 1em auto;
-        width: 720px;
-    }
-
-    #control {
-        margin-top: 1em;
-    }
-
-    #next-button {
-        float: right;
-    }
-
-    .placeholder {
-        color: #7A378B;
-        font-weight: bold;
-        text-decoration: underline;
-    }
-
-
-    #hit {
-        /* display: none;  */
-    }
-
-    
-
+     
     .links,
     .textpath {
         fill: none;
@@ -150,6 +97,15 @@
 
     }
 
+    #node-link-svg{
+        display: inline-flex;
+    }
+
+    #disableInteraction{
+        fill:white;
+        opacity:.7;
+    }
+
     .input {
         width:60% !important;
     }
@@ -201,6 +157,24 @@
         background-color:rgb(3, 93, 158);
         color:white;
         font-size:20px;
+        font-weight:bold;
+    }
+
+    #taskArea .taskCard{
+        background-color:rgb(64, 64, 64);
+    }
+
+    #taskArea .taskCard .card-header-title{
+        color:white;
+    }
+
+     #nextTask{
+        margin:10px 0px;
+
+        padding:10px;
+        background-color:rgb(73, 82, 100);
+        color:white;
+        font-size:18px;
         font-weight:bold;
     }
 

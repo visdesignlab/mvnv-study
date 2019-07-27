@@ -6,6 +6,7 @@
         "answer": "",
         "feedback": "",
         "prompt": "Select the European account with the highest number of followers.",
+        "replyType": "singleNodeSelection",
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
@@ -201,6 +202,7 @@
         "answer": "",
         "feedback": "",
         "prompt": "Find 3 nodes that are people and have more friends than followers.",
+        "replyType": "multipleNodeSelection",
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
@@ -397,6 +399,7 @@
         "answer": "",
         "feedback": "",
         "prompt": "Which of the european people who has interacted with R.Kosara has tweeted the most?",
+        "replyType": "singleNodeSelection",
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
@@ -593,6 +596,7 @@
         "answer": "",
         "feedback": "",
         "prompt": "What is the approximate combined # of followers of all the people who have interacted with  A. Lex?",
+        "replyType": "singleNodeSelection",
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
@@ -788,6 +792,7 @@
         "answer": "",
         "feedback": "",
         "prompt": "How many europeans are on the path that connects L.Harrison and R.Gove ?",
+        "replyType": "value",
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",

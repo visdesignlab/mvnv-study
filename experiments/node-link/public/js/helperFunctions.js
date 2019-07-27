@@ -148,7 +148,7 @@ function setPanelValuesFromFile() {
     });
   
     //ser values for radioButtons
-    d3.selectAll("input[type='radio']").property("checked", function() {
+    d3.select('#panelDiv').selectAll("input[type='radio']").property("checked", function() {
       if (this.name === "graphSize") {
         return config[this.name] === this.value;
       } else {
@@ -161,8 +161,6 @@ function setPanelValuesFromFile() {
       config.nodeLink.labelSize[config.graphSize] = eval(this.value);
     });
   
-    console.log('config', config, config.graphSize, config.nodeLink.labelSize)
-
     d3.select("#fontSlider").property(
       "value",
       config.nodeLink.labelSize[config.graphSize]
@@ -213,7 +211,7 @@ function setPanelValuesFromFile() {
       })
       .property("checked", "checked");
   
-    d3.selectAll("input[type='radio']").on("change", async function() {
+      d3.select('#panelDiv').selectAll("input[type='radio']").on("change", async function() {
   
       if (this.name === 'selectNeighbors'){
         config.nodeLink[this.name] = eval(this.value);
@@ -919,10 +917,7 @@ function isQuant(attr) {
     
           let task = tasks[taskNum];
     
-          d3.select("#taskArea")
-            .select(".card-header-title")
-            .text("Task " + (taskNum + 1) + " - " + task.prompt);
-    
+
           d3.select("#optimalConfig").on("click", () =>
             applyConfig("optimalConfig")
           );
@@ -956,16 +951,19 @@ function isQuant(attr) {
     d3.select("#" + configType).classed("clicked", true);
     config = JSON.parse(JSON.stringify(allConfigs[configType]));
 
+
+    //Update Task Header and Answer type 
+
      // update global variables from config;
      setGlobalScales();
 
     update();
   }
 
-  function setUpProvenance(nodes,workerID='test',taskID = 'noID', order = 'noOrder'){
+  function setUpProvenance(nodes,taskID = 'noID', order = 'noOrder'){
 
     const initialState = {
-       workerID,
+       workerID, //gets value from global workerID variable
        taskID,
        order,
        nodes,//array of nodes that keep track of their position, whether they were softSelect or hardSelected;

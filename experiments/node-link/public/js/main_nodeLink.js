@@ -17,7 +17,8 @@ var taskNum = 0;
 var config;
 var allConfigs = {};
 
-var tasks; //list of tasks, will eventually be separated out into different index.html files
+let tasks; //list of tasks
+let currentTask = 0; //start at task 0
 
 //compute default data domains once and use when needed
 var defaultDomains = { node: {}, edge: {} };
@@ -193,6 +194,7 @@ function setGlobalScales() {
 
 // Setup function that does initial sizing and setting up of elements for node-link diagram.
 function loadVis(id) {
+
   let targetDiv = d3.select("#targetSize");
   width = targetDiv.style("width").replace("px", "");
   height = targetDiv.style("height").replace("px", "");
@@ -225,6 +227,13 @@ function loadVis(id) {
 
   svg.append("g").attr("class", "nodes");
 
+  let cover = svg.append("rect").attr("id", "disableInteraction");
+  cover
+  .attr('width',visDimensions.width)
+  .attr('height', visDimensions.height)
+  .style('display','none');
+
+
   let parentWidth = d3
     .select("#visPanel")
     .select(".content")
@@ -254,40 +263,131 @@ function loadVis(id) {
     );
   // .force("y", d3.forceY().y(0));
 
-  (async function() {
 
-    // debugger
-    // async annonymous function
-    // const taskObj = await d3.json("../../configs/tasks.json");
-    // tasks = taskObj.tasks;
-    // await loadConfigs(taskObj.tasks[0].id);
+    // Set submit button callback. 
+    d3.selectAll('.submit').on("click",()=>{
+      //show feedback box
+      d3.select('#feedback').style('display','inline');
+
+      //add cover to vis and disable search and answerBox
+      d3.select('#disableInteraction').style('display','inline') //add cover to the vis
+      d3.select('#search-input').attr('disabled', 'true') //cannot search for nodes
+      d3.select('#answerBox').attr('disabled', 'true') //can no longer edit answer;
+      d3.selectAll('.submit').attr('disabled', 'true'); //discourage multiple clicks on the submit button
+      //update state with answer and end time; 
+    })
+
+    //set up callback for 'next Task';
+
+    d3.select('#nextTask').on("click",()=>{
+      //increment current task;
+      if (currentTask < tasks.length-1){
+        currentTask = currentTask + 1;
+        loadTask(taskList[currentTask])
+      } else {
+        console.log('finished Tasks')
+        experimenter.next();
+      }
+    })
+  //TODO combine these two variables into one; 
+
+  tasks = taskList;
+  //load in firstTask
+  loadTask(taskList[currentTask])
+
+  // (async function() {
+
+    // tasks = taskList;
+    // let firstTask = tasks[0]
+    // await loadConfigs(firstTask.taskID);
+
+    // console.log(firstTask)
+
+    //   //apply configs to visualization
+    // applyConfig("optimalConfig");
 
 
-    tasks = taskList;
-    await loadConfigs(tasks[0].taskID);
+    // //pass in workerID to setupProvenance
+    // setUpProvenance(getNodeState(graph.nodes));
 
 
-
-    //apply configs to visualization
-    applyConfig("optimalConfig");
-
-
-    //pass in workerID to setupProvenance
-    setUpProvenance(getNodeState(graph.nodes));
+    // //Set up observers for provenance graph
+    // setUpObserver("nodes", highlightSelectedNodes);
+    // // setUpObserver("nodes", highlightAnswerNodes);
 
 
-    //Set up observers for provenance graph
-    setUpObserver("nodes", highlightSelectedNodes);
-    // setUpObserver("nodes", highlightAnswerNodes);
+    // let baseConfig = await d3.json("../../configs/baseConfig.json");
+    // let nodeLinkConfig = await d3.json("../../configs/5AttrConfig.json");
+    // let saturatedConfig = await d3.json("../../configs/10AttrConfig.json");
+
+    // allConfigs.nodeLinkConfig = mergeConfigs(baseConfig, nodeLinkConfig);
+    // allConfigs.saturatedConfig = mergeConfigs(baseConfig, saturatedConfig);
+  // })();
+}
+
+async function loadTask(task){
+
+      config = task.config;
+
+      //reset disabled search/submit/answer boxes;
+      //remove vis cover;
+
+      // clear any values in the feedback or search box; 
+      d3.select('#feedback').select('.textarea').property('value', '');
+      //hide feedback box
+      d3.select('#feedback').style('display','none');
+
+      //add cover to vis and disable search and answerBox
+      d3.select('#disableInteraction').style('display','none') 
+      d3.select('#search-input').attr('disabled', null)
+      d3.select('#answerBox').attr('disabled', null) 
+      d3.select('#answerBox').property('value', '')
+      d3.selectAll('.submit').attr('disabled', null); 
+
+      //Clear Selected Node List
+      d3.select('#selectedNodeList')
+      .selectAll('li').remove();
+ 
+      //set div of correct display type to visible; 
+      d3.selectAll('.answerCard').style('display', 'none');
+
+      switch(task.replyType) {
+        case 'singleNodeSelection':
+          d3.select('#nodeAnswer').style('display', 'inline');
+          break;
+        case 'multipleNodeSelection':
+              d3.select('#nodeAnswer').style('display', 'inline');
+              break;
+        case 'value':
+            console.log('here2')
+
+          d3.select('#valueAnswer').style('display', 'inline');
+          break;
+        default:
+          // code block
+      } 
+
+      
+  
+
+      d3.select("#taskArea")
+      .select(".card-header-title")
+      .text(task.prompt + " (" + task.taskID + ")");
+
+      await loadNewGraph(config.graphFiles[config.loadedGraph]); 
+      
+    // update global variables from config;
+     setGlobalScales();
+
+      //pass in workerID to setupProvenance
+      setUpProvenance(getNodeState(graph.nodes));
 
 
-    let baseConfig = await d3.json("../../configs/baseConfig.json");
-    let nodeLinkConfig = await d3.json("../../configs/5AttrConfig.json");
-    let saturatedConfig = await d3.json("../../configs/10AttrConfig.json");
+      //Set up observers for provenance graph
+      setUpObserver("nodes", highlightSelectedNodes);
+      // setUpObserver("nodes", highlightAnswerNodes);
 
-    allConfigs.nodeLinkConfig = mergeConfigs(baseConfig, nodeLinkConfig);
-    allConfigs.saturatedConfig = mergeConfigs(baseConfig, saturatedConfig);
-  })();
+      update();
 }
 
 function highlightSelectedNodes(state) {
@@ -354,17 +454,57 @@ function selectNode(d) {
 
   selectedList = selectedListEnter.merge(selectedList);
   selectedList.text(d => d.shortName);
+ 
+  validateAnswer();
 
-  d3.select(".submit").on("click", () => {
-    //Unselect to actually send data to the database;
-  });
-  //either enable or disable the submit button;
-  d3.select("#submitNode").attr("disabled", () => {
-    let hasAnswer = graph.nodes.filter(n => n.hardSelect).length > 0;
 
-    //function that checks if the selected answer is acceptable.
-    return hasAnswer ? null : true;
-  });
+}
+
+function validateAnswer(){
+
+  let isValid;
+  let errorMsg;
+  let numSelectedNodes =  graph.nodes.filter(n => n.hardSelect).length
+
+  let submitSelector = '#submitNode'
+
+  switch (tasks[currentTask].replyType){
+    case 'singleNodeSelection':
+      isValid =  numSelectedNodes === 1;
+
+      if (numSelectedNodes > 1){
+        errorMsg='Too many nodes selected, please select a single node as your answer.'
+      }
+
+      if (numSelectedNodes < 1){
+        errorMsg='No nodes selected.'
+      }
+      break
+    case 'multipleNodeSelection':
+        isValid = graph.nodes.filter(n => n.hardSelect).length > 1;
+
+        if (numSelectedNodes <2){
+          errorMsg='Please select all nodes that answer this task.'
+        }
+  
+        if (numSelectedNodes < 1){
+          errorMsg='No nodes selected.'
+        }
+
+      break
+    case 'value':
+        isValid =d3.select('#answerBox').property("value").length > 0;
+        submitSelector = '#submitText'
+        errorMsg = 'Please enter a value in the answer box.';
+        console.log('value ', isValid)
+      break;
+  }
+
+
+  d3.select(submitSelector).attr("disabled",isValid ? null : true);
+  //toggle visibility of error message;
+  d3.select(".errorMsg").style('display',isValid ? 'none' : 'inline')
+  d3.select('.errorMsg').text(errorMsg)
 }
 
 function updateVis() {
@@ -505,6 +645,7 @@ function updateVis() {
 
     node
       .select("text")
+      .classed('selected', d=>d.hardSelect)
       .style("font-size", config.nodeLink.labelSize[config.graphSize])
       .text(d => d[config.nodeLink.labelAttr])
       .attr("y", d =>
@@ -549,8 +690,10 @@ function updateVis() {
 
     node
       .select(".selectBox")
+      .classed('selected', d=>d.hardSelect)
       .attr("width", checkboxSize)
-      .attr("height", checkboxSize)
+      //if there is no selection to be made for this task, don't draw the checkbox
+      .attr("height", tasks[currentTask].replyType !== 'value' ? checkboxSize : 0)
       .attr("x", function(d) {
         let nodeLabel = d3
           .select(d3.select(this).node().parentNode)
@@ -577,15 +720,7 @@ function updateVis() {
 
   //set callback for free form answer input box
 
-  d3.select("#answerBox").on("input", function() {
-    //either enable or disable the submit button;
-    d3.select("#submitText").attr("disabled", () => {
-      let hasAnswer = d3.select(this).property("value").length > 0;
-
-      //function that checks if the selected answer is acceptable.
-      return hasAnswer ? null : true;
-    });
-  });
+  d3.select("#answerBox").on("input", validateAnswer);
 
   d3.select("#search-input").on("change", function() {
     let selectedOption = d3.select(this).property("value");
@@ -1140,6 +1275,7 @@ function updateVis() {
     wasDragged = false;
     
   }
+
   drawLegend();
 }
 
