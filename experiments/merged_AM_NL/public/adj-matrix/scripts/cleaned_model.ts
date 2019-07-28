@@ -1907,6 +1907,25 @@ class View {
           .attr('x', columnPosition + barMargin.left)
           .attr('y', barMargin.top) // as y is set by translate
           .attr('fill', '#8B8B8B')
+          .on('mouseover', function (d) {
+            //if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
+              that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
+
+              let matrix = this.getScreenCTM()
+                .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+
+              that.tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+
+              that.tooltip.html(Math.round(d[column]))
+                .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+                .style("top", (window.pageYOffset + matrix.f - 10) + "px");
+            //}
+          })
+          .on('mouseout', (d)=>  {
+            that.tooltip.transition().duration(25).style("opacity", 0);
+          })
           .transition()
           .duration(2000)
           .attr('width', (d, i) => { return attributeScales[column](d[column]); })
