@@ -406,6 +406,7 @@ class View {
 
   constructor(controller) {
     this.controller = controller;
+
     this.controller.clickedCells = new Set();
     this.datumID = 'screen_name';
     this.clickFunction = (d, i, nodes) => {
@@ -2324,6 +2325,23 @@ class Controller {
 
   loadTask(taskNum){
     this.taskNum = taskNum;
+    this.task = this.tasks[this.taskNum];
+    this.configuration = this.task.config;
+    let obj = {
+      "domain": [true, false],
+      "range": ["#e86b45", '#fff'],
+      "labels": ['answer', 'not answer'],
+      'glyph': 'rect',
+      'label': 'selected'
+    }
+
+    //this.configuration = result;
+    this.configuration.attributeScales.node['selected'] = obj;
+    this.configuration.state = {}
+    this.configuration.state.adjMatrix = {};
+    this.configuration.state.adjMatrix.sortKey = 'shortName'
+    //configuration.state.adjMatrix.sortKey
+    this.reload();
 
     // load data file
     // render vis from configurations
@@ -2332,8 +2350,10 @@ class Controller {
   }
   async loadTasks() {
     this.taskNum = 0;
+    this.tasks = taskList;
     // work here to disambiguate task stuff TODO
-    let taskConfigs = await d3.json("./../taskLists/am_large.json").then((data) => {
+    /*
+    let taskConfigs = await d3.json("./../../taskLists/am_large.json").then((data) => {
       //this.tasks = data.tasks;
       this.configuration = data.task1.config;
       this.tasks = [data.task1];
@@ -2354,7 +2374,7 @@ class Controller {
       //configuration.state.adjMatrix.sortKey
       this.reload();
 
-    });
+    });*/
 
     //let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
     //if (this.tenAttr) {
@@ -2431,6 +2451,20 @@ class Controller {
   private hoverRow: any;
   private hoverCol: any;
 
+  sizeLayout(){
+    let targetDiv = d3.select("#targetSize");
+    let width = targetDiv.style("width").replace("px", ""),
+      height = targetDiv.style("height").replace("px", "");
+    let taskBarHeight = 74;
+    let panelDimensions  = {}
+    panelDimensions.width = width * 0.25;
+    panelDimensions.height = height - taskBarHeight;
+    console.log(panelDimensions);
+    d3.select("#visPanel").style("width", panelDimensions.width + "px");
+    d3.select('#panelDiv').style('display','none');
+    d3.select('#interactiveFreeFormMain').style('width',width*0.75);
+
+  }
   constructor() {
     this.clickedRow = {}
     this.clickedCol = {}
@@ -2440,6 +2474,8 @@ class Controller {
 
     this.loadClearButton();
     this.loadTasks();
+    this.loadTask(0);
+    this.sizeLayout();
 
     //this.loadConfigs();
 

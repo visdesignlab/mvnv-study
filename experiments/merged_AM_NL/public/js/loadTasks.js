@@ -28,7 +28,7 @@ async function loadTasks() {
   let conditionsObj = await conditionsRef.get().catch(function(error) {
     console.log("Error getting document:", error);
   });
-
+  console.log(conditionsObj);
   let conditions = conditionsObj.data().conditions;
   studyTracking.numConditions = conditions.length;
 
@@ -64,9 +64,9 @@ async function loadTasks() {
 
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (selectedVis === "nodeLink") {
-    d3.select("#adjMatrix").remove();
+    d3.select(".adjMatrix").remove();
   } else {
-    d3.select("#nodeLink").remove();
+    d3.select(".nodeLink").remove();
   }
 
   //load script tags for the appropriate vis technique;
@@ -82,6 +82,7 @@ async function loadTasks() {
 // //   dynamically load only js/css relevant to the vis approach being used;
  const loadAllScripts = async () => {
     return await Promise.all(scriptTags[selectedVis].map(async src => {
+      console.log(src);
         return await loadScript(src,()=>'')
       }))
   }

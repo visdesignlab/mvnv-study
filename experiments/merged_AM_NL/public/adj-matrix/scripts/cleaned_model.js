@@ -1958,6 +1958,8 @@ var Controller = /** @class */ (function () {
         this.hoverCol = {};
         this.loadClearButton();
         this.loadTasks();
+        this.loadTask(0);
+        this.sizeLayout();
         //this.loadConfigs();
         /*console.log(this.configuration);
     
@@ -2000,6 +2002,22 @@ var Controller = /** @class */ (function () {
     };
     Controller.prototype.loadTask = function (taskNum) {
         this.taskNum = taskNum;
+        this.task = this.tasks[this.taskNum];
+        this.configuration = this.task.config;
+        var obj = {
+            "domain": [true, false],
+            "range": ["#e86b45", '#fff'],
+            "labels": ['answer', 'not answer'],
+            'glyph': 'rect',
+            'label': 'selected'
+        };
+        //this.configuration = result;
+        this.configuration.attributeScales.node['selected'] = obj;
+        this.configuration.state = {};
+        this.configuration.state.adjMatrix = {};
+        this.configuration.state.adjMatrix.sortKey = 'shortName';
+        //configuration.state.adjMatrix.sortKey
+        this.reload();
         // load data file
         // render vis from configurations
         // add observers and new provenance graph
@@ -2007,69 +2025,70 @@ var Controller = /** @class */ (function () {
     };
     Controller.prototype.loadTasks = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var taskConfigs, task;
+            var task;
             var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        this.taskNum = 0;
-                        return [4 /*yield*/, d3.json("./../taskLists/am_large.json").then(function (data) {
-                                //this.tasks = data.tasks;
-                                _this.configuration = data.task1.config;
-                                _this.tasks = [data.task1];
-                                var obj = {
-                                    "domain": [true, false],
-                                    "range": ["#e86b45", '#fff'],
-                                    "labels": ['answer', 'not answer'],
-                                    'glyph': 'rect',
-                                    'label': 'selected'
-                                };
-                                //this.configuration = result;
-                                _this.configuration.attributeScales.node['selected'] = obj;
-                                _this.configuration.state = {};
-                                _this.configuration.state.adjMatrix = {};
-                                _this.configuration.state.adjMatrix.sortKey = 'shortName';
-                                //configuration.state.adjMatrix.sortKey
-                                _this.reload();
-                            })];
-                    case 1:
-                        taskConfigs = _a.sent();
-                        //let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
-                        //if (this.tenAttr) {
-                        //  taskConfig = "../configs/10AttrConfig.json"
-                        //} else if (this.fiveAttr) {
-                        //  taskConfig = "../configs/5AttrConfig.json"
-                        //}
-                        //let that = this;
-                        /*
-                        Promise.all([
-                          d3.json("../configs/baseConfig.json"),
-                          d3.json(taskConfig),
-                          d3.json("../configs/state.json")
-                        ]).then((configComponents) => {
-                          /*that.setupCSS(configComponents[0]);
-                          that.setupExports(configComponents[0], configComponents[1]);
-                          let components = [configComponents[0], configComponents[1], configComponents[2]];
-                          let result = deepmerge.all(components);
-                    */
-                        // added selected attribute scale
-                        //that.finishConstructing(result);
-                        //})
-                        this.taskNum = 0;
-                        task = this.tasks[this.taskNum];
-                        d3.select("#taskArea")
-                            .select(".card-header-title")
-                            .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
-                        d3.select("#next").on("click", function () {
-                            _this.taskNum = d3.min([_this.taskNum + 1, _this.tasks.length - 1]);
-                            _this.loadConfigs();
-                        });
-                        d3.select("#previous").on("click", function () {
-                            _this.taskNum = d3.max([_this.taskNum - 1, 0]);
-                            _this.loadConfigs();
-                        });
-                        return [2 /*return*/];
-                }
+                this.taskNum = 0;
+                this.tasks = taskList;
+                // work here to disambiguate task stuff TODO
+                /*
+                let taskConfigs = await d3.json("./../../taskLists/am_large.json").then((data) => {
+                  //this.tasks = data.tasks;
+                  this.configuration = data.task1.config;
+                  this.tasks = [data.task1];
+            
+                  let obj = {
+                    "domain": [true, false],
+                    "range": ["#e86b45", '#fff'],
+                    "labels": ['answer', 'not answer'],
+                    'glyph': 'rect',
+                    'label': 'selected'
+                  }
+            
+                  //this.configuration = result;
+                  this.configuration.attributeScales.node['selected'] = obj;
+                  this.configuration.state = {}
+                  this.configuration.state.adjMatrix = {};
+                  this.configuration.state.adjMatrix.sortKey = 'shortName'
+                  //configuration.state.adjMatrix.sortKey
+                  this.reload();
+            
+                });*/
+                //let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
+                //if (this.tenAttr) {
+                //  taskConfig = "../configs/10AttrConfig.json"
+                //} else if (this.fiveAttr) {
+                //  taskConfig = "../configs/5AttrConfig.json"
+                //}
+                //let that = this;
+                /*
+                Promise.all([
+                  d3.json("../configs/baseConfig.json"),
+                  d3.json(taskConfig),
+                  d3.json("../configs/state.json")
+                ]).then((configComponents) => {
+                  /*that.setupCSS(configComponents[0]);
+                  that.setupExports(configComponents[0], configComponents[1]);
+                  let components = [configComponents[0], configComponents[1], configComponents[2]];
+                  let result = deepmerge.all(components);
+            */
+                // added selected attribute scale
+                //that.finishConstructing(result);
+                //})
+                this.taskNum = 0;
+                task = this.tasks[this.taskNum];
+                d3.select("#taskArea")
+                    .select(".card-header-title")
+                    .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
+                d3.select("#next").on("click", function () {
+                    _this.taskNum = d3.min([_this.taskNum + 1, _this.tasks.length - 1]);
+                    _this.loadConfigs();
+                });
+                d3.select("#previous").on("click", function () {
+                    _this.taskNum = d3.max([_this.taskNum - 1, 0]);
+                    _this.loadConfigs();
+                });
+                return [2 /*return*/];
             });
         });
     };
@@ -2092,6 +2111,18 @@ var Controller = /** @class */ (function () {
             //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
             //that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
         });
+    };
+    Controller.prototype.sizeLayout = function () {
+        var targetDiv = d3.select("#targetSize");
+        var width = targetDiv.style("width").replace("px", ""), height = targetDiv.style("height").replace("px", "");
+        var taskBarHeight = 74;
+        var panelDimensions = {};
+        panelDimensions.width = width * 0.25;
+        panelDimensions.height = height - taskBarHeight;
+        console.log(panelDimensions);
+        d3.select("#visPanel").style("width", panelDimensions.width + "px");
+        d3.select('#panelDiv').style('display', 'none');
+        d3.select('#interactiveFreeFormMain').style('width', width * 0.75);
     };
     Controller.prototype.clearView = function () {
         d3.select('#topology').selectAll('*').remove();
