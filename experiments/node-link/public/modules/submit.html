@@ -131,7 +131,8 @@
 
         <br />
 
-        <div class="errorMsg" id="invalidAnswer" style="display:none">
+        <div  id="invalidAnswer" style="display:none">
+          <p class="errorMsg">
           In order to submit successfully, please be sure to answer all the questions with "*".
           </p>
         </div>
@@ -139,6 +140,10 @@
 
 
         <div id="codeBox" style="display:none">
+
+            <p id="submitSuccessful"></p>
+
+
           <p>
             <strong>Please copy and paste the following code back on Mechanical Turk before closing this
               window:</strong>
@@ -174,11 +179,15 @@
   <script>
     (async function () {
       let participant = await db.collection("participants").doc(workerID).get();
-      participantCode = participant.data().completionCode;
+      let participantCode = participant.data().completionCode;
 
+      let startTime = participant.data().startTime;
+
+      let endTime = Date.now();
       //set end time 
        db.collection("participants").doc(workerID).set({
-                    endTime: Date.now()
+                    endTime:endTime,
+                    minutesToComplete:(endTime-startTime)/60000 //60000 milliseconds in a minute 
         },{ merge: true });
 
 
@@ -211,8 +220,9 @@
                 demographics[qname] = d3.select(this).property("value");
               }
             }
-          })      
-          isValid = localSelection ? true : false; 
+          })    
+          
+          isValid = isValid ? (localSelection ? true : false ) : false; 
         })
 
         //general feedback. 
@@ -221,6 +231,7 @@
           
          //if everything checks out, 
           if (isValid){
+            console.log(demographics,feedback)
 
           //push their responses to firebase;
             db.collection("participants").doc(workerID).set({
@@ -235,6 +246,7 @@
             d3.select('#submitFeedback').attr('disabled', true)
 
             //display the completion code; 
+            d3.select('#submitSuccessful').text('Submit Successful! Thanks again for participating in this study.');
             d3.select('#codeBox').style('display','inline')
             d3.select('#postId').text(participantCode)
 

@@ -38,6 +38,11 @@ body {
     font-style:italic;
 }
 
+#submitSuccessful{
+    color:#4285f4;
+    font-weight:bold;
+}
+
 #nextTask{
     margin:10px 0px;
 

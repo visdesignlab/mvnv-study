@@ -34,13 +34,13 @@ async function loadTasks() {
   //find out which group to delegate and load appropriate taskList json file; ;
   var conditionsRef = db
     .collection("studyTracking")
-    .doc("FZP1xMCY2bNOu5Iyi9KP");
+    .doc("conditions");
 
   let conditionsObj = await conditionsRef.get().catch(function(error) {
     console.log("Error getting document:", error);
   });
 
-  let conditions = conditionsObj.data().conditions;
+  let conditions = conditionsObj.data().conditionList;
   studyTracking.numConditions = conditions.length;
 
   var assignedGroupDoc = db.collection("studyTracking").doc("currentGroup");
