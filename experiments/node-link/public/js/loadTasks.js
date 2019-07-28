@@ -75,9 +75,9 @@ async function loadTasks() {
 
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (selectedVis === "nodeLink") {
-    d3.select("#adjMatrix").remove();
+    d3.selectAll(".adjMatrix").remove();
   } else {
-    d3.select("#nodeLink").remove();
+    d3.selectAll(".nodeLink").remove();
   }
 
   //load script tags for the appropriate vis technique;
