@@ -51,8 +51,7 @@ var Model = /** @class */ (function () {
             //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
             //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
-            console.log("data/network_" + controller.configuration.loadedGraph + ".json");
-            setPanelValuesFromFile(controller.configuration, data);
+            //setPanelValuesFromFile(controller.configuration, data);
             _this.matrix = [];
             _this.scalarMatrix = [];
             _this.nodes = data.nodes;
@@ -77,65 +76,6 @@ var Model = /** @class */ (function () {
             //})
         });
     }
-    Model.prototype.grabTwitterData = function (graph, tweets) {
-        var _this = this;
-        var toRemove = [];
-        var newGraph = { 'nodes': [], 'links': [] };
-        this.graph = graph;
-        //create edges from tweets.
-        tweets = tweets.tweets;
-        tweets.map(function (tweet) {
-            //if a tweet mentions a person, create a 'mentions' edge between the tweeter, and the mentioned person.
-            if (_this.controller.configuration.attributeScales.edge.type.domain.includes("mentions")) {
-                tweet.entities.user_mentions.map(function (mention) {
-                    var source = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
-                    var target = graph.nodes.find(function (n) { return n.id === mention.id; });
-                    if (source && target) {
-                        var link = { 'source': source.id, 'target': target.id, 'type': 'mentions' };
-                        newGraph.links.push(link);
-                        if (!newGraph.nodes.find(function (n) { return n === source; })) {
-                            newGraph.nodes.push(source);
-                        }
-                        if (!newGraph.nodes.find(function (n) { return n === target; })) {
-                            newGraph.nodes.push(target);
-                        }
-                    }
-                    // console.log('link',link)
-                });
-            }
-            //if a tweet retweets another retweet, create a 'retweeted' edge between the re-tweeter and the original tweeter.
-            if (tweet.retweeted_status && _this.controller.configuration.attributeScales.edge.type.domain.includes("retweet")) {
-                var source_1 = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
-                var target_1 = graph.nodes.find(function (n) { return n.id === tweet.retweeted_status.user.id; });
-                if (source_1 && target_1) {
-                    var link = { 'source': source_1.id, 'target': target_1.id, 'type': 'retweet' };
-                    newGraph.links.push(link);
-                    if (!newGraph.nodes.find(function (n) { return n === source_1; })) {
-                        newGraph.nodes.push(source_1);
-                    }
-                    if (!newGraph.nodes.find(function (n) { return n === target_1; })) {
-                        newGraph.nodes.push(target_1);
-                    }
-                }
-            }
-            //if a tweet is a reply to another tweet, create an edge between the original tweeter and the author of the current tweet.
-            if (tweet.in_reply_to_user_id_str && _this.controller.configuration.attributeScales.edge.type.domain.includes("reply")) {
-                var source_2 = graph.nodes.find(function (n) { return n.id === tweet.user.id; });
-                var target_2 = graph.nodes.find(function (n) { return n.id === tweet.in_reply_to_user_id; });
-                if (source_2 && target_2) {
-                    var link = { 'source': source_2.id, 'target': target_2.id, 'type': 'reply' };
-                    newGraph.links.push(link);
-                    if (!newGraph.nodes.find(function (n) { return n === source_2; })) {
-                        newGraph.nodes.push(source_2);
-                    }
-                    if (!newGraph.nodes.find(function (n) { return n === target_2; })) {
-                        newGraph.nodes.push(target_2);
-                    }
-                }
-            }
-        });
-        return newGraph;
-    };
     Model.prototype.isQuant = function (attr) {
         // if not in list
         if (!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)) {
@@ -149,21 +89,130 @@ var Model = /** @class */ (function () {
         }
     };
     Model.prototype.populateSearchBox = function () {
+        var _this = this;
         var names = this.nodes.map(function (node) { return node.screen_name; });
         autocomplete(document.getElementById("myInput"), names);
-        d3.select('#searchButton').on('click', function () {
-            var name = document.getElementById("myInput").value;
-            if (names.indexOf(name) == -1) {
+        d3.select('#searchButton').classed('search', true);
+        d3.select('#searchButton')
+            //.on('click', this.controller.view.clickFunction);
+            .on('click', function () {
+            var nodeID = document.getElementById("myInput").value;
+            if (names.indexOf(nodeID) == -1) {
                 return;
             }
-            var cell = d3.selectAll('.cell')
-                .filter(function (d) { return (d.rowid == name && d.colid == name); });
-            console.log(cell);
+            var action = _this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
+            _this.controller.model.provenance.applyAction(action);
+            /*
+            let cell = d3.selectAll('#' + nodeID + nodeID)
+            //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
+    
+    
             var e = document.createEvent('UIEvents');
-            e.initUIEvent('click', true, true);
+            e.initUIEvent('click', true, true, /* ... */ /*);
             cell.select("rect").node().dispatchEvent(e);
-            console.log(cell.select("rect"));
+            console.log(cell.select("rect"));*/
         });
+    };
+    Model.prototype.getApplicationState = function () {
+        var _this = this;
+        return {
+            currentState: function () { return _this.provenance.graph().current.state; }
+        };
+    };
+    Model.prototype.setUpProvenance = function () {
+        var initialState = {
+            nodes: '',
+            search: '',
+            startTime: Date.now(),
+            endTime: '',
+            time: Date.now(),
+            count: 0,
+            clicked: [],
+            selections: {
+                answerBox: {},
+                attrRow: {},
+                rowLabel: {},
+                colLabel: {},
+                cellcol: {},
+                cellrow: {},
+                search: {}
+            }
+        };
+        var provenance = ProvenanceLibrary.initProvenance(initialState);
+        this.provenance = provenance;
+        var app = this.getApplicationState();
+        this.app = app;
+        var rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel');
+        var columnElements = ['colLabel', 'topoCol'];
+        var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
+        var elementNamesFromSelection = {
+            cellcol: columnElements,
+            colLabel: columnElements,
+            rowLabel: rowElements,
+            attrRow: rowElements,
+            cellrow: rowElements,
+            answerBox: rowElements,
+            search: rowElements.concat(columnElements)
+        };
+        function classAllHighlights(state) {
+            var clickedElements = new Set();
+            var answerElements = new Set();
+            for (var selectionType in state.selections) {
+                for (var selectionElement in elementNamesFromSelection[selectionType]) {
+                    selectionElement = elementNamesFromSelection[selectionType][selectionElement];
+                    for (var node in state.selections[selectionType]) {
+                        if (selectionType == 'answerBox') {
+                            answerElements.add('#' + selectionElement + node);
+                        }
+                        else {
+                            if (selectionType == 'attrRow' || selectionType == 'rowLabel') {
+                                // if both in attrRow and rowLabel, don't highlight element
+                                if (node in state.selections['attrRow'] && node in state.selections['rowLabel'])
+                                    continue;
+                            }
+                            clickedElements.add('#' + selectionElement + node);
+                        }
+                    }
+                }
+            }
+            var clickedSelectorQuery = Array.from(clickedElements).join(',');
+            var answerSelectorQuery = Array.from(answerElements).join(',');
+            clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
+            answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
+            return;
+        }
+        function setUpObservers() {
+            var updateHighlights = function (state) {
+                d3.selectAll('.clicked').classed('clicked', false);
+                d3.selectAll('.answer').classed('answer', false);
+                classAllHighlights(state);
+            };
+            var updateCellClicks = function (state) {
+                var cellNames = [];
+                Object.keys(state.selections.cellcol).map(function (key) {
+                    cellNames = cellNames.concat(state.selections.cellcol[key]);
+                });
+                var cellSelectorQuery = '#' + cellNames.join(',#');
+                // if no cells selected, return
+                d3.selectAll('.clickedCell').classed('clickedCell', false);
+                if (cellSelectorQuery == '#')
+                    return;
+                d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true);
+            };
+            var updateAnswerBox = function (state) {
+                window.controller.view.updateAnswerToggles(state);
+            };
+            provenance.addObserver("selections.rowLabel", updateHighlights);
+            provenance.addObserver("selections.colLabel", updateHighlights);
+            provenance.addObserver("selections.cellcol", updateHighlights);
+            provenance.addObserver("selections.cellrow", updateHighlights);
+            provenance.addObserver("selections.cellcol", updateCellClicks);
+            provenance.addObserver("selections.search", updateHighlights);
+            provenance.addObserver("selections.answerBox", updateHighlights);
+            provenance.addObserver("selections.answerBox", updateAnswerBox);
+        }
+        setUpObservers();
+        return [app, provenance];
     };
     Model.prototype.reload = function () {
         this.controller.loadData(this.nodes, this.edges, this.matrix);
@@ -180,9 +229,9 @@ var Model = /** @class */ (function () {
         this.controller.configuration.state.adjMatrix.sortKey = type;
         if (type == "clusterSpectral" || type == "clusterBary" || type == "clusterLeaf") {
             /*var graph = reorder.graph()
-                .nodes(this.nodes)
-                .links(this.edges)
-                .init();*/
+              .nodes(this.nodes)
+              .links(this.edges)
+              .init();*/
             var graph = reorder.graph()
                 .nodes(this.nodes)
                 .links(this.edges)
@@ -240,9 +289,7 @@ var Model = /** @class */ (function () {
                 return false;
             return true;
         }
-        console.log(this.edges);
         this.edges = this.edges.filter(checkEdge);
-        console.log(this.edges);
         this.maxTracker = { 'reply': 0, 'retweet': 0, 'mentions': 0 };
         // Convert links to matrix; count character occurrences.
         this.edges.forEach(function (link) {
@@ -297,10 +344,24 @@ var View = /** @class */ (function () {
     private orders: any;
   */
     function View(controller) {
+        var _this = this;
         this.controller = controller;
         this.controller.clickedCells = new Set();
+        this.datumID = 'screen_name';
+        this.clickFunction = function (d, i, nodes) {
+            var nodeID = _this.controller.view.determineID(d);
+            // remove hover or clicked from the class name of the objects that are interacted
+            // this is necessary as the click events are attached to the hovered rect in attrRow
+            var interaction = d3.select(nodes[i]).attr('class');
+            interaction = interaction.replace(' hovered', '');
+            interaction = interaction.replace(' clicked', '');
+            interaction = interaction.replace(' answer', '');
+            var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
+            _this.controller.model.provenance.applyAction(action);
+        };
         // set up load
         this.renderLoading();
+        this.mouseoverEvents = [];
         // Add scroll handler to containers
         d3.selectAll('.container').on('mousewheel', scrollHandler);
         function scrollHandler() {
@@ -339,7 +400,7 @@ var View = /** @class */ (function () {
     View.prototype.renderView = function () {
         d3.select('.loading').style('display', 'block').style('opacity', 1);
         this.viewWidth = 1000;
-        this.margins = { left: 85, top: 85, right: 0, bottom: 10 };
+        this.margins = { left: 95, top: 95, right: 0, bottom: 10 };
         this.initalizeEdges();
         this.initalizeAttributes();
         d3.select('.loading').style('display', 'none');
@@ -476,12 +537,11 @@ var View = /** @class */ (function () {
             .attr("x2", this.edgeWidth)
             .attr("y1", 0)
             .attr("y2", this.edgeHeight);
-        console.log("Extra:", extraLine);
         this.edgeColumns
             .append('rect')
-            .classed('highlightCol', true)
+            .classed('topoCol', true)
             .attr('id', function (d, i) {
-            return "highlightCol" + d[i].colid;
+            return "topoCol" + d[i].colid;
         })
             .attr('x', -this.edgeHeight - this.margins.bottom)
             .attr('y', 0)
@@ -512,37 +572,15 @@ var View = /** @class */ (function () {
         // added highligh row code
         this.edgeRows //.select('#highlightLayer')
             .append('rect')
-            .classed('highlightTopoRow', true)
+            .classed('topoRow', true)
             .attr('id', function (d, i) {
-            return "highlightTopoRow" + d[i].rowid;
+            return "topoRow" + d[i].rowid;
         })
             .attr('x', -this.margins.left)
             .attr('y', 0)
             .attr('width', this.edgeWidth + this.margins.right + this.margins.left)
             .attr('height', this.verticalScale.bandwidth())
-            .attr('fill-opacity', 0)
-            .on('mouseover', function (d, index) {
-            /*this.highlightEdgeNode(d,index,"row");
-    
-            this.highlightEdgeNode(d,index,"row");
-            d3.select(this)
-              .classed('hovered', true);
-              */
-        })
-            .on('mouseout', function () {
-            /*d3.select(this)
-              .classed('hovered', false);*/
-            /*
-          d3.selectAll('.highlightRow')
-            .filter((d: any, i) => { return d.index === index })
-            .classed('hovered', false)*/
-        })
-            .on('click', function (d) {
-            _this.clickedNode(d.index);
-            // click node
-            // select node and turn orange ish
-            // highlight other nodes (add jumps?)
-        });
+            .attr('fill-opacity', 0);
         this.edgeScales = {};
         this.controller.configuration.attributeScales.edge.type.domain.forEach(function (type) {
             // calculate the max
@@ -559,7 +597,8 @@ var View = /** @class */ (function () {
         var cells = this.edgeRows.selectAll(".cell")
             .data(function (d) { return d; /*.filter(item => item.z > 0)*/ })
             .enter().append('g')
-            .attr("class", "cell");
+            .attr("class", "cell")
+            .attr('id', function (d) { return d.colid + d.rowid; });
         if (this.controller.configuration.adjMatrixValues.edgeBars) {
             // bind squares to cells for the mouse over effect
             cells
@@ -618,6 +657,8 @@ var View = /** @class */ (function () {
             if (cell.colid !== cell.rowid) {
                 that.addHighlightNodesToDict(_this.controller.hoverRow, cell.colid, cellID); // Add row (colid)
             }
+            // add mouseover events
+            _this.mouseoverEvents.push({ time: new Date().getTime(), event: cellID });
             that.addHighlightNodesToDict(_this.controller.hoverCol, cell.colid, cellID); // Add col (colid)
             d3.selectAll('.hovered').classed('hovered', false);
             that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
@@ -636,32 +677,57 @@ var View = /** @class */ (function () {
             //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
             //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
         })
-            .on("click", function (cell, index, nodes) {
-            var cellElement = d3.select(nodes[index]).selectAll('rect');
-            var cellID = cell.rowid + cell.colid;
-            console.log(cellElement);
-            cellElement.classed('clickedCell', !_this.controller.clickedCells.has(cellID));
-            console.log(cellElement.classed('clickedCell'));
-            if (_this.controller.clickedCells.has(cellID)) {
-                _this.controller.clickedCells.delete(cellID);
-                that.removeHighlightNodesToDict(_this.controller.clickedRow, cell.rowid, cellID); // Add row (rowid)
-                if (cell.colid !== cell.rowid) {
-                    that.removeHighlightNodesToDict(_this.controller.clickedRow, cell.colid, cellID); // Add row (colid)
-                }
-                that.removeHighlightNodesToDict(_this.controller.clickedCol, cell.colid, cellID); // Add col (colid)
-            }
-            else {
-                _this.controller.clickedCells.add(cellID);
-                that.addHighlightNodesToDict(_this.controller.clickedRow, cell.rowid, cellID); // Add row (rowid)
-                if (cell.colid !== cell.rowid) {
-                    that.addHighlightNodesToDict(_this.controller.clickedRow, cell.colid, cellID); // Add row (colid)
-                }
-                that.addHighlightNodesToDict(_this.controller.clickedCol, cell.colid, cellID); // Add col (colid)
-            }
-            d3.selectAll('.clicked').classed('clicked', false);
-            that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
-            that.renderHighlightNodesFromDict(_this.controller.clickedCol, 'clicked', 'Col');
+            .on('click', function (d, i, nodes) {
+            // only trigger click if edge exists
+            if (d.combined != 0 || d.retweet != 0 || d.mentions != 0) {
+                _this.clickFunction(d, i, nodes);
+            } // TODO PROBLEM: Fix the fact that hover inteferes with setting class name (as it also appears)
+            return;
         });
+        /*(d, i, nodes) => {
+    
+          let nodeID = this.determineID(d);
+    
+          let action = this.changeInteractionWrapper(nodeID, i, nodes);
+          this.controller.model.provenance.applyAction(action);
+    
+    
+        });*/
+        /*      .on("click", (cell, index, nodes) => {
+                let cellElement = d3.select(nodes[index]).selectAll('rect');
+                let cellID = cell.rowid + cell.colid;
+                console.log(cellElement);
+    
+                if (cell.combined != 0 || cell.mentions != 0 || cell.retweets != 0) {
+    
+                }
+    
+                cellElement.classed('clickedCell', !this.controller.clickedCells.has(cellID))
+                console.log(cellElement.classed('clickedCell'));
+    
+    
+                if (this.controller.clickedCells.has(cellID)) {
+                  this.controller.clickedCells.delete(cellID);
+                  that.removeHighlightNodesToDict(this.controller.clickedRow, cell.rowid, cellID);  // Add row (rowid)
+                  if (cell.colid !== cell.rowid) {
+                    that.removeHighlightNodesToDict(this.controller.clickedRow, cell.colid, cellID);  // Add row (colid)
+                  }
+                  that.removeHighlightNodesToDict(this.controller.clickedCol, cell.colid, cellID);  // Add col (colid)
+                } else {
+                  this.controller.clickedCells.add(cellID);
+                  that.addHighlightNodesToDict(this.controller.clickedRow, cell.rowid, cellID);  // Add row (rowid)
+                  if (cell.colid !== cell.rowid) {
+                    that.addHighlightNodesToDict(this.controller.clickedRow, cell.colid, cellID);  // Add row (colid)
+                  }
+    
+                  that.addHighlightNodesToDict(this.controller.clickedCol, cell.colid, cellID);  // Add col (colid)
+                }
+    
+                d3.selectAll('.clicked').classed('clicked', false);
+                that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
+                that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
+    
+              });*/
         // color squares
         this.controller.clickedRow = {};
         this.controller.clickedCol = {};
@@ -752,16 +818,16 @@ var View = /** @class */ (function () {
             d3.selectAll("text").classed("active", false);
             that.tooltip.transition().duration(250).style("opacity", 0);
             // encapsulate in one function
-            d3.selectAll('.highlightAttrRow')
+            d3.selectAll('.attrRow')
                 .classed('hovered', false);
-            d3.selectAll('.highlightTopoRow')
+            d3.selectAll('.topoRow')
                 .classed('hovered', false);
             d3.selectAll('.highlightCol')
                 .classed('hovered', false);
         }
         this.order = this.controller.getOrder();
         this.edgeRows.append("text")
-            .attr('class', 'nodeLabel')
+            .attr('class', 'rowLabel')
             .attr("id", function (d, i) {
             return "nodeLabelRow" + d[i].rowid;
         })
@@ -771,7 +837,7 @@ var View = /** @class */ (function () {
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
             .style("font-size", 7.5 + "px")
-            .text(function (d, i) { return _this.nodes[i].name; })
+            .text(function (d, i) { return _this.nodes[i].shortName; })
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
             var rowID = d[0].rowid;
@@ -785,70 +851,34 @@ var View = /** @class */ (function () {
             .on('mouseover', function (d, i, nodes) {
             var rowID = d[0].rowid;
             that.addHighlightNodesToDict(_this.controller.hoverRow, rowID, rowID); // Add row (rowid)
+            _this.mouseoverEvents.push({ time: new Date().getTime(), event: 'rowLabel' + rowID });
             //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
             d3.selectAll('.hovered').classed('hovered', false);
             that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
             //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
         })
-            .on('click', function (d, i, nodes) {
-            /*let cellElement = d3.select(nodes[index]).selectAll('rect');
-            console.log(cellElement);
-            cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
-            console.log(cellElement.classed('clickedCell'));
-            let cellID = cell.rowid + cell.colid;*/
-            console.log(d[i]);
-            var nodeID = d[0].rowid;
-            // will add or remove node
-            console.log(d);
-            // will add or remove node
-            /*
-            that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // FOR ANSWER
-            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
-            d3.selectAll('.answer').classed('answer', false);
-            d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
-            that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
-            that.addHighlightNodesToDict(_this.controller.clickedRow, nodeID, nodeID); // FOR ANSWER
-            console.log(nodeID, _this.controller.clickedRow, nodeID in _this.controller.clickedRow);
-            d3.selectAll('.clicked').classed('clicked', false);
-            d3.selectAll('.clicked').classed('clicked', nodeID in _this.controller.clickedRow);
-            that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
-            // selects row text
-            //d3.select(nodes[i]).classed('answer', (data) => {
-            //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
-            //});
-            // classes row
-            //this.classHighlights(d.screen_name, 'Row', 'answer');
-            //this.selectNode(d[0].rowid);
-        });
+            .on('click', this.clickFunction); /*(d, i, nodes) => {
+  
+          let nodeID = this.determineID(d);
+  
+          let action = this.changeInteractionWrapper(nodeID, i, nodes);
+          this.controller.model.provenance.applyAction(action);
+  
+  
+        });*/
         this.edgeColumns.append("text")
             .attr("id", function (d, i) {
             return "nodeLabelCol" + d[i].rowid;
         })
-            .attr('class', 'nodeLabel')
+            .attr('class', 'colLabel')
             .attr('z-index', 30)
             .attr("y", 3)
             .attr('x', 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
             .style("font-size", 7.5 + "px")
-            .text(function (d, i) { return _this.nodes[i].name; })
-            .on('click', function (d, index, nodes) {
-            console.log(d[index]);
-            var nodeID = d[0].rowid;
-            // will add or remove node
-            console.log(nodeID, _this.controller.clickedCol, nodeID in _this.controller.clickedCol);
-            that.addHighlightNodesToDict(_this.controller.clickedCol, nodeID, nodeID); // Add row (rowid)
-            d3.selectAll('.clicked').classed('clicked', false);
-            that.renderHighlightNodesFromDict(_this.controller.clickedCol, 'clicked', 'Col');
-            that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
-            // selects row text
-            //d3.select(nodes[i]).classed('answer', (data) => {
-            //  return !this.controller.configuration.state.selectedNodes.includes(data[0].rowid)
-            //});
-            //d3.select(nodes[index]).classed('clicked', !this.controller.configuration.state.adjMatrix.columnSelectedNodes.includes(d[index].rowid));
-            //this.classHighlights(d.screen_name, 'Col', 'clicked');
-            //this.selectNeighborNodes(d[index].rowid);
-        })
+            .text(function (d, i) { return _this.nodes[i].shortName; })
+            .on('click', this.clickFunction)
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
             var colID = d[0].rowid; // as rows and columns are flipped
@@ -861,8 +891,8 @@ var View = /** @class */ (function () {
         })
             .on('mouseover', function (d, i, nodes) {
             var colID = d[0].rowid;
-            console.log(colID, d);
             that.addHighlightNodesToDict(_this.controller.hoverCol, colID, colID); // Add row (rowid)
+            _this.mouseoverEvents.push({ time: new Date().getTime(), event: 'colLabel' + colID });
             //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
             d3.selectAll('.hovered').classed('hovered', false);
             that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
@@ -872,6 +902,87 @@ var View = /** @class */ (function () {
             .append("div")
             .attr("class", "tooltip")
             .style("opacity", 0);
+    };
+    /**
+     * [changeInteractionWrapper description]
+     * @param  nodeID ID of the node being interacted with
+     * @param  node   nodes corresponding to the element class interacted with (from d3 select nodes[i])
+     * @param  interactionType class name of element interacted with
+     * @return        [description]
+     */
+    View.prototype.changeInteractionWrapper = function (nodeID, node, interactionType) {
+        var _this = this;
+        return {
+            label: interactionType,
+            action: function (nodeID) {
+                var currentState = _this.controller.model.app.currentState();
+                //add time stamp to the state graph
+                currentState.time = Date.now();
+                console.log(currentState);
+                var interactionName = interactionType; //cell, search, etc
+                var interactedElement = interactionType;
+                if (interactionName == 'cell') {
+                    var cellData = d3.select(node).data()[0]; //
+                    nodeID = cellData.colid;
+                    interactedElement = cellData.colid + cellData.rowid;
+                    _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
+                    _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+                    nodeID = cellData.rowid;
+                    interactionName = interactionName + 'row';
+                }
+                _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
+                return currentState;
+            },
+            args: [nodeID]
+        };
+    };
+    /**
+     * Used to determine the ID based upon the datum element.
+     * @param  data data returned as the first argument of d3 selection
+     * @return      a list containing the id (ID's) of data elements
+     */
+    View.prototype.determineID = function (data) {
+        // if attr Row
+        if (data[this.datumID]) {
+            return data[this.datumID];
+        }
+        else if (data.colid) { // if cell
+            return data.colid + data.rowid;
+        }
+        else { // if colLabel or rowLabel
+            return data[0].rowid;
+        }
+    };
+    /**
+     * Adds the interacted node to the state object.
+     * @param  state           [description]
+     * @param  nodeID          [description]
+     * @param  interaction     [description]
+     * @param  interactionName [description]
+     * @return                 [description]
+     */
+    View.prototype.changeInteraction = function (state, nodeID, interaction, interactionName) {
+        if (interactionName === void 0) { interactionName = interaction; }
+        // if there have been any mouseover events since the last submitted action, log them in provenance
+        if (this.mouseoverEvents.length > 1) {
+            state.selections.previousMouseovers = this.mouseoverEvents;
+            this.mouseoverEvents = [];
+        }
+        if (nodeID in state.selections[interaction]) {
+            // Remove element if in list, if list is empty, delete key
+            var currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
+            if (currentIndex > -1) {
+                state.selections[interaction][nodeID].splice(currentIndex, 1);
+                if (state.selections[interaction][nodeID].length == 0)
+                    delete state.selections[interaction][nodeID];
+            }
+            else {
+                state.selections[interaction][nodeID].push(interactionName);
+            }
+        }
+        else {
+            state.selections[interaction][nodeID] = [interactionName];
+        }
     };
     /**
      * [mouseoverEdge description]
@@ -959,7 +1070,6 @@ var View = /** @class */ (function () {
             var legendFile = 'assets/';
             legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge';
             legendFile += '.png';
-            console.log(legendFile);
             d3.select('#legends').append('g').append("svg:image")
                 .attr('x', 0)
                 .attr('y', 0)
@@ -1070,7 +1180,7 @@ var View = /** @class */ (function () {
     View.prototype.classHighlights = function (nodeID, rowOrCol, className) {
         if (rowOrCol === void 0) { rowOrCol = 'Row'; }
         // select attr and topo highlight
-        d3.selectAll('#highlight' + 'Attr' + rowOrCol + nodeID + ',#highlight' + 'Topo' + rowOrCol + nodeID)
+        d3.selectAll('Attr' + rowOrCol + nodeID + ',' + 'Topo' + rowOrCol + nodeID)
             .classed(className, true);
         //d3.selectAll('#highlight' + 'Topo' + rowOrCol + nodeID)
         //  .classed(className, true);*
@@ -1089,20 +1199,20 @@ var View = /** @class */ (function () {
             nodeID = node.rowid;
         }
         // highlight attr
-        this.highlightNode(nodeID, 'Attr');
-        this.highlightNode(nodeID, 'Topo');
+        this.highlightNode(nodeID, 'attr');
+        this.highlightNode(nodeID, 'topo');
     };
     View.prototype.highlightRowAndCol = function (node) {
         var nodeID = node.screen_name;
         if (node.screen_name == null) {
             nodeID = node.colid;
         }
-        this.highlightNode(nodeID, 'Attr');
+        this.highlightNode(nodeID, 'attr');
         this.highlightNode(nodeID, '', 'Col');
     };
     View.prototype.highlightNode = function (nodeID, attrOrTopo, rowOrCol) {
         if (rowOrCol === void 0) { rowOrCol = 'Row'; }
-        d3.selectAll('#highlight' + attrOrTopo + rowOrCol + nodeID)
+        d3.selectAll('.' + attrOrTopo + rowOrCol + nodeID)
             .classed('hovered', true);
     };
     //u: BCC    BCCINVITADOS2019
@@ -1133,22 +1243,23 @@ var View = /** @class */ (function () {
      * @param  nodeID       [description]
      * @param  removingNode [description]
      * @return              [description]
-     */
-    View.prototype.removeHighlightNode = function (removingNode) {
-        // remove from selected nodes
-        for (var nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
-            //finds the position of removing node in the nodes array
-            var index = this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].indexOf(removingNode);
-            // keep on removing all places of removing node
-            if (index > -1) {
-                this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].splice(index, 1);
-                // delete properties if no nodes left
-                if (this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].length == 0) {
-                    delete this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID];
-                }
-            }
+  
+    removeHighlightNode(removingNode: string) {
+      // remove from selected nodes
+  
+      for (let nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
+        //finds the position of removing node in the nodes array
+        let index = this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].indexOf(removingNode);
+        // keep on removing all places of removing node
+        if (index > -1) {
+          this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].splice(index, 1);
+          // delete properties if no nodes left
+          if (this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID].length == 0) {
+            delete this.controller.configuration.state.adjMatrix.highlightedNodes[nodeID];
+          }
         }
-    };
+      }
+    }*/
     View.prototype.nodeDictContainsPair = function (dict, nodeToHighlight, interactedElement) {
         if (nodeToHighlight in dict) {
             return dict[nodeToHighlight].has(interactedElement);
@@ -1196,22 +1307,17 @@ var View = /** @class */ (function () {
         if (rowOrCol === void 0) { rowOrCol = 'Row'; }
         //highlight correct nodes
         var cssSelector = '';
-        console.log(dict);
         for (var nodeID in dict) {
             if (rowOrCol == 'Row') {
-                console.log(dict, nodeID, cssSelector);
-                cssSelector += '#highlight' + 'Attr' + rowOrCol + nodeID + ',' + '#highlight' + 'Topo' + rowOrCol + nodeID + ',';
+                cssSelector += '#attr' + rowOrCol + nodeID + ',';
             }
-            else {
-                cssSelector += '#highlight' + rowOrCol + nodeID + ',';
-            }
+            cssSelector += '#topo' + rowOrCol + nodeID + ',';
             if (classToRender == 'answer' && rowOrCol == "Row") {
                 cssSelector += '#nodeLabelRow' + nodeID + ',';
             }
         }
         // remove last comma
         cssSelector = cssSelector.substring(0, cssSelector.length - 1);
-        console.log(cssSelector);
         if (cssSelector == '') {
             return;
         }
@@ -1223,9 +1329,9 @@ var View = /** @class */ (function () {
         d3.selectAll('.neighborSelected').classed('neighborSelected', false);
         // re add all highlights
         for (var nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
-            d3.select('#highlight' + 'Topo' + 'Row' + nodeID)
+            d3.select('topo' + 'Row' + nodeID)
                 .classed('neighborSelected', true);
-            d3.select('#highlight' + 'Attr' + 'Row' + nodeID)
+            d3.select('attr' + 'Row' + nodeID)
                 .classed('neighborSelected', true);
         }
     };
@@ -1237,10 +1343,10 @@ var View = /** @class */ (function () {
         else {
             this.controller.configuration.state.selectedNodes.push(nodeID);
         }
-        var attrRow = d3.selectAll('#highlight' + 'Attr' + 'Row' + nodeID);
+        var attrRow = d3.selectAll('attr' + 'Row' + nodeID);
         attrRow
             .classed('selected', !attrRow.classed('selected'));
-        var topoRow = d3.selectAll('#highlight' + 'Topo' + 'Row' + nodeID);
+        var topoRow = d3.selectAll('topo' + 'Row' + nodeID);
         topoRow
             .classed('selected', !topoRow.classed('selected'));
     };
@@ -1346,6 +1452,28 @@ var View = /** @class */ (function () {
           .delay((d, i) => { return this.verticalScale(i) * 4; })
           .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
     };
+    View.prototype.updateAnswerToggles = function (state) {
+        var _this = this;
+        console.log(state);
+        //let answerStatus = nodeID in this.controller.answerRow;
+        var color = this.controller.configuration.attributeScales.node.selected.range[0];
+        console.log(d3.selectAll('.answerBox'));
+        d3.selectAll('.answerBox').selectAll('circle').transition().duration(500)
+            .attr("cx", function (d) {
+            var answerStatus = d[_this.datumID] in state.selections.answerBox;
+            console.log(answerStatus);
+            return (answerStatus ? 3 * _this.columnWidths['selected'] / 4 : 1.15 * _this.columnWidths['selected'] / 4);
+        })
+            .style("fill", function (d) {
+            var answerStatus = d[_this.datumID] in state.selections.answerBox;
+            return answerStatus ? color : "white";
+        });
+        d3.select('.answerBox').selectAll('rect').transition().duration(500)
+            .style("fill", function (d) {
+            var answerStatus = d[_this.datumID] in state.selections.answerBox;
+            return answerStatus ? "#8B8B8B" : "lightgray";
+        });
+    };
     /**
      * [initalizeAttributes description]
      * @return [description]
@@ -1394,62 +1522,53 @@ var View = /** @class */ (function () {
         this.attributeRows.append('rect')
             .attr('x', 0)
             .attr('y', 0)
-            .classed('highlightAttrRow', true)
+            .classed('attrRow', true)
             .attr('id', function (d, i) {
-            return "highlightAttrRow" + d.screen_name;
+            return "attrRow" + d.screen_name;
         })
             .attr('width', width)
             .attr('height', this.verticalScale.bandwidth()) // end addition
             .attr("fill-opacity", 0)
-            .on('mouseover', function (p) {
-            // selection constructor
-            // selection of rows or columns
-            // selection of edge or attribute
-            // classing hovered as true
-            // wont work for seriated matricies!
-            var attrRow = _this.highlightRow(p);
-            /*let sel = d3.selectAll(".highlightRow")
-              .filter((d, i) => {
-    
-                  if(d.index != null){
-                    return p.index == d.index; // attr
-                  }
-                  console.log(p.index,d[i]);
-                  return //p.index == d[i].y; //topology
-    
-              })
-              .classed("hovered", true);*/
-            /*d3.selectAll(".highlightRow")
-              .filter((d,index)=>{return d.index==index})*/
+            .on('mouseover', function (d) {
+            that.addHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.mouseoverEvents.push({ time: new Date().getTime(), event: 'attrRow' + d[_this.datumID] });
+            d3.selectAll('.hovered').classed('hovered', false);
+            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
         })
-            .on('mouseout', function () {
-            d3.selectAll('.highlightAttrRow')
-                .classed('hovered', false);
-            d3.selectAll('.highlightTopoRow')
-                .classed('hovered', false);
-        }).on('click', function (d, i, nodes) {
-            /*let cellElement = d3.select(nodes[index]).selectAll('rect');
-            console.log(cellElement);
-            cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
-            console.log(cellElement.classed('clickedCell'));
-            let cellID = cell.rowid + cell.colid;*/
-            console.log(d);
-            var nodeID = d.screen_name;
-            /*
-            // will add or remove node
-            console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
-            that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
-            d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
-            that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');*/
-            that.addHighlightNodesToDict(_this.controller.clickedRow, nodeID, nodeID); // FOR ANSWER
-            console.log(nodeID, _this.controller.clickedRow, nodeID in _this.controller.clickedRow);
-            //d3.selectAll('.answer').classed('answer', false);
-            d3.selectAll('.clicked').classed('clicked', nodeID in _this.controller.clickedRow);
-            that.renderHighlightNodesFromDict(_this.controller.clickedRow, 'clicked', 'Row');
-            // classes row
-            //this.classHighlights(d.screen_name, 'Row', 'answer');
-            //this.selectNode(d[0].rowid);
-        });
+            .on('mouseout', function (d) {
+            that.removeHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            d3.selectAll('.hovered').classed('hovered', false);
+            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
+        }).on('click', this.clickFunction);
+        /*.on('click', (d, i, nodes) => {
+    
+          /*let cellElement = d3.select(nodes[index]).selectAll('rect');
+          console.log(cellElement);
+          cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
+          console.log(cellElement.classed('clickedCell'));
+          let cellID = cell.rowid + cell.colid;
+          console.log(d);
+          let nodeID = d.screen_name;
+          /*
+          // will add or remove node
+          console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
+          that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
+          d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
+          that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
+    
+    
+          that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
+          console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
+          //d3.selectAll('.answer').classed('answer', false);
+          d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
+    
+          that.renderHighlightNodesFromDict(this.controller.clickedCol, 'clicked', 'Col');
+          that.renderHighlightNodesFromDict(this.controller.clickedRow, 'clicked', 'Row');
+    
+          // classes row
+          //this.classHighlights(d.screen_name, 'Row', 'answer');
+          //this.selectNode(d[0].rowid);
+        });*/
         var columns = this.controller.configuration.nodeAttributes;
         columns.unshift('selected'); // ANSWER COLUMNS
         var formatCurrency = d3.format("$,.0f"), formatNumber = d3.format(",.0f");
@@ -1460,14 +1579,13 @@ var View = /** @class */ (function () {
         var columnRange = [];
         var xRange = 0;
         var columnWidths = this.determineColumnWidths(columns); // ANSWER COLUMNS
-        console.log(columnWidths, columns);
         //450 / columns.length;
+        this.columnWidths = columnWidths;
         var categoricalAttributes = ["type", "continent"];
         var quantitativeAttributes = ["followers_count", "friends_count", "statuses_count", "count_followers_in_query", "favourites_count", "listed_count", "memberFor_days", "query_tweet_count"];
         columns.forEach(function (col, index) {
             // calculate range
             columnRange.push(xRange);
-            console.log(col);
             var domain = _this.controller.configuration.attributeScales.node[col].domain;
             if (quantitativeAttributes.indexOf(col) > -1) {
                 var scale = d3.scaleLinear().domain(domain).range([barMargin.left, columnWidths[col] - barMargin.right]);
@@ -1516,7 +1634,6 @@ var View = /** @class */ (function () {
         columns.forEach(function (column, index) {
             var columnPosition = _this.columnScale(column);
             if (categoricalAttributes.indexOf(column) > -1) { // if categorical
-                console.log("CATEGORICAL!");
                 _this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
                 return;
             }
@@ -1544,18 +1661,19 @@ var View = /** @class */ (function () {
                 var answerBox = _this.attributeRows
                     .append('g')
                     .attr("class", "answerBox")
+                    .attr("id", function (d) { return "answerBox" + d[_this.datumID]; })
                     .attr('transform', 'translate(' + (columnPosition + barMargin.left) + ',' + 0 + ')');
                 var rect = answerBox.append("rect")
-                    .attr("x", barMargin.left)
+                    .attr("x", (columnWidths[column] / 4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
                     .attr("y", barMargin.top)
                     .attr("rx", barHeight / 2)
                     .attr("ry", barHeight / 2)
                     .style("fill", "lightgray")
-                    .attr("width", columnWidths[column] - barMargin.left - barMargin.right)
+                    .attr("width", columnWidths[column] / 2)
                     .attr("height", barHeight)
                     .attr('stroke', 'lightgray');
                 var circle = answerBox.append("circle")
-                    .attr("cx", barHeight / 2 + barMargin.left)
+                    .attr("cx", (1.15 * columnWidths[column] / 4))
                     .attr("cy", barHeight / 2 + barMargin.top)
                     .attr("r", barHeight / 2)
                     .style("fill", "white");
@@ -1563,19 +1681,20 @@ var View = /** @class */ (function () {
                     .on('click', function (d, i, nodes) {
                     var color = _this.controller.configuration.attributeScales.node.selected.range[0];
                     //if already answer
-                    var nodeID = d.screen_name;
-                    console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
-                    that.addHighlightNodesToDict(_this.controller.answerRow, nodeID, nodeID); // Add row or remove if already in
-                    console.log(nodeID, _this.controller.answerRow, nodeID in _this.controller.answerRow);
-                    d3.selectAll('.answer').classed('answer', false);
-                    that.renderHighlightNodesFromDict(_this.controller.answerRow, 'answer', 'Row');
+                    var nodeID = _this.determineID(d);
+                    //that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row or remove if already in
+                    //d3.selectAll('.answer').classed('answer', false);
+                    //that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
                     /*Visual chagne */
                     var answerStatus = nodeID in _this.controller.answerRow;
                     d3.select(nodes[i]).selectAll('circle').transition().duration(500)
-                        .attr("cx", (answerStatus ? (columnWidths[column] - barHeight / 2 - barMargin.right) : (barHeight / 2 + barMargin.left)))
+                        .attr("cx", (answerStatus ? 3 * columnWidths[column] / 4 : 1.15 * columnWidths[column] / 4))
                         .style("fill", answerStatus ? color : "white");
                     d3.select(nodes[i]).selectAll('rect').transition().duration(500)
                         .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
+                    _this.clickFunction(d, i, nodes);
+                    //let action = this.changeInteractionWrapper(nodeID, i, nodes);
+                    //this.controller.model.provenance.applyAction(action);
                     //d3.select(nodes[i]).transition().duration(500).attr('fill',)
                 });
             }
@@ -1656,7 +1775,6 @@ var View = /** @class */ (function () {
             return _this.columnNames[d];
         })
             .on('mouseover', function (d) {
-            console.log(that.columnNames[d].length, maxcharacters, that.columnNames[d].length > maxcharacters);
             if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
                 that.tooltip.transition().duration(200).style("opacity", .9);
                 var matrix = this.getScreenCTM()
@@ -1672,11 +1790,11 @@ var View = /** @class */ (function () {
             .on('mouseout', function (d) {
             that.tooltip.transition().duration(250).style("opacity", 0);
         });
-        console.log(columnHeaders.selectAll('.header'));
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
-        console.log(answerColumn);
         d3.select('.loading').style('display', 'none');
+        this.controller.model.setUpProvenance();
+        window.focus();
         // Append g's for table headers
         // For any data row, add
         /*.on("click", clicked)
@@ -1748,7 +1866,6 @@ var View = /** @class */ (function () {
         //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
         var legendItemSize = (legendWidth) / (dividers + 3);
         var margin = this.verticalScale.bandwidth() / dividers;
-        console.log(margin);
         var xRange = [];
         var rects = this.attributes.append("g")
             .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * legendItemSize) + "," + (-legendHeight) + ")"); //
@@ -1789,7 +1906,7 @@ var View = /** @class */ (function () {
     View.prototype.selectHighlight = function (nodeToSelect, rowOrCol, attrOrTopo, orientation) {
         if (attrOrTopo === void 0) { attrOrTopo = "Attr"; }
         if (orientation === void 0) { orientation = 'x'; }
-        var selection = d3.selectAll(".highlight" + attrOrTopo + rowOrCol)
+        var selection = d3.selectAll("." + attrOrTopo + rowOrCol)
             .filter(function (d, i) {
             if (attrOrTopo == "Attr" && d.index == null) {
                 // attr
@@ -1841,7 +1958,7 @@ var Controller = /** @class */ (function () {
         this.hoverCol = {};
         this.loadClearButton();
         this.loadTasks();
-        this.loadConfigs();
+        //this.loadConfigs();
         /*console.log(this.configuration);
     
         this.configuration.then(data => {
@@ -1876,56 +1993,69 @@ var Controller = /** @class */ (function () {
           sheet.addRule(".rect.selected", ruleString, 1);
           */
     };
-    Controller.prototype.loadConfigs = function () {
-        var taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
-        if (this.tenAttr) {
-            taskConfig = "../configs/10AttrConfig.json";
-        }
-        else if (this.fiveAttr) {
-            taskConfig = "../configs/5AttrConfig.json";
-        }
-        var that = this;
-        Promise.all([
-            d3.json("../configs/baseConfig.json"),
-            d3.json(taskConfig),
-            d3.json("../configs/state.json")
-        ]).then(function (configComponents) {
-            that.setupCSS(configComponents[0]);
-            that.setupExports(configComponents[0], configComponents[1]);
-            var components = [configComponents[0], configComponents[1], configComponents[2]];
-            var result = deepmerge.all(components);
-            var obj = {
-                "domain": [true, false],
-                "range": ["#e86b45", '#fff'],
-                "labels": ['answer', 'not answer'],
-                'glyph': 'rect',
-                'label': 'selected'
-            };
-            that.configuration = result;
-            that.configuration.attributeScales.node['selected'] = obj;
-            console.log(that.configuration.attributeScales);
-            that.reload();
-            //that.finishConstructing(result);
-        });
-    };
     Controller.prototype.finishConstructing = function (config) {
         this.configuration = config;
         this.view = new View(this); // initalize view,
         this.model = new Model(this); // start reading in data
     };
+    Controller.prototype.loadTask = function (taskNum) {
+        this.taskNum = taskNum;
+        // load data file
+        // render vis from configurations
+        // add observers and new provenance graph
+        // create new field to store in fB?
+    };
     Controller.prototype.loadTasks = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var task;
+            var taskConfigs, task;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.taskNum = 0;
-                        return [4 /*yield*/, d3.json("./../configs/tasks.json").then(function (data) {
-                                _this.tasks = data.tasks;
+                        return [4 /*yield*/, d3.json("./../taskLists/am_large.json").then(function (data) {
+                                //this.tasks = data.tasks;
+                                _this.configuration = data.task1.config;
+                                _this.tasks = [data.task1];
+                                var obj = {
+                                    "domain": [true, false],
+                                    "range": ["#e86b45", '#fff'],
+                                    "labels": ['answer', 'not answer'],
+                                    'glyph': 'rect',
+                                    'label': 'selected'
+                                };
+                                //this.configuration = result;
+                                _this.configuration.attributeScales.node['selected'] = obj;
+                                _this.configuration.state = {};
+                                _this.configuration.state.adjMatrix = {};
+                                _this.configuration.state.adjMatrix.sortKey = 'shortName';
+                                //configuration.state.adjMatrix.sortKey
+                                _this.reload();
                             })];
                     case 1:
-                        _a.sent();
+                        taskConfigs = _a.sent();
+                        //let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
+                        //if (this.tenAttr) {
+                        //  taskConfig = "../configs/10AttrConfig.json"
+                        //} else if (this.fiveAttr) {
+                        //  taskConfig = "../configs/5AttrConfig.json"
+                        //}
+                        //let that = this;
+                        /*
+                        Promise.all([
+                          d3.json("../configs/baseConfig.json"),
+                          d3.json(taskConfig),
+                          d3.json("../configs/state.json")
+                        ]).then((configComponents) => {
+                          /*that.setupCSS(configComponents[0]);
+                          that.setupExports(configComponents[0], configComponents[1]);
+                          let components = [configComponents[0], configComponents[1], configComponents[2]];
+                          let result = deepmerge.all(components);
+                    */
+                        // added selected attribute scale
+                        //that.finishConstructing(result);
+                        //})
+                        this.taskNum = 0;
                         task = this.tasks[this.taskNum];
                         d3.select("#taskArea")
                             .select(".card-header-title")
@@ -1955,7 +2085,6 @@ var Controller = /** @class */ (function () {
             var test = d3.selectAll('.clickedCell').classed('clickedCell', false);
             d3.selectAll('.answer').classed('answer', false);
             d3.selectAll('.clicked').classed('clicked', false);
-            console.log(test, _this.clickedCells);
             _this.view.renderHighlightNodesFromDict(_this.clickedRow, 'clicked', 'Row');
             _this.view.renderHighlightNodesFromDict(_this.clickedCol, 'clicked', 'Col');
             _this.view.renderHighlightNodesFromDict(_this.answerRow, 'answer', 'Row');
