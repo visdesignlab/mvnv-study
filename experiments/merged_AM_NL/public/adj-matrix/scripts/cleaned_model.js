@@ -1070,7 +1070,7 @@ var View = /** @class */ (function () {
             var legendFile = 'assets/';
             legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge';
             legendFile += '.png';
-            d3.select('#legends').append('g').append("svg:image")
+            d3.select('#legend-svg').append('g').append("svg:image")
                 .attr('x', 0)
                 .attr('y', 0)
                 .attr('width', 170)
@@ -1089,7 +1089,7 @@ var View = /** @class */ (function () {
         var extent = scale.domain();
         var number = 5;
         var sampleNumbers = this.linspace(extent[0], extent[1], number);
-        var svg = d3.select('#legends').append("g")
+        var svg = d3.select('#legend-svg').append("g")
             .attr("id", "legendLinear" + type)
             .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
             .on('click', function (d, i, nodes) {
@@ -1570,7 +1570,7 @@ var View = /** @class */ (function () {
           //this.selectNode(d[0].rowid);
         });*/
         var columns = this.controller.configuration.nodeAttributes;
-        columns.unshift('selected'); // ANSWER COLUMNS
+        //columns.unshift('selected'); // ANSWER COLUMNS
         var formatCurrency = d3.format("$,.0f"), formatNumber = d3.format(",.0f");
         // generate scales for each
         var attributeScales = {};
@@ -2004,15 +2004,31 @@ var Controller = /** @class */ (function () {
         this.taskNum = taskNum;
         this.task = this.tasks[this.taskNum];
         this.configuration = this.task.config;
-        var obj = {
-            "domain": [true, false],
-            "range": ["#e86b45", '#fff'],
-            "labels": ['answer', 'not answer'],
-            'glyph': 'rect',
-            'label': 'selected'
-        };
-        //this.configuration = result;
-        this.configuration.attributeScales.node['selected'] = obj;
+        d3.select("#taskArea")
+            .select(".card-header-title")
+            .text('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt);
+        console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt, d3.select("#taskArea").select(".card-header-title"));
+        if (this.task.replyType == 'value') {
+            // hide selected nodes
+            d3.select('#nodeAnswer').style('display', 'none');
+            d3.select('#valueAnswer').style('display', 'block');
+            // no obj
+        }
+        else {
+            // hide value
+            d3.select('#nodeAnswer').style('display', 'block');
+            d3.select('#valueAnswer').style('display', 'none');
+            this.configuration.nodeAttributes.unshift('selected');
+            var obj = {
+                "domain": [true, false],
+                "range": ["#e86b45", '#fff'],
+                "labels": ['answer', 'not answer'],
+                'glyph': 'rect',
+                'label': 'selected'
+            };
+            //this.configuration = result;
+            this.configuration.attributeScales.node['selected'] = obj;
+        }
         this.configuration.state = {};
         this.configuration.state.adjMatrix = {};
         this.configuration.state.adjMatrix.sortKey = 'shortName';
@@ -2117,7 +2133,7 @@ var Controller = /** @class */ (function () {
         var width = targetDiv.style("width").replace("px", ""), height = targetDiv.style("height").replace("px", "");
         var taskBarHeight = 74;
         var panelDimensions = {};
-        panelDimensions.width = width * 0.25;
+        panelDimensions.width = width * 0.24;
         panelDimensions.height = height - taskBarHeight;
         console.log(panelDimensions);
         d3.select("#visPanel").style("width", panelDimensions.width + "px");

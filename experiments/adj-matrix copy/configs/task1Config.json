@@ -1,0 +1,26 @@
+{
+    "taskID":"task1",
+    "loadedGraph": "large_undirected_singleEdge",
+    "isDirected": false,
+    "isMultiEdge": false,
+    "graphSize":"large",
+    "nodeAttributes": ["followers_count","friends_count"],
+    "edgeAttributes": ["type","count"],
+    "nodeLink":{
+        "quantAttrs":["followers_count","friends_count"],
+        "catAttrs":["type","continent"],
+        "drawBars":true,
+        "selectNeighbors": false,            
+        "nodeHeight": 30,
+        "nodeWidth": 60,
+        "labelSize": 14,
+        "labelAttr": "shortName",
+        "nodeFillAttr": "type",
+        "nodeSizeAttr": "friends_count",
+        "edgeWidthAttr":"count",
+        "edgeStrokeAttr":"type"
+    },
+    "adjMatrix":{
+
+    }
+}

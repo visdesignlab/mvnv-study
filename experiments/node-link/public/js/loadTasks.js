@@ -54,8 +54,8 @@ async function loadTasks() {
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  vis = selectedVis;
-
+  vis = 'adjMatrix';// selectedVis;
+  selectedVis = 'adjMatrix'
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
@@ -83,11 +83,11 @@ async function loadTasks() {
   //load script tags for the appropriate vis technique;
   let scriptTags = {
     nodeLink: ["js/main_nodeLink.js", "js/helperFunctions.js"], //,"js/createTaskConfig.js"],
-    adjMatrix: []
+    adjMatrix: ["adj-matrix/libs/reorder/science.v1.js","adj-matrix/libs/reorder/tiny-queue.js","adj-matrix/libs/reorder/reorder.v1.js","adj-matrix/scripts/fill_config_settings.js","adj-matrix/scripts/helper_functions.js","adj-matrix/scripts/autocomplete.js","adj-matrix/scripts/cleaned_model.js"]
   };
   let cssTags = {
     nodeLink: ["css/node-link.css"],
-    adjMatrix: []
+    adjMatrix: ["adj-matrix/css/adj-matrix.css"]
   };
 
 // //   dynamically load only js/css relevant to the vis approach being used;
