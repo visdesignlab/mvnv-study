@@ -1,0 +1,83 @@
+{
+    "graphFiles": {
+        "small_directed_multiEdge": "../public/data/network_small_directed_multiEdge.json",
+        "large_directed_multiEdge": "../public/data/network_large_directed_multiEdge.json",
+        "small_undirected_multiEdge": "../public/data/network_small_undirected_multiEdge.json",
+        "large_undirected_multiEdge": "../public/data/network_large_undirected_multiEdge.json",
+        "small_undirected_singleEdge": "../public/data/network_small_undirected_singleEdge.json",
+        "large_undirected_singleEdge": "../public/data/network_large_undirected_singleEdge.json"
+    },
+    "attributeScales": {
+        "node": {
+            "followers_count": {
+                "domain": [0, 2000]
+            },
+            "friends_count": {
+                "domain": [0, 2000]
+            },
+            "statuses_count": {
+                "domain": [0, 6000]
+            },
+            "count_followers_in_query": {
+               
+            },
+            "favourites_count": {
+               
+            },
+            "listed_count": {
+               
+            },
+            "memberFor_days": {
+               
+            },
+            "query_tweet_count": {
+               
+            },
+            "type": {
+                "domain": ["person", "institution"],
+                "range": ["#a88e69", "#68aa73"]
+            },
+            "continent": {
+                "domain": ["North America", "South America", "Asia", "Europe"],
+                "range": ["#1b9e77", "#d95f02", "#7570b3", "#e7298a"]
+            }
+
+
+
+
+        },
+        "edge": {
+            "count": {
+                "domain": [1, 11]
+            },
+            "type": {
+                "domain": ["mentions", "retweets","combined"],
+                "range": ["#427d9b", "#88419d","rgb(163, 161, 161)"]
+            }
+        }
+    },
+    "style": {
+        "selectedNodeColor": "#ea9b0f",
+        "hoveredNodeColor": "fde8ca"
+    },
+    "nodeLink": {
+        "noEdgeColor": "white",
+        "noNodeFill": "white",
+        "noNodeStroke": "white",
+        "quantColor": [
+            "#2d2d2d",
+            "#d67205",
+            "#777777",
+            "#706842"
+        ],
+        "catColors": [
+            "#1b9e77",
+            "#d95f02",
+            "#7570b3",
+            "#e7298a"
+        ]
+    },
+    "adjMatrix": {
+
+    }
+}
