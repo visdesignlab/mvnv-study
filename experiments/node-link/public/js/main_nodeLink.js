@@ -280,17 +280,17 @@ function loadVis(id) {
     //set up callback for 'next Task';
 
     d3.select('#nextTask').on("click",()=>{
-      d3.select('.hit').style('display', 'none');
-      experimentr.next();
-
-      // //increment current task;
-      // if (currentTask < tasks.length-1){
-      //   currentTask = currentTask + 1;
-      //   loadTask(taskList[currentTask])
-      // } else {
-      //   console.log('finished Tasks')
-      //   experimentr.next();
-      // }
+   
+      //increment current task;
+      if (currentTask < tasks.length-1){
+        currentTask = currentTask + 1;
+        loadTask(taskList[currentTask])
+      } else {
+        console.log('finished Tasks')
+        d3.select('.hit').style('display', 'none');
+        experimentr.next();
+  
+      }
     })
   //TODO combine these two variables into one; 
 
@@ -482,10 +482,10 @@ function validateAnswer(){
       }
       break
     case 'multipleNodeSelection':
-        isValid = graph.nodes.filter(n => n.hardSelect).length > 1;
+        isValid = graph.nodes.filter(n => n.hardSelect).length == tasks[currentTask].replyCount;
 
-        if (numSelectedNodes <2){
-          errorMsg='Please select all nodes that answer this task.'
+        if (numSelectedNodes <tasks[currentTask].replyCount){
+          errorMsg='Keep going! This question requires ' + tasks[currentTask].replyCount + ' node selections.'
         }
   
         if (numSelectedNodes < 1){

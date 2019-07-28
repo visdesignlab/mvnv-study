@@ -7,6 +7,7 @@
         "feedback": "",
         "prompt": "Select the European account with the highest number of followers.",
         "replyType": "singleNodeSelection",
+        "replyCount":1,
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
@@ -203,6 +204,7 @@
         "feedback": "",
         "prompt": "Find 3 nodes that are people and have more friends than followers.",
         "replyType": "multipleNodeSelection",
+        "replyCount":3,
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
@@ -400,6 +402,7 @@
         "feedback": "",
         "prompt": "Which of the european people who has interacted with R.Kosara has tweeted the most?",
         "replyType": "singleNodeSelection",
+        "replyCount":1,
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",
@@ -596,7 +599,7 @@
         "answer": "",
         "feedback": "",
         "prompt": "What is the approximate combined # of followers of all the people who have interacted with  A. Lex?",
-        "replyType": "singleNodeSelection",
+        "replyType": "value",
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",

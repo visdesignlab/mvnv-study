@@ -17,7 +17,7 @@
                 Please enter your Amazon Worker Id. <strong>You may only complete this HIT once.</strong> Subsequent completions cannot be accepted:
                 <br>
     
-                <input class="input" type="text" placeholder="Enter Worker Id" id="workerId" name="workerId" disabled="true" size="30" />
+                <input class="input" type="text" placeholder="Enter Worker Id" id="workerId" name="workerId" size="30" />
                 <a class="button" id="checkId" >Check ID</a>
                 <br>
     
@@ -75,12 +75,13 @@
                         data.workerId = this.value;
                     });
             d3.select('#consentYes').on('click',function(){
-                //if the user consents to particpate in the study, add him to the list of particpants and set the global
+                //if the user consents to particpate in the study, create a random completion code, add him to the list of particpants, and set the global
                 // memberID variable
                 workerID = data.workerId;
             db.collection('participants').doc(workerID).set({
-                    startTime: Date.now()
-                },{ merge: true });
+                    startTime: Date.now(),
+                    completionCode:makeid(6)
+                },{ merge: true }); //shouldn't need the merge value; 
 
                 experimentr.next();
             });
@@ -114,6 +115,6 @@
                 }
             }
         }
-
+ 
     }());
 </script>

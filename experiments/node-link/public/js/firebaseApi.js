@@ -22,12 +22,9 @@ let fireStore = {
         db = firebase.firestore(app);
       },
 
-      addDocument(data,collection = "tasks") {
-        db.collection(collection)
-          .add(data)
-          .then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
-          })
+      addDocument(data,collection) {
+        db.collection(collection).doc(workerID)
+          .set(data)
           .catch(function(error) {
             console.error("Error adding document: ", error);
           });

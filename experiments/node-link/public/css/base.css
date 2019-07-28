@@ -33,6 +33,11 @@ body {
     background-color:lightgrey;
 }
 
+.errorMsg{
+    color:red;
+    font-style:italic;
+}
+
 #nextTask{
     margin:10px 0px;
 

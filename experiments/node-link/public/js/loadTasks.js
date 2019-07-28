@@ -1,6 +1,6 @@
 //global variable that defines the tasks to be shown to the user and the (randomized) order in which to show them
 let taskList;
-let workerID = "MaryEllen"; // to be populated when the user goes through the consent form;
+let workerID = "Carolina"; // to be populated when the user goes through the consent form;
 
 let vis;
 
@@ -10,6 +10,17 @@ let studyTracking = {
   group: null,
   numConditions: null
 };
+
+          //function that generates random 'completion code' for worker to input back into Mechanical Turk;
+          function makeid(length) {
+            var result           = '';
+            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for ( let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
 
 async function loadTasks() {
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle

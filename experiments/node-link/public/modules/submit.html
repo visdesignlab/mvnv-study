@@ -1,115 +1,254 @@
-<div id="debrief">
+<div id='#debrief' class="card">
+  <header class="card-header">
+    <p class="card-header-title">
+      Thank you! Before you submit, please provide some demographics information as well as general feedback on your experience.
+    </p>
 
-<h1> (3/3) Demographics </h1>
+  </header>
+  <div class="card-content">
+    <div class="content">
+      <div id="age"><strong>Your age:</strong> <strong style="color: red">*</strong>
+        <div id="ages">
+          <input type="radio" id="a1" name="age" value="18-25"> 18-25
+          <input type="radio" id="a2" name="age" value="25-39"> 25-39
+          <input type="radio" id="a3" name="age" value="40-49"> 40-49
+          <input type="radio" id="a4" name="age" value="50-59"> 50-59
+          <input type="radio" id="a5" name="age" value="60+"> 60+
+          <input type="radio" id="a6" name="age" value="Unspecified"> Unspecified
+        </div>
+      </div>
+      <br>
+      <div id="sex"><strong>Your gender:</strong><strong style="color: red">*</strong>
+        <div id="sexes">
+          <input type="radio" id="s1" name="sex" value="Male"> Male
+          <input type="radio" id="s2" name="sex" value="Female"> Female
+          <input type="radio" id="s3" name="sex" value="Unspecified"> Unspecified
+        </div>
+      </div>
+      <br>
+      <div id="handed"><strong>Are you left or right handed:</strong> <strong style="color: red">*</strong>
+        <div id="handedness">
+          <input type="radio" id="s1" name="handed" value="Right"> Right
+          <input type="radio" id="s2" name="handed" value="Left"> Left
+          <input type="radio" id="s3" name="handed" value="Unspecified"> Unspecified
+        </div>
+      </div>
+      <br>
+      <div id="degree"><strong>Highest degree obtained:</strong> <strong style="color: red">*</strong>
+        <div id="degrees">
+          <input type="radio" id="d1" name="degree" value="High School"> High School
+          <input type="radio" id="d2" name="degree" value="Bachelors"> Bachelors
+          <input type="radio" id="d3" name="degree" value="Masters"> Masters
+          <input type="radio" id="d4" name="degree" value="PhD"> PhD
+          <input type="radio" id="d5" name="degree" value="Other"> Other Professional Degree
+          <input type="radio" id="s3" name="degree" value="Unspecified"> Unspecified
+        </div>
+      </div>
+      <br>
+      <div id="screen_size"><strong>Your screen size is closest to:</strong> <strong style="color: red">*</strong>
+        <div id="screen_sizes">
+          <input type="radio" id="m4" name="screen_size" value="9 or smaller"> 9" or smaller
+          <input type="radio" id="m4" name="screen_size" value=11> 11"
+          <input type="radio" id="m4" name="screen_size" value=13> 13"
+          <input type="radio" id="m4" name="screen_size" value=15> 15"
+          <input type="radio" id="m4" name="screen_size" value=17> 17"
+          <input type="radio" id="m4" name="screen_size" value=19> 19"
+          <input type="radio" id="m4" name="screen_size" value=21> 21"
+          <input type="radio" id="m5" name="screen_size" value="23 or larger"> 23" or larger
+          <input type="radio" id="m5" name="screen_size" value="unsure"> I'm not sure
+        </div>
+      </div>
+      <br>
+      <div id="visualizations"><strong>How familiar are you with data visualizations (1 not familiar at all, 7 very
+          familiar)?</strong> <strong style="color: red">*</strong>
+        <div id="visualizationfam">
+          <input type="radio" id="sc1" name="vis_experience" value=1> 1
+          <input type="radio" id="sc2" name="vis_experience" value=2> 2
+          <input type="radio" id="sc3" name="vis_experience" value=3> 3
+          <input type="radio" id="sc4" name="vis_experience" value=4> 4
+          <input type="radio" id="sc5" name="vis_experience" value=5> 5
+          <input type="radio" id="sc6" name="vis_experience" value=6> 6
+          <input type="radio" id="sc7" name="vis_experience" value=7> 7
+        </div>
+      </div>
 
-<p>
-Thank you! Before you submit, please fill out the following demographics form.
-</p>
+      <br>
 
-<div id="age">Your age: <strong style="color: red">*</strong>
-    <div id="ages">
-        <input type="radio" id="a1" name="age" value="18-25"> 18-25
-        <input type="radio" id="a2" name="age" value="25-39"> 25-39
-        <input type="radio" id="a3" name="age" value="40-49"> 40-49
-        <input type="radio" id="a4" name="age" value="50-59"> 50-59
-        <input type="radio" id="a5" name="age" value="60+"> 60+
-        <input type="radio" id="a6" name="age" value="Unspecified"> Unspecified
+      <div id="trainingFeedback">
+        <p><strong>
+            Did you find the training video sufficient to understand the visualizations and tasks? <strong
+              style="color: red">*</strong>
+          </strong>
+        </p>
+
+
+        <div class="control">
+          <label class="radio">
+            <input type="radio" name="training" value = "Yes">
+            Yes
+          </label>
+          <label class="radio">
+            <input type="radio" name="training" value = "Mostly">
+            Mostly
+          </label>
+          <label class="radio">
+            <input type="radio" name="training" value = "No">
+            No
+          </label>
+        </div>
+
+        <textarea class="textarea" placeholder="Please add any explanations here. Optional"></textarea>
+
+      </div>
+
+      <br />
+
+      <div id="overallFeedback">
+        <p>
+          <strong>Please share your overall impressions.</strong> 
+        </p>
+        <textarea class="textarea"
+          placeholder="Include anything you particularly liked or disliked about the tasks here."></textarea>
+      </div>
+
+
+
+      <div>
+
+        <br />
+
+        <div>
+
+          <p>
+            <strong>A code for Mechanical Turk will display below after you submit successfully. </strong>
+          </p>
+
+          <a class="button" id="submitFeedback" type="button">Submit</a>
+
+
+
+        </div>
+
+        <br />
+
+        <div class="errorMsg" id="invalidAnswer" style="display:none">
+          In order to submit successfully, please be sure to answer all the questions with "*".
+          </p>
+        </div>
+
+
+
+        <div id="codeBox" style="display:none">
+          <p>
+            <strong>Please copy and paste the following code back on Mechanical Turk before closing this
+              window:</strong>
+          </p>
+          <h2 id="postId"></h2>
+        </div>
+
+      </div>
+
+
+
+
     </div>
-</div>
-<br>
-<div id="sex">Your gender: <strong style="color: red">*</strong>
-    <div id="sexes">
-        <input type="radio" id="s1" name="sex" value="Male"> Male
-        <input type="radio" id="s2" name="sex" value="Female"> Female
-        <input type="radio" id="s3" name="sex" value="Unspecified"> Unspecified
-    </div>
-</div>
-<br>
-<div id="handed">Are you left or right handed: <strong style="color: red">*</strong>
-    <div id="handedness">
-        <input type="radio" id="s1" name="handed" value="Right"> Right
-        <input type="radio" id="s2" name="handed" value="Left"> Left
-        <input type="radio" id="s3" name="handed" value="Unspecified"> Unspecified
-    </div>
-</div>
-<br>
-<div id="degree">Highest degree obtained: <strong style="color: red">*</strong>
-    <div id="degrees">
-        <input type="radio" id="d1" name="degree" value="High School"> High School
-        <input type="radio" id="d2" name="degree" value="Bachelors"> Bachelors
-        <input type="radio" id="d3" name="degree" value="Masters"> Masters
-        <input type="radio" id="d4" name="degree" value="PhD"> PhD
-        <input type="radio" id="d5" name="degree" value="Other"> Other Professional Degree
-        <input type="radio" id="s3" name="degree" value="Unspecified"> Unspecified
-    </div>
-</div>
-<br>
-<div id="screen_size">Your screen size is closest to: <strong style="color: red">*</strong>
-    <div id="screen_sizes">
-        <input type="radio" id="m4" name="screen_size" value="9 or smaller"> 9" or smaller
-        <input type="radio" id="m4" name="screen_size" value=11> 11"
-        <input type="radio" id="m4" name="screen_size" value=13> 13"
-        <input type="radio" id="m4" name="screen_size" value=15> 15"
-        <input type="radio" id="m4" name="screen_size" value=17> 17"
-        <input type="radio" id="m4" name="screen_size" value=19> 19"
-        <input type="radio" id="m4" name="screen_size" value=21> 21"
-        <input type="radio" id="m5" name="screen_size" value="23 or larger"> 23" or larger
-        <input type="radio" id="m5" name="screen_size" value="unsure"> I'm not sure
-    </div>
-</div>
-<br>
-<div id="visualizations">How familiar are you with data visualizations (1 not familiar at all, 7 very familiar)? <strong style="color: red">*</strong>
-    <div id="visualizationfam"> 
-        <input type="radio" id="sc1" name="vis_experience" value=1> 1
-        <input type="radio" id="sc2" name="vis_experience" value=2> 2
-        <input type="radio" id="sc3" name="vis_experience" value=3> 3
-        <input type="radio" id="sc4" name="vis_experience" value=4> 4
-        <input type="radio" id="sc5" name="vis_experience" value=5> 5
-        <input type="radio" id="sc6" name="vis_experience" value=6> 6
-        <input type="radio" id="sc7" name="vis_experience" value=7> 7
-     </div>
-</div>
-
-<br>
-<div class="submitArea">
-  <p>Please share anything else you'd like to tell us here:</p>
-  <textarea name="comment_additional" rows="4" cols="80"></textarea>
-</div>
+  </div>
 
 
-<p><strong>A code for Mechanical Turk will display below after you submit successfully.</strong></p>
-
-<div id="invalidanswer" style="display: none">
-<p style="color: red">
-In order to submit successfully, please be sure to answer all the questions with "*".
-</p>
-</div>
-
-<button id="submitComments" type="button">Submit</button>
 
 
-<div id="codebox" style="display: none">
-<p>
-<strong>Please copy and paste the following code back on Mechanical Turk before closing this window:</strong>
-</p>
-<h2 id="postId"></h2>
-</div>
 
-<div id="submitFeedback"></div>
 
-</div>
 
-<style>
-  .response {
-    margin-top: 16px;
-  }
+  <style>
+    .response {
+      margin-top: 16px;
+    }
 
-  #submitComments, #codebox {
-    margin-top: 16px;
-  }
-</style>
+    #submitComments,
+    #codebox {
+      margin-top: 16px;
+    }
+  </style>
 
-<!-- <script>
+  <script>
+    (async function () {
+      let participant = await db.collection("participants").doc(workerID).get();
+      participantCode = participant.data().completionCode;
+
+      //set end time 
+       db.collection("participants").doc(workerID).set({
+                    endTime: Date.now()
+        },{ merge: true });
+
+
+
+      //set callback for submit button (check that all radiobuttons are checked. Text box responses are optional? )
+
+      d3.select('#submitFeedback').on("click", function(){
+
+        let demographics = {};
+        let feedback = {};
+        let mandatoryQuestions = ['age','sex', 'handed', 'degree', 'screen_size','vis_experience', 'training']
+
+       //check to make sure there are values for all radioButtons. 
+        let isValid = true;
+
+        mandatoryQuestions.map(function(qname){
+          let localSelection = false;
+          d3.selectAll("input[name=" + qname + "]")
+          .each(function(){
+            localSelection = localSelection || d3.select(this).property('checked');
+            
+            //if the answer is valid, save their response
+            if (d3.select(this).property('checked')){
+              if (qname == 'training'){
+                feedback[qname]={};
+                feedback[qname].helpful = d3.select(this).property("value");
+                feedback[qname].explanation = d3.select('#trainingFeedback').select('.textarea').property("value");
+
+              } else {
+                demographics[qname] = d3.select(this).property("value");
+              }
+            }
+          })      
+          isValid = localSelection ? true : false; 
+        })
+
+        //general feedback. 
+        feedback.overall = d3.select('#overallFeedback').select('.textarea').property("value");
+       
+          
+         //if everything checks out, 
+          if (isValid){
+
+          //push their responses to firebase;
+            db.collection("participants").doc(workerID).set({
+                          demographics,
+                          feedback
+              },{ merge: true });
+
+            //Hide any previous error msgs
+            d3.select('#invalidAnswer').style('display', 'none');
+
+            //Disable the submit button to avoid submitting twice
+            d3.select('#submitFeedback').attr('disabled', true)
+
+            //display the completion code; 
+            d3.select('#codeBox').style('display','inline')
+            d3.select('#postId').text(participantCode)
+
+          } else {
+            //display error msg;
+            d3.select('#invalidAnswer').style('display', 'inline');
+
+          }
+          
+      })
+    })()
+  </script>
+
+  <!-- <script>
 (function() {
 
   var postId  = experimentr.postId

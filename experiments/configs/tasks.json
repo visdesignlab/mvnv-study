@@ -7,8 +7,10 @@
       "answer":"",
       "feedback":"",
       "prompt": "Select the European account with the highest number of followers.",
-      "replyType":"singleNodeSelection",
-      "config":{}
+       "config":{},
+       "replyType":"singleNodeSelection",
+       "replyCount":1
+
     },
     "task2": 
     {
