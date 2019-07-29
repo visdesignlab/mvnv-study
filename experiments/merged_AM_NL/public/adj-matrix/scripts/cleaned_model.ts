@@ -819,7 +819,7 @@ class View {
         // only trigger click if edge exists
         if(d.combined != 0 || d.retweet != 0 || d.mentions != 0){
           this.clickFunction(d,i,nodes);
-        } // TODO PROBLEM: Fix the fact that hover inteferes with setting class name (as it also appears)
+        }
         return;
       })
     /*(d, i, nodes) => {
@@ -990,7 +990,7 @@ class View {
       .attr("y", this.verticalScale.bandwidth() / 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "end")
-      .style("font-size", 7.5 + "px")
+      .style("font-size", 11)
       .text((d, i) => this.nodes[i].shortName)
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
@@ -1002,8 +1002,7 @@ class View {
         //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
-        //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
-        //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
+
       })
       .on('mouseover', (d, i, nodes) => {
         let rowID = d[0].rowid;
@@ -1011,20 +1010,10 @@ class View {
         that.addHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
         this.mouseoverEvents.push({time:new Date().getTime(),event:'rowLabel'+rowID})
 
-        //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
-        //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       })
-      .on('click', this.clickFunction)/*(d, i, nodes) => {
-
-        let nodeID = this.determineID(d);
-
-        let action = this.changeInteractionWrapper(nodeID, i, nodes);
-        this.controller.model.provenance.applyAction(action);
-
-
-      });*/
+      .on('click', this.clickFunction)
 
 
     this.edgeColumns.append("text")
@@ -1037,7 +1026,7 @@ class View {
       .attr('x', 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
-      .style("font-size", 7.5 + "px")
+      .style("font-size", 11)
       .text((d, i) => this.nodes[i].shortName)
       .on('click', this.clickFunction)
       .on("mouseout", (d, i, nodes) => {
@@ -1063,6 +1052,8 @@ class View {
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       });
+
+      //make rowlabel and collabel
 
 
     this.tooltip = d3.select("body")
@@ -1770,7 +1761,7 @@ class View {
 
     this.attributeRows.append("line")
       .attr("x1", 0)
-      .attr("x2", this.attributeWidth)
+      .attr("x2", this.controller.attrWidth)
       .attr('stroke', '2px')
       .attr('stroke-opacity', 0.3);
 
@@ -2165,7 +2156,7 @@ class View {
     // set all categorical column width to their width, keep track of total width
     // set all other columns widths based off width - categorical
 
-    let widthOffset = 450 / columns.length;
+    let widthOffset = this.controller.attrWidth / columns.length;
 
     let totalCategoricalWidth = 0;
 
@@ -2183,7 +2174,7 @@ class View {
       }
     }
 
-    let quantitativeWidth = 450 - totalCategoricalWidth,
+    let quantitativeWidth = this.controller.attrWidth - totalCategoricalWidth,
       quantitativeColumns = columns.length - Object.keys(widths).length,
       quantitativeColumnSize = quantitativeWidth / quantitativeColumns;
 
@@ -2377,6 +2368,7 @@ class Controller {
   private taskNum: number;
 
   loadTask(taskNum){
+    console.log('in development!')
     this.taskNum = taskNum;
     this.task = this.tasks[this.taskNum];
     this.configuration = this.task.config;
@@ -2405,14 +2397,18 @@ class Controller {
         'glyph': 'rect',
         'label': 'selected'
       }
+      console.log(this.configuration.nodeAttributes,d3.min([125*this.configuration.nodeAttributes.length,450]));
+
 
       //this.configuration = result;
       this.configuration.attributeScales.node['selected'] = obj;
     }
+    this.attrWidth = 450//d3.min([125*this.configuration.nodeAttributes.length,450]);
 
     this.configuration.state = {}
     this.configuration.state.adjMatrix = {};
     this.configuration.state.adjMatrix.sortKey = 'shortName'
+    this.sizeLayout();
     //configuration.state.adjMatrix.sortKey
     this.reload();
 
@@ -2554,8 +2550,12 @@ class Controller {
     console.log(d3.select('.adjMatrix.vis'),width*.8)
     this.visHeight = panelDimensions.height;
     this.visWidth = width*0.8-40;
-    this.attributePorportion = 450/1050;
-    this.edgePorportion = 600/1050;
+    this.edgeWidth = 600;
+    console.log(this.attrWidth)//,this.edgePorportion)
+
+    this.attributePorportion = this.attrWidth/(this.edgeWidth+this.attrWidth);
+    this.edgePorportion = this.edgeWidth/(this.edgeWidth+this.attrWidth);
+    console.log(this.attributePorportion,this.edgePorportion)
     //d3.select('.adjMatrix.vis').style('width',width*0.8);
     d3.select('.adjMatrix.vis').style('width',(this.visWidth).toString()+'px')
     console.log();
@@ -2567,10 +2567,10 @@ class Controller {
     this.answerRow = {}
     this.hoverRow = {}
     this.hoverCol = {}
-    this.sizeLayout();
     this.loadClearButton();
     this.loadTasks();
     this.loadTask(0);
+    this.sizeLayout();
 
 
     //this.loadConfigs();

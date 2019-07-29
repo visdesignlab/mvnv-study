@@ -211,7 +211,7 @@ function resetPanel() {
     if (vis === 'nodeLink'){
         loadTask(task);
     } else {
-        window.controller.loadTask(currentTask)
+        window.controller.loadTask(currentTask);
     }
 }
 
@@ -219,9 +219,9 @@ function resetPanel() {
   console.log("should be updating", taskList[currentTask].taskID);
   console.log(provGraph);
   // Push the latest provenance graph to the firestore.
-  
-//   return; 
-  //not updating provenanceGraph right now to avoid overloading the database 
+
+//   return;
+  //not updating provenanceGraph right now to avoid overloading the database
   db.collection("provenanceGraphs")
     .doc(workerID)
     .update({
@@ -318,7 +318,7 @@ async function loadTasks() {
     console.log("Error getting document:", error);
   });
 
-  
+
 
   let group = 0 //assignedGroup.data().currentGroup;
   studyTracking.group = group;
@@ -328,7 +328,8 @@ async function loadTasks() {
 
   console.log('selected Vis is ',selectedVis)
 
-  vis = selectedVis;  
+  vis = selectedVis //='nodeLink' //= 'adjMatrix'
+
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
@@ -351,6 +352,7 @@ async function loadTasks() {
     d3.selectAll(".adjMatrix").remove();
   } else {
     d3.selectAll(".nodeLink").remove();
+    d3.selectAll('.development').remove();
   }
 
   //load script tags for the appropriate vis technique;
