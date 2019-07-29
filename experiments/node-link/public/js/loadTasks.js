@@ -48,8 +48,11 @@ d3.selectAll(".submit").on("click", async function (){
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
+  console.log(d3.select(this).attr('disabled'))
+
   if(vis === "nodeLink"){
     updateState("Finished Task");
+    pushProvenance(app.currentState())
   } else {
     let action = {
       label: 'Finished Task',
@@ -64,9 +67,10 @@ d3.selectAll(".submit").on("click", async function (){
     }
 
     window.controller.model.provenance.applyAction(action);
+    pushProvenance(window.controller.model.app.currentState());
+
   }
 
-  pushProvenance(window.controller.model.app.currentState());
 
   taskList[currentTask].endTime = Date.now();
   taskList[currentTask].minutesToComplete = Math.round(
@@ -326,8 +330,10 @@ async function loadTasks() {
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  vis = 'adjMatrix';// selectedVis;
-  selectedVis = 'adjMatrix'
+  console.log('selected Vis is ',selectedVis)
+
+  vis =  selectedVis; // 'adjMatrix';// selectedVis;
+//   selectedVis = 'adjMatrix'
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
@@ -355,11 +361,11 @@ async function loadTasks() {
   //load script tags for the appropriate vis technique;
   let scriptTags = {
     nodeLink: ["js/main_nodeLink.js", "js/helperFunctions.js"], //,"js/createTaskConfig.js"],
-    adjMatrix: ["adj-matrix/libs/reorder/science.v1.js","adj-matrix/libs/reorder/tiny-queue.js","adj-matrix/libs/reorder/reorder.v1.js","adj-matrix/scripts/fill_config_settings.js","adj-matrix/scripts/helper_functions.js","adj-matrix/scripts/autocomplete.js","adj-matrix/scripts/cleaned_model.js"]
+    adjMatrix: ["../../adj-matrix/libs/reorder/science.v1.js","../../adj-matrix/libs/reorder/tiny-queue.js","../../adj-matrix/libs/reorder/reorder.v1.js","../../adj-matrix/scripts/fill_config_settings.js","../../adj-matrix/scripts/helper_functions.js","../../adj-matrix/scripts/autocomplete.js","../../adj-matrix/scripts/cleaned_model.js"]
   };
   let cssTags = {
     nodeLink: ["css/node-link.css"],
-    adjMatrix: ["adj-matrix/css/adj-matrix.css"]
+    adjMatrix: ["../../adj-matrix/css/adj-matrix.css"]
   };
 
   // //   dynamically load only js/css relevant to the vis approach being used;

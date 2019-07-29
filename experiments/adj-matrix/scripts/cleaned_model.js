@@ -2013,7 +2013,7 @@ var Controller = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         this.taskNum = 0;
-                        return [4 /*yield*/, d3.json("./../taskLists/am_large.json").then(function (data) {
+                        return [4 /*yield*/, d3.json("./../../taskLists/large.json").then(function (data) {
                                 //this.tasks = data.tasks;
                                 _this.configuration = data.task1.config;
                                 _this.tasks = [data.task1];
