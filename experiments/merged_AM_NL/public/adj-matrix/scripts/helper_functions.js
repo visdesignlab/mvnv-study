@@ -1,17 +1,3 @@
-//d3.select("#panelControl").on("click", () => {
-  /*let panel = d3.select("#panelDiv");
-  let isVisible = panel.style("display") === "block";
-  panel.style("display", isVisible ? "none" : "block");
-  let button1 = d3.select("#saturatedConfig");
-  let button2 = d3.select("#nodeLinkConfig");
-  let button3 = d3.select("#optimalConfig");
-  //button1.style("display", isVisible ? "none" : "block");
-  //button2.style("display", isVisible ? "none" : "block");
-  //button3.style("display", isVisible ? "none" : "block");*/
-
-  //window.controller.reload();
-//});
-//d3.select("#panelControl").on("click")();
 function searchForNode(theForm) {
     console.log(theForm);
     var reason = "";

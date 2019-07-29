@@ -312,7 +312,6 @@ async function loadTask(task){
       //pass in workerID to setupProvenance
       setUpProvenance(getNodeState(graph.nodes));
 
-
       //Set up observers for provenance graph
       setUpObserver("nodes", highlightSelectedNodes);
       // setUpObserver("nodes", highlightAnswerNodes);
@@ -324,7 +323,8 @@ function highlightSelectedNodes(state) {
   //not currently using the state since it only reflects the same data that is bound to the dom elements. probably bad practice?
 
   // see if there is at least one node 'clicked'
-  let hasUserSelection = d3.selectAll(".node.clicked").size() > 0;
+  //check state not ui, since ui has not yet been updated; 
+  let hasUserSelection = state.nodes.find(n=>n.selected)//d3.selectAll(".node.clicked").size() > 0;
 
   //set the class of everything to 'muted', except for the selected node and it's neighbors;
   d3.select(".nodes")
@@ -333,6 +333,7 @@ function highlightSelectedNodes(state) {
       return (
         config.nodeLink.selectNeighbors &&
         hasUserSelection &&
+        !d.selected &&
         d.userSelectedNeighbors.length < 1
       );
     })
@@ -373,8 +374,6 @@ function selectNode(d) {
 
   //update the list of selected nodes in the answer panel.
   updateAnswer(graph.nodes.filter(n => n.hardSelect));
-
-
 }
 
 
@@ -462,6 +461,8 @@ function updateVis() {
 
     link = linkEnter.merge(link);
 
+    link.classed('muted',false)
+
     link
       .select("path")
       .style("stroke-width", edgeWidth)
@@ -500,6 +501,8 @@ function updateVis() {
 
     node = nodeEnter.merge(node);
 
+    node.classed('muted',false)
+
     node
       .select(".node")
       .attr("x", d => -nodeLength(d) / 2 - 4)
@@ -513,7 +516,8 @@ function updateVis() {
       .attr("rx", d => (config.nodeIsRect ? nodeLength(d) / 20 : nodeLength(d)))
       .attr("ry", d =>
         config.nodeIsRect ? nodeHeight(d) / 20 : nodeHeight(d)
-      );
+      )
+      .classed('clicked',d=>d.selected)
 
     node
       .select("text")
@@ -595,14 +599,12 @@ function updateVis() {
   d3.select("#search-input").on("change", function() {
     let selectedOption = d3.select(this).property("value");
 
-
-    //find the right nodeObject
-
     //empty search box;
     if (selectedOption.length === 0) {
       return;
     }
 
+    //find the right nodeObject
     node = graph.nodes.find(n=>n.shortName === selectedOption);
 
     if (!node){
@@ -612,10 +614,7 @@ function updateVis() {
 
     //Only 'click' node if it isn't already selected;
     if (!isSelected) {
-
-      node.selected = true;  
-      //update state graph;
-      updateState("Selected Node");
+      nodeClick(node,'searched');
     }
   });
 
@@ -884,18 +883,18 @@ function updateVis() {
       .style("stroke", nodeStroke);
   });
 
-  node.on("click", function(d) {
+  node.on("click", nodeClick);
 
+  function nodeClick(d,label){
     //modify graph.nodes to reflect the 'clicked' state of this node;
     d.selected =  d.selected ? false: true; 
 
     //update neighbors
     tagNeighbors(d);
 
-
     //update state graph;
-    updateState(d.selected ? 'Selected Node' : 'Unselected Node');
-  });
+    updateState(label ? label : (d.selected ? 'Selected Node' : 'Unselected Node'));
+  }
 
   function tagNeighbors(clickedNode) {
     if (!config.nodeLink.selectNeighbors) {
@@ -910,7 +909,7 @@ function updateVis() {
       // || node.edges.find(n => n === clickedNode.id);
       if (isNeighbor) {
         //add to list of selected neighbors
-        if (!isClicked) {
+        if (isClicked) {
           node.userSelectedNeighbors.push(clickedNode.id);
         } else {
           node.userSelectedNeighbors = node.userSelectedNeighbors.filter(

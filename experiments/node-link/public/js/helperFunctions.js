@@ -889,7 +889,7 @@ function isQuant(attr) {
   }
 
   function getNodeState(nodes){
-    return nodes.map(n=>{return {x:n.x,y:n.y,selected:false,answerSelected:false}})
+    return nodes.map(n=>{return {x:n.x,y:n.y,selected:n.selected || false ,answerSelected:n.answerSelected || false}})
   }
 
   function setConfigCallbacks(baseConfig,taskConfig){
@@ -999,6 +999,7 @@ function isQuant(attr) {
   function updateState(label,searchId){
 
     console.log('calling update state with ', label)
+    console.log ('there are ', getNodeState(graph.nodes).filter(n=>n.selected).length  , ' selected nodes')
     provenance.applyAction({
       label,
       action: (nodes,label) => {

@@ -48,7 +48,10 @@ d3.selectAll(".submit").on("click", async function (){
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
-  console.log(d3.select(this).attr('disabled'))
+  //Enforce 'disabled' behavior on this 'button'
+  if(d3.select(this).attr('disabled')){
+      return;
+  }
 
   if(vis === "nodeLink"){
     updateState("Finished Task");
@@ -68,7 +71,6 @@ d3.selectAll(".submit").on("click", async function (){
 
     window.controller.model.provenance.applyAction(action);
     pushProvenance(window.controller.model.app.currentState());
-
   }
 
 
@@ -107,7 +109,8 @@ d3.select("#nextTask").on("click", async () => {
     difficulty,
     explanation
   };
-  console.log(taskObj);
+
+
   //update taskList with the answer for that task.
   db.collection("results")
     .doc(workerID)
@@ -156,10 +159,14 @@ function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
+
+
   // clear any values in the feedback or search box;
   d3.select("#feedback")
     .select(".textarea")
     .property("value", "");
+
+    d3.select('.searchInput').property('value', '')
   //hide feedback box
   d3.select("#feedback").style("display", "none");
 
@@ -213,7 +220,7 @@ function resetPanel() {
   console.log(provGraph);
   // Push the latest provenance graph to the firestore.
   
-  return; 
+//   return; 
   //not updating provenanceGraph right now to avoid overloading the database 
   db.collection("provenanceGraphs")
     .doc(workerID)
@@ -223,19 +230,6 @@ function resetPanel() {
       )
     });
 }
-
-// function startProvenance(provGraph) {
-//   console.log("should be creating", taskList[currentTask].taskID);
-
-//   // Push the latest provenance graph to the firestore.
-//   db.collection("provenanceGraphs")
-//     .doc(workerID)
-//     .update({
-//       [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
-//         provGraph
-//       )
-//     });
-// }
 
 //validates answer
 function validateAnswer(answer, currentTask) {
@@ -324,7 +318,9 @@ async function loadTasks() {
     console.log("Error getting document:", error);
   });
 
-  let group = assignedGroup.data().currentGroup;
+  
+
+  let group = 0 //assignedGroup.data().currentGroup;
   studyTracking.group = group;
 
   let selectedCondition = conditions[group];
@@ -332,8 +328,7 @@ async function loadTasks() {
 
   console.log('selected Vis is ',selectedVis)
 
-  vis =  selectedVis; // 'adjMatrix';// selectedVis;
-//   selectedVis = 'adjMatrix'
+  vis = selectedVis;  
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
