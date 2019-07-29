@@ -546,12 +546,15 @@ class View {
 
     // Float edges so put edges and attr on same place
     d3.select('#topology').style('float', 'left');
+
     let width = this.controller.visWidth*this.controller.edgePorportion;//this.edgeWidth + this.margins.left + this.margins.right;
     let height = this.controller.visHeight;//this.edgeHeight + this.margins.top + this.margins.bottom;
-    this.edgeWidth = width - (this.margins.left + this.margins.right)*this.controller.edgePorportion;
-    this.edgeHeight = height - (this.margins.top + this.margins.bottom)*this.controller.edgePorportion;
+
+    this.edgeWidth = width - (this.margins.left + this.margins.right)//*this.controller.edgePorportion;
+    this.edgeHeight = height - (this.margins.top + this.margins.bottom)//*this.controller.edgePorportion;
+
     this.edges = d3.select('#topology').append("svg")
-      .attr("viewBox", "0 0 " + this.edgeWidth + " " + this.edgeHeight + "")
+      .attr("viewBox", "0 0 " + (width)+ " " + this.edgeHeight + "")
       .attr("preserveAspectRatio", "xMinYMin meet")
       .append("g")
       .classed("svg-content", true)
@@ -1724,11 +1727,11 @@ class View {
 
     let width = this.controller.visWidth*this.controller.attributePorportion;//this.edgeWidth + this.margins.left + this.margins.right;
     let height = this.controller.visHeight;//this.edgeHeight + this.margins.top + this.margins.bottom;
-    this.attributeWidth = width - (this.margins.left + this.margins.right) * this.controller.attributePorportion;
-    this.attributeHeight = height - (this.margins.top + this.margins.bottom) * this.controller.attributePorportion;
+    this.attributeWidth =  width - (this.margins.left + this.margins.right) //* this.controller.attributePorportion;
+    this.attributeHeight = height - (this.margins.top + this.margins.bottom)// * this.controller.attributePorportion;
 
     this.attributes = d3.select('#attributes').append("svg")
-      .attr("viewBox", "0 0 " + this.attributeWidth + " " + this.attributeHeight + "")
+      .attr("viewBox", "0 0 " + width + " " + this.attributeHeight + "")
       .attr("preserveAspectRatio", "xMinYMin meet")
       .append("g")
       .classed("svg-content", true)
@@ -2526,11 +2529,11 @@ class Controller {
     d3.select('#panelDiv').style('display','none');
     console.log(d3.select('.adjMatrix.vis'),width*.8)
     this.visHeight = panelDimensions.height;
-    this.visWidth = width*0.8;
+    this.visWidth = width*0.8-40;
     this.attributePorportion = 450/1050;
     this.edgePorportion = 600/1050;
     //d3.select('.adjMatrix.vis').style('width',width*0.8);
-    d3.select('.adjMatrix.vis').style('width',(this.visWidth-40).toString()+'px')
+    d3.select('.adjMatrix.vis').style('width',(this.visWidth).toString()+'px')
     console.log();
   }
 
