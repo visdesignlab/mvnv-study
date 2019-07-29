@@ -2488,20 +2488,36 @@ class Controller {
   private clickedCells: any;
   loadClearButton() {
     d3.select('#clearButton').on('click', () => {
-      this.clickedRow = {}
-      this.clickedCol = {}
-      this.answerRow = {}
-      this.hoverRow = {}
-      this.hoverCol = {};
-      this.clickedCells = new Set();
-      let test = d3.selectAll('.clickedCell').classed('clickedCell', false);
-      d3.selectAll('.answer').classed('answer', false);
-      d3.selectAll('.clicked').classed('clicked', false);
+
+      let action = {
+        label: 'clear',
+        action: () => {
+          const currentState = this.model.app.currentState();
+          //add time stamp to the state graph
+          currentState.time = Date.now();
+          currentState.event = 'clear';
+          currentState.selections =  {
+            answerBox: {},
+            attrRow: {},
+            rowLabel: {},
+            colLabel: {},
+            cellcol: {},
+            cellrow: {},
+            search: {}
+          }
+          return currentState;
+        },
+        args: []
+      }
+      this.model.provenance.applyAction(action);
+      pushProvenance(this.model.app.currentState())
+
+      
 
 
-      this.view.renderHighlightNodesFromDict(this.clickedRow, 'clicked', 'Row');
-      this.view.renderHighlightNodesFromDict(this.clickedCol, 'clicked', 'Col');
-      this.view.renderHighlightNodesFromDict(this.answerRow, 'answer', 'Row');
+      //this.view.renderHighlightNodesFromDict(this.clickedRow, 'clicked', 'Row');
+      //this.view.renderHighlightNodesFromDict(this.clickedCol, 'clicked', 'Col');
+      //this.view.renderHighlightNodesFromDict(this.answerRow, 'answer', 'Row');
 
       //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
       //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');

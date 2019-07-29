@@ -2148,18 +2148,31 @@ var Controller = /** @class */ (function () {
     Controller.prototype.loadClearButton = function () {
         var _this = this;
         d3.select('#clearButton').on('click', function () {
-            _this.clickedRow = {};
-            _this.clickedCol = {};
-            _this.answerRow = {};
-            _this.hoverRow = {};
-            _this.hoverCol = {};
-            _this.clickedCells = new Set();
-            var test = d3.selectAll('.clickedCell').classed('clickedCell', false);
-            d3.selectAll('.answer').classed('answer', false);
-            d3.selectAll('.clicked').classed('clicked', false);
-            _this.view.renderHighlightNodesFromDict(_this.clickedRow, 'clicked', 'Row');
-            _this.view.renderHighlightNodesFromDict(_this.clickedCol, 'clicked', 'Col');
-            _this.view.renderHighlightNodesFromDict(_this.answerRow, 'answer', 'Row');
+            var action = {
+                label: 'clear',
+                action: function () {
+                    var currentState = _this.model.app.currentState();
+                    //add time stamp to the state graph
+                    currentState.time = Date.now();
+                    currentState.event = 'clear';
+                    currentState.selections = {
+                        answerBox: {},
+                        attrRow: {},
+                        rowLabel: {},
+                        colLabel: {},
+                        cellcol: {},
+                        cellrow: {},
+                        search: {}
+                    };
+                    return currentState;
+                },
+                args: []
+            };
+            _this.model.provenance.applyAction(action);
+            pushProvenance(_this.model.app.currentState());
+            //this.view.renderHighlightNodesFromDict(this.clickedRow, 'clicked', 'Row');
+            //this.view.renderHighlightNodesFromDict(this.clickedCol, 'clicked', 'Col');
+            //this.view.renderHighlightNodesFromDict(this.answerRow, 'answer', 'Row');
             //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
             //this.view.renderHighlightNodesFromDict(this.clickedRow,'clicked','Row');
             //that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
