@@ -48,7 +48,10 @@ d3.selectAll(".submit").on("click", async function (){
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
-  console.log(d3.select(this).attr('disabled'))
+  //Enforce 'disabled' behavior on this 'button'
+  if(d3.select(this).attr('disabled')){
+      return;
+  }
 
   if(vis === "nodeLink"){
     updateState("Finished Task");
@@ -68,7 +71,6 @@ d3.selectAll(".submit").on("click", async function (){
 
     window.controller.model.provenance.applyAction(action);
     pushProvenance(window.controller.model.app.currentState());
-
   }
 
 
