@@ -18,7 +18,6 @@ var config;
 var allConfigs = {};
 
 let tasks; //list of tasks
-let currentTask = 0; //start at task 0
 
 //compute default data domains once and use when needed
 var defaultDomains = { node: {}, edge: {} };
@@ -264,39 +263,12 @@ function loadVis(id) {
   // .force("y", d3.forceY().y(0));
 
 
-    // Set submit button callback. 
-    d3.selectAll('.submit').on("click",()=>{
-      //show feedback box
-      d3.select('#feedback').style('display','inline');
-
-      //add cover to vis and disable search and answerBox
-      d3.select('#disableInteraction').style('display','inline') //add cover to the vis
-      d3.select('#search-input').attr('disabled', 'true') //cannot search for nodes
-      d3.select('#answerBox').attr('disabled', 'true') //can no longer edit answer;
-      d3.selectAll('.submit').attr('disabled', 'true'); //discourage multiple clicks on the submit button
-      //update state with answer and end time; 
-    })
-
-    //set up callback for 'next Task';
-
-    d3.select('#nextTask').on("click",()=>{
-   
-      //increment current task;
-      if (currentTask < tasks.length-1){
-        currentTask = currentTask + 1;
-        loadTask(taskList[currentTask])
-      } else {
-        console.log('finished Tasks')
-        d3.select('.hit').style('display', 'none');
-        experimentr.next();
-  
-      }
-    })
   //TODO combine these two variables into one; 
 
   tasks = taskList;
   //load in firstTask
-  loadTask(taskList[currentTask])
+  resetPanel(); 
+  // loadTask(taskList[currentTask])
 
   // (async function() {
 
@@ -331,49 +303,6 @@ function loadVis(id) {
 async function loadTask(task){
 
       config = task.config;
-
-      // clear any values in the feedback or search box; 
-      d3.select('#feedback').select('.textarea').property('value', '');
-      //hide feedback box
-      d3.select('#feedback').style('display','none');
-
-      //add cover to vis and disable search and answerBox
-      d3.select('#disableInteraction').style('display','none') 
-      d3.select('#search-input').attr('disabled', null)
-      d3.select('#answerBox').attr('disabled', null) 
-      d3.select('#answerBox').property('value', '')
-      d3.selectAll('.submit').attr('disabled', true); 
-
-      //Clear Selected Node List
-      d3.select('#selectedNodeList')
-      .selectAll('li').remove();
-
-      //clear any selected Radio buttons in the feedback box;
-      d3.select('#feedback').selectAll('input').property('checked',false);
- 
-      //set div of correct display type to visible; 
-      d3.selectAll('.answerCard').style('display', 'none');
-
-      switch(task.replyType) {
-        case 'singleNodeSelection':
-          d3.select('#nodeAnswer').style('display', 'inline');
-          break;
-        case 'multipleNodeSelection':
-              d3.select('#nodeAnswer').style('display', 'inline');
-              break;
-        case 'value':
-            console.log('here2')
-
-          d3.select('#valueAnswer').style('display', 'inline');
-          break;
-        default:
-          // code block
-      } 
-
-    
-      d3.select("#taskArea")
-      .select(".card-header-title")
-      .text(task.prompt + " (" + task.taskID + ")");
 
       await loadNewGraph(config.graphFiles[config.loadedGraph]); 
       
@@ -443,70 +372,12 @@ function selectNode(d) {
   selectBox.classed("selected", d.hardSelect);
 
   //update the list of selected nodes in the answer panel.
-
-  let selectedList = d3
-    .select("#selectedNodeList")
-    .selectAll("li")
-    .data(graph.nodes.filter(n => n.hardSelect), n => n.id);
-
-  let selectedListEnter = selectedList.enter().append("li");
-
-  selectedList.exit().remove();
-
-  selectedList = selectedListEnter.merge(selectedList);
-  selectedList.text(d => d.shortName);
- 
-  validateAnswer();
+  updateAnswer(graph.nodes.filter(n => n.hardSelect));
 
 
 }
 
-function validateAnswer(){
 
-  let isValid;
-  let errorMsg;
-  let numSelectedNodes =  graph.nodes.filter(n => n.hardSelect).length
-
-  let submitSelector = '#submitNode'
-
-  switch (tasks[currentTask].replyType){
-    case 'singleNodeSelection':
-      isValid =  numSelectedNodes === 1;
-
-      if (numSelectedNodes > 1){
-        errorMsg='Too many nodes selected, please select a single node as your answer.'
-      }
-
-      if (numSelectedNodes < 1){
-        errorMsg='No nodes selected.'
-      }
-      break
-    case 'multipleNodeSelection':
-        isValid = graph.nodes.filter(n => n.hardSelect).length == tasks[currentTask].replyCount;
-
-        if (numSelectedNodes <tasks[currentTask].replyCount){
-          errorMsg='Keep going! This question requires ' + tasks[currentTask].replyCount + ' node selections.'
-        }
-  
-        if (numSelectedNodes < 1){
-          errorMsg='No nodes selected.'
-        }
-
-      break
-    case 'value':
-        isValid =d3.select('#answerBox').property("value").length > 0;
-        submitSelector = '#submitText'
-        errorMsg = 'Please enter a value in the answer box.';
-        console.log('value ', isValid)
-      break;
-  }
-
-
-  d3.select(submitSelector).attr("disabled",isValid ? null : true);
-  //toggle visibility of error message;
-  d3.select(".errorMsg").style('display',isValid ? 'none' : 'inline')
-  d3.select('.errorMsg').text(errorMsg)
-}
 
 function updateVis() {
   config.nodeIsRect = config.nodeLink.drawBars;
@@ -719,9 +590,7 @@ function updateVis() {
     );
   }
 
-  //set callback for free form answer input box
 
-  d3.select("#answerBox").on("input", validateAnswer);
 
   d3.select("#search-input").on("change", function() {
     let selectedOption = d3.select(this).property("value");
