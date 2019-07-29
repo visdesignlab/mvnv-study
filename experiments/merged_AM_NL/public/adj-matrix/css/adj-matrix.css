@@ -84,7 +84,7 @@ display:inline-block;
 height:600px;
 width:600px;
 */
-float: left;
+float: right;
 display: inline-block;
 position: relative;
 /*width:1097.28px;*/
@@ -100,7 +100,7 @@ display:inline-block;
 height:600px;
 width:600px;
 */
-float: left;
+float: right;
 display: inline-block;
 position: relative;
 /*width:822.72px;*/
@@ -203,14 +203,24 @@ font-weight: 800;
 fill:white;
 /*fill: #ea9b0f;*/
 }
+#visPanel{
+    display: inline-block;
+    vertical-align: top
+}
 
+.adjMatrix.vis{
+
+    position: relative;
+    display: inline-block;
+
+}
 line {
 stroke: #aaa;
 opacity: 0.3;
 }
 
 #interactiveFreeFormMain{
-  width:95%;
+  width:100%;
   margin-left: auto;
   margin-right:auto;
 }

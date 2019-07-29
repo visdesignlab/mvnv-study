@@ -1,0 +1,38 @@
+state,individualBefore,individualAfter,familyBefore
+Alabama,209,145,757
+Alaska,312,107,1131
+Arizona,166,145,600
+Arkansas,241,145,873
+Delaware,237,145,859
+Florida,218,145,789
+Georgia,221,145,800
+Idaho,188,145,680
+Illinois,188,145,682
+Indiana,265,145,961
+Iowa,189,145,683
+Kansas,171,145,619
+Louisiana,249,145,902
+Maine,265,145,961
+Michigan,202,145,731
+Mississippi,295,145,1069
+Missouri,220,145,798
+Montana,208,145,753
+Nebraska,206,145,744
+New Hampshire,237,145,859
+New Jersey,260,145,943
+New Mexico,186,145,672
+North Carolina,243,145,880
+North Dakota,232,145,841
+Ohio,212,145,768
+Oklahoma,175,145,634
+Pennsylvania,187,145,675
+South Carolina,223,145,809
+South Dakota,235,145,852
+Tennessee,161,145,584
+Texas,201,145,727
+Utah,203,145,656
+Virginia,221,145,799
+West Virginia,218,145,789
+Wisconsin,238,145,861
+Wyoming,342,145,1237
+"Average, 36 States",214,145,774

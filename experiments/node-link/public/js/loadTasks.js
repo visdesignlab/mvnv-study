@@ -26,7 +26,7 @@ function updateAnswer(answer) {
   //Update answer inside taskList;
   let taskObj = taskList[currentTask];
   taskObj.answer = typeof answer == "object" ? answer.map(a => a.id) : answer; //answer will either be an array of objects or a value;
-
+  console.log(taskObj);
   //populate answer list; - will do nothing if there is no #selectedNodeList (which is the case for value answers)
   let selectedList = d3
     .select("#selectedNodeList")
@@ -48,10 +48,25 @@ d3.selectAll(".submit").on("click", async function (){
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
-  console.log(d3.select(this).attr('disabled'))
-  updateState("Finished Task");
+  if(vis === "nodeLink"){
+    updateState("Finished Task");
+  } else {
+    let action = {
+      label: 'Finished Task',
+      action: () => {
+        const currentState = window.controller.model.app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        currentState.event = 'Finished Task'
+        return currentState;
+      },
+      args: []
+    }
 
-  pushProvenance(app.currentState());
+    window.controller.model.provenance.applyAction(action);
+  }
+
+  pushProvenance(window.controller.model.app.currentState());
 
   taskList[currentTask].endTime = Date.now();
   taskList[currentTask].minutesToComplete = Math.round(
@@ -72,7 +87,7 @@ d3.selectAll(".submit").on("click", async function (){
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
-
+  console.log(currentTask,taskList)
   let selected = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
@@ -88,7 +103,7 @@ d3.select("#nextTask").on("click", async () => {
     difficulty,
     explanation
   };
-
+  console.log(taskObj);
   //update taskList with the answer for that task.
   db.collection("results")
     .doc(workerID)
@@ -101,7 +116,7 @@ d3.select("#nextTask").on("click", async () => {
     });
 
   //increment current task;
-  if (currentTask < tasks.length - 1) {
+  if (currentTask < taskList.length - 1) {
     currentTask = currentTask + 1;
     //set startTime for next task;
     taskList[currentTask].startTime = Date.now();
@@ -311,8 +326,8 @@ async function loadTasks() {
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  vis = selectedVis;
-
+  vis = 'adjMatrix';// selectedVis;
+  selectedVis = 'adjMatrix'
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
@@ -340,11 +355,11 @@ async function loadTasks() {
   //load script tags for the appropriate vis technique;
   let scriptTags = {
     nodeLink: ["js/main_nodeLink.js", "js/helperFunctions.js"], //,"js/createTaskConfig.js"],
-    adjMatrix: []
+    adjMatrix: ["adj-matrix/libs/reorder/science.v1.js","adj-matrix/libs/reorder/tiny-queue.js","adj-matrix/libs/reorder/reorder.v1.js","adj-matrix/scripts/fill_config_settings.js","adj-matrix/scripts/helper_functions.js","adj-matrix/scripts/autocomplete.js","adj-matrix/scripts/cleaned_model.js"]
   };
   let cssTags = {
     nodeLink: ["css/node-link.css"],
-    adjMatrix: []
+    adjMatrix: ["adj-matrix/css/adj-matrix.css"]
   };
 
   // //   dynamically load only js/css relevant to the vis approach being used;

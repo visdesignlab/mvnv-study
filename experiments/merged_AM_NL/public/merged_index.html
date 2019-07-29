@@ -44,10 +44,21 @@
                             <div class="card">
                                 <div class="card-content">
                                     <div class="content">
-                                        <label class="label">Search for Nodes</label>
-                                        <input class="input searchInput" type="text" placeholder="Search for node"
-                                            id="search-input"></input>
-                                        <!-- <a class="button is-pulled-right submit" id="searchButton">Search</a> -->
+                                        <div class = 'nodeLink'>
+                                          <label class="label">Search for Nodes</label>
+                                          <input class="input searchInput" type="text" placeholder="Search for node"
+                                              id="search-input"></input>
+                                          <!-- <a class="button is-pulled-right submit" id="searchButton">Search</a> -->
+                                        </div>
+                                        <div class="adjMatrix">
+                                          <form autocomplete="off"  onsubmit="return searchForNode(this);">
+                                            <div class="autocomplete" style="width:300px;">
+                                              <input id="myInput" type="text" name="twitterNames" placeholder="Search for Name">
+                                            </div>
+                                            <input type="button" id ="searchButton" value="Search">
+                                          </form>
+                                          <input type="button" id ="clearButton" value="Clear Selections">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -143,7 +154,7 @@
                         <div class="nodeLink">
                           <svg id="node-link-svg"></svg>
                         </div>
-                        <div class="adj-matrix">
+                        <div class="adjMatrix vis">
                           <div class="loading"></div>
                           <div class="loadingOverlay"></div>
                           <div id="interactiveFreeFormMain">
@@ -155,15 +166,17 @@
                     </div>
 
                     <!-- <a class="button" id="panelControl">Hide/Show Control Panel</a> -->
+                    <div class="nodeLink">
+                      <a class="button is-pulled-right" id="clear-selection">Clear Highlighted Nodes</a>
+                      <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+                      <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
 
-                    <a class="button is-pulled-right" id="clear-selection">Clear Highlighted Nodes</a>
-                    <a href="#" id="next" class="button is-pulled-right">Next Task</a>
-                    <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
 
+                      <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
+                      <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
+                      <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
+                    </div>
 
-                    <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
-                    <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
-                    <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
                 </div>
 
             </div>
@@ -488,8 +501,8 @@
 <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-firestore.js"></script>
 
 
-<script src="js/firebaseApi.js" type="text/javascript"></script>
-<script src="js/loadTasks.js" type="text/javascript"></script>
+<script src="../../node-link/public/js/firebaseApi.js" type="text/javascript"></script>
+<script src="../../node-link/public/js/loadTasks.js" type="text/javascript"></script>
 
 
 <!-- These are dynamically loaded now -->
