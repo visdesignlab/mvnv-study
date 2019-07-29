@@ -47,6 +47,9 @@ function updateAnswer(answer) {
 d3.selectAll(".submit").on("click", async () => {
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
+  if(!validateAnswer(taskList[currentTask].answer, currentTask)){
+    return;
+  }
 
   if(vis === "nodeLink"){
     updateState("Finished Task");

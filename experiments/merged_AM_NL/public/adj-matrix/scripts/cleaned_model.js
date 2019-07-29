@@ -2187,7 +2187,7 @@ var Controller = /** @class */ (function () {
     Controller.prototype.clearView = function () {
         d3.select('#topology').selectAll('*').remove();
         d3.select('#attributes').selectAll('*').remove();
-        d3.select('#legends').selectAll('*').remove();
+        d3.select('#legend-svg').selectAll('*').remove();
     };
     Controller.prototype.loadCurrentTask = function () {
         var task = this.tasks[this.taskNum];
