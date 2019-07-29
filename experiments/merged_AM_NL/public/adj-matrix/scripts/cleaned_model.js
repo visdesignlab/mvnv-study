@@ -90,7 +90,7 @@ var Model = /** @class */ (function () {
     };
     Model.prototype.populateSearchBox = function () {
         var _this = this;
-        var names = this.nodes.map(function (node) { return node.screen_name; });
+        var names = this.nodes.map(function (node) { return node.shortName; });
         autocomplete(document.getElementById("myInput"), names);
         d3.select('#searchButton').classed('search', true);
         d3.select('#searchButton')
@@ -102,7 +102,7 @@ var Model = /** @class */ (function () {
             }
             var action = _this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
             _this.controller.model.provenance.applyAction(action);
-            pushProvenance(_this.controller.model.app.currentState());
+            //pushProvenance(this.controller.model.app.currentState())
             /*
             let cell = d3.selectAll('#' + nodeID + nodeID)
             //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
@@ -146,7 +146,7 @@ var Model = /** @class */ (function () {
         var app = this.getApplicationState();
         this.app = app;
         // creates the document with the name and worker ID
-        pushProvenance(app.currentState());
+        //pushProvenance(app.currentState());
         var rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel');
         var columnElements = ['colLabel', 'topoCol'];
         var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
@@ -374,7 +374,7 @@ var View = /** @class */ (function () {
             var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
             _this.controller.model.provenance.applyAction(action);
             console.log(JSON.stringify(_this.controller.model.app.currentState()).length, _this.controller.model.app.currentState());
-            pushProvenance(_this.controller.model.app.currentState());
+            //pushProvenance(this.controller.model.app.currentState())
         };
         // set up load
         this.renderLoading();
@@ -2046,9 +2046,11 @@ var Controller = /** @class */ (function () {
         this.task = this.tasks[this.taskNum];
         this.configuration = this.task.config;
         var prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
-        d3.select("#taskArea")
-            .select(".card-header-title")
+        d3.select("#taskArea").selectAll('.card-header-title')
             .text(prompt);
+        console.log(d3.select("#taskArea")
+            .select('.card taskCard')
+            .select(".card-header-title"), d3.select("#taskArea").selectAll('.card-header-title'));
         console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt, d3.select("#taskArea").select(".card-header-title"));
         if (this.task.replyType == 'value') {
             // hide selected nodes
@@ -2174,7 +2176,7 @@ var Controller = /** @class */ (function () {
                 args: []
             };
             _this.model.provenance.applyAction(action);
-            pushProvenance(_this.model.app.currentState());
+            //pushProvenance(this.model.app.currentState())
             //this.view.renderHighlightNodesFromDict(this.clickedRow, 'clicked', 'Row');
             //this.view.renderHighlightNodesFromDict(this.clickedCol, 'clicked', 'Col');
             //this.view.renderHighlightNodesFromDict(this.answerRow, 'answer', 'Row');

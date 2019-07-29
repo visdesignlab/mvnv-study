@@ -1,4 +1,4 @@
-d3.select("#panelControl").on("click", () => {
+//d3.select("#panelControl").on("click", () => {
   /*let panel = d3.select("#panelDiv");
   let isVisible = panel.style("display") === "block";
   panel.style("display", isVisible ? "none" : "block");
@@ -10,8 +10,8 @@ d3.select("#panelControl").on("click", () => {
   //button3.style("display", isVisible ? "none" : "block");*/
 
   //window.controller.reload();
-});
-d3.select("#panelControl").on("click")();
+//});
+//d3.select("#panelControl").on("click")();
 function searchForNode(theForm) {
     console.log(theForm);
     var reason = "";

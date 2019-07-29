@@ -39,7 +39,7 @@ class Model {
 
   private scalarMatrix: any;
   populateSearchBox() {
-    let names = this.nodes.map(node => node.screen_name);
+    let names = this.nodes.map(node => node.shortName);
     autocomplete(document.getElementById("myInput"), names);
     d3.select('#searchButton').classed('search', true);
     d3.select('#searchButton')
@@ -2381,10 +2381,11 @@ class Controller {
     this.task = this.tasks[this.taskNum];
     this.configuration = this.task.config;
     let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
-    d3.select("#taskArea")
-      .select(".card-header-title")
+    d3.select("#taskArea").selectAll('.card-header-title')
       .text(prompt);
-
+    console.log(d3.select("#taskArea")
+      .select('.card taskCard')
+      .select(".card-header-title"),d3.select("#taskArea").selectAll('.card-header-title'))
     console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
 
     if(this.task.replyType == 'value'){
