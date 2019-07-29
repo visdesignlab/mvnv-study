@@ -983,6 +983,10 @@ function isQuant(attr) {
       //set global variables
       provenance = ProvenanceLibrary.initProvenance(initialState);
       app = nodeLink(provenance);
+
+
+      //push initial state to firestore
+      pushProvenance(app.currentState())
   }
 
   function setUpObserver(stateField,callback){
@@ -1013,6 +1017,8 @@ function isQuant(attr) {
       },
       args: [getNodeState(graph.nodes),label]
     });
+
+    //
 
     let state = app.currentState();
     console.log('state size: ',JSON.stringify(state).length);
@@ -1054,15 +1060,5 @@ function isQuant(attr) {
 
   }
 
-  //function that generates random 'completion code' for worker to input back into Mechanical Turk;
-  function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
- }
- 
+
 

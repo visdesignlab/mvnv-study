@@ -22,6 +22,10 @@ let fireStore = {
         db = firebase.firestore(app);
       },
 
+      updateTask(data){
+        db.collection('results').doc(workerID).set(data,{ merge: true }); //shouldn't need the merge value; 
+      },
+
       addDocument(data,collection) {
         db.collection(collection).doc(workerID)
           .set(data)
@@ -44,4 +48,19 @@ let fireStore = {
 
 }
 
+//common data validation and submission code
+
+//function that updates the answer in the side panel as well as in the results field in tasks and pushed to firestore
+function updateAnswer(taskNumber,nodeArray){
+  //Update answer inside taskList;
+  let taskObj = taskList[taskNumber];
+  taskObj.answer = nodeArray;
+
+}
+
+//function that fires on 'nextTask' that submits final ProvenanceGraph
+function submitFinalProvenanceGraph(){
+
+
+}
 
