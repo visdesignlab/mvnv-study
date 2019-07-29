@@ -26,7 +26,7 @@ function updateAnswer(answer) {
   //Update answer inside taskList;
   let taskObj = taskList[currentTask];
   taskObj.answer = typeof answer == "object" ? answer.map(a => a.id) : answer; //answer will either be an array of objects or a value;
-
+  console.log(taskObj);
   //populate answer list; - will do nothing if there is no #selectedNodeList (which is the case for value answers)
   let selectedList = d3
     .select("#selectedNodeList")
@@ -48,9 +48,25 @@ d3.selectAll(".submit").on("click", async () => {
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
-  updateState("Finished Task");
+  if(vis === "nodeLink"){
+    updateState("Finished Task");
+  } else {
+    let action = {
+      label: 'Finished Task',
+      action: () => {
+        const currentState = window.controller.model.app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        currentState.event = 'Finished Task'
+        return currentState;
+      },
+      args: []
+    }
 
-  pushProvenance(app.currentState());
+    window.controller.model.provenance.applyAction(action);
+  }
+
+  pushProvenance(window.controller.model.app.currentState());
 
   taskList[currentTask].endTime = Date.now();
   taskList[currentTask].minutesToComplete = Math.round(
@@ -71,7 +87,7 @@ d3.selectAll(".submit").on("click", async () => {
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
-
+  console.log(currentTask,taskList)
   let selected = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
@@ -87,7 +103,7 @@ d3.select("#nextTask").on("click", async () => {
     difficulty,
     explanation
   };
-
+  console.log(taskObj);
   //update taskList with the answer for that task.
   db.collection("results")
     .doc(workerID)
@@ -100,7 +116,7 @@ d3.select("#nextTask").on("click", async () => {
     });
 
   //increment current task;
-  if (currentTask < tasks.length - 1) {
+  if (currentTask < taskList.length - 1) {
     currentTask = currentTask + 1;
     //set startTime for next task;
     taskList[currentTask].startTime = Date.now();

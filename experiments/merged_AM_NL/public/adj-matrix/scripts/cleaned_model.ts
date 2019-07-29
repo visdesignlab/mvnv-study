@@ -53,6 +53,7 @@ class Model {
         }
         let action = this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
         this.controller.model.provenance.applyAction(action);
+        pushProvenance(this.controller.model.app.currentState())
 
         /*
         let cell = d3.selectAll('#' + nodeID + nodeID)
@@ -121,7 +122,8 @@ class Model {
 
   setUpProvenance() {
     const initialState = {
-
+      workerID:workerID,
+      taskID:this.controller.tasks[this.controller.taskNum],
       nodes: '',//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
       search: '', //field to store the id of a searched node;
       startTime: Date.now(), //time this provenance graph was created and the task initialized;
@@ -148,6 +150,8 @@ class Model {
 
     const app = this.getApplicationState();
     this.app = app;
+    // creates the document with the name and worker ID
+    pushProvenance(app.currentState());
     const rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel')
     let columnElements = ['colLabel', 'topoCol'];
     let rowElements = ['rowLabel', 'topoRow', 'attrRow']
@@ -165,6 +169,7 @@ class Model {
     function classAllHighlights(state) {
       let clickedElements = new Set();
       let answerElements = new Set();
+
 
       for (let selectionType in state.selections) {
         for (let selectionElement in elementNamesFromSelection[selectionType]) {
@@ -219,6 +224,17 @@ class Model {
 
       let updateAnswerBox = (state) => {
         window.controller.view.updateAnswerToggles(state);
+        let answer = [];
+        for(let i = 0; i < window.controller.model.nodes.length; i++){
+          console.log(window.controller.model.nodes[i][this.controller.view.datumID],this.controller.view.datumID)
+          if(window.controller.model.nodes[i][this.controller.view.datumID] in state.selections.answerBox){
+            answer.push(window.controller.model.nodes[i]);
+          }
+        }
+        console.log(answer)
+        updateAnswer(answer);
+
+
       }
 
       provenance.addObserver("selections.rowLabel", updateHighlights)
@@ -418,7 +434,7 @@ class View {
       interaction = interaction.replace(' answer', '');
       let action = this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
       this.controller.model.provenance.applyAction(action);
-
+      pushProvenance(this.controller.model.app.currentState())
 
     };
     // set up load
@@ -1051,6 +1067,7 @@ class View {
       .style("opacity", 0);
 
   }
+
   /**
    * [changeInteractionWrapper description]
    * @param  nodeID ID of the node being interacted with
@@ -1066,7 +1083,7 @@ class View {
         //add time stamp to the state graph
         currentState.time = Date.now();
         console.log(currentState);
-
+        currentState.event = interactionType;
         let interactionName = interactionType //cell, search, etc
         let interactedElement = interactionType
         if (interactionName == 'cell') {
@@ -1671,6 +1688,9 @@ class View {
   updateAnswerToggles(state){
     console.log(state);
     //let answerStatus = nodeID in this.controller.answerRow;
+    if(this.controller.configuration.attributeScales.node.selected == undefined){
+      return;
+    }
     let color = this.controller.configuration.attributeScales.node.selected.range[0];
     console.log(d3.selectAll('.answerBox'));
     d3.selectAll('.answerBox').selectAll('circle').transition().duration(500)
@@ -2559,6 +2579,7 @@ class Controller {
 
     this.view = new View(this); // initalize view,
     this.model = new Model(this); //.reload();
+    this.tasks[this.taskNum].startTime = Date.now();
     //
     //this.model = new Model(this); // start reading in data
   }

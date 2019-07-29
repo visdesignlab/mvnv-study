@@ -102,6 +102,7 @@ var Model = /** @class */ (function () {
             }
             var action = _this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
             _this.controller.model.provenance.applyAction(action);
+            pushProvenance(_this.controller.model.app.currentState());
             /*
             let cell = d3.selectAll('#' + nodeID + nodeID)
             //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
@@ -121,6 +122,8 @@ var Model = /** @class */ (function () {
     };
     Model.prototype.setUpProvenance = function () {
         var initialState = {
+            workerID: workerID,
+            taskID: this.controller.tasks[this.controller.taskNum],
             nodes: '',
             search: '',
             startTime: Date.now(),
@@ -142,6 +145,8 @@ var Model = /** @class */ (function () {
         this.provenance = provenance;
         var app = this.getApplicationState();
         this.app = app;
+        // creates the document with the name and worker ID
+        pushProvenance(app.currentState());
         var rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel');
         var columnElements = ['colLabel', 'topoCol'];
         var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
@@ -182,6 +187,7 @@ var Model = /** @class */ (function () {
             return;
         }
         function setUpObservers() {
+            var _this = this;
             var updateHighlights = function (state) {
                 d3.selectAll('.clicked').classed('clicked', false);
                 d3.selectAll('.answer').classed('answer', false);
@@ -201,6 +207,15 @@ var Model = /** @class */ (function () {
             };
             var updateAnswerBox = function (state) {
                 window.controller.view.updateAnswerToggles(state);
+                var answer = [];
+                for (var i = 0; i < window.controller.model.nodes.length; i++) {
+                    console.log(window.controller.model.nodes[i][_this.controller.view.datumID], _this.controller.view.datumID);
+                    if (window.controller.model.nodes[i][_this.controller.view.datumID] in state.selections.answerBox) {
+                        answer.push(window.controller.model.nodes[i]);
+                    }
+                }
+                console.log(answer);
+                updateAnswer(answer);
             };
             provenance.addObserver("selections.rowLabel", updateHighlights);
             provenance.addObserver("selections.colLabel", updateHighlights);
@@ -358,6 +373,7 @@ var View = /** @class */ (function () {
             interaction = interaction.replace(' answer', '');
             var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
             _this.controller.model.provenance.applyAction(action);
+            pushProvenance(_this.controller.model.app.currentState());
         };
         // set up load
         this.renderLoading();
@@ -919,6 +935,7 @@ var View = /** @class */ (function () {
                 //add time stamp to the state graph
                 currentState.time = Date.now();
                 console.log(currentState);
+                currentState.event = interactionType;
                 var interactionName = interactionType; //cell, search, etc
                 var interactedElement = interactionType;
                 if (interactionName == 'cell') {
@@ -1456,6 +1473,9 @@ var View = /** @class */ (function () {
         var _this = this;
         console.log(state);
         //let answerStatus = nodeID in this.controller.answerRow;
+        if (this.controller.configuration.attributeScales.node.selected == undefined) {
+            return;
+        }
         var color = this.controller.configuration.attributeScales.node.selected.range[0];
         console.log(d3.selectAll('.answerBox'));
         d3.selectAll('.answerBox').selectAll('circle').transition().duration(500)
@@ -2181,6 +2201,7 @@ var Controller = /** @class */ (function () {
         d3.select('.loading').style('display', 'block');
         this.view = new View(this); // initalize view,
         this.model = new Model(this); //.reload();
+        this.tasks[this.taskNum].startTime = Date.now();
         //
         //this.model = new Model(this); // start reading in data
     };
