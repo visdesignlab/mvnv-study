@@ -220,7 +220,7 @@ function resetPanel() {
   console.log(provGraph);
   // Push the latest provenance graph to the firestore.
   
-  return; 
+//   return; 
   //not updating provenanceGraph right now to avoid overloading the database 
   db.collection("provenanceGraphs")
     .doc(workerID)

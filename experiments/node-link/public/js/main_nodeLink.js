@@ -614,7 +614,7 @@ function updateVis() {
 
     //Only 'click' node if it isn't already selected;
     if (!isSelected) {
-      nodeClick(node);
+      nodeClick(node,'searched');
     }
   });
 
@@ -885,7 +885,7 @@ function updateVis() {
 
   node.on("click", nodeClick);
 
-  function nodeClick(d){
+  function nodeClick(d,label){
     //modify graph.nodes to reflect the 'clicked' state of this node;
     d.selected =  d.selected ? false: true; 
 
@@ -893,7 +893,7 @@ function updateVis() {
     tagNeighbors(d);
 
     //update state graph;
-    updateState(d.selected ? 'Selected Node' : 'Unselected Node');
+    updateState(label ? label : (d.selected ? 'Selected Node' : 'Unselected Node'));
   }
 
   function tagNeighbors(clickedNode) {
