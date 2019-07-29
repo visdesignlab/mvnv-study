@@ -318,7 +318,9 @@ async function loadTasks() {
     console.log("Error getting document:", error);
   });
 
-  let group = assignedGroup.data().currentGroup;
+  
+
+  let group = 0 //assignedGroup.data().currentGroup;
   studyTracking.group = group;
 
   let selectedCondition = conditions[group];
@@ -326,8 +328,7 @@ async function loadTasks() {
 
   console.log('selected Vis is ',selectedVis)
 
-  vis =  selectedVis; // 'adjMatrix';// selectedVis;
-//   selectedVis = 'adjMatrix'
+  vis = selectedVis;  
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
@@ -355,11 +356,11 @@ async function loadTasks() {
   //load script tags for the appropriate vis technique;
   let scriptTags = {
     nodeLink: ["js/main_nodeLink.js", "js/helperFunctions.js"], //,"js/createTaskConfig.js"],
-    adjMatrix: ["../../adj-matrix/libs/reorder/science.v1.js","../../adj-matrix/libs/reorder/tiny-queue.js","../../adj-matrix/libs/reorder/reorder.v1.js","../../adj-matrix/scripts/fill_config_settings.js","../../adj-matrix/scripts/helper_functions.js","../../adj-matrix/scripts/autocomplete.js","../../adj-matrix/scripts/cleaned_model.js"]
+    adjMatrix: ["../../merged_AM_NL/public/adj-matrix/libs/reorder/science.v1.js","../../merged_AM_NL/public/adj-matrix/libs/reorder/tiny-queue.js","../../merged_AM_NL/public/adj-matrix/libs/reorder/reorder.v1.js","../../merged_AM_NL/public/adj-matrix/scripts/fill_config_settings.js","../../merged_AM_NL/public/adj-matrix/scripts/helper_functions.js","../../merged_AM_NL/public/adj-matrix/scripts/autocomplete.js","../../merged_AM_NL/public/adj-matrix/scripts/cleaned_model.js"]
   };
   let cssTags = {
     nodeLink: ["css/node-link.css"],
-    adjMatrix: ["../../adj-matrix/css/adj-matrix.css"]
+    adjMatrix: ["../../merged_AM_NL/public/adj-matrix/css/adj-matrix.css"]
   };
 
   // //   dynamically load only js/css relevant to the vis approach being used;

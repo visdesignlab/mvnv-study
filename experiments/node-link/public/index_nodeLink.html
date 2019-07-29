@@ -51,9 +51,15 @@
 
                                         </div>
 
-                                        <div class = "adjMatrix">
-
-                                        </div>
+                                        <div class="adjMatrix">
+                                                <form autocomplete="off"  onsubmit="return searchForNode(this);">
+                                                  <div class="autocomplete" style="width:300px;">
+                                                    <input id="myInput" type="text" name="twitterNames" placeholder="Search for Name">
+                                                  </div>
+                                                  <input type="button" id ="searchButton" value="Search">
+                                                </form>
+                                                <input type="button" id ="clearButton" value="Clear Selections">
+                                              </div>
                                                                             </div>
                                 </div>
                             </div>
@@ -442,7 +448,7 @@
             //If we want to define which group the user will be assigned here, move await loadTasks() from hit.html to here;
 
             experimentr.sequence([
-                // 'modules/consent.html',
+                'modules/consent.html',
                 // 'modules/training_collegeFake.html',
                 'modules/hit.html',
                 // 'modules/findings.html',

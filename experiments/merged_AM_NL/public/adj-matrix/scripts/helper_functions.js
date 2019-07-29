@@ -11,7 +11,7 @@ d3.select("#panelControl").on("click", () => {
 
   //window.controller.reload();
 });
-d3.select("#panelControl").on("click")();
+// d3.select("#panelControl").on("click")();
 function searchForNode(theForm) {
     console.log(theForm);
     var reason = "";
