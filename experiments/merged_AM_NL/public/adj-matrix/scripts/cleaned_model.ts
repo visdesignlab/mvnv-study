@@ -53,7 +53,7 @@ class Model {
         }
         let action = this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
         this.controller.model.provenance.applyAction(action);
-        pushProvenance(this.controller.model.app.currentState())
+        //pushProvenance(this.controller.model.app.currentState())
 
         /*
         let cell = d3.selectAll('#' + nodeID + nodeID)
@@ -151,7 +151,7 @@ class Model {
     const app = this.getApplicationState();
     this.app = app;
     // creates the document with the name and worker ID
-    pushProvenance(app.currentState());
+    //pushProvenance(app.currentState());
     const rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel')
     let columnElements = ['colLabel', 'topoCol'];
     let rowElements = ['rowLabel', 'topoRow', 'attrRow']
@@ -434,7 +434,8 @@ class View {
       interaction = interaction.replace(' answer', '');
       let action = this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
       this.controller.model.provenance.applyAction(action);
-      pushProvenance(this.controller.model.app.currentState())
+      console.log(JSON.stringify(this.controller.model.app.currentState()).length,this.controller.model.app.currentState())
+      //pushProvenance(this.controller.model.app.currentState())
 
     };
     // set up load
@@ -1938,18 +1939,20 @@ class View {
           .attr('fill', '#8B8B8B')
           .on('mouseover', function (d) {
             //if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
-              that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
+              //that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
 
               let matrix = this.getScreenCTM()
                 .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+
+              that.tooltip.html(Math.round(d[column]))
+                  .style("left", (window.pageXOffset + matrix.e + columnWidths[column]/2 - 35) + "px")
+                  .style("top", (window.pageYOffset + matrix.f - 5) + "px");
 
               that.tooltip.transition()
                 .duration(200)
                 .style("opacity", .9);
 
-              that.tooltip.html(Math.round(d[column]))
-                .style("left", (window.pageXOffset + matrix.e - 25) + "px")
-                .style("top", (window.pageYOffset + matrix.f - 10) + "px");
+
             //}
           })
           .on('mouseout', (d)=>  {
@@ -2118,7 +2121,11 @@ class View {
       })
       .on('mouseout', function(d) {
         that.tooltip.transition().duration(250).style("opacity", 0);
-      });
+      })
+      .on('click', (d)=>{
+        console.log(d);
+        this.sort(d);
+      })
 
     let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
     answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
@@ -2510,9 +2517,9 @@ class Controller {
         args: []
       }
       this.model.provenance.applyAction(action);
-      pushProvenance(this.model.app.currentState())
+      //pushProvenance(this.model.app.currentState())
 
-      
+
 
 
       //this.view.renderHighlightNodesFromDict(this.clickedRow, 'clicked', 'Row');

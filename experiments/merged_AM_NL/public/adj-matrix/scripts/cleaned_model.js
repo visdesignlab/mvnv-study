@@ -373,6 +373,7 @@ var View = /** @class */ (function () {
             interaction = interaction.replace(' answer', '');
             var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
             _this.controller.model.provenance.applyAction(action);
+            console.log(JSON.stringify(_this.controller.model.app.currentState()).length, _this.controller.model.app.currentState());
             pushProvenance(_this.controller.model.app.currentState());
         };
         // set up load
@@ -1668,15 +1669,15 @@ var View = /** @class */ (function () {
                     .attr('fill', '#8B8B8B')
                     .on('mouseover', function (d) {
                     //if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
-                    that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
+                    //that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
                     var matrix = this.getScreenCTM()
                         .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+                    that.tooltip.html(Math.round(d[column]))
+                        .style("left", (window.pageXOffset + matrix.e + columnWidths[column] / 2 - 35) + "px")
+                        .style("top", (window.pageYOffset + matrix.f - 5) + "px");
                     that.tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    that.tooltip.html(Math.round(d[column]))
-                        .style("left", (window.pageXOffset + matrix.e - 25) + "px")
-                        .style("top", (window.pageYOffset + matrix.f - 10) + "px");
                     //}
                 })
                     .on('mouseout', function (d) {
@@ -1825,6 +1826,10 @@ var View = /** @class */ (function () {
         })
             .on('mouseout', function (d) {
             that.tooltip.transition().duration(250).style("opacity", 0);
+        })
+            .on('click', function (d) {
+            console.log(d);
+            _this.sort(d);
         });
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
