@@ -18,7 +18,9 @@
     
       console.log('loading vis')
       if (vis === 'nodeLink') {
+        d3.selectAll('.development').remove()
         loadVis("vis");
+        
       } else {
         d3.select('.card-header-title').text(
           'YOU WON THE ADJACENCY MATRIX! PLEASE RELOAD TO PLAY WITH THE NODE-LINK');

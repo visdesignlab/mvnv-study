@@ -109,7 +109,8 @@ d3.select("#nextTask").on("click", async () => {
     difficulty,
     explanation
   };
-  console.log(taskObj);
+
+
   //update taskList with the answer for that task.
   db.collection("results")
     .doc(workerID)
@@ -158,10 +159,14 @@ function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
+
+
   // clear any values in the feedback or search box;
   d3.select("#feedback")
     .select(".textarea")
     .property("value", "");
+
+    d3.select('.searchInput').property('value', '')
   //hide feedback box
   d3.select("#feedback").style("display", "none");
 
@@ -225,19 +230,6 @@ function resetPanel() {
       )
     });
 }
-
-// function startProvenance(provGraph) {
-//   console.log("should be creating", taskList[currentTask].taskID);
-
-//   // Push the latest provenance graph to the firestore.
-//   db.collection("provenanceGraphs")
-//     .doc(workerID)
-//     .update({
-//       [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
-//         provGraph
-//       )
-//     });
-// }
 
 //validates answer
 function validateAnswer(answer, currentTask) {

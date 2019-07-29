@@ -25,10 +25,7 @@
 
     }
 
-    .errorMsg{
-        color:red;
-        font-style:italic;
-    }
+    
 
     .selectBox{
         stroke:rgb(94, 94, 94);
@@ -67,7 +64,7 @@
     }
 
     .muted {
-        opacity: .5;
+        opacity: .2;
     }
 
     .hideLabel {
