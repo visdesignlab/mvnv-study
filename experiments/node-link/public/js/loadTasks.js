@@ -44,10 +44,11 @@ function updateAnswer(answer) {
 }
 
 // Set submit button callback.
-d3.selectAll(".submit").on("click", async () => {
+d3.selectAll(".submit").on("click", async function (){
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
+  console.log(d3.select(this).attr('disabled'))
   updateState("Finished Task");
 
   pushProvenance(app.currentState());
@@ -189,9 +190,12 @@ function resetPanel() {
 }
 
  function pushProvenance(provGraph) {
-    console.log("should be updating", taskList[currentTask].taskID);
+  console.log("should be updating", taskList[currentTask].taskID);
   console.log(provGraph);
   // Push the latest provenance graph to the firestore.
+  
+  return; 
+  //not updating provenanceGraph right now to avoid overloading the database 
   db.collection("provenanceGraphs")
     .doc(workerID)
     .update({
