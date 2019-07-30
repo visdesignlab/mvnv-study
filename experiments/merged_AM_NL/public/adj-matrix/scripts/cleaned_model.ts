@@ -223,7 +223,9 @@ class Model {
       }
 
       let updateAnswerBox = (state) => {
-        window.controller.view.updateAnswerToggles(state);
+
+        window.controller.configuration.adjMatrix['toggle']? window.controller.view.updateAnswerToggles(state): window.controller.view.updateCheckBox(state);
+        //window.controller.view.updateAnswerToggles(state)
         let answer = [];
         for(let i = 0; i < window.controller.model.nodes.length; i++){
           console.log(window.controller.model.nodes[i][this.controller.view.datumID],this.controller.view.datumID)
@@ -1680,6 +1682,19 @@ class View {
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
   }
 
+  updateCheckBox(state){
+    if(this.controller.configuration.attributeScales.node.selected == undefined){
+      return;
+    }
+    let color = this.controller.configuration.attributeScales.node.selected.range[0];
+    console.log(d3.selectAll('.answerBox'));
+
+    d3.selectAll('.answerBox').selectAll('rect').transition().duration(250)
+      .style("fill", d=>{
+        let answerStatus = d[this.datumID] in state.selections.answerBox;
+        return answerStatus ? color : "white"
+      })
+  }
   updateAnswerToggles(state){
     console.log(state);
     //let answerStatus = nodeID in this.controller.answerRow;
@@ -1698,6 +1713,7 @@ class View {
         let answerStatus = d[this.datumID] in state.selections.answerBox;
         return answerStatus ? color : "white";
       })
+
 
     d3.select('.answerBox').selectAll('rect').transition().duration(500)
       .style("fill", d=>{
@@ -1967,22 +1983,36 @@ class View {
           .attr("class", "answerBox")
           .attr("id", d=> "answerBox" + d[this.datumID])
           .attr('transform', 'translate(' + (columnPosition + barMargin.left) + ',' + 0 + ')');
+        if(this.controller.configuration.adjMatrix.toggle){
+          let rect = answerBox.append("rect")
+            .attr("x", (columnWidths[column] / 4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
+            .attr("y", barMargin.top)
+            .attr("rx", barHeight / 2)
+            .attr("ry", barHeight / 2)
+            .style("fill", "lightgray")
+            .attr("width", columnWidths[column] / 2)
+            .attr("height", barHeight)
+            .attr('stroke', 'lightgray')
 
-        let rect = answerBox.append("rect")
-          .attr("x", (columnWidths[column] / 4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
-          .attr("y", barMargin.top)
-          .attr("rx", barHeight / 2)
-          .attr("ry", barHeight / 2)
-          .style("fill", "lightgray")
-          .attr("width", columnWidths[column] / 2)
-          .attr("height", barHeight)
-          .attr('stroke', 'lightgray')
+          let circle = answerBox.append("circle")
+            .attr("cx", (1.15 * columnWidths[column] / 4))
+            .attr("cy", barHeight / 2 + barMargin.top)
+            .attr("r", barHeight / 2)
+            .style("fill", "white")
+            .style('stroke','lightgray');
+          console.log(circle);
+        } else {
+          let rect = answerBox.append("rect")
+            .attr("x", (columnWidths[column] / 2) - barHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
+            .attr("y", barMargin.top)
+            //.attr("rx", barHeight / 2)
+            //.attr("ry", barHeight / 2)
+            .style("fill", "white")
+            .attr("width", barHeight)
+            .attr("height", barHeight)
+            .attr('stroke', 'lightgray')
+        }
 
-        let circle = answerBox.append("circle")
-          .attr("cx", (1.15 * columnWidths[column] / 4))
-          .attr("cy", barHeight / 2 + barMargin.top)
-          .attr("r", barHeight / 2)
-          .style("fill", "white");
 
         answerBox
           .on('click', (d, i, nodes) => {
@@ -1996,12 +2026,16 @@ class View {
 
             /*Visual chagne */
             let answerStatus = nodeID in this.controller.answerRow;
+            if(this.controller.configuration.adjMatrix.toggle){
+              d3.select(nodes[i]).selectAll('circle').transition().duration(500)
+                .attr("cx", (answerStatus ? 3 * columnWidths[column] / 4 : 1.15 * columnWidths[column] / 4))
+                .style("fill", answerStatus ? color : "white");
+              d3.select(nodes[i]).selectAll('rect').transition().duration(500)
+                .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
+            } else {
 
-            d3.select(nodes[i]).selectAll('circle').transition().duration(500)
-              .attr("cx", (answerStatus ? 3 * columnWidths[column] / 4 : 1.15 * columnWidths[column] / 4))
-              .style("fill", answerStatus ? color : "white");
-            d3.select(nodes[i]).selectAll('rect').transition().duration(500)
-              .style("fill", answerStatus ? "#8B8B8B" : "lightgray");
+            }
+
 
             this.clickFunction(d, i, nodes);
 
@@ -2030,8 +2064,7 @@ class View {
 
     // Add headers
 
-    let columnHeaders = this.attributes.append('g')
-      .classed('column-headers', true)
+
 
     this.columnNames = {
       "followers_count": "Followers",
@@ -2040,8 +2073,8 @@ class View {
       "statuses_count": "Tweets",
       "favourites_count": "Liked Tweets",
       "count_followers_in_query": "In-Network Followers",
-      "continent": "",
-      "type": "",
+      "continent": "Continent",
+      "type": "Type",
       "memberFor_days": "Account Age",
       "listed_count": "In Lists",
       "selected": "Answer"
@@ -2050,17 +2083,17 @@ class View {
     function calculateMaxChars(numColumns) {
       switch (numColumns) {
         case 1:
-          return { "characters": 20, "font": 14 }
+          return { "characters": 20, "font": 17 }
         case 2:
-          return { "characters": 20, "font": 13 }
+          return { "characters": 20, "font": 15 }
         case 3:
-          return { "characters": 20, "font": 12 }
+          return { "characters": 20, "font": 14 }
         case 4:
-          return { "characters": 19, "font": 11 }
+          return { "characters": 19, "font": 13 }
         case 5:
-          return { "characters": 18, "font": 10 }
+          return { "characters": 18, "font": 12 }
         case 6:
-          return { "characters": 16, "font": 10 }
+          return { "characters": 16, "font": 12 }
         case 7:
           return { "characters": 14, "font": 10 }
         case 8:
@@ -2075,18 +2108,36 @@ class View {
     }
     let options = calculateMaxChars(columns.length)// 10 attr => 8
     let maxcharacters = options.characters;
-    let fontSize = options.font;
-    columnHeaders.selectAll('.header')
+    let fontSize = options.font//*1.1;
+
+
+    //this.createColumnHeaders();
+    let columnHeaders = this.attributes.append('g')
+      .classed('column-headers', true)
+    let columnHeaderGroups = columnHeaders.selectAll('.header')
       .data(columns)
       .enter()
       .append('g')
-      .attr('transform', (d) => 'translate(' + (this.columnScale(d) + barMargin.left) + ',' + (-45) + ')')
+      .attr('transform', (d) => 'translate(' + (this.columnScale(d) ) + ',' + (-65) + ')')
+      console.log(columnHeaderGroups);
+
+    columnHeaderGroups
+      .append('rect')
+      .attr('width',d=>this.columnWidths[d])
+      .attr('height',20)
+      .attr('y',0)
+      .attr('x',0)
+      .attr('fill','none')
+      .attr('stroke','lightgray')
+      .attr('stroke-width',1)
+
+    columnHeaderGroups
       .append('text')
       .classed('header', true)
       //.attr('y', -45)
       //.attr('x', (d) => this.columnScale(d) + barMargin.left)
       .style('font-size', fontSize.toString() + 'px')
-      .attr('text-anchor', 'left')
+      .attr('text-anchor', 'middle')
       //.attr('transform','rotate(-10)')
       .text((d, i) => {
         if (this.columnNames[d] && this.columnNames[d].length > maxcharacters) {
@@ -2094,6 +2145,8 @@ class View {
         }
         return this.columnNames[d];
       })
+      .attr('x',d=>this.columnWidths[d]/2)
+      .attr('y',14)
       .on('mouseover', function(d) {
         if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
           that.tooltip.transition().duration(200).style("opacity", .9);
@@ -2119,7 +2172,7 @@ class View {
       })
 
     let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
-    answerColumn.attr('y', 35).attr('x', 10).attr('font-weight', 650);
+    answerColumn.attr('font-weight', 650)//.attr('y', 35).attr('x', 10);
 
 
     d3.select('.loading').style('display', 'none');
@@ -2159,16 +2212,20 @@ class View {
     let widthOffset = this.controller.attrWidth / columns.length;
 
     let totalCategoricalWidth = 0;
+    let bandwidthScale = 2
+    let bandwidth = this.verticalScale.bandwidth();
 
     // fill in categorical column sizes
     for (let i = 0; i < columns.length; i++) {
       let column = columns[i];
       // if column is categorical
       if (this.isCategorical(column)) {
-        let width = (this.verticalScale.bandwidth()) * (this.controller.configuration.attributeScales.node[column].domain.length + 3)
+        let width = (bandwidthScale*bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3/bandwidthScale)
+
         if (column == "selected") {
           width = 60;
         }
+
         widths[column] = width;
         totalCategoricalWidth += width; // add width
       }
@@ -2196,8 +2253,8 @@ class View {
   createUpsetPlot(column, columnWidth, placementScaleForAttr) {
     let columnPosition = this.columnScale(column);
     let topMargin = 1;
-    let width = this.verticalScale.bandwidth() - 2 * topMargin;
-
+    let height = this.verticalScale.bandwidth() - 2 * topMargin;
+    let width = this.verticalScale.bandwidth()*2
     for (let i = 0; i < placementScaleForAttr.length; i++) {
       this.attributeRows
         .append('rect')
@@ -2207,7 +2264,7 @@ class View {
           return d[column] == placementScaleForAttr[i].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
         })
         .attr('width', width)
-        .attr('height', width);
+        .attr('height', height);
     }
 
 
@@ -2218,16 +2275,17 @@ class View {
     let attributeInfo = this.controller.configuration.attributeScales.node[attribute];
     let dividers = attributeInfo.domain.length;
     let legendHeight = 25;
+    let bandwidthScale = 2
+    let bandwidth = this.verticalScale.bandwidth();
 
-
-    //let functionalWidth = legendWidth - 2*this.verticalScale.bandwidth();
-    let legendItemSize = (legendWidth) / (dividers + 3);
-    let margin = this.verticalScale.bandwidth() / dividers;
+    let legendItemSize = bandwidth*bandwidthScale;
+    //(legendWidth) / (dividers + 3/bandwidthScale);
+    let margin = bandwidth*bandwidthScale / dividers;
 
     let xRange = [];
 
     let rects = this.attributes.append("g")
-      .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * legendItemSize) + "," + (-legendHeight) + ")"); //
+      .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * bandwidth) + "," + (-legendHeight) + ")"); //
 
     for (let i = 0; i < dividers; i++) {
       let rect1 = rects
@@ -2237,7 +2295,7 @@ class View {
       xRange.push({
         "attr": attribute,
         "value": attributeInfo.domain[i],
-        "position": this.columnScale(attribute) + 1 * legendItemSize + (i * (legendItemSize + margin))
+        "position": (this.columnScale(attribute) + 1 * bandwidth) + (i * (legendItemSize + margin))
       });
 
       rect1
@@ -2246,16 +2304,16 @@ class View {
         .attr('y', 0)
         .attr('fill', attributeInfo.range[i])
         .attr('width', legendItemSize)
-        .attr('height', legendItemSize)
+        .attr('height', this.verticalScale.bandwidth())
 
       rect1
         .append('text')
         .text(attributeInfo.legendLabels[i])
-        .attr('x', 3)
-        .attr('y', legendItemSize)
-        .attr('text-anchor', 'start')
-        .style('font-size', 7.5)
-        .attr('transform', 'rotate(-90)')
+        .attr('x', legendItemSize/2)
+        .attr('y', -3)
+        .attr('text-anchor', 'middle')
+        .style('font-size', 11)
+        //.attr('transform', 'rotate(-90)')
     }
 
     return xRange;
@@ -2397,14 +2455,15 @@ class Controller {
         'glyph': 'rect',
         'label': 'selected'
       }
-      console.log(this.configuration.nodeAttributes,d3.min([125*this.configuration.nodeAttributes.length,450]));
+      console.log(this.configuration.nodeAttributes,d3.min([100*this.configuration.nodeAttributes.length,450]));
 
 
       //this.configuration = result;
       this.configuration.attributeScales.node['selected'] = obj;
+      this.configuration.adjMatrix['toggle'] = false;
     }
 
-    this.attrWidth = d3.min([125*this.configuration.nodeAttributes.length,450]);
+    this.attrWidth = d3.min([125*this.configuration.nodeAttributes.length,650]);
 
     this.configuration.state = {}
     this.configuration.state.adjMatrix = {};

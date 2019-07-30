@@ -184,7 +184,9 @@ rect.answer{
   fill :#ea9b0f !important;
   fill-opacity:1 !important;
 }
-
+text {
+  text-rendering: optimizeLegibility;
+}
 text.active {
 fill: red;
 font-weight: bold;
