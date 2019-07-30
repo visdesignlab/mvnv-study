@@ -2,7 +2,7 @@
     "task1": {
         "workerID": null,
         "order": null,
-        "answer": "",
+        "answer": {"nodes":[],"value":""},
         "feedback": "",
         "prompt": "Select the European account with the highest number of followers.",
         "replyType": [
@@ -200,7 +200,7 @@
     "task2": {
         "workerID": null,
         "order": null,
-        "answer": "",
+        "answer": {"nodes":[],"value":""},
         "feedback": "",
         "prompt": "Find 3 nodes that are people and have more friends than followers.",
         "replyType": [
@@ -402,7 +402,7 @@
     "task3": {
         "workerID": null,
         "order": null,
-        "answer": "",
+        "answer": {"nodes":[],"value":""},
         "feedback": "",
         "prompt": "Which of the european people who has interacted with R.Kosara has tweeted the most?",
         "replyType": [
@@ -604,7 +604,7 @@
     "task4": {
         "workerID": null,
         "order": null,
-        "answer": "",
+        "answer": {"nodes":[],"value":""},
         "feedback": "",
         "prompt": "Select the accounts that have retweeted Alex Lex, and enter their average # of followers?",
         "replyType": [
@@ -806,7 +806,7 @@
     "task5": {
         "workerID": null,
         "order": null,
-        "answer": "",
+        "answer": {"nodes":[],"value":""},
         "feedback": "",
         "prompt": "How many europeans are on the path that connects L.Harrison and R.Gove ?",
         "replyType": [
