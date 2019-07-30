@@ -83,7 +83,7 @@
             db.collection('participants').doc(workerID).set({
                     startTime: Date.now(),
                     completionCode:makeid(6)
-                },{ merge: true }); //shouldn't need the merge value; 
+                }); 
 
                 experimentr.next();
             });

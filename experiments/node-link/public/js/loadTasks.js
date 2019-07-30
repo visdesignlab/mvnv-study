@@ -27,6 +27,8 @@ function updateAnswer(answer) {
   let taskObj = taskList[currentTask];
   taskObj.answer = typeof answer == "object" ? answer.map(a => a.id) : answer; //answer will either be an array of objects or a value;
   //populate answer list; - will do nothing if there is no #selectedNodeList (which is the case for value answers)
+
+  console.log('after updating answer, answer is ', taskObj.answer)
   let selectedList = d3
     .select("#selectedNodeList")
     .selectAll("li")
@@ -71,8 +73,6 @@ d3.selectAll(".submit").on("click", async function (){
     provenance.applyAction(action);
     pushProvenance(app.currentState())
   } else {
-
-    console.log('should NOT be here')
     let action = {
       label: 'Finished Task',
       action: () => {
@@ -92,8 +92,7 @@ d3.selectAll(".submit").on("click", async function (){
 
   taskList[currentTask].endTime = Date.now();
   taskList[currentTask].minutesToComplete = Math.round(
-    (taskList[currentTask].startTime - taskList[currentTask].endTime) / 60000
-  );
+  taskList[currentTask].startTime - taskList[currentTask].endTime) / 60000;
 
   //show feedback box - changed to show modal
 //   d3.select("#feedback").style("display", "inline");
@@ -105,12 +104,17 @@ d3.selectAll(".submit").on("click", async function (){
   d3.select("#search-input").attr("disabled", "true"); //cannot search for nodes
   d3.select("#answerBox").attr("disabled", "true"); //can no longer edit answer;
   d3.selectAll(".submit").attr("disabled", "true"); //discourage multiple clicks on the submit button
+
+  console.log('answer on submit is ', taskList[currentTask].answer)
+
   //update state with answer and end time;
 });
 
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
+
+    console.log('taskAnswer on next is ', taskObj)
   let selected = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
@@ -245,14 +249,17 @@ function resetPanel() {
 }
 
  async function pushProvenance(provGraph) {
-  console.log("should be updating", taskList[currentTask].taskID);
-  console.log(provGraph);
-  // Push the latest provenance graph to the firestore.
   
-  let provGraphDoc = await db.collection("provenanceGraphs")
-  .doc("Carolina").get();
+//       //create a document in the provenance graph colletion
+//   db.collection("provenanceGraphs")
+//   .doc(workerID)
+//   .set({'startingField':''}, { merge: true });
 
-let doc = provGraphDoc.data();
+  // Push the latest provenance graph to the firestore.
+    let provGraphDoc = await db.collection(workerID)
+    .doc(taskList[currentTask].taskID).get();
+
+    let doc = provGraphDoc.data();
 
   let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
 
@@ -262,20 +269,58 @@ let doc = provGraphDoc.data();
   if (docSize>.75){
     console.log('Provenance Graph for this user is too large! Considering storing each state in its own document');
   } else {
-    db.collection("provenanceGraphs")
-    .doc(workerID)
-    .update({
-      [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
-        provGraph
-      )
-    });
+      let docRef =  db.collection(workerID)
+      .doc(taskList[currentTask].taskID);
+      if (doc){
+        docRef.update({
+            provGraphs: firebase.firestore.FieldValue.arrayUnion(
+              provGraph
+            )
+          });
+      } else {
+        docRef.set({
+            provGraphs: firebase.firestore.FieldValue.arrayUnion(
+              provGraph
+            )
+          });
+      }
+    
+    
   }
+  
+  
+//     console.log("should be updating", taskList[currentTask].taskID);
+//   console.log(provGraph);
+//   // Push the latest provenance graph to the firestore.
+  
+//     let provGraphDoc = await db.collection("provenanceGraphs")
+//   .doc("Carolina").get();
+
+//     let doc = provGraphDoc.data();
+
+//   let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
+
+//   console.log('Provenance graph size is ',docSize, ' MB')
+//   console.log ('Provenance graph has ', doc , 'elements')
+
+//   if (docSize>.75){
+//     console.log('Provenance Graph for this user is too large! Considering storing each state in its own document');
+//   } else {
+//     db.collection("provenanceGraphs")
+//     .doc(workerID)
+//     .update({
+//       [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
+//         provGraph
+//       )
+//     });
+//   }
  
  
 }
 //Function to ensure that the workerID is a valid database document ID; 
 function sanitizeWorkerID(workerID){
-    //     Must be valid UTF-8 characters
+    
+    // Must be valid UTF-8 characters
     // Must be no longer than 1,500 bytes
     // Cannot contain a forward slash (/)
     // Cannot solely consist of a single period (.) or double periods (..)
@@ -401,6 +446,7 @@ async function loadTasks() {
     return task;
   });
 
+  console.log(selectedVis)
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (selectedVis === "nodeLink") {
     d3.selectAll(".adjMatrix").remove();
@@ -484,13 +530,9 @@ async function assignTasks() {
   });
 
   var taskListRef = db.collection("results").doc(workerID);
-  taskListRef.set(configLessTaskList, { merge: true });
+  taskListRef.set(configLessTaskList);
 
-  //create a document in the provenance graph colletion
 
-  db.collection("provenanceGraphs")
-    .doc(workerID)
-    .set({'startingField':''}, { merge: true });
   //update group;
   db.collection("studyTracking")
     .doc("currentGroup")
