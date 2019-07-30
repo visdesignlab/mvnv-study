@@ -30,7 +30,7 @@ function updateAnswer(answer) {
   if (answerType === 'string'){
     taskObj.answer.value = answer;
   } else {
-    taskObj.answer.nodes = answer.map(a => {id:a.id;name:a.shortName});
+    taskObj.answer.nodes = answer.map(a => {id:a.id;name:d.shortName});
 
     let selectedList = d3
     .select("#selectedNodeList")
@@ -288,35 +288,17 @@ async function pushProvenance(provGraph) {
       "Provenance Graph for this user is too large! Considering storing each state in its own document"
     );
   } else {
-      let docRef =  db.collection(workerID)
-      .doc(taskList[currentTask].taskID);
-      if (doc){
-        docRef.update({
-            provGraphs: firebase.firestore.FieldValue.arrayUnion(
-              provGraph
-            )
-          });
-      } else {
-        docRef.set({
-            provGraphs: firebase.firestore.FieldValue.arrayUnion(
-              provGraph
-            )
-          });
-      }
-
-
+    let docRef = db.collection(workerID).doc(taskList[currentTask].taskID);
+    if (doc) {
+      docRef.update({
+        provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
+      });
+    } else {
+      docRef.set({
+        provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
+      });
+    }
   }
-
-}
-//Function to ensure that the workerID is a valid database document ID;
-function sanitizeWorkerID(workerID){
-
-    // Must be valid UTF-8 characters
-    // Must be no longer than 1,500 bytes
-    // Cannot contain a forward slash (/)
-    // Cannot solely consist of a single period (.) or double periods (..)
-    // Cannot match the regular expression __.*__
-    return workerID
 
   //     console.log("should be updating", taskList[currentTask].taskID);
   //   console.log(provGraph);
@@ -360,15 +342,13 @@ function sanitizeWorkerID(workerID) {
 function validateAnswer(answer,errorCheckField) {
   
   //validate fields of answer as required by the task config (string/node);
-  
-  //infer type of answer
+
   let answerIsNode = errorCheckField === "nodes";
   let numSelectedNodes = answer.nodes.length;
 
   let isValid;
   let errorMsg;
 
-  
   let task = taskList[currentTask];
 
   let replyTypes = task.replyType;
@@ -416,11 +396,10 @@ function validateAnswer(answer,errorCheckField) {
         errorMsg = "Please enter a value in the answer box.";
   }
 
-  d3.select('#submitButton').attr("disabled", isValid ? null : true);
+  submitSelector.attr("disabled", isValid ? null : true);
   //toggle visibility of error message;
-  d3.select('.errorMsg')
-  .style("display", isValid ? "none" : "inline")
-  .text(errorMsg);
+  submitSelector.style("display", isValid ? "none" : "inline");
+  errorMsgSelector.text(errorMsg);
 
   return isValid;
 }
@@ -469,7 +448,7 @@ async function loadTasks() {
 
   console.log("selected Vis is ", selectedVis);
 
-  vis = selectedVis = 'adjMatrix'//='nodeLink' //
+  vis = selectedVis; //='nodeLink' //= 'adjMatrix'
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);

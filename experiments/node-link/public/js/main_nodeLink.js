@@ -341,7 +341,7 @@ async function loadTask(task) {
 
   setUpObserver("selected", highlightSelectedNodes);
   setUpObserver("hardSelected", highlightHardSelectedNodes);
-  // setUpObserver(".nodePos", updatePos);
+  setUpObserver("nodePos", updatePos);
 
   update();
 }
