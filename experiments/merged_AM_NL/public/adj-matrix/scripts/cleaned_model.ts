@@ -43,9 +43,6 @@ class Model {
     autocomplete(document.getElementById("myInput"), names);
     d3.select('#searchButton').classed('search', true);
     d3.select('#searchButton')
-      //.on('click', this.controller.view.clickFunction);
-
-
       .on('click', () => {
         let nodeID = document.getElementById("myInput").value;
         let index = names.indexOf(nodeID);
@@ -141,6 +138,7 @@ class Model {
         attrRow: {},
         rowLabel: {},
         colLabel: {},
+        neighborSelect: {},
         cellcol: {},
         cellrow: {},
         search: {}
@@ -166,6 +164,7 @@ class Model {
       rowLabel: rowElements,
       attrRow: rowElements,
       cellrow: rowElements,
+      neighborSelect: rowElements,
       answerBox: rowElements,
       search: rowElements.concat(columnElements)
     }
@@ -1034,7 +1033,22 @@ class View {
       .attr("text-anchor", "start")
       .style("font-size", 11)
       .text((d, i) => this.nodes[i].shortName)
-      .on('click', this.clickFunction)
+      .on('click', (d,i,nodes)=>{
+        if(this.controller.configuration.adjMatrix.neighborSelect){
+          d.map(node =>{
+            if(node.mentions != 0 || node.combined != 0 || node.retweet != 0){
+              console.log(node);
+              let neighbor = node.colid;
+              console.log(nodes,i);
+              let action = this.controller.view.changeInteractionWrapper(neighbor, nodes[i], 'neighborSelect');
+              console.log(action);
+              this.controller.model.provenance.applyAction(action);
+            }
+          })
+        } else {
+          this.clickFunction(d,i,nodes);
+        }
+      })
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
 
@@ -1071,7 +1085,7 @@ class View {
 
   /**
    * [changeInteractionWrapper description]
-   * @param  nodeID ID of the node being interacted with
+   * @param  nodeID ID of the node being changed with
    * @param  node   nodes corresponding to the element class interacted with (from d3 select nodes[i])
    * @param  interactionType class name of element interacted with
    * @return        [description]
@@ -1097,6 +1111,10 @@ class View {
 
           nodeID = cellData.rowid;
           interactionName = interactionName + 'row'
+        } else if (interactionName == 'neighborSelect'){
+          console.log(node,d3.select(node),d3.select(node).data())
+          interactedElement = 'colClick'+d3.select(node).data()[0][0].rowid;
+          console.log(interactedElement);
         }
         this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
         return currentState;
@@ -2464,8 +2482,10 @@ class Controller {
 
       //this.configuration = result;
       this.configuration.attributeScales.node['selected'] = obj;
-      this.configuration.adjMatrix['toggle'] = false;
+
     }
+    this.configuration.adjMatrix['toggle'] = false;
+    this.configuration.adjMatrix.neighborSelect = true;
 
     this.attrWidth = d3.min([125*this.configuration.nodeAttributes.length,650]);
 
@@ -2571,7 +2591,8 @@ class Controller {
             colLabel: {},
             cellcol: {},
             cellrow: {},
-            search: {}
+            search: {},
+            neighborSelect : {}
           }
           return currentState;
         },

@@ -94,7 +94,6 @@ var Model = /** @class */ (function () {
         autocomplete(document.getElementById("myInput"), names);
         d3.select('#searchButton').classed('search', true);
         d3.select('#searchButton')
-            //.on('click', this.controller.view.clickFunction);
             .on('click', function () {
             var nodeID = document.getElementById("myInput").value;
             var index = names.indexOf(nodeID);
@@ -140,6 +139,7 @@ var Model = /** @class */ (function () {
                 attrRow: {},
                 rowLabel: {},
                 colLabel: {},
+                neighborSelect: {},
                 cellcol: {},
                 cellrow: {},
                 search: {}
@@ -160,6 +160,7 @@ var Model = /** @class */ (function () {
             rowLabel: rowElements,
             attrRow: rowElements,
             cellrow: rowElements,
+            neighborSelect: rowElements,
             answerBox: rowElements,
             search: rowElements.concat(columnElements)
         };
@@ -889,7 +890,23 @@ var View = /** @class */ (function () {
             .attr("text-anchor", "start")
             .style("font-size", 11)
             .text(function (d, i) { return _this.nodes[i].shortName; })
-            .on('click', this.clickFunction)
+            .on('click', function (d, i, nodes) {
+            if (_this.controller.configuration.adjMatrix.neighborSelect) {
+                d.map(function (node) {
+                    if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
+                        console.log(node);
+                        var neighbor = node.colid;
+                        console.log(nodes, i);
+                        var action = _this.controller.view.changeInteractionWrapper(neighbor, nodes[i], 'neighborSelect');
+                        console.log(action);
+                        _this.controller.model.provenance.applyAction(action);
+                    }
+                });
+            }
+            else {
+                _this.clickFunction(d, i, nodes);
+            }
+        })
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
             var colID = d[0].rowid; // as rows and columns are flipped
@@ -917,7 +934,7 @@ var View = /** @class */ (function () {
     };
     /**
      * [changeInteractionWrapper description]
-     * @param  nodeID ID of the node being interacted with
+     * @param  nodeID ID of the node being changed with
      * @param  node   nodes corresponding to the element class interacted with (from d3 select nodes[i])
      * @param  interactionType class name of element interacted with
      * @return        [description]
@@ -942,6 +959,11 @@ var View = /** @class */ (function () {
                     _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
                     nodeID = cellData.rowid;
                     interactionName = interactionName + 'row';
+                }
+                else if (interactionName == 'neighborSelect') {
+                    console.log(node, d3.select(node), d3.select(node).data());
+                    interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
+                    console.log(interactedElement);
                 }
                 _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
                 return currentState;
@@ -2120,8 +2142,9 @@ var Controller = /** @class */ (function () {
             console.log(this.configuration.nodeAttributes, d3.min([100 * this.configuration.nodeAttributes.length, 450]));
             //this.configuration = result;
             this.configuration.attributeScales.node['selected'] = obj;
-            this.configuration.adjMatrix['toggle'] = false;
         }
+        this.configuration.adjMatrix['toggle'] = false;
+        this.configuration.adjMatrix.neighborSelect = true;
         this.attrWidth = d3.min([125 * this.configuration.nodeAttributes.length, 650]);
         this.configuration.state = {};
         this.configuration.state.adjMatrix = {};
@@ -2220,7 +2243,8 @@ var Controller = /** @class */ (function () {
                         colLabel: {},
                         cellcol: {},
                         cellrow: {},
-                        search: {}
+                        search: {},
+                        neighborSelect: {}
                     };
                     return currentState;
                 },

@@ -409,7 +409,7 @@ async function loadTasks() {
 
   console.log('selected Vis is ',selectedVis)
 
-  vis = selectedVis = 'adjMatrix'//='nodeLink' //
+  vis = selectedVis// = 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
