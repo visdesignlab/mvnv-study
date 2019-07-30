@@ -249,14 +249,15 @@ function resetPanel() {
 }
 
  async function pushProvenance(provGraph) {
-<<<<<<< HEAD
+//<<<<<<< HEAD
   console.log("should be updating", taskList[currentTask].taskID);
   console.log(provGraph);
   // Push the latest provenance graph to the firestore.
 
   let provGraphDoc = await db.collection("provenanceGraphs")
   .doc("Carolina").get();
-=======
+//=======
+/*
 
 //       //create a document in the provenance graph colletion
 //   db.collection("provenanceGraphs")
@@ -267,7 +268,7 @@ function resetPanel() {
     let provGraphDoc = await db.collection(workerID)
     .doc(taskList[currentTask].taskID).get();
 >>>>>>> a0f0ba1bb96541dd277a3321ed6eab789bb1abdb
-
+*/
     let doc = provGraphDoc.data();
 
   let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
@@ -408,7 +409,7 @@ async function loadTasks() {
 
   console.log('selected Vis is ',selectedVis)
 
-  vis = selectedVis //= 'adjMatrix'//='nodeLink' //
+  vis = selectedVis = 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
@@ -433,7 +434,7 @@ async function loadTasks() {
     d3.selectAll(".adjMatrix").remove();
   } else {
     d3.selectAll(".nodeLink").remove();
-    d3.selectAll('.development').remove();
+    d3.selectAll('.isDevelopment').remove();
   }
 
   //load script tags for the appropriate vis technique;

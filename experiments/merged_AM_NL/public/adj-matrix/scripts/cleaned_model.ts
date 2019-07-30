@@ -48,10 +48,14 @@ class Model {
 
       .on('click', () => {
         let nodeID = document.getElementById("myInput").value;
-        if (names.indexOf(nodeID) == -1) {
+        let index = names.indexOf(nodeID);
+        if (index == -1) {
           return;
         }
-        let action = this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
+        let name = this.nodes.filter(node=>{return node.shortName == nodeID});
+        console.log(name);
+        name = name[0].screen_name;
+        let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
         this.controller.model.provenance.applyAction(action);
         //pushProvenance(this.controller.model.app.currentState())
 
@@ -182,13 +186,13 @@ class Model {
               if(selectionType =='attrRow' || selectionType =='rowLabel'){
                 // if both in attrRow and rowLabel, don't highlight element
                 if(node in state.selections['attrRow'] && node in state.selections['rowLabel']) continue;
-
               }
               clickedElements.add('#' + selectionElement + node)
             }
           }
         }
       }
+      console.log(clickedElements);
 
       let clickedSelectorQuery = Array.from(clickedElements).join(',')
       let answerSelectorQuery = Array.from(answerElements).join(',')
@@ -228,12 +232,12 @@ class Model {
         //window.controller.view.updateAnswerToggles(state)
         let answer = [];
         for(let i = 0; i < window.controller.model.nodes.length; i++){
-          console.log(window.controller.model.nodes[i][this.controller.view.datumID],this.controller.view.datumID)
+          //console.log(window.controller.model.nodes[i][this.controller.view.datumID],this.controller.view.datumID)
           if(window.controller.model.nodes[i][this.controller.view.datumID] in state.selections.answerBox){
             answer.push(window.controller.model.nodes[i]);
           }
         }
-        console.log(answer)
+        //console.log(answer)
         updateAnswer(answer);
 
 

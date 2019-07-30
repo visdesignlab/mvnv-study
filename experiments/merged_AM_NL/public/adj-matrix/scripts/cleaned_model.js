@@ -97,10 +97,14 @@ var Model = /** @class */ (function () {
             //.on('click', this.controller.view.clickFunction);
             .on('click', function () {
             var nodeID = document.getElementById("myInput").value;
-            if (names.indexOf(nodeID) == -1) {
+            var index = names.indexOf(nodeID);
+            if (index == -1) {
                 return;
             }
-            var action = _this.controller.view.changeInteractionWrapper(nodeID, null, 'search');
+            var name = _this.nodes.filter(function (node) { return node.shortName == nodeID; });
+            console.log(name);
+            name = name[0].screen_name;
+            var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
             _this.controller.model.provenance.applyAction(action);
             //pushProvenance(this.controller.model.app.currentState())
             /*
@@ -180,6 +184,7 @@ var Model = /** @class */ (function () {
                     }
                 }
             }
+            console.log(clickedElements);
             var clickedSelectorQuery = Array.from(clickedElements).join(',');
             var answerSelectorQuery = Array.from(answerElements).join(',');
             clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
@@ -210,12 +215,12 @@ var Model = /** @class */ (function () {
                 //window.controller.view.updateAnswerToggles(state)
                 var answer = [];
                 for (var i = 0; i < window.controller.model.nodes.length; i++) {
-                    console.log(window.controller.model.nodes[i][_this.controller.view.datumID], _this.controller.view.datumID);
+                    //console.log(window.controller.model.nodes[i][this.controller.view.datumID],this.controller.view.datumID)
                     if (window.controller.model.nodes[i][_this.controller.view.datumID] in state.selections.answerBox) {
                         answer.push(window.controller.model.nodes[i]);
                     }
                 }
-                console.log(answer);
+                //console.log(answer)
                 updateAnswer(answer);
             };
             provenance.addObserver("selections.rowLabel", updateHighlights);
