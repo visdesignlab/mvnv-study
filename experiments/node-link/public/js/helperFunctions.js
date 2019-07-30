@@ -119,12 +119,7 @@ function countSiblingLinks(graph, source, target) {
   //Functions related to the control panel. 
 
   //function that populates the control Panel. assumes access to the global variable graph and config;
-function setPanelValuesFromFile() {
-    //create internal dictionary of defaultDomains for each attribute;
-
-    // return;
-  
-    [["node", "nodes"], ["edge", "links"]].map(node_edge => {
+function setPanelValuesFromFile() {    [["node", "nodes"], ["edge", "links"]].map(node_edge => {
       Object.keys(config.attributeScales[node_edge[0]]).map(attr => {
         let graphElements = graph[node_edge[1]];
         //use d3.extent for quantitative attributes
@@ -1006,40 +1001,6 @@ function isQuant(attr) {
     );
   }
 
-
-  // //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
-  // function updateState(label,searchId){
-
-  //   console.log('calling update state with ', label)
-  //   console.log ('there are ', getNodeState(graph.nodes).filter(n=>n.selected).length  , ' selected nodes')
-
-  //   provenance.applyAction({
-  //     label,
-  //     action: (nodes,label) => {
-  //       const currentState = app.currentState();
-  //       //add time stamp to the state graph
-  //       currentState.time = Date.now();
-  //       //Add label describing what the event was
-  //       currentState.event = label;
-  //       //Update actual node data
-  //       currentState.nodes = nodes; 
-  //       //If node was searched, push him to the search array
-  //       if (searchId){
-  //         currentState.search.push(searchId)
-  //       }
-  //       return currentState;
-  //     },
-  //     args: [getNodeState(graph.nodes),label]
-  //   });
-
-  //   //
-
-  //   let state = app.currentState();
-  //   console.log('state size: ',JSON.stringify(state).length);
-  //   // fb.addDocument(state)
-
-  // }
-  
   async function loadNewGraph(fileName) {
     graph = await d3.json(fileName);
 

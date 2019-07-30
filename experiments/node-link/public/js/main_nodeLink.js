@@ -336,14 +336,12 @@ async function loadTask(task) {
     });
   }
 
-
   //pass in workerID to setupProvenance
   setUpProvenance(graph.nodes, task.taskID, task.order);
 
   setUpObserver("selected", highlightSelectedNodes);
   setUpObserver("hardSelected", highlightHardSelectedNodes);
-  setUpObserver("nodePos", updatePos);
-
+  // setUpObserver(".nodePos", updatePos);
 
   update();
 }
@@ -426,6 +424,7 @@ function selectNode(node) {
 }
 
 function highlightHardSelectedNodes(state) {
+  console.log("triggered highlightHardSelectedNodes")
   d3.selectAll(".selectBox").classed("selected", d =>
     state.hardSelected.includes(d.id)
   );
@@ -1087,6 +1086,7 @@ function updateVis() {
       label: label,
       action: () => {
         const currentState = app.currentState();
+        console.log('CURRENT STATE', currentState)
         //add time stamp to the state graph
         currentState.time = Date.now();
         //Add label describing what the event was
