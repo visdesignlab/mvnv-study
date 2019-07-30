@@ -26,7 +26,6 @@ function updateAnswer(answer) {
   //Update answer inside taskList;
   let taskObj = taskList[currentTask];
   taskObj.answer = typeof answer == "object" ? answer.map(a => a.id) : answer; //answer will either be an array of objects or a value;
-  console.log(taskObj);
   //populate answer list; - will do nothing if there is no #selectedNodeList (which is the case for value answers)
   let selectedList = d3
     .select("#selectedNodeList")
@@ -54,9 +53,26 @@ d3.selectAll(".submit").on("click", async function (){
   }
 
   if(vis === "nodeLink"){
-    updateState("Finished Task");
+
+    //   updateState('Finished Task');
+    let action = {
+        label:"Finished Task",
+        action: () => {
+          const currentState = app.currentState();
+          //add time stamp to the state graph
+          currentState.time = Date.now();
+          //Add label describing what the event was
+          currentState.event = "Finished Task";
+          return currentState;
+        },
+        args: []
+      }
+
+    provenance.applyAction(action);
     pushProvenance(app.currentState())
   } else {
+
+    console.log('should NOT be here')
     let action = {
       label: 'Finished Task',
       action: () => {
@@ -79,8 +95,10 @@ d3.selectAll(".submit").on("click", async function (){
     (taskList[currentTask].startTime - taskList[currentTask].endTime) / 60000
   );
 
-  //show feedback box
-  d3.select("#feedback").style("display", "inline");
+  //show feedback box - changed to show modal
+//   d3.select("#feedback").style("display", "inline");
+
+    d3.select('.modalFeedback').classed('is-active',true)
 
   //add cover to vis and disable search and answerBox
   d3.select("#disableInteraction").style("display", "inline"); //add cover to the vis
@@ -93,16 +111,26 @@ d3.selectAll(".submit").on("click", async function (){
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
-  console.log(currentTask,taskList)
   let selected = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
 
+  //check to see if something has been selected before allowing the user to continue:
+
+  if (selected.size() === 0){
+    //display error msg;
+    d3.select('.modalFeedback').select('.errorMsg').style('display', 'inline')
+    return
+  } else{
+    d3.select('.modalFeedback').select('.errorMsg').style('display', 'none')
+  }
+
   // grab any potential feedback from the user;
   let explanation = d3
-    .select("#feedback")
+    .select(".modalFeedback")
     .select(".textarea")
     .property("value");
+
   let difficulty = selected.size() > 0 ? selected.property("value") : "";
 
   taskObj.feedback = {
@@ -128,6 +156,8 @@ d3.select("#nextTask").on("click", async () => {
     //set startTime for next task;
     taskList[currentTask].startTime = Date.now();
     resetPanel();
+    d3.select('.modalFeedback').classed('is-active',false)
+
   } else {
     console.log("finished Tasks");
     d3.select(".hit").style("display", "none");
@@ -159,15 +189,14 @@ function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
-
-
   // clear any values in the feedback or search box;
-  d3.select("#feedback")
+  d3.select(".modalFeedback")
     .select(".textarea")
     .property("value", "");
 
     d3.select('.searchInput').property('value', '')
-  //hide feedback box
+  
+    //hide feedback box
   d3.select("#feedback").style("display", "none");
 
   //add cover to vis and disable search and answerBox
@@ -183,7 +212,7 @@ function resetPanel() {
     .remove();
 
   //clear any selected Radio buttons in the feedback box;
-  d3.select("#feedback")
+  d3.select(".modalFeedback")
     .selectAll("input")
     .property("checked", false);
 
@@ -215,21 +244,46 @@ function resetPanel() {
     }
 }
 
- function pushProvenance(provGraph) {
+ async function pushProvenance(provGraph) {
   console.log("should be updating", taskList[currentTask].taskID);
   console.log(provGraph);
   // Push the latest provenance graph to the firestore.
+  
+  let provGraphDoc = await db.collection("provenanceGraphs")
+  .doc("Carolina").get();
 
-//   return;
-  //not updating provenanceGraph right now to avoid overloading the database
-  db.collection("provenanceGraphs")
+let doc = provGraphDoc.data();
+
+  let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
+
+  console.log('Provenance graph size is ',docSize, ' MB')
+  console.log ('Provenance graph has ', doc , 'elements')
+
+  if (docSize>.75){
+    console.log('Provenance Graph for this user is too large! Considering storing each state in its own document');
+  } else {
+    db.collection("provenanceGraphs")
     .doc(workerID)
     .update({
       [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
         provGraph
       )
     });
+  }
+ 
+ 
 }
+//Function to ensure that the workerID is a valid database document ID; 
+function sanitizeWorkerID(workerID){
+    //     Must be valid UTF-8 characters
+    // Must be no longer than 1,500 bytes
+    // Cannot contain a forward slash (/)
+    // Cannot solely consist of a single period (.) or double periods (..)
+    // Cannot match the regular expression __.*__
+    return workerID
+
+}
+
 
 //validates answer
 function validateAnswer(answer, currentTask) {
@@ -443,4 +497,61 @@ async function assignTasks() {
     .update({
       currentGroup: (studyTracking.group + 1) % studyTracking.numConditions
     });
+}
+
+function calcFirestoreDocSize(collectionName, docId, docObject) {
+    let docNameSize = encodedLength(collectionName) + 16
+    let docIdType = typeof(docId)
+    if(docIdType === 'string') {
+        docNameSize += encodedLength(docId) + 1
+    } else {
+        docNameSize += 8
+    }  
+    let docSize = docNameSize + calcObjSize(docObject)
+
+    return  docSize
+}
+function encodedLength(str) {
+    var len = str.length;
+    for (let i = str.length - 1; i >= 0; i--) {
+        var code = str.charCodeAt(i);
+        if (code > 0x7f && code <= 0x7ff) {
+            len++;
+        } else if (code > 0x7ff && code <= 0xffff) {
+            len += 2;
+        } if (code >= 0xDC00 && code <= 0xDFFF) {
+            i--;
+        }
+    }
+    return len;
+}
+
+function calcObjSize(obj) {
+    let key;
+    let size = 0;
+    let type = typeof obj;
+
+    if(!obj) {
+        return 1
+    } else if(type === 'number') {
+        return 8
+    } else if(type === 'string') {
+        return encodedLength(obj) + 1
+    } else if(type === 'boolean') {
+        return 1
+    } else if (obj instanceof Date) {
+        return 8
+    } else if(obj instanceof Array) {
+        for(let i = 0; i < obj.length; i++) {
+            size += calcObjSize(obj[i])
+        }
+        return size
+    } else if(type === 'object') {
+
+        for(key of Object.keys(obj)) {
+            size += encodedLength(key) + 1 
+            size += calcObjSize(obj[key])
+        }
+        return size += 32
+    }
 }
