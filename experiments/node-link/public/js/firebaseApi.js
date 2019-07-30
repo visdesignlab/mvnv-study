@@ -48,19 +48,3 @@ let fireStore = {
 
 }
 
-//common data validation and submission code
-
-//function that updates the answer in the side panel as well as in the results field in tasks and pushed to firestore
-function updateAnswer(taskNumber,nodeArray){
-  //Update answer inside taskList;
-  let taskObj = taskList[taskNumber];
-  taskObj.answer = nodeArray;
-
-}
-
-//function that fires on 'nextTask' that submits final ProvenanceGraph
-function submitFinalProvenanceGraph(){
-
-
-}
-

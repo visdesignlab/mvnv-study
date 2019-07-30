@@ -888,8 +888,15 @@ function isQuant(attr) {
     await loadNewGraph(config.graphFiles[config.loadedGraph]);     
   }
 
-  function getNodeState(nodes){
-    return nodes.map(n=>{return {x:n.x,y:n.y,selected:n.selected || false ,answerSelected:n.answerSelected || false}})
+  // function getNodeState(nodes){
+  //   return nodes.map(n=>{return {x:n.x,y:n.y,selected:n.selected || false ,answerSelected:n.answerSelected || false}})
+  // }
+
+  //function that initializes the state object for node positions;
+  function nodePositionMap(nodes){
+    let nodeMap={};
+    nodes.map(n=>nodeMap[n.id]={x:n.x,y:n.y});
+    return nodeMap;
   }
 
   function setConfigCallbacks(baseConfig,taskConfig){
@@ -962,11 +969,16 @@ function isQuant(attr) {
 
   function setUpProvenance(nodes,taskID = 'noID', order = 'noOrder'){
 
+    let nodePos = nodePositionMap(nodes);
+
     const initialState = {
        workerID, //gets value from global workerID variable
        taskID,
        order,
-       nodes,//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
+       nodePos,//map of node positions, 
+       userSelectedNeighbors:{}, //map of nodes that have neighbors selected (so they can be non-muted)
+       selected:[], //set of nodes that have been 'soft selected'
+       hardSelected:[], //set of nodes that have been 'hard selected'
        search:[], //field to store the id of a searched node;
        startTime:Date.now(), //time this provenance graph was created and the task initialized;
        event:'startedProvenance',//string describing what event triggered this state update; same as the label in provenance.applyAction
@@ -995,37 +1007,38 @@ function isQuant(attr) {
   }
 
 
-  //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
-  function updateState(label,searchId){
+  // //wrapper function around applyAction since i'm always just updating nodes to have a barebones version of graph.nodes
+  // function updateState(label,searchId){
 
-    console.log('calling update state with ', label)
-    console.log ('there are ', getNodeState(graph.nodes).filter(n=>n.selected).length  , ' selected nodes')
-    provenance.applyAction({
-      label,
-      action: (nodes,label) => {
-        const currentState = app.currentState();
-        //add time stamp to the state graph
-        currentState.time = Date.now();
-        //Add label describing what the event was
-        currentState.event = label;
-        //Update actual node data
-        currentState.nodes = nodes; 
-        //If node was searched, push him to the search array
-        if (searchId){
-          currentState.search.push(searchId)
-        }
-        return currentState;
-      },
-      args: [getNodeState(graph.nodes),label]
-    });
+  //   console.log('calling update state with ', label)
+  //   console.log ('there are ', getNodeState(graph.nodes).filter(n=>n.selected).length  , ' selected nodes')
 
-    //
+  //   provenance.applyAction({
+  //     label,
+  //     action: (nodes,label) => {
+  //       const currentState = app.currentState();
+  //       //add time stamp to the state graph
+  //       currentState.time = Date.now();
+  //       //Add label describing what the event was
+  //       currentState.event = label;
+  //       //Update actual node data
+  //       currentState.nodes = nodes; 
+  //       //If node was searched, push him to the search array
+  //       if (searchId){
+  //         currentState.search.push(searchId)
+  //       }
+  //       return currentState;
+  //     },
+  //     args: [getNodeState(graph.nodes),label]
+  //   });
 
-    let state = app.currentState();
-    console.log('state size: ',JSON.stringify(state).length);
-    // fb.addDocument(state)
+  //   //
 
-  }
+  //   let state = app.currentState();
+  //   console.log('state size: ',JSON.stringify(state).length);
+  //   // fb.addDocument(state)
+
+  // }
   
   async function loadNewGraph(fileName) {
     graph = await d3.json(fileName);

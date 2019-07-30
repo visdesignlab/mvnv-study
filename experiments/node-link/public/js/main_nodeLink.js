@@ -42,6 +42,8 @@ var visDimensions = { width: 0, height: 0 };
 //Dimensions of the panel with the task, legend, and user response
 var panelDimensions = { width: 0, height: 0 };
 
+let taskBarHeight;
+
 var svg;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
 
@@ -56,7 +58,7 @@ let nodeLength,
   nodeHeight,
   nodeFill,
   catFill,
-  nodeSTroke,
+  nodeStroke,
   edgeColor,
   edgeWidth;
 
@@ -145,8 +147,8 @@ function setGlobalScales() {
     return nodeFillScale(value);
   };
 
-  nodeStroke = function(node) {
-    return node.selected
+  nodeStroke = function(selected) {
+    return selected
       ? config.style.selectedNodeColor
       : config.nodeLink.noNodeStroke;
   };
@@ -195,15 +197,16 @@ function setGlobalScales() {
 function loadVis(id) {
 
   let targetDiv = d3.select("#targetSize");
-  width = targetDiv.style("width").replace("px", "");
-  height = targetDiv.style("height").replace("px", "");
-
-  // height = height*0.75;
-  let taskBarHeight = 74;
-  //  console.log(width2,height2)
-
-  visDimensions.width = width * 0.75 - 24;
-  visDimensions.height = height - taskBarHeight;
+      width = targetDiv.style("width").replace("px", "");
+      height = targetDiv.style("height").replace("px", "");
+    
+      // height = height*0.75;
+      taskBarHeight = 74;
+      //  console.log(width2,height2)
+    
+      visDimensions.width = width * 0.75 - 24;
+      visDimensions.height = height - taskBarHeight;
+      
 
   panelDimensions.width = width * 0.25;
   panelDimensions.height = height - taskBarHeight;
@@ -290,7 +293,6 @@ function loadVis(id) {
     // setUpObserver("nodes", highlightSelectedNodes);
     // // setUpObserver("nodes", highlightAnswerNodes);
 
-
     // let baseConfig = await d3.json("../../configs/baseConfig.json");
     // let nodeLinkConfig = await d3.json("../../configs/5AttrConfig.json");
     // let saturatedConfig = await d3.json("../../configs/10AttrConfig.json");
@@ -302,29 +304,70 @@ function loadVis(id) {
 
 async function loadTask(task){
 
+  console.log('loading task')
+
       config = task.config;
 
       await loadNewGraph(config.graphFiles[config.loadedGraph]); 
       
-    // update global variables from config;
-     setGlobalScales();
+      // update global variables from config;
+      setGlobalScales();
+
+      //determine x and y positions before starting provenance; 
+
+      if (graph.nodes[0].fx === undefined) {
+        //scale node positions to this screen;
+    
+        let xPos = d3
+          .scaleLinear()
+          .domain(d3.extent(graph.nodes, n => n.x))
+          .range([50, visDimensions.width - 50]);
+        let yPos = d3
+          .scaleLinear()
+          .domain(d3.extent(graph.nodes, n => n.y))
+          .range([50, visDimensions.height - 50]);
+    
+        graph.nodes.map(n => {
+          n.x = xPos(n.x);
+          n.y = yPos(n.y);
+          n.fx = n.x;
+          n.fy = n.y;
+          n.savedX = n.fx;
+          n.savedY = n.fy;
+        });
+      } else {
+        graph.nodes.map(n => {
+          n.fx = n.savedX;
+          n.fy = n.savedY;
+          n.x = n.savedX;
+          n.y = n.savedY;
+        });
+      }
 
       //pass in workerID to setupProvenance
-      setUpProvenance(getNodeState(graph.nodes));
+      setUpProvenance(graph.nodes);
+
+      setUpObserver("selected", highlightSelectedNodes);
+      setUpObserver("hardSelected", highlightHardSelectedNodes);
+      setUpObserver("nodePos", updatePos);
+
+
+
 
       //Set up observers for provenance graph
-      setUpObserver("nodes", highlightSelectedNodes);
+      // setUpObserver("nodes", highlightSelectedNodes);
+      // setUpObserver("nodes", updatePos);
+
       // setUpObserver("nodes", highlightAnswerNodes);
 
       update();
 }
 
 function highlightSelectedNodes(state) {
-  //not currently using the state since it only reflects the same data that is bound to the dom elements. probably bad practice?
 
   // see if there is at least one node 'clicked'
   //check state not ui, since ui has not yet been updated; 
-  let hasUserSelection = state.nodes.find(n=>n.selected)//d3.selectAll(".node.clicked").size() > 0;
+  let hasUserSelection = state.selected.length>0; 
 
   //set the class of everything to 'muted', except for the selected node and it's neighbors;
   d3.select(".nodes")
@@ -333,47 +376,163 @@ function highlightSelectedNodes(state) {
       return (
         config.nodeLink.selectNeighbors &&
         hasUserSelection &&
-        !d.selected &&
-        d.userSelectedNeighbors.length < 1
+        !state.selected.includes(d.id) && 
+        (!state.userSelectedNeighbors[d.id] ||  state.userSelectedNeighbors[d.id].length == 0)//this id exists in the dict
       );
     })
 
     d3.select(".nodes")
     .selectAll(".node")
-    .classed("clicked", d => d.selected);
+    .classed("clicked", d => state.selected.includes(d.id)); 
 
   d3.select(".links")
     .selectAll(".linkGroup")
     .classed(
       "muted",
-      d => config.nodeLink.selectNeighbors && hasUserSelection && !d.selected
+      d => config.nodeLink.selectNeighbors && hasUserSelection && !state.selected.includes(d.id) 
     );
   // .select('path')
   // .style("stroke", edgeColor);
 
   d3.selectAll(".nodeGroup")
     .select(".node")
-    .style("fill", nodeFill)
-    .style("stroke", nodeStroke);
+    .style("fill", nodeFill) //using local bound data, ok, since state should not influence the fill
+    .style("stroke", d=>nodeStroke(state.selected.includes(d.id))); 
 }
 
-function selectNode(d) {
+function selectNode(node) {
   d3.event.stopPropagation();
-  d3.select(this).classed("selected", !d3.select(this).classed("selected"));
+  const currentState = app.currentState();
 
-  d.hardSelect = d3.select(this).classed("selected");
+  //find out if this node was selected before; 
+  let selected = currentState.hardSelected;
+  let wasSelected = selected.includes(node.id);
 
-  let nodeLabel = d3.select(d3.select(this).node().parentNode).select("text");
+  if (wasSelected){
+    selected = selected.filter(s=> s !==  node.id)
+  } else {
+    selected.push(node.id)
+  }
 
-  let selectBox = d3
-    .select(d3.select(this).node().parentNode)
-    .select(".selectBox");
+  let label = 'Hard Selected a Node' ;
 
-  nodeLabel.classed("selected", d.hardSelect);
-  selectBox.classed("selected", d.hardSelect);
+  let action = {
+    label: label,
+    action: () => {
+      const currentState = app.currentState();
+      //add time stamp to the state graph
+      currentState.time = Date.now();
+      //Add label describing what the event was
+      currentState.event = label;
+      //Update actual node data
+      currentState.hardSelected = selected; 
+      return currentState;
+    },
+    args: []
+  }
+  
+  provenance.applyAction(action);
+  pushProvenance(app.currentState())
+}
+
+function highlightHardSelectedNodes(state) {
+
+  d3.selectAll(".selectBox").classed('selected',d=>state.hardSelected.includes(d.id));
 
   //update the list of selected nodes in the answer panel.
-  updateAnswer(graph.nodes.filter(n => n.hardSelect));
+  updateAnswer(graph.nodes.filter(n => state.hardSelected.includes(n.id)));
+}
+
+
+function dragNode(){
+  d3.selectAll(".linkGroup")
+  .select("path")
+  .attr("d", function(d) {
+    let path = arcPath(d.type === "mentions", d);
+    if (path.includes("null")) {
+      console.log("bad path");
+    }
+    return path;
+  });
+
+let radius = nodeMarkerLength / 2;
+
+d3.selectAll(".nodeGroup").attr("transform", d => {
+  d.x = Math.max(radius, Math.min(visDimensions.width, d.x));
+  d.y = Math.max(radius, Math.min(visDimensions.height, d.y));
+  return "translate(" + d.x + "," + d.y + ")";
+});
+
+}
+function updatePos(state) {
+
+  d3.selectAll(".linkGroup")
+    .select("path")
+    .attr("d", function(d) {
+      let path = arcPath(d.type === "mentions", d,state);
+      if (path.includes("null")) {
+        console.log("bad path");
+      }
+      return path;
+    });
+
+  d3.selectAll(".nodeGroup").attr("transform", d => "translate(" + state.nodePos[d.id].x + "," + state.nodePos[d.id].y + ")");
+}
+
+function arcPath(leftHand, d,state=false) {
+
+  let source  = state? {x:state.nodePos[d.source.id].x, y:state.nodePos[d.source.id].y} : d.source;
+  let target  = state? {x:state.nodePos[d.target.id].x, y:state.nodePos[d.target.id].y} : d.target;
+
+
+  var x1 = leftHand ? source.x : target.x,
+    y1 = leftHand ? source.y : target.y,
+    x2 = leftHand ? target.x: source.x,
+    y2 = leftHand ? target.y: source.y;
+  (dx = x2 - x1),
+    (dy = y2 - y1),
+    (dr = Math.sqrt(dx * dx + dy * dy)),
+    (drx = dr),
+    (dry = dr),
+    (sweep = leftHand ? 0 : 1);
+  // siblingCount = countSiblingLinks(graph, d.source, d.target);
+  (xRotation = 0), (largeArc = 0);
+
+  // if (siblingCount > 1) {
+  //   var siblings = getSiblingLinks(graph, d.source, d.target);
+  //   var arcScale = d3
+  //     .scaleOrdinal()
+  //     .domain(siblings)
+  //     .range([1, siblingCount]);
+
+  //   drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+  //   dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
+  // }
+
+  return (
+    "M" +
+    x1 +
+    "," +
+    y1 +
+    "A" +
+    drx +
+    ", " +
+    dry +
+    " " +
+    xRotation +
+    ", " +
+    largeArc +
+    ", " +
+    sweep +
+    " " +
+    x2 +
+    "," +
+    y2
+  );
+
+  // return ("M" + x1 + "," + y1
+  //    + "S" + x2 + "," + y2
+  //    + " " + x2 + "," + y2)
 }
 
 
@@ -387,7 +546,6 @@ function updateVis() {
   let nodeSizeAttr = config.nodeLink.nodeSizeAttr;
   let edgeWidthAttr = config.nodeLink.edgeWidthAttr;
 
-  console.log( config.attributeScales.node, nodeSizeAttr)
   fakeSmallNode[nodeSizeAttr] =
     config.attributeScales.node[nodeSizeAttr].domain[0];
   fakeLargeNode[nodeSizeAttr] =
@@ -512,12 +670,12 @@ function updateVis() {
         config.nodeIsRect ? nodeHeight(d) + 8 : nodeLength(d) + 8
       )
       .style("fill", nodeFill)
-      .style("stroke", nodeStroke)
+      .style("stroke", d=>nodeStroke(app.currentState().selected.includes(d.id)))
       .attr("rx", d => (config.nodeIsRect ? nodeLength(d) / 20 : nodeLength(d)))
       .attr("ry", d =>
         config.nodeIsRect ? nodeHeight(d) / 20 : nodeHeight(d)
       )
-      .classed('clicked',d=>d.selected)
+      .classed('clicked',d=>app.currentState().selected.includes(d.id))
 
     node
       .select("text")
@@ -593,30 +751,6 @@ function updateVis() {
         .on("end", dragended)
     );
   }
-
-
-
-  d3.select("#search-input").on("change", function() {
-    let selectedOption = d3.select(this).property("value");
-
-    //empty search box;
-    if (selectedOption.length === 0) {
-      return;
-    }
-
-    //find the right nodeObject
-    node = graph.nodes.find(n=>n.shortName === selectedOption);
-
-    if (!node){
-      return;
-    } 
-    let isSelected =  node.selected;
-
-    //Only 'click' node if it isn't already selected;
-    if (!isSelected) {
-      nodeClick(node,'searched');
-    }
-  });
 
   //Drawing Nested Bar Charts
   {
@@ -855,73 +989,179 @@ function updateVis() {
   });
 
   d3.select("#clear-selection").on("click", () => {
-    let clearSelection = function(d) {
-      let isNode = d.userSelectedNeighbors !== undefined;
 
-      d.selected = false;
-      if (isNode) {
-        d.userSelectedNeighbors = [];
-      }
-      return true;
-    };
+    // set app.currentState() selected to empty; 
 
-    d3.selectAll(".node").classed("clicked", false);
+    let action = {
+      label: "cleared all selected nodes",
+      action: () => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        //Add label describing what the event was
+        currentState.event = "cleared all selected nodes";
+        //Update actual node data
+        currentState.selected = []; 
+        currentState.selectedNeighbors = {}; 
+        return currentState;
+      },
+      args: []
+    }
+    
+    provenance.applyAction(action);
+    pushProvenance(app.currentState())
 
-    d3.select(".nodes")
-      .selectAll(".nodeGroup")
-      .filter(clearSelection)
-      .classed("muted", false);
+    // let clearSelection = function(d) {
+    //   let isNode = d.userSelectedNeighbors !== undefined;
 
-    d3.select(".links")
-      .selectAll(".linkGroup")
-      .filter(clearSelection)
-      .classed("muted", false);
+    //   d.selected = false;
+    //   if (isNode) {
+    //     d.userSelectedNeighbors = [];
+    //   }
+    //   return true;
+    // };
 
-    node
-      .select(".node")
-      .style("fill", nodeFill)
-      .style("stroke", nodeStroke);
+    // d3.selectAll(".node").classed("clicked", false);
+
+    // d3.select(".nodes")
+    //   .selectAll(".nodeGroup")
+    //   .filter(clearSelection)
+    //   .classed("muted", false);
+
+    // d3.select(".links")
+    //   .selectAll(".linkGroup")
+    //   .filter(clearSelection)
+    //   .classed("muted", false);
+
+    // node
+    //   .select(".node")
+    //   .style("fill", nodeFill)
+      // .style("stroke", nodeStroke);
   });
 
-  node.on("click", nodeClick);
+  d3.select("#search-input").on("change", function() {
+    let selectedOption = d3.select(this).property("value");
 
-  function nodeClick(d,label){
-    //modify graph.nodes to reflect the 'clicked' state of this node;
-    d.selected =  d.selected ? false: true; 
-
-    //update neighbors
-    tagNeighbors(d);
-
-    //update state graph;
-    updateState(label ? label : (d.selected ? 'Selected Node' : 'Unselected Node'));
-  }
-
-  function tagNeighbors(clickedNode) {
-    if (!config.nodeLink.selectNeighbors) {
+    //empty search box;
+    if (selectedOption.length === 0) {
       return;
     }
 
-    let isClicked = clickedNode.selected;
+    //find the right nodeObject
+    node = graph.nodes.find(n=>n.shortName === selectedOption);
 
-    //iterate through all nodes and search neighbors;
-    graph.nodes.map(node => {
-      let isNeighbor = node.neighbors.find(n => n === clickedNode.id);
-      // || node.edges.find(n => n === clickedNode.id);
-      if (isNeighbor) {
-        //add to list of selected neighbors
-        if (isClicked) {
-          node.userSelectedNeighbors.push(clickedNode.id);
-        } else {
-          node.userSelectedNeighbors = node.userSelectedNeighbors.filter(
-            n => n !== clickedNode.id
-          );
+    if (!node){
+      return;
+    } 
+    let isSelected =  node.selected;
+
+    //Only 'click' node if it isn't already selected;
+    if (!isSelected) {
+      nodeClick(node,true);
+    }
+  });
+
+  node.on("click",d=> nodeClick(d));
+
+  //function that updates the state, and includes a flag for when this was done through a search 
+  function nodeClick(node,search=false){
+
+    const currentState = app.currentState();
+
+    //find out if this node was selected before; 
+    let selected = currentState.selected;
+    let wasSelected = selected.includes(node.id);
+
+    if (wasSelected){
+      selected = selected.filter(s=> s !==  node.id)
+    } else {
+      selected.push(node.id)
+    }
+
+    //'select or unselect neighboring links as necessary
+     if (config.nodeLink.selectNeighbors){
+       
+       graph.links.map(link => {
+         if (link.source.id == node.id || link.target.id == node.id){
+          if (wasSelected){
+            selected = selected.filter(s=> s !==  link.id)
+          } else {
+            selected.push(link.id)
+          }
+         }
+      });
+
+     }
+    
+    let neighbors = tagNeighbors(node,!wasSelected,currentState)
+    
+    let label = search ? 'Searched for Node' : ( wasSelected ? 'Unselect Node' : 'Select Node');
+
+    let action = {
+      label: label,
+      action: () => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        //Add label describing what the event was
+        currentState.event = label;
+        //Update actual node data
+        currentState.selected = selected; 
+        currentState.userSelectedNeighbors = neighbors;
+        //If node was searched, push him to the search array
+        if (search){
+          currentState.search.push(node.id)
         }
-      }
-    });
+        return currentState;
+      },
+      args: []
+    }
+    
+    provenance.applyAction(action);
+    pushProvenance(app.currentState())
 
-    graph.links.map(link => {
-      link.selected = link.source.selected || link.target.selected;
-    });
+  }
+
+  function tagNeighbors(clickedNode,wasClicked,currentState) {
+    if (!config.nodeLink.selectNeighbors) {
+      return {};
+    }
+
+    let userSelectedNeighbors = currentState.userSelectedNeighbors
+
+    //iterate through the neighbors of the currently clicked node only and set or remove itself from the relevant lists;
+
+    clickedNode.neighbors.map(neighbor=>{
+      if (wasClicked){
+        userSelectedNeighbors[neighbor] ? userSelectedNeighbors[neighbor].push(clickedNode.id) : userSelectedNeighbors[neighbor] =[clickedNode.id];
+      }else{
+        userSelectedNeighbors[neighbor] = userSelectedNeighbors[neighbor].filter(
+          n => n !== clickedNode.id
+        );
+      }
+
+    })
+
+    return userSelectedNeighbors
+    // //iterate through all nodes and search neighbors;
+    // graph.nodes.map(node => {
+    //   let isNeighbor = node.neighbors.find(n => n === clickedNode.id);
+    //   // || node.edges.find(n => n === clickedNode.id);
+    //   if (isNeighbor) {
+    //     //add to list of selected neighbors
+    //     if (wasClicked) {
+    //       node.userSelectedNeighbors.push(clickedNode.id);
+    //     } else {
+    //       node.userSelectedNeighbors = node.userSelectedNeighbors.filter(
+    //         n => n !== clickedNode.id
+    //       );
+    //     }
+    //   }
+    // });
+
+    // graph.links.map(link => {
+    //   link.selected = link.source.selected || link.target.selected;
+    // });
   }
 
   //set up simulation
@@ -955,52 +1195,8 @@ function updateVis() {
   //remove collision force
   // simulation.force('collision',null);
 
-  if (graph.nodes[0].fx === undefined) {
-    //scale node positions to this screen;
 
-    let xPos = d3
-      .scaleLinear()
-      .domain(d3.extent(graph.nodes, n => n.x))
-      .range([50, visDimensions.width - 50]);
-    let yPos = d3
-      .scaleLinear()
-      .domain(d3.extent(graph.nodes, n => n.y))
-      .range([50, visDimensions.height - 50]);
-
-    // for (var i = 0; i < 2000; ++i) simulation.tick();
-    // simulation.stop();
-
-    // //put the collision force back in
-    // simulation.force(
-    //   "collision",
-    //   d3.forceCollide().radius(d => nodeLength(d))
-    // );
-
-    // for (var i = 0; i < 1000; ++i) simulation.tick();
-    //   simulation.stop();
-
-    // console.log(visDimensions)
-    graph.nodes.map(n => {
-      // console.log('here')
-      // n.x = Math.random()*visDimensions.width;
-      // n.y = Math.random()*visDimensions.height
-      n.x = xPos(n.x);
-      n.y = yPos(n.y);
-      n.fx = n.x;
-      n.fy = n.y;
-      n.savedX = n.fx;
-      n.savedY = n.fy;
-      // console.log(n.x,n.y)
-    });
-  } else {
-    graph.nodes.map(n => {
-      n.fx = n.savedX;
-      n.fy = n.savedY;
-      n.x = n.savedX;
-      n.y = n.savedY;
-    });
-  }
-  updatePos();
+  dragNode();
 
   // else {
   //   graph.nodes.map(n => {
@@ -1041,79 +1237,10 @@ function updateVis() {
     simulation.alphaTarget(0.1).restart();
   });
 
-  function arcPath(leftHand, d) {
-    var x1 = leftHand ? d.source.x : d.target.x,
-      y1 = leftHand ? d.source.y : d.target.y,
-      x2 = leftHand ? d.target.x : d.source.x,
-      y2 = leftHand ? d.target.y : d.source.y;
-    (dx = x2 - x1),
-      (dy = y2 - y1),
-      (dr = Math.sqrt(dx * dx + dy * dy)),
-      (drx = dr),
-      (dry = dr),
-      (sweep = leftHand ? 0 : 1);
-    // siblingCount = countSiblingLinks(graph, d.source, d.target);
-    (xRotation = 0), (largeArc = 0);
 
-    // if (siblingCount > 1) {
-    //   var siblings = getSiblingLinks(graph, d.source, d.target);
-    //   var arcScale = d3
-    //     .scaleOrdinal()
-    //     .domain(siblings)
-    //     .range([1, siblingCount]);
-
-    //   drx = drx / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
-    //   dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
-    // }
-
-    return (
-      "M" +
-      x1 +
-      "," +
-      y1 +
-      "A" +
-      drx +
-      ", " +
-      dry +
-      " " +
-      xRotation +
-      ", " +
-      largeArc +
-      ", " +
-      sweep +
-      " " +
-      x2 +
-      "," +
-      y2
-    );
-
-    // return ("M" + x1 + "," + y1
-    //    + "S" + x2 + "," + y2
-    //    + " " + x2 + "," + y2)
-  }
 
   function ticked() {
-    updatePos();
-  }
-
-  function updatePos() {
-    d3.selectAll(".linkGroup")
-      .select("path")
-      .attr("d", function(d) {
-        let path = arcPath(d.type === "mentions", d);
-        if (path.includes("null")) {
-          console.log("bad path");
-        }
-        return path;
-      });
-
-    let radius = nodeMarkerLength / 2;
-
-    d3.selectAll(".nodeGroup").attr("transform", d => {
-      d.x = Math.max(radius, Math.min(visDimensions.width, d.x));
-      d.y = Math.max(radius, Math.min(visDimensions.height, d.y));
-      return "translate(" + d.x + "," + d.y + ")";
-    });
+    dragNode();
   }
 
   //Flag to distinguish a drag from a click. 
@@ -1130,16 +1257,32 @@ function updateVis() {
     d.fy = d3.event.y;
     d.x = d3.event.x;
     d.y = d3.event.y;
-    updatePos();
+    dragNode();
     wasDragged = true;
 
-    console.log('dragged')
+    // console.log('dragged')
   }
   function dragended(d) {
     if (wasDragged){
       //update node position in state graph;
-    updateState("Dragged Node");
-    console.log(app.currentState());
+    // updateState("Dragged Node");
+    
+    let action = {
+      label: "Dragged Node",
+      action: () => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        //Add label describing what the event was
+        currentState.event = "Dragged Node";
+        //Update node positions
+        graph.nodes.map(n=>currentState.nodePos[n.id]={x:n.x,y:n.y})
+        return currentState;
+      },
+      args: []
+    }
+
+    provenance.applyAction(action);
     }
     wasDragged = false;
     

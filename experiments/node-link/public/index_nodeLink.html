@@ -116,33 +116,120 @@
                                 </div>
                             </div>
 
+                            <div class="modal modalFeedback">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-card">
+
+                
+                                            <header class="modal-card-head">
+                                                    <p class="modal-card-title">
+                                                    On a scale of 1 (easy) to 7 (hard),
+                                                    <br/>  how hard was this task?
+                                                    </p>
+                                                </header>
+                                      <section class="modal-card-body">
+                                            <div class="content">
+                                                    <div class="control">
+
+                                                        <!-- <strong>easy</strong> -->
+                                                        easy  
+
+                                                        <span id="easyHardRating">
+                                                                <label class="radio">
+                                                                        <input type="radio" name="difficulty" value="1">
+                                                                        1
+                                                                      </label>
+                                                                      <label class="radio">
+                                                                        <input type="radio" name="difficulty" value="2">
+                                                                        2
+                                                                      </label>
+                                                                      <label class="radio">
+                                                                        <input type="radio" name="difficulty" value="3">
+                                                                        3
+                                                                      </label>
+                                                                      <label class="radio">
+                                                                              <input type="radio" name="difficulty" value="4">
+                                                                              4
+                                                                            </label>
+                                                                            <label class="radio">
+                                                                              <input type="radio" name="difficulty" value="5">
+                                                                              5
+                                                                            </label>
+                                                                            <label class="radio">
+                                                                              <input type="radio" name="difficulty" value="6">
+                                                                              6
+                                                                            </label>
+                                                                            <label class="radio">
+                                                                                  <input type="radio" name="difficulty" value="7">
+                                                                                  7
+                                                                                </label>
+
+                                                        </span>
+                                                         <!-- <strong>hard</strong> -->
+                                                         hard
+                                                                    
+                                                          </div>                                                          
+                                                          <br/>
+    
+                                                    <textarea class="textarea" placeholder="Enter any additional information here"></textarea>  
+                                                    
+                                                    <p class='errorMsg' style=display:none>Please select a score above before proceeding!</p>
+                                                    
+    
+                                            </div>
+                                      </section>
+                                      <footer class="modal-card-foot">
+                                            <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
+                                      </footer>
+                                    </div>
+                                  </div>
+
 
                             <div class="card" id="feedback" style=display:none>
                                     <header class="card-header">
                                         <p class="card-header-title">
-                                            Please let us know how hard you found the task and your strategy in solving it (optional)
+                                                <strong>On a scale of 1 (very easy) to 7 (very hard), how hard was this task?</strong>
                                         </p>
                                     </header>
                                     <div class="card-content">
                                         <div class="content">
-
+                                            very
                                                 <div class="control">
                                                         <label class="radio">
-                                                          <input type="radio" name="difficulty" value="Easy">
-                                                          Easy
+                                                          <input type="radio" name="difficulty" value="1">
+                                                          1
                                                         </label>
                                                         <label class="radio">
-                                                          <input type="radio" name="difficulty" value="Medium">
-                                                          Medium
+                                                          <input type="radio" name="difficulty" value="2">
+                                                          2
                                                         </label>
                                                         <label class="radio">
-                                                          <input type="radio" name="difficulty" value="Hard">
-                                                          Hard
+                                                          <input type="radio" name="difficulty" value="3">
+                                                          3
                                                         </label>
+                                                        <label class="radio">
+                                                                <input type="radio" name="difficulty" value="4">
+                                                                4
+                                                              </label>
+                                                              <label class="radio">
+                                                                <input type="radio" name="difficulty" value="5">
+                                                                5
+                                                              </label>
+                                                              <label class="radio">
+                                                                <input type="radio" name="difficulty" value="6">
+                                                                6
+                                                              </label>
+                                                              <label class="radio">
+                                                                    <input type="radio" name="difficulty" value="7">
+                                                                    7
+                                                                  </label>
+                                                        
                                                       </div>
+
+                                                      hard 
                                                       <br/>
 
-                                                <textarea class="textarea" placeholder="I solved the task by..."></textarea>   
+                                                <textarea class="textarea" placeholder="Enter any additional information here"></textarea>   
                                                 
                                                 <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
 
@@ -448,7 +535,7 @@
             //If we want to define which group the user will be assigned here, move await loadTasks() from hit.html to here;
 
             experimentr.sequence([
-                'modules/consent.html',
+                // 'modules/consent.html',
                 // 'modules/training_collegeFake.html',
                 'modules/hit.html',
                 // 'modules/findings.html',

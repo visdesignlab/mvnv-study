@@ -16,6 +16,18 @@ body {
     /* height:1080px; */
 }
 
+#easyLabel{
+    padding-left:0px;
+}
+
+#hardLabel{
+    padding-left:190px;
+}
+
+#easyHardRating{
+    padding:0px 5px;
+}
+
 
 #taskArea .taskCard{
     background-color:#4285f4;
