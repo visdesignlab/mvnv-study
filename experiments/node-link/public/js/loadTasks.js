@@ -195,7 +195,7 @@ function resetPanel() {
     .property("value", "");
 
     d3.select('.searchInput').property('value', '')
-  
+
     //hide feedback box
   d3.select("#feedback").style("display", "none");
 
@@ -248,7 +248,7 @@ function resetPanel() {
   console.log("should be updating", taskList[currentTask].taskID);
   console.log(provGraph);
   // Push the latest provenance graph to the firestore.
-  
+
   let provGraphDoc = await db.collection("provenanceGraphs")
   .doc("Carolina").get();
 
@@ -270,10 +270,10 @@ let doc = provGraphDoc.data();
       )
     });
   }
- 
- 
+
+
 }
-//Function to ensure that the workerID is a valid database document ID; 
+//Function to ensure that the workerID is a valid database document ID;
 function sanitizeWorkerID(workerID){
     //     Must be valid UTF-8 characters
     // Must be no longer than 1,500 bytes
@@ -382,7 +382,7 @@ async function loadTasks() {
 
   console.log('selected Vis is ',selectedVis)
 
-  vis = selectedVis //='nodeLink' //= 'adjMatrix'
+  vis = selectedVis //= 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
@@ -506,7 +506,7 @@ function calcFirestoreDocSize(collectionName, docId, docObject) {
         docNameSize += encodedLength(docId) + 1
     } else {
         docNameSize += 8
-    }  
+    }
     let docSize = docNameSize + calcObjSize(docObject)
 
     return  docSize
@@ -549,7 +549,7 @@ function calcObjSize(obj) {
     } else if(type === 'object') {
 
         for(key of Object.keys(obj)) {
-            size += encodedLength(key) + 1 
+            size += encodedLength(key) + 1
             size += calcObjSize(obj[key])
         }
         return size += 32

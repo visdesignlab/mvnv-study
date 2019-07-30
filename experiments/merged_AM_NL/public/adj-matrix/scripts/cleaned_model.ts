@@ -555,7 +555,7 @@ class View {
     this.edgeHeight = height - (this.margins.top + this.margins.bottom)//*this.controller.edgePorportion;
 
     this.edges = d3.select('#topology').append("svg")
-      .attr("viewBox", "0 0 " + (width)+ " " + this.edgeHeight + "")
+      .attr("viewBox", "0 0 " + (width)+ " " + height + "")
       .attr("preserveAspectRatio", "xMinYMin meet")
       .append("g")
       .classed("svg-content", true)
@@ -1723,7 +1723,7 @@ class View {
     this.attributeHeight = height - (this.margins.top + this.margins.bottom)// * this.controller.attributePorportion;
 
     this.attributes = d3.select('#attributes').append("svg")
-      .attr("viewBox", "0 0 " + width + " " + this.attributeHeight + "")
+      .attr("viewBox", "0 0 " + (width)+ " " + height + "")
       .attr("preserveAspectRatio", "xMinYMin meet")
       .append("g")
       .classed("svg-content", true)
@@ -2403,7 +2403,8 @@ class Controller {
       //this.configuration = result;
       this.configuration.attributeScales.node['selected'] = obj;
     }
-    this.attrWidth = 450//d3.min([125*this.configuration.nodeAttributes.length,450]);
+
+    this.attrWidth = d3.min([125*this.configuration.nodeAttributes.length,450]);
 
     this.configuration.state = {}
     this.configuration.state.adjMatrix = {};
@@ -2550,11 +2551,30 @@ class Controller {
     console.log(d3.select('.adjMatrix.vis'),width*.8)
     this.visHeight = panelDimensions.height;
     this.visWidth = width*0.8-40;
-    this.edgeWidth = 600;
+    this.edgeWidth = this.visWidth-this.attrWidth;
     console.log(this.attrWidth)//,this.edgePorportion)
 
-    this.attributePorportion = this.attrWidth/(this.edgeWidth+this.attrWidth);
-    this.edgePorportion = this.edgeWidth/(this.edgeWidth+this.attrWidth);
+    let filler = 0;
+    if(panelDimensions.height < this.edgeWidth){
+      this.edgeWidth = panelDimensions.height;
+      filler = this.visWidth-this.attrWidth-this.edgeWidth;
+      this.visWidth = this.visWidth;
+    }
+
+
+    this.attributePorportion = this.attrWidth/(this.edgeWidth+this.attrWidth + filler);
+    this.edgePorportion = this.edgeWidth/(this.edgeWidth+this.attrWidth+ filler);
+    if(this.edgeWidth < panelDimensions.height){
+      this.visHeight = this.visWidth*this.edgePorportion;
+    } else {
+
+    }
+    d3.select('.topocontainer').style('width',(100*this.edgePorportion).toString() + '%');
+    d3.select('.topocontainer').style('height',(this.visHeight).toString() + 'px');
+    d3.select('.attrcontainer').style('width',(100*this.attributePorportion).toString() + '%');
+    d3.select('.attrcontainer').style('height',(this.visHeight).toString() + 'px');
+
+
     console.log(this.attributePorportion,this.edgePorportion)
     //d3.select('.adjMatrix.vis').style('width',width*0.8);
     d3.select('.adjMatrix.vis').style('width',(this.visWidth).toString()+'px')
