@@ -892,6 +892,7 @@ var View = /** @class */ (function () {
             .text(function (d, i) { return _this.nodes[i].shortName; })
             .on('click', function (d, i, nodes) {
             if (_this.controller.configuration.adjMatrix.neighborSelect) {
+                _this.clickFunction(d, i, nodes);
                 d.map(function (node) {
                     if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
                         console.log(node);

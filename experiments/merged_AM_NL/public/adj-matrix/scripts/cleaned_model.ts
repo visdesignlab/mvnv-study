@@ -1035,6 +1035,7 @@ class View {
       .text((d, i) => this.nodes[i].shortName)
       .on('click', (d,i,nodes)=>{
         if(this.controller.configuration.adjMatrix.neighborSelect){
+          this.clickFunction(d,i,nodes);
           d.map(node =>{
             if(node.mentions != 0 || node.combined != 0 || node.retweet != 0){
               console.log(node);
