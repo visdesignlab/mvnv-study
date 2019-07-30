@@ -6,7 +6,8 @@
       "answer":"",
       "feedback":"",
       "prompt": "Select the European account with the highest number of followers.",
-      "replyType":"singleNodeSelection",
+      "replyType":["singleNodeSelection"],
+      "replyCount":1,
       "config":{}
     },
     "task2": 
@@ -16,7 +17,11 @@
       "answer":"",
       "feedback":"",
       "prompt": "Find 3 nodes that are people and have more friends than followers.",
-      "replyType":"multipleNodeSelection",
+      "replyType":["multipleNodeSelection"],
+      "replyCount":{
+         "type":"exactly",
+         "value":3
+        },
       "config":{}
     },
     "task3": 
@@ -26,7 +31,11 @@
       "answer":"",
       "feedback":"",
       "prompt": "Which of the european people who has interacted with R.Kosara has tweeted the most?",
-      "replyType":"singleNodeSelection",
+      "replyType":["singleNodeSelection"],
+      "replyCount":{
+        "type":"exactly",
+        "value":1
+       },
       "config":{}
     },
     "task4": 
@@ -35,8 +44,12 @@
       "order":null,
       "answer":"",
       "feedback":"",
-      "prompt": "What is the approximate combined # of followers of all the people who have interacted with  A. Lex?",
-      "replyType":"value",
+      "prompt": "Select the accounts that have retweeted Alex Lex, and enter their average # of followers?",
+      "replyType":["multipleNodeSelection","value"],
+      "replyCount":{
+        "type":"at least",
+        "value":1
+       },
       "config":{}
     },
     "task5": 
@@ -46,7 +59,7 @@
       "answer":"",
       "feedback":"",
       "prompt": "How many europeans are on the path that connects L.Harrison and R.Gove ?",
-      "replyType":"value",
+      "replyType":["value"],
       "config":{}
     }
   }

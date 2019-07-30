@@ -82,39 +82,25 @@
                             <div class="card answerCard" id="nodeAnswer">
                                 <header class="card-header">
                                     <p class="card-header-title">
-                                        Selected Answer
+                                        Answer Section
                                     </p>
 
                                 </header>
                                 <div class="card-content">
                                     <div class="content">
 
-                                        <a class="button is-pulled-right submit" id="submitNode" disabled>Submit</a>
+                                        <a class="button is-pulled-right submit" id="submitButton" disabled>Submit</a>
 
                                         <ul id="selectedNodeList">
+                                            <li> test value</li>
                                         </ul>
-                                        <p class='errorMsg' style=display:none>This is an error message that will be displayed if the user
-                                            tries to submit an answer that does not conform with the instructions.</p>
+                                            <input class="input" type="text" placeholder="answer text" id="answerBox">
+                                            <p class='errorMsg' style=display:none>This is an error message that will be displayed if the user
+                                                tries to submit an answer that does not conform with the instructions.</p>
+
                                     </div>
                                 </div>
 
-                            </div>
-
-
-                            <div class="card answerCard" id="valueAnswer">
-                                <header class="card-header">
-                                    <p class="card-header-title">
-                                        Enter your answer below
-                                    </p>
-                                </header>
-                                <div class="card-content">
-                                    <div class="content">
-                                        <input class="input" type="text" placeholder="answer text" id="answerBox">
-                                        <a class="button is-pulled-right submit" id="submitText" disabled>Submit</a>
-                                        <p class='errorMsg' style=display:none>This is an error message that will be displayed if the user
-                                            tries to submit an answer that does not conform with the instructions.</p>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="modal modalFeedback">
@@ -184,59 +170,6 @@
                                       </footer>
                                     </div>
                                   </div>
-
-
-                            <div class="card" id="feedback" style=display:none>
-                                    <header class="card-header">
-                                        <p class="card-header-title">
-                                                <strong>On a scale of 1 (very easy) to 7 (very hard), how hard was this task?</strong>
-                                        </p>
-                                    </header>
-                                    <div class="card-content">
-                                        <div class="content">
-                                            very
-                                                <div class="control">
-                                                        <label class="radio">
-                                                          <input type="radio" name="difficulty" value="1">
-                                                          1
-                                                        </label>
-                                                        <label class="radio">
-                                                          <input type="radio" name="difficulty" value="2">
-                                                          2
-                                                        </label>
-                                                        <label class="radio">
-                                                          <input type="radio" name="difficulty" value="3">
-                                                          3
-                                                        </label>
-                                                        <label class="radio">
-                                                                <input type="radio" name="difficulty" value="4">
-                                                                4
-                                                              </label>
-                                                              <label class="radio">
-                                                                <input type="radio" name="difficulty" value="5">
-                                                                5
-                                                              </label>
-                                                              <label class="radio">
-                                                                <input type="radio" name="difficulty" value="6">
-                                                                6
-                                                              </label>
-                                                              <label class="radio">
-                                                                    <input type="radio" name="difficulty" value="7">
-                                                                    7
-                                                                  </label>
-                                                        
-                                                      </div>
-
-                                                      hard 
-                                                      <br/>
-
-                                                <textarea class="textarea" placeholder="Enter any additional information here"></textarea>   
-                                                
-                                                <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
-
-                                        </div>
-                                    </div>
-                                </div>
 
 
                         </div>

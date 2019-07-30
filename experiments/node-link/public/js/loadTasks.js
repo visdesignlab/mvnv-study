@@ -25,79 +25,87 @@ d3.select("#answerBox").on("input", function() {
 function updateAnswer(answer) {
   //Update answer inside taskList;
   let taskObj = taskList[currentTask];
-  taskObj.answer = typeof answer == "object" ? answer.map(a => a.id) : answer; //answer will either be an array of objects or a value;
-  //populate answer list; - will do nothing if there is no #selectedNodeList (which is the case for value answers)
+  let answerType = typeof answer;
 
-  console.log('after updating answer, answer is ', taskObj.answer)
-  let selectedList = d3
+  if (answerType === 'string'){
+    taskObj.answer.value = answer;
+  } else {
+    taskObj.answer.nodes = answer.map(a => {id:a.id;name:d.shortName});
+
+    let selectedList = d3
     .select("#selectedNodeList")
     .selectAll("li")
     .data(answer, n => n.id);
 
-  let selectedListEnter = selectedList.enter().append("li");
+      let selectedListEnter = selectedList.enter().append("li");
 
-  selectedList.exit().remove();
+      selectedList.exit().remove();
 
-  selectedList = selectedListEnter.merge(selectedList);
-  selectedList.text(d => d.shortName);
+      selectedList = selectedListEnter.merge(selectedList);
+      selectedList.text(d => d.shortName);
 
-  validateAnswer(taskObj.answer, currentTask);
+  }
+
+  console.log("after updating answer, answer is ", taskObj.answer);
+  
+  //validate the entire answer object, but error check for only the field that is being updated
+  validateAnswer(taskObj.answer,answerType == 'string' ? 'value' : 'nodes');
 }
 
 // Set submit button callback.
-d3.selectAll(".submit").on("click", async function (){
+d3.selectAll(".submit").on("click", async function() {
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
   //Enforce 'disabled' behavior on this 'button'
-  if(d3.select(this).attr('disabled')){
-      return;
+  if (d3.select(this).attr("disabled")) {
+    return;
   }
 
-  if(vis === "nodeLink"){
-
+  if (vis === "nodeLink") {
     //   updateState('Finished Task');
     let action = {
-        label:"Finished Task",
-        action: () => {
-          const currentState = app.currentState();
-          //add time stamp to the state graph
-          currentState.time = Date.now();
-          //Add label describing what the event was
-          currentState.event = "Finished Task";
-          return currentState;
-        },
-        args: []
-      }
+      label: "Finished Task",
+      action: () => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        //Add label describing what the event was
+        currentState.event = "Finished Task";
+        return currentState;
+      },
+      args: []
+    };
 
     provenance.applyAction(action);
-    pushProvenance(app.currentState())
+    pushProvenance(app.currentState());
   } else {
     let action = {
-      label: 'Finished Task',
+      label: "Finished Task",
       action: () => {
         const currentState = window.controller.model.app.currentState();
         //add time stamp to the state graph
         currentState.time = Date.now();
-        currentState.event = 'Finished Task'
+        currentState.event = "Finished Task";
         return currentState;
       },
       args: []
-    }
+    };
 
     window.controller.model.provenance.applyAction(action);
     pushProvenance(window.controller.model.app.currentState());
   }
 
-
   taskList[currentTask].endTime = Date.now();
-  taskList[currentTask].minutesToComplete = Math.round(
-  taskList[currentTask].startTime - taskList[currentTask].endTime) / 60000;
+  taskList[currentTask].minutesToComplete =
+    Math.round(
+      taskList[currentTask].startTime - taskList[currentTask].endTime
+    ) / 60000;
 
   //show feedback box - changed to show modal
-//   d3.select("#feedback").style("display", "inline");
+  //   d3.select("#feedback").style("display", "inline");
 
-    d3.select('.modalFeedback').classed('is-active',true)
+  d3.select(".modalFeedback").classed("is-active", true);
 
   //add cover to vis and disable search and answerBox
   d3.select("#disableInteraction").style("display", "inline"); //add cover to the vis
@@ -105,7 +113,7 @@ d3.selectAll(".submit").on("click", async function (){
   d3.select("#answerBox").attr("disabled", "true"); //can no longer edit answer;
   d3.selectAll(".submit").attr("disabled", "true"); //discourage multiple clicks on the submit button
 
-  console.log('answer on submit is ', taskList[currentTask].answer)
+  console.log("answer on submit is ", taskList[currentTask].answer);
 
   //update state with answer and end time;
 });
@@ -114,19 +122,23 @@ d3.selectAll(".submit").on("click", async function (){
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
 
-    console.log('taskAnswer on next is ', taskObj)
+  console.log("taskAnswer on next is ", taskObj);
   let selected = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
 
   //check to see if something has been selected before allowing the user to continue:
 
-  if (selected.size() === 0){
+  if (selected.size() === 0) {
     //display error msg;
-    d3.select('.modalFeedback').select('.errorMsg').style('display', 'inline')
-    return
-  } else{
-    d3.select('.modalFeedback').select('.errorMsg').style('display', 'none')
+    d3.select(".modalFeedback")
+      .select(".errorMsg")
+      .style("display", "inline");
+    return;
+  } else {
+    d3.select(".modalFeedback")
+      .select(".errorMsg")
+      .style("display", "none");
   }
 
   // grab any potential feedback from the user;
@@ -141,7 +153,6 @@ d3.select("#nextTask").on("click", async () => {
     difficulty,
     explanation
   };
-
 
   //update taskList with the answer for that task.
   db.collection("results")
@@ -160,8 +171,7 @@ d3.select("#nextTask").on("click", async () => {
     //set startTime for next task;
     taskList[currentTask].startTime = Date.now();
     resetPanel();
-    d3.select('.modalFeedback').classed('is-active',false)
-
+    d3.select(".modalFeedback").classed("is-active", false);
   } else {
     console.log("finished Tasks");
     d3.select(".hit").style("display", "none");
@@ -198,10 +208,10 @@ function resetPanel() {
     .select(".textarea")
     .property("value", "");
 
-    d3.select('.searchInput').property('value', '')
-  
-    //hide feedback box
-  d3.select("#feedback").style("display", "none");
+  d3.select(".searchInput").property("value", "");
+
+  //hide feedback box
+  // d3.select("#feedback").style("display", "none");
 
   //add cover to vis and disable search and answerBox
   d3.select("#disableInteraction").style("display", "none");
@@ -210,7 +220,7 @@ function resetPanel() {
   d3.select("#answerBox").property("value", "");
   d3.selectAll(".submit").attr("disabled", true);
 
-  //Clear Selected Node List
+  // //Clear Selected Node List
   d3.select("#selectedNodeList")
     .selectAll("li")
     .remove();
@@ -221,162 +231,177 @@ function resetPanel() {
     .property("checked", false);
 
   //set div of correct display type to visible;
-  d3.selectAll(".answerCard").style("display", "none");
+  // d3.selectAll(".answerCard").style("display", "none");
 
-  switch (task.replyType) {
-    case "singleNodeSelection":
-      d3.select("#nodeAnswer").style("display", "inline");
-      break;
-    case "multipleNodeSelection":
-      d3.select("#nodeAnswer").style("display", "inline");
-      break;
-    case "value":
-      d3.select("#valueAnswer").style("display", "inline");
-      break;
-    default:
-    // code block
-  }
+  // let replyTypes = task.replyType[0];
+  // let numReplyTypes = task.replyType.length;
+
+  // if (numReplyTypes === 1) {
+  //   switch (replyTypes) {
+  //     case "singleNodeSelection":
+  //       d3.select("#nodeAnswer").style("display", "inline");
+  //       break;
+  //     case "multipleNodeSelection":
+  //       d3.select("#nodeAnswer").style("display", "inline");
+  //       break;
+  //     case "value":
+  //       d3.select("#valueAnswer").style("display", "inline");
+  //       break;
+  //   }
+  // } else {
+  //   d3.select("#multipleAnswers").style("display", "inline");
+  // }
 
   d3.select("#taskArea")
     .select(".card-header-title")
     .text(task.prompt + " (" + task.taskID + ")");
 
-    if (vis === 'nodeLink'){
-        loadTask(task);
-    } else {
-        window.controller.loadTask(currentTask);
-    }
+  if (vis === "nodeLink") {
+    loadTask(task);
+  } else {
+    window.controller.loadTask(currentTask);
+  }
 }
 
- async function pushProvenance(provGraph) {
-  
-//       //create a document in the provenance graph colletion
-//   db.collection("provenanceGraphs")
-//   .doc(workerID)
-//   .set({'startingField':''}, { merge: true });
+async function pushProvenance(provGraph) {
+  //       //create a document in the provenance graph colletion
+  //   db.collection("provenanceGraphs")
+  //   .doc(workerID)
+  //   .set({'startingField':''}, { merge: true });
 
   // Push the latest provenance graph to the firestore.
-    let provGraphDoc = await db.collection(workerID)
-    .doc(taskList[currentTask].taskID).get();
+  let provGraphDoc = await db
+    .collection(workerID)
+    .doc(taskList[currentTask].taskID)
+    .get();
 
-    let doc = provGraphDoc.data();
+  let doc = provGraphDoc.data();
 
-  let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
+  let docSize =
+    calcFirestoreDocSize("provenanceGraph", workerID, doc) / 1000000;
 
-  console.log('Provenance graph size is ',docSize, ' MB')
-  console.log ('Provenance graph has ', doc , 'elements')
+  console.log("Provenance graph size is ", docSize, " MB");
+  console.log("Provenance graph has ", doc, "elements");
 
-  if (docSize>.75){
-    console.log('Provenance Graph for this user is too large! Considering storing each state in its own document');
+  if (docSize > 0.75) {
+    console.log(
+      "Provenance Graph for this user is too large! Considering storing each state in its own document"
+    );
   } else {
-      let docRef =  db.collection(workerID)
-      .doc(taskList[currentTask].taskID);
-      if (doc){
-        docRef.update({
-            provGraphs: firebase.firestore.FieldValue.arrayUnion(
-              provGraph
-            )
-          });
-      } else {
-        docRef.set({
-            provGraphs: firebase.firestore.FieldValue.arrayUnion(
-              provGraph
-            )
-          });
-      }
-    
-    
+    let docRef = db.collection(workerID).doc(taskList[currentTask].taskID);
+    if (doc) {
+      docRef.update({
+        provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
+      });
+    } else {
+      docRef.set({
+        provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
+      });
+    }
   }
-  
-  
-//     console.log("should be updating", taskList[currentTask].taskID);
-//   console.log(provGraph);
-//   // Push the latest provenance graph to the firestore.
-  
-//     let provGraphDoc = await db.collection("provenanceGraphs")
-//   .doc("Carolina").get();
 
-//     let doc = provGraphDoc.data();
+  //     console.log("should be updating", taskList[currentTask].taskID);
+  //   console.log(provGraph);
+  //   // Push the latest provenance graph to the firestore.
 
-//   let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
+  //     let provGraphDoc = await db.collection("provenanceGraphs")
+  //   .doc("Carolina").get();
 
-//   console.log('Provenance graph size is ',docSize, ' MB')
-//   console.log ('Provenance graph has ', doc , 'elements')
+  //     let doc = provGraphDoc.data();
 
-//   if (docSize>.75){
-//     console.log('Provenance Graph for this user is too large! Considering storing each state in its own document');
-//   } else {
-//     db.collection("provenanceGraphs")
-//     .doc(workerID)
-//     .update({
-//       [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
-//         provGraph
-//       )
-//     });
-//   }
- 
- 
+  //   let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
+
+  //   console.log('Provenance graph size is ',docSize, ' MB')
+  //   console.log ('Provenance graph has ', doc , 'elements')
+
+  //   if (docSize>.75){
+  //     console.log('Provenance Graph for this user is too large! Considering storing each state in its own document');
+  //   } else {
+  //     db.collection("provenanceGraphs")
+  //     .doc(workerID)
+  //     .update({
+  //       [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
+  //         provGraph
+  //       )
+  //     });
+  //   }
 }
-//Function to ensure that the workerID is a valid database document ID; 
-function sanitizeWorkerID(workerID){
-    
-    // Must be valid UTF-8 characters
-    // Must be no longer than 1,500 bytes
-    // Cannot contain a forward slash (/)
-    // Cannot solely consist of a single period (.) or double periods (..)
-    // Cannot match the regular expression __.*__
-    return workerID
-
+//Function to ensure that the workerID is a valid database document ID;
+function sanitizeWorkerID(workerID) {
+  // Must be valid UTF-8 characters
+  // Must be no longer than 1,500 bytes
+  // Cannot contain a forward slash (/)
+  // Cannot solely consist of a single period (.) or double periods (..)
+  // Cannot match the regular expression __.*__
+  return workerID;
 }
-
 
 //validates answer
-function validateAnswer(answer, currentTask) {
+//validates the entire answer object before assigning the submit button enable/disabled; 
+//error checks the field specified to show any error msgs.
+function validateAnswer(answer,errorCheckField) {
+  
+  //validate fields of answer as required by the task config (string/node);
+  
+  //infer type of answer
+  let answerIsNode = errorCheckField === "nodes";
+  let numSelectedNodes = answer.nodes.length;
+
   let isValid;
   let errorMsg;
-  let numSelectedNodes = answer.length; //graph.nodes.filter(n => n.hardSelect).length
 
-  let submitSelector = "#submitNode"; //changes to #submitText if replyType is 'value'
+  
+  let task = taskList[currentTask];
 
-  switch (taskList[currentTask].replyType) {
-    case "singleNodeSelection":
-      isValid = numSelectedNodes === 1;
+  let replyTypes = task.replyType;
 
-      if (numSelectedNodes > 1) {
-        errorMsg =
-          "Too many nodes selected, please select a single node as your answer.";
-      }
+  if (answerIsNode && replyTypes.includes("singleNodeSelection")) {
+    isValid = numSelectedNodes === 1;
 
-      if (numSelectedNodes < 1) {
-        errorMsg = "No nodes selected.";
-      }
-      break;
-    case "multipleNodeSelection":
-      isValid = answer.length == taskList[currentTask].replyCount;
+    if (numSelectedNodes > 1) {
+      errorMsg =
+        "Too many nodes selected, please select a single node as your answer.";
+    }
 
-      if (numSelectedNodes < taskList[currentTask].replyCount) {
+    if (numSelectedNodes < 1) {
+      errorMsg = "No nodes selected.";
+    }
+  }
+
+  if (answerIsNode && replyTypes.includes("multipleNodeSelection")) {
+    //check for exact number or for 'at least' requirement;
+    if (task.replyCount.type === "exactly") {
+      isValid = answer.length == task.replyCount.value;
+
+      if (numSelectedNodes < task.replyCount.value) {
         errorMsg =
           "Keep going! This question requires " +
-          taskList[currentTask].replyCount +
+          task.replyCount.value +
+          " node selections.";
+      }
+
+      if (numSelectedNodes > task.replyCount.value) {
+        errorMsg =
+          "Too many nodes selected. This task requires " +
+          task.replyCount.value +
           " node selections.";
       }
 
       if (numSelectedNodes < 1) {
         errorMsg = "No nodes selected.";
       }
-
-      break;
-    case "value":
-      isValid = d3.select("#answerBox").property("value").length > 0; //TODO error check if the value is a number of string
-      submitSelector = "#submitText";
-      errorMsg = "Please enter a value in the answer box.";
-      break;
+    }
   }
 
-  d3.select(submitSelector).attr("disabled", isValid ? null : true);
+  if (!answerIsNode){
+        isValid = d3.select("#answerBox").property("value").length > 0; //TODO error check if the value is a number of string
+        errorMsg = "Please enter a value in the answer box.";
+  }
+
+  submitSelector.attr("disabled", isValid ? null : true);
   //toggle visibility of error message;
-  d3.select(".errorMsg").style("display", isValid ? "none" : "inline");
-  d3.select(".errorMsg").text(errorMsg);
+  submitSelector.style("display", isValid ? "none" : "inline");
+  errorMsgSelector.text(errorMsg);
 
   return isValid;
 }
@@ -417,17 +442,15 @@ async function loadTasks() {
     console.log("Error getting document:", error);
   });
 
-
-
-  let group = 0 //assignedGroup.data().currentGroup;
+  let group = 0; //assignedGroup.data().currentGroup;
   studyTracking.group = group;
 
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  console.log('selected Vis is ',selectedVis)
+  console.log("selected Vis is ", selectedVis);
 
-  vis = selectedVis //='nodeLink' //= 'adjMatrix'
+  vis = selectedVis; //='nodeLink' //= 'adjMatrix'
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
@@ -446,19 +469,27 @@ async function loadTasks() {
     return task;
   });
 
-  console.log(selectedVis)
+  console.log(selectedVis);
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (selectedVis === "nodeLink") {
     d3.selectAll(".adjMatrix").remove();
   } else {
     d3.selectAll(".nodeLink").remove();
-    d3.selectAll('.development').remove();
+    d3.selectAll(".development").remove();
   }
 
   //load script tags for the appropriate vis technique;
   let scriptTags = {
     nodeLink: ["js/main_nodeLink.js", "js/helperFunctions.js"], //,"js/createTaskConfig.js"],
-    adjMatrix: ["../../merged_AM_NL/public/adj-matrix/libs/reorder/science.v1.js","../../merged_AM_NL/public/adj-matrix/libs/reorder/tiny-queue.js","../../merged_AM_NL/public/adj-matrix/libs/reorder/reorder.v1.js","../../merged_AM_NL/public/adj-matrix/scripts/fill_config_settings.js","../../merged_AM_NL/public/adj-matrix/scripts/helper_functions.js","../../merged_AM_NL/public/adj-matrix/scripts/autocomplete.js","../../merged_AM_NL/public/adj-matrix/scripts/cleaned_model.js"]
+    adjMatrix: [
+      "../../merged_AM_NL/public/adj-matrix/libs/reorder/science.v1.js",
+      "../../merged_AM_NL/public/adj-matrix/libs/reorder/tiny-queue.js",
+      "../../merged_AM_NL/public/adj-matrix/libs/reorder/reorder.v1.js",
+      "../../merged_AM_NL/public/adj-matrix/scripts/fill_config_settings.js",
+      "../../merged_AM_NL/public/adj-matrix/scripts/helper_functions.js",
+      "../../merged_AM_NL/public/adj-matrix/scripts/autocomplete.js",
+      "../../merged_AM_NL/public/adj-matrix/scripts/cleaned_model.js"
+    ]
   };
   let cssTags = {
     nodeLink: ["css/node-link.css"],
@@ -532,7 +563,6 @@ async function assignTasks() {
   var taskListRef = db.collection("results").doc(workerID);
   taskListRef.set(configLessTaskList);
 
-
   //update group;
   db.collection("studyTracking")
     .doc("currentGroup")
@@ -542,58 +572,58 @@ async function assignTasks() {
 }
 
 function calcFirestoreDocSize(collectionName, docId, docObject) {
-    let docNameSize = encodedLength(collectionName) + 16
-    let docIdType = typeof(docId)
-    if(docIdType === 'string') {
-        docNameSize += encodedLength(docId) + 1
-    } else {
-        docNameSize += 8
-    }  
-    let docSize = docNameSize + calcObjSize(docObject)
+  let docNameSize = encodedLength(collectionName) + 16;
+  let docIdType = typeof docId;
+  if (docIdType === "string") {
+    docNameSize += encodedLength(docId) + 1;
+  } else {
+    docNameSize += 8;
+  }
+  let docSize = docNameSize + calcObjSize(docObject);
 
-    return  docSize
+  return docSize;
 }
 function encodedLength(str) {
-    var len = str.length;
-    for (let i = str.length - 1; i >= 0; i--) {
-        var code = str.charCodeAt(i);
-        if (code > 0x7f && code <= 0x7ff) {
-            len++;
-        } else if (code > 0x7ff && code <= 0xffff) {
-            len += 2;
-        } if (code >= 0xDC00 && code <= 0xDFFF) {
-            i--;
-        }
+  var len = str.length;
+  for (let i = str.length - 1; i >= 0; i--) {
+    var code = str.charCodeAt(i);
+    if (code > 0x7f && code <= 0x7ff) {
+      len++;
+    } else if (code > 0x7ff && code <= 0xffff) {
+      len += 2;
     }
-    return len;
+    if (code >= 0xdc00 && code <= 0xdfff) {
+      i--;
+    }
+  }
+  return len;
 }
 
 function calcObjSize(obj) {
-    let key;
-    let size = 0;
-    let type = typeof obj;
+  let key;
+  let size = 0;
+  let type = typeof obj;
 
-    if(!obj) {
-        return 1
-    } else if(type === 'number') {
-        return 8
-    } else if(type === 'string') {
-        return encodedLength(obj) + 1
-    } else if(type === 'boolean') {
-        return 1
-    } else if (obj instanceof Date) {
-        return 8
-    } else if(obj instanceof Array) {
-        for(let i = 0; i < obj.length; i++) {
-            size += calcObjSize(obj[i])
-        }
-        return size
-    } else if(type === 'object') {
-
-        for(key of Object.keys(obj)) {
-            size += encodedLength(key) + 1 
-            size += calcObjSize(obj[key])
-        }
-        return size += 32
+  if (!obj) {
+    return 1;
+  } else if (type === "number") {
+    return 8;
+  } else if (type === "string") {
+    return encodedLength(obj) + 1;
+  } else if (type === "boolean") {
+    return 1;
+  } else if (obj instanceof Date) {
+    return 8;
+  } else if (obj instanceof Array) {
+    for (let i = 0; i < obj.length; i++) {
+      size += calcObjSize(obj[i]);
     }
+    return size;
+  } else if (type === "object") {
+    for (key of Object.keys(obj)) {
+      size += encodedLength(key) + 1;
+      size += calcObjSize(obj[key]);
+    }
+    return (size += 32);
+  }
 }
