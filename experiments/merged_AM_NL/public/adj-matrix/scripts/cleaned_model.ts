@@ -226,7 +226,7 @@ class Model {
       }
 
       let updateAnswerBox = (state) => {
-
+        console.log("In answer update")
         window.controller.configuration.adjMatrix['toggle']? window.controller.view.updateAnswerToggles(state): window.controller.view.updateCheckBox(state);
         //window.controller.view.updateAnswerToggles(state)
         let answer = [];
@@ -246,11 +246,13 @@ class Model {
       provenance.addObserver("selections.colLabel", updateHighlights)
       provenance.addObserver("selections.cellcol", updateHighlights)
       provenance.addObserver("selections.cellrow", updateHighlights)
+      provenance.addObserver("selections.neighborSelect", updateHighlights)
       provenance.addObserver("selections.cellcol", updateCellClicks)
 
       provenance.addObserver("selections.search", updateHighlights)
       provenance.addObserver("selections.answerBox", updateHighlights)
       provenance.addObserver("selections.answerBox", updateAnswerBox)
+
 
     }
     setUpObservers();
@@ -1035,16 +1037,11 @@ class View {
       .text((d, i) => this.nodes[i].shortName)
       .on('click', (d,i,nodes)=>{
         if(this.controller.configuration.adjMatrix.neighborSelect){
-          d.map(node =>{
-            if(node.mentions != 0 || node.combined != 0 || node.retweet != 0){
-              console.log(node);
-              let neighbor = node.colid;
-              console.log(nodes,i);
-              let action = this.controller.view.changeInteractionWrapper(neighbor, nodes[i], 'neighborSelect');
-              console.log(action);
-              this.controller.model.provenance.applyAction(action);
-            }
-          })
+          this.clickFunction(d,i,nodes);
+          let action = this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
+          this.controller.model.provenance.applyAction(action);
+
+
         } else {
           this.clickFunction(d,i,nodes);
         }
@@ -1112,9 +1109,20 @@ class View {
           nodeID = cellData.rowid;
           interactionName = interactionName + 'row'
         } else if (interactionName == 'neighborSelect'){
-          console.log(node,d3.select(node),d3.select(node).data())
+
+          //this.controller.model.provenance.applyAction(action);
+          let columnData = d3.select(node).data()[0];
           interactedElement = 'colClick'+d3.select(node).data()[0][0].rowid;
-          console.log(interactedElement);
+          columnData.map(node=>{
+            if(node.mentions != 0 || node.combined != 0 || node.retweet != 0){
+              console.log(node);
+              let neighbor = node.colid;
+              this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
+
+            }
+          })
+          return currentState;
+
         }
         this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
         return currentState;
@@ -1154,7 +1162,7 @@ class View {
       this.mouseoverEvents = [];
     }
 
-
+    console.log(nodeID,interaction,interactionName);
     if (nodeID in state.selections[interaction]) {
       // Remove element if in list, if list is empty, delete key
       let currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
@@ -1554,18 +1562,7 @@ class View {
 
   }
 
-  renderNeighborHighlightNodes() {
-    //for
-    // remove all highlights
-    d3.selectAll('.neighborSelected').classed('neighborSelected', false);
-    // re add all highlights
-    for (let nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
-      d3.select('topo' + 'Row' + nodeID)
-        .classed('neighborSelected', true);
-      d3.select('attr' + 'Row' + nodeID)
-        .classed('neighborSelected', true);
-    }
-  }
+
 
   selectNode(nodeID: string) {
     let index = this.controller.configuration.state.selectedNodes.indexOf(nodeID)

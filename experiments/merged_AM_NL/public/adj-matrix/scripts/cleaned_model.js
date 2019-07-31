@@ -212,6 +212,7 @@ var Model = /** @class */ (function () {
                 d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true);
             };
             var updateAnswerBox = function (state) {
+                console.log("In answer update");
                 window.controller.configuration.adjMatrix['toggle'] ? window.controller.view.updateAnswerToggles(state) : window.controller.view.updateCheckBox(state);
                 //window.controller.view.updateAnswerToggles(state)
                 var answer = [];
@@ -228,6 +229,7 @@ var Model = /** @class */ (function () {
             provenance.addObserver("selections.colLabel", updateHighlights);
             provenance.addObserver("selections.cellcol", updateHighlights);
             provenance.addObserver("selections.cellrow", updateHighlights);
+            provenance.addObserver("selections.neighborSelect", updateHighlights);
             provenance.addObserver("selections.cellcol", updateCellClicks);
             provenance.addObserver("selections.search", updateHighlights);
             provenance.addObserver("selections.answerBox", updateHighlights);
@@ -892,16 +894,9 @@ var View = /** @class */ (function () {
             .text(function (d, i) { return _this.nodes[i].shortName; })
             .on('click', function (d, i, nodes) {
             if (_this.controller.configuration.adjMatrix.neighborSelect) {
-                d.map(function (node) {
-                    if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
-                        console.log(node);
-                        var neighbor = node.colid;
-                        console.log(nodes, i);
-                        var action = _this.controller.view.changeInteractionWrapper(neighbor, nodes[i], 'neighborSelect');
-                        console.log(action);
-                        _this.controller.model.provenance.applyAction(action);
-                    }
-                });
+                _this.clickFunction(d, i, nodes);
+                var action = _this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
+                _this.controller.model.provenance.applyAction(action);
             }
             else {
                 _this.clickFunction(d, i, nodes);
@@ -961,9 +956,17 @@ var View = /** @class */ (function () {
                     interactionName = interactionName + 'row';
                 }
                 else if (interactionName == 'neighborSelect') {
-                    console.log(node, d3.select(node), d3.select(node).data());
+                    //this.controller.model.provenance.applyAction(action);
+                    var columnData = d3.select(node).data()[0];
                     interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
-                    console.log(interactedElement);
+                    columnData.map(function (node) {
+                        if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
+                            console.log(node);
+                            var neighbor = node.colid;
+                            _this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
+                        }
+                    });
+                    return currentState;
                 }
                 _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
                 return currentState;
@@ -1003,6 +1006,7 @@ var View = /** @class */ (function () {
             state.selections.previousMouseovers = this.mouseoverEvents;
             this.mouseoverEvents = [];
         }
+        console.log(nodeID, interaction, interactionName);
         if (nodeID in state.selections[interaction]) {
             // Remove element if in list, if list is empty, delete key
             var currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
@@ -1357,18 +1361,6 @@ var View = /** @class */ (function () {
             return;
         }
         d3.selectAll(cssSelector).classed(classToRender, true);
-    };
-    View.prototype.renderNeighborHighlightNodes = function () {
-        //for
-        // remove all highlights
-        d3.selectAll('.neighborSelected').classed('neighborSelected', false);
-        // re add all highlights
-        for (var nodeID in this.controller.configuration.state.adjMatrix.highlightedNodes) {
-            d3.select('topo' + 'Row' + nodeID)
-                .classed('neighborSelected', true);
-            d3.select('attr' + 'Row' + nodeID)
-                .classed('neighborSelected', true);
-        }
     };
     View.prototype.selectNode = function (nodeID) {
         var index = this.controller.configuration.state.selectedNodes.indexOf(nodeID);

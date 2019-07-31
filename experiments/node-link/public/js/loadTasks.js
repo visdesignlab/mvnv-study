@@ -45,7 +45,13 @@ function updateAnswer(answer) {
       selectedList.text(d => d.shortName);
 
   }
+<<<<<<< HEAD
   
+=======
+
+  console.log("after updating answer, answer is ", taskObj.answer);
+
+>>>>>>> 4dabd9743e59eaaddcc07df9821a55bb3ff65ee0
   //validate the entire answer object, but error check for only the field that is being updated
   validateAnswer(taskObj.answer,answerType == 'string' ? 'value' : 'nodes');
 }
@@ -256,11 +262,6 @@ function resetPanel() {
 }
 
 async function pushProvenance(provGraph) {
-  //       //create a document in the provenance graph colletion
-  //   db.collection("provenanceGraphs")
-  //   .doc(workerID)
-  //   .set({'startingField':''}, { merge: true });
-
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
     .collection(workerID)
@@ -295,10 +296,7 @@ async function pushProvenance(provGraph) {
             )
           });
       }
-
-
   }
-
 }
 //Function to ensure that the workerID is a valid database document ID;
 function sanitizeWorkerID(workerID){
@@ -309,45 +307,10 @@ function sanitizeWorkerID(workerID){
     // Cannot solely consist of a single period (.) or double periods (..)
     // Cannot match the regular expression __.*__
     return workerID
-
-  //     console.log("should be updating", taskList[currentTask].taskID);
-  //   console.log(provGraph);
-  //   // Push the latest provenance graph to the firestore.
-
-  //     let provGraphDoc = await db.collection("provenanceGraphs")
-  //   .doc("Carolina").get();
-
-  //     let doc = provGraphDoc.data();
-
-  //   let docSize = calcFirestoreDocSize("provenanceGraph",workerID,doc)/1000000
-
-  //   console.log('Provenance graph size is ',docSize, ' MB')
-  //   console.log ('Provenance graph has ', doc , 'elements')
-
-  //   if (docSize>.75){
-  //     console.log('Provenance Graph for this user is too large! Considering storing each state in its own document');
-  //   } else {
-  //     db.collection("provenanceGraphs")
-  //     .doc(workerID)
-  //     .update({
-  //       [taskList[currentTask].taskID]: firebase.firestore.FieldValue.arrayUnion(
-  //         provGraph
-  //       )
-  //     });
-  //   }
-}
-//Function to ensure that the workerID is a valid database document ID;
-function sanitizeWorkerID(workerID) {
-  // Must be valid UTF-8 characters
-  // Must be no longer than 1,500 bytes
-  // Cannot contain a forward slash (/)
-  // Cannot solely consist of a single period (.) or double periods (..)
-  // Cannot match the regular expression __.*__
-  return workerID;
 }
 
 //validates answer
-//validates the entire answer object before assigning the submit button enable/disabled; 
+//validates the entire answer object before assigning the submit button enable/disabled;
 //error checks the field specified to show any error msgs.
 //force argument is true when this is run from the submit button. Forces error message to show up that wouldn't otherwise.
 function validateAnswer(answer,errorCheckField,force=false) {
