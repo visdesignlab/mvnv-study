@@ -433,11 +433,13 @@ console.log('answer is valid ', isValid)
 console.log('errorMsg is ', errorMsg)
   d3.select('#submitButton').attr("disabled", isValid || isFlexibleAnswer ? null : true);
   //toggle visibility of error message;
-  d3.selectAll('.errorMsg')
-  .style("display", !isValid ? "inline" : "none");
+  
 
   let errorMsgSelector = errorCheckField === 'value' ? d3.select('#valueAnswer').select('.errorMsg') : d3.select('#nodeAnswer').select('.errorMsg')
-  errorMsgSelector.text(errorMsg);
+  
+  errorMsgSelector
+  .style("display", !isValid ? "inline" : "none")
+  .text(errorMsg);
 
   return isValid;
 }
