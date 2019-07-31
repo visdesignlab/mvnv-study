@@ -2633,7 +2633,7 @@ class Controller {
     panelDimensions.width = width * 0.2;
     panelDimensions.height = height - taskBarHeight;
     console.log(panelDimensions);
-    //d3.select("#visPanel").style("width", panelDimensions.width + "px");
+    d3.select("#visPanel").style("width", panelDimensions.width + "px");
     d3.select('#panelDiv').style('display','none');
     console.log(d3.select('.adjMatrix.vis'),width*.8)
     this.visHeight = panelDimensions.height;
