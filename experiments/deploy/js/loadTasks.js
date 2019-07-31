@@ -419,7 +419,7 @@ function makeid(length) {
   return result;
 }
 
-async function loadTasks() {
+async function loadTasks(visType) {
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -443,11 +443,18 @@ async function loadTasks() {
     console.log("Error getting document:", error);
   });
 
-  let group = 1 ;//assignedGroup.data().currentGroup;
+  let group = visType ? (visType === 'nodeLink' ? 0 : 1 ) : assignedGroup.data().currentGroup;
+
+
   studyTracking.group = group;
 
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
+
+   //(force the task list if this is a heuristics run)
+  if (visType){
+    selectedCondition.taskList = 'taskLists/heuristics.json'
+  }
 
   vis = selectedVis// = 'adjMatrix'//='nodeLink' //
 
@@ -490,7 +497,7 @@ async function loadTasks() {
     ]
   };
   let cssTags = {
-    nodeLink: ["css/nodeLink/node-link.css","css/bulma-checkradio.min"],
+    nodeLink: ["css/nodeLink/node-link.css","css/nodeLink/bulma-checkradio.min.css"],
     adjMatrix: ["css/adjMatrix/adj-matrix.css",]
   };
 

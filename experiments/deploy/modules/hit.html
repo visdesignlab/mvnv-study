@@ -2,27 +2,34 @@
 </div>
 
 <script>
-      (async function(){
+  (async function () {
 
-      experimentr.hideNext();
-      await loadTasks();
-      assignTasks();
+    function getUrlVars() {
+      var vars = {};
+      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+        vars[key] = value;
+      });
+      return vars;
+    }
 
-      d3.select('.hit').style('display', 'inline');
-      if (vis === 'nodeLink') {
-        // d3.selectAll('.development').remove();
-        loadVis("vis");
-                
-      } else {
-       // included script already auto loads the vis. 
-      }
+    // //see if url parameter was passed as to what type of vis to show for this link
+    let visType = getUrlVars()["vis"] == 'nodeLink' ? "nodeLink" : 'adjMatrix';
 
-      resetPanel();
-      experimentr.startTimer('exploration');
+    experimentr.hideNext();
+    await loadTasks(visType);
+    assignTasks();
 
-      })()
+    d3.select('.hit').style('display', 'inline');
+    if (vis === 'nodeLink') {
+      d3.selectAll('.development').remove();
+      loadVis("vis");
 
-    
-      
+    } else {
+      // included script already auto loads the vis. 
+    }
+
+    resetPanel();
+    experimentr.startTimer('exploration');
+
+  })()
 </script>
-
