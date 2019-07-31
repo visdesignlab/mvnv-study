@@ -226,6 +226,7 @@ var Model = /** @class */ (function () {
                 //console.log(answer)
                 updateAnswer(answer);
             };
+            provenance.addObserver("selections.attrRow", updateHighlights);
             provenance.addObserver("selections.rowLabel", updateHighlights);
             provenance.addObserver("selections.colLabel", updateHighlights);
             provenance.addObserver("selections.cellcol", updateHighlights);
