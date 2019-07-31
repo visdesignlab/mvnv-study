@@ -6,7 +6,8 @@
         "feedback": "",
         "prompt": "Select the European account with the highest number of followers.",
         "replyType": [
-            "singleNodeSelection"
+            "singleNodeSelection",
+            "value"
         ],
         "replyCount": 1,
         "config": {
@@ -204,7 +205,8 @@
         "feedback": "",
         "prompt": "Find 3 nodes that are people and have more friends than followers.",
         "replyType": [
-            "multipleNodeSelection"
+            "multipleNodeSelection",
+            "value"
         ],
         "replyCount": {
             "type": "exactly",
@@ -406,7 +408,8 @@
         "feedback": "",
         "prompt": "Which of the european people who has interacted with R.Kosara has tweeted the most?",
         "replyType": [
-            "singleNodeSelection"
+            "singleNodeSelection",
+            "value"
         ],
         "replyCount": {
             "type": "exactly",
@@ -608,8 +611,7 @@
         "feedback": "",
         "prompt": "Select the accounts that have retweeted Alex Lex, and enter their average # of followers?",
         "replyType": [
-            "multipleNodeSelection",
-            "value"
+            "multipleNodeSelection"
         ],
         "replyCount": {
             "type": "at least",
@@ -810,8 +812,13 @@
         "feedback": "",
         "prompt": "How many europeans are on the path that connects L.Harrison and R.Gove ?",
         "replyType": [
+            "multipleNodeSelection",
             "value"
         ],
+        "replyCount": {
+            "type": "at least",
+            "value": 3
+        },
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "../../data/network_small_directed_multiEdge.json",

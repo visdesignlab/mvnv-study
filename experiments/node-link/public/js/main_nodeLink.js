@@ -245,7 +245,6 @@ function loadVis(id) {
     .attr("width", parentWidth) //size + margin.left + margin.right)
     .attr("height", 250);
 
-  console.log("legend width", parentWidth);
 
   simulation = d3
     .forceSimulation()
@@ -297,7 +296,6 @@ function loadVis(id) {
 }
 
 async function loadTask(task) {
-  console.log("loading task");
 
   config = task.config;
 
@@ -769,9 +767,6 @@ function updateVis() {
     let scaleStart = -nodeMarkerLength / 2 + barPadding;
     let scaleEnd = scaleStart + (numBars - 1) * (barWidth + barPadding);
 
-    console.log("nodeMarkerLength", nodeMarkerLength);
-    console.log("barWidth", barWidth);
-
     let barXScale = d3
       .scaleLinear()
       .domain([0, numBars - 1])
@@ -962,7 +957,6 @@ function updateVis() {
       newGraph.nodes.push(newNode);
     });
 
-    console.log(graphCopy.links);
     var items = graphCopy.links;
     const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
     const header = Object.keys(items[0]).filter(
@@ -976,12 +970,10 @@ function updateVis() {
     csv.unshift(header.join(","));
     csv = csv.join("\r\n");
 
-    console.log(csv);
-
     // let parseInputFilename =
     // let filename = config.isDirected ? config.directedGraph : config.undir_graph;
 
-    console.log(JSON.stringify(newGraph));
+    // console.log(JSON.stringify(newGraph));
   });
 
   d3.select("#clear-selection").on("click", () => {
@@ -1060,8 +1052,6 @@ function updateVis() {
 
   //function that updates the state, and includes a flag for when this was done through a search
   function nodeClick(node, search = false) {
-
-    console.log('called nodeClick')
     const currentState = app.currentState();
 
     //find out if this node was selected before;
@@ -1086,7 +1076,6 @@ function updateVis() {
       label: label,
       action: () => {
         const currentState = app.currentState();
-        console.log('CURRENT STATE', currentState)
         //add time stamp to the state graph
         currentState.time = Date.now();
         //Add label describing what the event was
@@ -1136,10 +1125,7 @@ function updateVis() {
           ? userSelectedNeighbors[target].push(clickedNode.id)
           : (userSelectedNeighbors[target] = [clickedNode.id]);
 
-          console.log('setting userSelectedNeighbors of ', target ,  ' to ', userSelectedNeighbors[target])
-
       } else {
-        console.log('userSelectedNeighbors of ', target ,  ' are ', userSelectedNeighbors[target])
         // if (!userSelectedNeighbors[target]){
         //   debugger;
         // }

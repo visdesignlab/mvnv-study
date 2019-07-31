@@ -30,12 +30,12 @@ function updateAnswer(answer) {
   if (answerType === 'string'){
     taskObj.answer.value = answer;
   } else {
-    taskObj.answer.nodes = answer.map(a => {id:a.id;name:a.shortName});
+    taskObj.answer.nodes = answer.map(a => {return {"id":a.id, "name":a.shortName}});
 
     let selectedList = d3
     .select("#selectedNodeList")
     .selectAll("li")
-    .data(answer, n => n.id);
+    .data(answer);
 
       let selectedListEnter = selectedList.enter().append("li");
 
@@ -45,15 +45,13 @@ function updateAnswer(answer) {
       selectedList.text(d => d.shortName);
 
   }
-
-  console.log("after updating answer, answer is ", taskObj.answer);
   
   //validate the entire answer object, but error check for only the field that is being updated
   validateAnswer(taskObj.answer,answerType == 'string' ? 'value' : 'nodes');
 }
 
 // Set submit button callback.
-d3.selectAll(".submit").on("click", async function() {
+d3.select("#submitButton").on("click", async function() {
   // ******  need access to dylan's provenance graph
   // push final provenance graph here;
 
@@ -61,6 +59,25 @@ d3.selectAll(".submit").on("click", async function() {
   if (d3.select(this).attr("disabled")) {
     return;
   }
+
+  //TO DO validate answers that were not enforced with validateAnswer (such as a minimum number of selected nodes);
+  let task = taskList[currentTask];
+  let flexibleAnswer = task.replyType.includes ('multipleNodeSelection') && task.replyCount.type === 'at least';
+
+  //force validate answer; 
+
+  if (flexibleAnswer){
+    let isValid = validateAnswer(task.answer,'nodes',true);
+    if (task.replyType.includes('value')){
+      let validateValue = validateAnswer(task.answer,'value',true);
+      isValid = isValid && validateValue;
+    }
+    if (!isValid){
+      return;
+    }
+  }
+
+ 
 
   if (vis === "nodeLink") {
     //   updateState('Finished Task');
@@ -99,30 +116,16 @@ d3.selectAll(".submit").on("click", async function() {
   taskList[currentTask].endTime = Date.now();
   taskList[currentTask].minutesToComplete =
     Math.round(
-      taskList[currentTask].startTime - taskList[currentTask].endTime
+      taskList[currentTask].endTime - taskList[currentTask].startTime
     ) / 60000;
 
-  //show feedback box - changed to show modal
-  //   d3.select("#feedback").style("display", "inline");
-
   d3.select(".modalFeedback").classed("is-active", true);
-
-  //add cover to vis and disable search and answerBox
-  d3.select("#disableInteraction").style("display", "inline"); //add cover to the vis
-  d3.select("#search-input").attr("disabled", "true"); //cannot search for nodes
-  d3.select("#answerBox").attr("disabled", "true"); //can no longer edit answer;
-  d3.selectAll(".submit").attr("disabled", "true"); //discourage multiple clicks on the submit button
-
-  console.log("answer on submit is ", taskList[currentTask].answer);
-
-  //update state with answer and end time;
 });
 
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
 
-  console.log("taskAnswer on next is ", taskObj);
   let selected = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
@@ -173,7 +176,6 @@ d3.select("#nextTask").on("click", async () => {
     resetPanel();
     d3.select(".modalFeedback").classed("is-active", false);
   } else {
-    console.log("finished Tasks");
     d3.select(".hit").style("display", "none");
 
     let participant = await db
@@ -203,6 +205,10 @@ function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
+
+  //Only start off with the submit button enabled for when the task only requires an unspecified node count; 
+  let flexibleAnswer = task.replyType.includes ('multipleNodeSelection') && task.replyCount.type === 'at least';
+
   // clear any values in the feedback or search box;
   d3.select(".modalFeedback")
     .select(".textarea")
@@ -210,15 +216,9 @@ function resetPanel() {
 
   d3.select(".searchInput").property("value", "");
 
-  //hide feedback box
-  // d3.select("#feedback").style("display", "none");
-
-  //add cover to vis and disable search and answerBox
-  d3.select("#disableInteraction").style("display", "none");
-  d3.select("#search-input").attr("disabled", null);
-  d3.select("#answerBox").attr("disabled", null);
   d3.select("#answerBox").property("value", "");
-  d3.selectAll(".submit").attr("disabled", true);
+
+  d3.selectAll(".submit").attr("disabled", flexibleAnswer ? null : true );
 
   // //Clear Selected Node List
   d3.select("#selectedNodeList")
@@ -230,27 +230,19 @@ function resetPanel() {
     .selectAll("input")
     .property("checked", false);
 
-  //set div of correct display type to visible;
-  // d3.selectAll(".answerCard").style("display", "none");
+    //check for different reply types
 
-  // let replyTypes = task.replyType[0];
-  // let numReplyTypes = task.replyType.length;
+    if (task.replyType.includes("value")){
+      d3.select('#valueAnswer').style('display','inline');
+    }else{
+      d3.select('#valueAnswer').style('display','none');
+    }
 
-  // if (numReplyTypes === 1) {
-  //   switch (replyTypes) {
-  //     case "singleNodeSelection":
-  //       d3.select("#nodeAnswer").style("display", "inline");
-  //       break;
-  //     case "multipleNodeSelection":
-  //       d3.select("#nodeAnswer").style("display", "inline");
-  //       break;
-  //     case "value":
-  //       d3.select("#valueAnswer").style("display", "inline");
-  //       break;
-  //   }
-  // } else {
-  //   d3.select("#multipleAnswers").style("display", "inline");
-  // }
+    if (task.replyType.includes("singleNodeSelection") || task.replyType.includes("multipleNodeSelection") ){
+      d3.select('#nodeAnswer').style('display','block');
+    }else{
+      d3.select('#nodeAnswer').style('display','none');
+    }
 
   d3.select("#taskArea")
     .select(".card-header-title")
@@ -357,70 +349,95 @@ function sanitizeWorkerID(workerID) {
 //validates answer
 //validates the entire answer object before assigning the submit button enable/disabled; 
 //error checks the field specified to show any error msgs.
-function validateAnswer(answer,errorCheckField) {
-  
-  //validate fields of answer as required by the task config (string/node);
-  
-  //infer type of answer
-  let answerIsNode = errorCheckField === "nodes";
-  let numSelectedNodes = answer.nodes.length;
-
-  let isValid;
-  let errorMsg;
-
+//force argument is true when this is run from the submit button. Forces error message to show up that wouldn't otherwise.
+function validateAnswer(answer,errorCheckField,force=false) {
   
   let task = taskList[currentTask];
-
   let replyTypes = task.replyType;
 
-  if (answerIsNode && replyTypes.includes("singleNodeSelection")) {
-    isValid = numSelectedNodes === 1;
+  //infer type of answer
+  let numSelectedNodes = answer.nodes.length;
 
-    if (numSelectedNodes > 1) {
-      errorMsg =
-        "Too many nodes selected, please select a single node as your answer.";
-    }
+  let isValid = true;
+  let errorMsg;
 
-    if (numSelectedNodes < 1) {
-      errorMsg = "No nodes selected.";
-    }
-  }
+  let isFlexibleAnswer = replyTypes.includes("multipleNodeSelection") && task.replyCount.type == "at least"
 
-  if (answerIsNode && replyTypes.includes("multipleNodeSelection")) {
-    //check for exact number or for 'at least' requirement;
-    if (task.replyCount.type === "exactly") {
-      isValid = answer.length == task.replyCount.value;
 
-      if (numSelectedNodes < task.replyCount.value) {
+  if (replyTypes.includes("singleNodeSelection")){
+    isValid = isValid && numSelectedNodes === 1;
+    
+    if(errorCheckField === 'nodes'){
+      if (numSelectedNodes > 1) {
         errorMsg =
-          "Keep going! This question requires " +
-          task.replyCount.value +
-          " node selections.";
+          "Too many nodes selected, please select a single node as your answer.";
       }
-
-      if (numSelectedNodes > task.replyCount.value) {
-        errorMsg =
-          "Too many nodes selected. This task requires " +
-          task.replyCount.value +
-          " node selections.";
-      }
-
+  
       if (numSelectedNodes < 1) {
         errorMsg = "No nodes selected.";
       }
     }
-  }
+  } else if (replyTypes.includes("multipleNodeSelection")){
+    //only naturally perform 'isValid' check for counts that are exactly
+    if (task.replyCount.type === "exactly") {
+      isValid = isValid && numSelectedNodes == task.replyCount.value;
 
-  if (!answerIsNode){
-        isValid = d3.select("#answerBox").property("value").length > 0; //TODO error check if the value is a number of string
-        errorMsg = "Please enter a value in the answer box.";
-  }
+      if (errorCheckField === 'nodes'){
+        if (numSelectedNodes < task.replyCount.value) {
+          errorMsg =
+            "Keep going! This question requires " +
+            task.replyCount.value +
+            " node selections.";
+        }
+  
+        if (numSelectedNodes > task.replyCount.value) {
+          errorMsg =
+            "Too many nodes selected. This task requires " +
+            task.replyCount.value +
+            " node selections.";
+        }
+  
+        if (numSelectedNodes < 1) {
+          errorMsg = "No nodes selected.";
+        }
+      }
+    } 
+} 
 
-  d3.select('#submitButton').attr("disabled", isValid ? null : true);
+if (replyTypes.includes("value")){
+  isValid = isValid &&  d3.select("#answerBox").property("value").length > 0;
+
+  if (errorCheckField === 'value'){
+    if (d3.select("#answerBox").property("value").length < 1){
+      errorMsg = "Please enter a value in the answer box.";
+      console.log('should be here')
+    }
+  }
+}
+
+//when running Validate answer with 'force' = true, then this is happening on submit; 
+if (force && errorCheckField==='nodes' && task.replyCount.type === "at least"){
+  console.log('forcing!')
+  isValid = isValid && numSelectedNodes >= task.replyCount.value;
+  if (numSelectedNodes <1 ) {
+    errorMsg =  "No nodes selected!";
+  } else if (numSelectedNodes < task.replyCount.value) {
+      errorMsg =
+        "Please select at least  " +
+        task.replyCount.value +
+        " nodes.";
+    }    
+}
+
+console.log('answer is valid ', isValid)
+console.log('errorMsg is ', errorMsg)
+  d3.select('#submitButton').attr("disabled", isValid || isFlexibleAnswer ? null : true);
   //toggle visibility of error message;
-  d3.select('.errorMsg')
-  .style("display", isValid ? "none" : "inline")
-  .text(errorMsg);
+  d3.selectAll('.errorMsg')
+  .style("display", !isValid ? "inline" : "none");
+
+  let errorMsgSelector = errorCheckField === 'value' ? d3.select('#valueAnswer').select('.errorMsg') : d3.select('#nodeAnswer').select('.errorMsg')
+  errorMsgSelector.text(errorMsg);
 
   return isValid;
 }
@@ -467,8 +484,6 @@ async function loadTasks() {
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  console.log("selected Vis is ", selectedVis);
-
   vis = selectedVis// = 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
@@ -488,7 +503,6 @@ async function loadTasks() {
     return task;
   });
 
-  console.log(selectedVis);
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (selectedVis === "nodeLink") {
     d3.selectAll(".adjMatrix").remove();
@@ -568,7 +582,6 @@ function loadScript(url, callback) {
 
 //Once a user has signed the consent form. Update the 'currentGroup' and push the taskList to their name;
 async function assignTasks() {
-  console.log("trying to assign tasks");
 
   //create a pared down copy of this taskList to store in firebase (no need to store configs);
   let configLessTaskList = JSON.parse(

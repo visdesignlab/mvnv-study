@@ -16,8 +16,17 @@ body {
     /* height:1080px; */
 }
 
+#visPanel{
+    height:1060px;
+}
+
 #easyLabel{
     padding-left:0px;
+}
+
+.selectBox.selected{
+    fill:rgb(255, 111, 0);
+    stroke:rgb(255, 111, 0);;
 }
 
 #hardLabel{
@@ -37,12 +46,12 @@ body {
     color:white;
 }
 
-#submitNode, #submitText{
+#submitButton{
     color:white;
     background-color:#4285f4;
 }
 
-#submitNode[disabled], #submitText[disabled]{
+#submitButton[disabled]{
     color:darkgrey;
     background-color:lightgrey;
 }

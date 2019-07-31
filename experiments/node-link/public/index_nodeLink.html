@@ -45,23 +45,24 @@
                                 <div class="card-content">
                                     <div class="content">
                                         <div class="nodeLink">
-                                                <label class="label">Search for Nodes</label>
-                                                <input class="input searchInput" type="text" placeholder="Search for node"
-                                                    id="search-input"></input>
+                                            <label class="label">Search for Nodes</label>
+                                            <input class="input searchInput" type="text" placeholder="Search for node"
+                                                id="search-input"></input>
 
                                         </div>
 
                                         <div class="adjMatrix">
-                                          <form autocomplete="off"  onsubmit="return searchForNode(this);">
-                                            <div class="autocomplete" style="width:300px;">
-                                              <input id="myInput" type="text" name="twitterNames" placeholder="Search for Name">
-                                            </div>
-                                            <input type="button" id ="searchButton" value="Search">
-                                          </form>
-                                          <input type="button" id ="clearButton" value="Clear Selections">
+                                            <form autocomplete="off" onsubmit="return searchForNode(this);">
+                                                <div class="autocomplete" style="width:300px;">
+                                                    <input id="myInput" type="text" name="twitterNames"
+                                                        placeholder="Search for Name">
+                                                </div>
+                                                <input type="button" id="searchButton" value="Search">
+                                            </form>
+                                            <input type="button" id="clearButton" value="Clear Selections">
                                         </div>
 
-                                                                            </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card">
@@ -79,7 +80,7 @@
                             </div>
 
 
-                            <div class="card answerCard" id="nodeAnswer">
+                            <div class="card answerCard">
                                 <header class="card-header">
                                     <p class="card-header-title">
                                         Answer Section
@@ -91,12 +92,28 @@
 
                                         <a class="button is-pulled-right submit" id="submitButton" disabled>Submit</a>
 
-                                        <ul id="selectedNodeList">
-                                            <li> test value</li>
-                                        </ul>
+                                        <span id="nodeAnswer">
+                                            <label><strong>Selected Nodes</strong></label>
+                                            <br />
+                                            <ul id="selectedNodeList">
+                                                <li> test value</li>
+                                            </ul>
+                                            <p class='errorMsg' style=display:none></p>
+                                            <br />
+
+                                        </span>
+
+                                        <span id="valueAnswer">
+                                            <label><strong>Enter Numeric Answer Below</strong></label>
+                                            <br />
                                             <input class="input" type="text" placeholder="answer text" id="answerBox">
-                                            <p class='errorMsg' style=display:none>This is an error message that will be displayed if the user
-                                                tries to submit an answer that does not conform with the instructions.</p>
+                                            <br />
+                                            <p class='errorMsg' style=display:none></p>
+                                        </span>
+
+
+
+
 
                                     </div>
                                 </div>
@@ -104,88 +121,90 @@
                             </div>
 
                             <div class="modal modalFeedback">
-                                    <div class="modal-background"></div>
-                                    <div class="modal-card">
+                                <div class="modal-background"></div>
+                                <div class="modal-card">
 
-                
-                                            <header class="modal-card-head">
-                                                    <p class="modal-card-title">
-                                                    On a scale of 1 (easy) to 7 (hard),
-                                                    <br/>  how hard was this task?
-                                                    </p>
-                                                </header>
-                                      <section class="modal-card-body">
-                                            <div class="content">
-                                                    <div class="control">
 
-                                                        <!-- <strong>easy</strong> -->
-                                                        easy  
+                                    <header class="modal-card-head">
+                                        <p class="modal-card-title">
+                                            On a scale of 1 (easy) to 7 (hard),
+                                            <br /> how hard was this task?
+                                        </p>
+                                    </header>
+                                    <section class="modal-card-body">
+                                        <div class="content">
+                                            <div class="control">
 
-                                                        <span id="easyHardRating">
-                                                                <label class="radio">
-                                                                        <input type="radio" name="difficulty" value="1">
-                                                                        1
-                                                                      </label>
-                                                                      <label class="radio">
-                                                                        <input type="radio" name="difficulty" value="2">
-                                                                        2
-                                                                      </label>
-                                                                      <label class="radio">
-                                                                        <input type="radio" name="difficulty" value="3">
-                                                                        3
-                                                                      </label>
-                                                                      <label class="radio">
-                                                                              <input type="radio" name="difficulty" value="4">
-                                                                              4
-                                                                            </label>
-                                                                            <label class="radio">
-                                                                              <input type="radio" name="difficulty" value="5">
-                                                                              5
-                                                                            </label>
-                                                                            <label class="radio">
-                                                                              <input type="radio" name="difficulty" value="6">
-                                                                              6
-                                                                            </label>
-                                                                            <label class="radio">
-                                                                                  <input type="radio" name="difficulty" value="7">
-                                                                                  7
-                                                                                </label>
+                                                <!-- <strong>easy</strong> -->
+                                                easy
 
-                                                        </span>
-                                                         <!-- <strong>hard</strong> -->
-                                                         hard
-                                                                    
-                                                          </div>                                                          
-                                                          <br/>
-    
-                                                    <textarea class="textarea" placeholder="Enter any additional information here"></textarea>  
-                                                    
-                                                    <p class='errorMsg' style=display:none>Please select a score above before proceeding!</p>
-                                                    
-    
+                                                <span id="easyHardRating">
+                                                    <label class="radio">
+                                                        <input type="radio" name="difficulty" value="1">
+                                                        1
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="difficulty" value="2">
+                                                        2
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="difficulty" value="3">
+                                                        3
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="difficulty" value="4">
+                                                        4
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="difficulty" value="5">
+                                                        5
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="difficulty" value="6">
+                                                        6
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="difficulty" value="7">
+                                                        7
+                                                    </label>
+
+                                                </span>
+                                                <!-- <strong>hard</strong> -->
+                                                hard
+
                                             </div>
-                                      </section>
-                                      <footer class="modal-card-foot">
-                                            <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
-                                      </footer>
-                                    </div>
-                                  </div>
+                                            <br />
+
+                                            <textarea class="textarea"
+                                                placeholder="Enter any additional information here"></textarea>
+
+                                            <p class='errorMsg' style=display:none>Please select a score above before
+                                                proceeding!</p>
+
+
+                                        </div>
+                                    </section>
+                                    <footer class="modal-card-foot">
+                                        <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
+                                    </footer>
+                                </div>
+                            </div>
 
 
                         </div>
 
                         <div class="nodeLink">
-                                <svg id="node-link-svg"></svg>
+                            <svg id="node-link-svg"></svg>
                         </div>
 
                         <div class="adjMatrix vis">
                             <div class="loading"></div>
-                          <div class="loadingOverlay"></div>
-                          <div id="interactiveFreeFormMain">
-                              <div id="topology" class="topocontainer" height="700" width="700"> </div>
-                              <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
+                            <div class="loadingOverlay"></div>
+                            <div id="interactiveFreeFormMain">
+                                <div id="topology" class="topocontainer" height="700" width="700"> </div>
+                                <div id="attributes" class="attrcontainer" height="700" width="650"> </div>
 
-                          </div>
+                            </div>
                         </div>
 
                     </div>
@@ -193,14 +212,14 @@
                     <!-- <a class="button" id="panelControl">Hide/Show Control Panel</a> -->
 
                     <div class="isDevelopment">
-                            <a class="button is-pulled-right" id="clear-selection">Clear Highlighted Nodes</a>
-                            <a href="#" id="next" class="button is-pulled-right">Next Task</a>
-                            <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
+                        <a class="button is-pulled-right" id="clear-selection">Clear Highlighted Nodes</a>
+                        <a href="#" id="next" class="button is-pulled-right">Next Task</a>
+                        <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
 
 
-                            <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
-                            <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
-                            <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
+                        <a class="button condition is-pulled-right" id="saturatedConfig">10 Attribute Condition</a>
+                        <a class="button condition is-pulled-right" id="nodeLinkConfig">5 Attribute Condition</a>
+                        <a class="button condition is-pulled-right" id="optimalConfig">Optimal Condition</a>
                     </div>
 
                 </div>
