@@ -2669,15 +2669,10 @@ class Controller {
     d3.select('#attributes').selectAll('*').remove();
     d3.select('#legend-svg').selectAll('*').remove();
   }
-  loadCurrentTask() {
-    let task = this.tasks[this.taskNum]
-    d3.select("#taskArea")
-      .select(".card-header-title")
-      .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
-  }
+
   reload() {
     this.clearView();
-    this.loadCurrentTask();
+    //this.loadCurrentTask();
     d3.select('.loading').style('display', 'block');
 
     this.view = new View(this); // initalize view,

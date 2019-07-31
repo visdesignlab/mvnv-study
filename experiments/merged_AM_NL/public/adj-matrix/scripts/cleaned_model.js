@@ -2222,15 +2222,9 @@ var Controller = /** @class */ (function () {
         d3.select('#attributes').selectAll('*').remove();
         d3.select('#legend-svg').selectAll('*').remove();
     };
-    Controller.prototype.loadCurrentTask = function () {
-        var task = this.tasks[this.taskNum];
-        d3.select("#taskArea")
-            .select(".card-header-title")
-            .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
-    };
     Controller.prototype.reload = function () {
         this.clearView();
-        this.loadCurrentTask();
+        //this.loadCurrentTask();
         d3.select('.loading').style('display', 'block');
         this.view = new View(this); // initalize view,
         this.model = new Model(this); //.reload();
