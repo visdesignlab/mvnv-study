@@ -72,7 +72,7 @@ class Model {
 
   constructor(controller: any) {
     this.controller = controller;
-    d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
+    d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
       //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
       //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
@@ -2451,7 +2451,7 @@ class Controller {
     this.taskNum = taskNum;
     this.task = this.tasks[this.taskNum];
     this.configuration = this.task.config;
-    let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
+    //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
 
     //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
 
