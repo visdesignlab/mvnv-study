@@ -47,7 +47,7 @@ var Model = /** @class */ (function () {
     function Model(controller) {
         var _this = this;
         this.controller = controller;
-        d3.json("data/network_" + controller.configuration.loadedGraph + ".json").then(function (data) {
+        d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then(function (data) {
             //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
             //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
@@ -2109,7 +2109,7 @@ var Controller = /** @class */ (function () {
         this.taskNum = taskNum;
         this.task = this.tasks[this.taskNum];
         this.configuration = this.task.config;
-        var prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
+        //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
         //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
         if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
             if (!this.configuration.nodeAttributes.includes('selected')) {
