@@ -41,6 +41,7 @@ class Model {
   populateSearchBox() {
     let names = this.nodes.map(node => node.shortName);
     autocomplete(document.getElementById("myInput"), names);
+    d3.selectAll('.autocomplete').style('width',150);
     d3.select('#searchButton').classed('search', true);
     d3.select('#searchButton')
       .on('click', () => {

@@ -45,7 +45,7 @@ function updateAnswer(answer) {
       selectedList.text(d => d.shortName);
 
   }
-  
+
   //validate the entire answer object, but error check for only the field that is being updated
   validateAnswer(taskObj.answer,answerType == 'string' ? 'value' : 'nodes');
 }
@@ -64,7 +64,7 @@ d3.select("#submitButton").on("click", async function() {
   let task = taskList[currentTask];
   let flexibleAnswer = task.replyType.includes ('multipleNodeSelection') && task.replyCount.type === 'at least';
 
-  //force validate answer; 
+  //force validate answer;
 
   if (flexibleAnswer){
     let isValid = validateAnswer(task.answer,'nodes',true);
@@ -77,7 +77,7 @@ d3.select("#submitButton").on("click", async function() {
     }
   }
 
- 
+
 
   if (vis === "nodeLink") {
     //   updateState('Finished Task');
@@ -206,7 +206,7 @@ function resetPanel() {
   task.startTime = Date.now();
 
 
-  //Only start off with the submit button enabled for when the task only requires an unspecified node count; 
+  //Only start off with the submit button enabled for when the task only requires an unspecified node count;
   let flexibleAnswer = task.replyType.includes ('multipleNodeSelection') && task.replyCount.type === 'at least';
 
   // clear any values in the feedback or search box;
@@ -258,7 +258,7 @@ function resetPanel() {
 
 async function pushProvenance(provGraph) {
  //stop pushing to provenance for now;
-  return; 
+  return;
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
     .collection(workerID)
@@ -311,7 +311,7 @@ function sanitizeWorkerID(workerID){
 //error checks the field specified to show any error msgs.
 //force argument is true when this is run from the submit button. Forces error message to show up that wouldn't otherwise.
 function validateAnswer(answer,errorCheckField,force=false) {
-  
+
   let task = taskList[currentTask];
   let replyTypes = task.replyType;
 
@@ -326,13 +326,13 @@ function validateAnswer(answer,errorCheckField,force=false) {
 
   if (replyTypes.includes("singleNodeSelection")){
     isValid = isValid && numSelectedNodes === 1;
-    
+
     if(errorCheckField === 'nodes'){
       if (numSelectedNodes > 1) {
         errorMsg =
           "Too many nodes selected, please select a single node as your answer.";
       }
-  
+
       if (numSelectedNodes < 1) {
         errorMsg = "No nodes selected.";
       }
@@ -349,20 +349,20 @@ function validateAnswer(answer,errorCheckField,force=false) {
             task.replyCount.value +
             " node selections.";
         }
-  
+
         if (numSelectedNodes > task.replyCount.value) {
           errorMsg =
             "Too many nodes selected. This task requires " +
             task.replyCount.value +
             " node selections.";
         }
-  
+
         if (numSelectedNodes < 1) {
           errorMsg = "No nodes selected.";
         }
       }
-    } 
-} 
+    }
+}
 
 if (replyTypes.includes("value")){
   isValid = isValid &&  d3.select("#answerBox").property("value").length > 0;
@@ -375,7 +375,7 @@ if (replyTypes.includes("value")){
   }
 }
 
-//when running Validate answer with 'force' = true, then this is happening on submit; 
+//when running Validate answer with 'force' = true, then this is happening on submit;
 if (force && errorCheckField==='nodes' && task.replyCount.type === "at least"){
   console.log('forcing!')
   isValid = isValid && numSelectedNodes >= task.replyCount.value;
@@ -386,17 +386,17 @@ if (force && errorCheckField==='nodes' && task.replyCount.type === "at least"){
         "Please select at least  " +
         task.replyCount.value +
         " nodes.";
-    }    
+    }
 }
 
 console.log('answer is valid ', isValid)
 console.log('errorMsg is ', errorMsg)
   d3.select('#submitButton').attr("disabled", isValid || isFlexibleAnswer ? null : true);
   //toggle visibility of error message;
-  
+
 
   let errorMsgSelector = errorCheckField === 'value' ? d3.select('#valueAnswer').select('.errorMsg') : d3.select('#nodeAnswer').select('.errorMsg')
-  
+
   errorMsgSelector
   .style("display", !isValid ? "inline" : "none")
   .text(errorMsg);
@@ -446,7 +446,7 @@ async function loadTasks() {
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  vis = selectedVis// = 'adjMatrix'//='nodeLink' //
+  vis = selectedVis = 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
