@@ -231,6 +231,7 @@ function resetPanel() {
     .selectAll("li")
     .remove();
 
+    
   //clear any selected Radio buttons in the feedback box;
   d3.select(".modalFeedback")
     .selectAll("input")
