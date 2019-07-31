@@ -447,7 +447,7 @@ async function loadTasks() {
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  vis = selectedVis = 'adjMatrix'//='nodeLink' //
+  vis = selectedVis// = 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);

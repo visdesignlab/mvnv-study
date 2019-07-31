@@ -1647,12 +1647,14 @@ var View = /** @class */ (function () {
             xRange += columnWidths[col];
         });
         this.attributeScales = attributeScales;
+        console.log(columnRange);
         // need max and min of each column
         /*this.barWidthScale = d3.scaleLinear()
           .domain([0, 1400])
           .range([0, 140]);*/
         var placementScale = {};
         this.columnScale.range(columnRange);
+        console.log(this.columnScale, columns, columnRange);
         for (var _i = 0, _a = Object.entries(attributeScales); _i < _a.length; _i++) {
             var _b = _a[_i], column = _b[0], scale = _b[1];
             if (categoricalAttributes.indexOf(column) > -1) { // if not selected categorical
@@ -2124,17 +2126,19 @@ var Controller = /** @class */ (function () {
             // hide value
             d3.select('#nodeAnswer').style('display', 'block');
             d3.select('#valueAnswer').style('display', 'none');
-            this.configuration.nodeAttributes.unshift('selected');
-            var obj = {
-                "domain": [true, false],
-                "range": ["#e86b45", '#fff'],
-                "labels": ['answer', 'not answer'],
-                'glyph': 'rect',
-                'label': 'selected'
-            };
+            if (!this.configuration.nodeAttributes.includes('selected')) {
+                this.configuration.nodeAttributes.unshift('selected');
+                var obj = {
+                    "domain": [true, false],
+                    "range": ["#e86b45", '#fff'],
+                    "labels": ['answer', 'not answer'],
+                    'glyph': 'rect',
+                    'label': 'selected'
+                };
+                this.configuration.attributeScales.node['selected'] = obj;
+            }
             console.log(this.configuration.nodeAttributes, d3.min([100 * this.configuration.nodeAttributes.length, 450]));
             //this.configuration = result;
-            this.configuration.attributeScales.node['selected'] = obj;
         }
         this.configuration.adjMatrix['toggle'] = false;
         this.configuration.adjMatrix.neighborSelect = true;
@@ -2261,7 +2265,7 @@ var Controller = /** @class */ (function () {
         panelDimensions.width = width * 0.2;
         panelDimensions.height = height - taskBarHeight;
         console.log(panelDimensions);
-        d3.select("#visPanel").style("width", panelDimensions.width + "px");
+        //d3.select("#visPanel").style("width", panelDimensions.width + "px");
         d3.select('#panelDiv').style('display', 'none');
         console.log(d3.select('.adjMatrix.vis'), width * .8);
         this.visHeight = panelDimensions.height;
@@ -2278,8 +2282,6 @@ var Controller = /** @class */ (function () {
         this.edgePorportion = this.edgeWidth / (this.edgeWidth + this.attrWidth + filler);
         if (this.edgeWidth < panelDimensions.height) {
             this.visHeight = this.visWidth * this.edgePorportion;
-        }
-        else {
         }
         d3.select('.topocontainer').style('width', (100 * this.edgePorportion).toString() + '%');
         d3.select('.topocontainer').style('height', (this.visHeight).toString() + 'px');
