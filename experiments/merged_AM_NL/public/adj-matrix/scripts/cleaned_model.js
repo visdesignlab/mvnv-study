@@ -2110,22 +2110,13 @@ var Controller = /** @class */ (function () {
         this.task = this.tasks[this.taskNum];
         this.configuration = this.task.config;
         var prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
-        d3.select("#taskArea").selectAll('.card-header-title')
-            .text(prompt);
+        //d3.select("#taskArea").selectAll('.card-header-title')
+        //  .text(prompt);
         console.log(d3.select("#taskArea")
             .select('.card taskCard')
             .select(".card-header-title"), d3.select("#taskArea").selectAll('.card-header-title'));
         console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt, d3.select("#taskArea").select(".card-header-title"));
-        if (this.task.replyType == 'value') {
-            // hide selected nodes
-            d3.select('#nodeAnswer').style('display', 'none');
-            d3.select('#valueAnswer').style('display', 'block');
-            // no obj
-        }
-        else {
-            // hide value
-            d3.select('#nodeAnswer').style('display', 'block');
-            d3.select('#valueAnswer').style('display', 'none');
+        if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
             if (!this.configuration.nodeAttributes.includes('selected')) {
                 this.configuration.nodeAttributes.unshift('selected');
                 var obj = {

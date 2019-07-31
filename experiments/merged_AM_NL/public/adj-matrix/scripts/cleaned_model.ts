@@ -2452,22 +2452,10 @@ class Controller {
     this.task = this.tasks[this.taskNum];
     this.configuration = this.task.config;
     let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
-    d3.select("#taskArea").selectAll('.card-header-title')
-      .text(prompt);
-    console.log(d3.select("#taskArea")
-      .select('.card taskCard')
-      .select(".card-header-title"),d3.select("#taskArea").selectAll('.card-header-title'))
-    console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
 
-    if(this.task.replyType == 'value'){
-      // hide selected nodes
-      d3.select('#nodeAnswer').style('display','none');
-      d3.select('#valueAnswer').style('display','block');
-      // no obj
-    } else {
-      // hide value
-      d3.select('#nodeAnswer').style('display','block');
-      d3.select('#valueAnswer').style('display','none');
+    //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
+
+    if(this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')){
       if(!this.configuration.nodeAttributes.includes('selected')){
         this.configuration.nodeAttributes.unshift('selected');
         let obj = {
@@ -2482,9 +2470,6 @@ class Controller {
       }
 
       console.log(this.configuration.nodeAttributes,d3.min([100*this.configuration.nodeAttributes.length,450]));
-
-
-      //this.configuration = result;
 
     }
     this.configuration.adjMatrix['toggle'] = false;
@@ -2555,25 +2540,9 @@ class Controller {
 
       //that.finishConstructing(result);
     //})
-    this.taskNum = 0;
 
 
-    let task = this.tasks[this.taskNum]
-    d3.select("#taskArea")
-      .select(".card-header-title")
-      .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
 
-
-    d3.select("#next").on("click", () => {
-      this.taskNum = d3.min([this.taskNum + 1, this.tasks.length - 1]);
-      this.loadConfigs();
-    });
-
-    d3.select("#previous").on("click", () => {
-      this.taskNum = d3.max([this.taskNum - 1, 0]);
-      this.loadConfigs();
-
-    });
 
   }
   private clickedCells: any;
