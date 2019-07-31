@@ -21,15 +21,21 @@
             "type": "person",
             "continent": "South America",
             "shortName": "John Gómez",
-            "x": 772.8547751812812,
-            "y": 555.2449607909728,
+            "x": 574.6698149580358,
+            "y": 456.97069733628155,
             "neighbors": [
                 208312922,
-                81658145
+                81658145,
+                16112517,
+                1873322353,
+                743468486756868100
             ],
             "edges": [
                 "91169926_208312922_retweet",
-                "91169926_81658145_retweet"
+                "91169926_81658145_retweet",
+                "91169926_16112517_retweet",
+                "91169926_1873322353_retweet",
+                "743468486756868100_91169926_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -55,17 +61,39 @@
             "type": "person",
             "continent": "North America",
             "shortName": "Rob Gove",
-            "x": 395.104542658957,
-            "y": 393.90995919791277,
+            "x": 427.3065301703833,
+            "y": 377.72910844624437,
             "neighbors": [
                 91169926,
                 191257554,
-                1085199426837188600
+                1085199426837188600,
+                318046158,
+                18406335,
+                1006945298,
+                227831457,
+                84043985,
+                29700681,
+                4597853354,
+                247943631,
+                403626099,
+                2873695769,
+                889998600
             ],
             "edges": [
                 "91169926_208312922_retweet",
                 "191257554_208312922_retweet",
-                "208312922_1085199426837188600_mentions"
+                "208312922_1085199426837188600_mentions",
+                "318046158_208312922_retweet",
+                "18406335_208312922_retweet",
+                "1006945298_208312922_retweet",
+                "227831457_208312922_retweet",
+                "84043985_208312922_retweet",
+                "29700681_208312922_retweet",
+                "208312922_4597853354_mentions",
+                "208312922_247943631_retweet",
+                "403626099_208312922_retweet",
+                "2873695769_208312922_retweet",
+                "889998600_208312922_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -91,15 +119,17 @@
             "type": "institution",
             "continent": "Europe",
             "shortName": "AA Design",
-            "x": 473.038876349379,
-            "y": 652.8664422050186,
+            "x": 515.4404741848507,
+            "y": 179.92401074868926,
             "neighbors": [
                 208312922,
-                81658145
+                81658145,
+                10414152
             ],
             "edges": [
                 "191257554_208312922_retweet",
-                "191257554_81658145_retweet"
+                "191257554_81658145_retweet",
+                "191257554_10414152_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -125,51 +155,31 @@
             "type": "institution",
             "continent": "Europe",
             "shortName": "EVis2019",
-            "x": 756.109031159325,
-            "y": 479.0037129983141,
+            "x": 807.0490884257716,
+            "y": 195.07944226887187,
             "neighbors": [
                 208312922,
                 4058687172,
                 201277609,
-                40219508
+                40219508,
+                19283433,
+                2527017636,
+                30009655,
+                19299318,
+                1035496563743842300,
+                81658145
             ],
             "edges": [
                 "208312922_1085199426837188600_mentions",
                 "4058687172_1085199426837188600_retweet",
                 "201277609_1085199426837188600_mentions",
-                "40219508_1085199426837188600_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 21,
-            "query_tweet_count": 4,
-            "friends_count": 70,
-            "statuses_count": 89,
-            "listed_count": 0,
-            "utc_offset": null,
-            "favourites_count": 39,
-            "count_followers_in_query": 2,
-            "screen_name": "_____leena_____",
-            "id": 4058687172,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/659761411384455172/_9I3QXpo_normal.png",
-            "influential": false,
-            "original": true,
-            "memberSince": "2015-10-29T15:12:37.000Z",
-            "name": "Rina",
-            "location": "",
-            "memberFor_days": 1371,
-            "type": "person",
-            "continent": "Asia",
-            "shortName": "Rina",
-            "x": 1168.4306776668202,
-            "y": 275.6638883682841,
-            "neighbors": [
-                1085199426837188600
-            ],
-            "edges": [
-                "4058687172_1085199426837188600_retweet"
+                "40219508_1085199426837188600_retweet",
+                "1085199426837188600_19283433_retweet",
+                "1085199426837188600_2527017636_retweet",
+                "1085199426837188600_30009655_retweet",
+                "1085199426837188600_19299318_retweet",
+                "1085199426837188600_1035496563743842300_retweet",
+                "81658145_1085199426837188600_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -195,19 +205,25 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "Jon Robert",
-            "x": 948.7869631216174,
-            "y": 557.2109836520572,
+            "x": 1122.4302514757342,
+            "y": 489.41571788262536,
             "neighbors": [
                 1085199426837188600,
                 78865306,
                 16112517,
-                2596138699
+                2596138699,
+                81658145,
+                30009655,
+                711885257549680600
             ],
             "edges": [
                 "201277609_1085199426837188600_mentions",
                 "201277609_78865306_retweet",
                 "201277609_16112517_retweet",
-                "2596138699_201277609_retweet"
+                "2596138699_201277609_retweet",
+                "201277609_81658145_retweet",
+                "30009655_201277609_mentions",
+                "711885257549680600_201277609_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -233,8 +249,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "Alex",
-            "x": 839.5918083145017,
-            "y": 666.159317006792,
+            "x": 912.5070191226615,
+            "y": 465.12364595383747,
             "neighbors": [
                 91169926,
                 10414152,
@@ -243,7 +259,20 @@
                 84043985,
                 191257554,
                 16557883,
-                6146692
+                6146692,
+                201277609,
+                395853499,
+                85844572,
+                270431596,
+                16112517,
+                1652270612,
+                446672281,
+                2527017636,
+                19299318,
+                1085199426837188600,
+                909697437694087200,
+                92951551,
+                701375574
             ],
             "edges": [
                 "91169926_81658145_retweet",
@@ -253,45 +282,20 @@
                 "84043985_81658145_retweet",
                 "191257554_81658145_retweet",
                 "16557883_81658145_retweet",
-                "6146692_81658145_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 1130,
-            "query_tweet_count": 7,
-            "friends_count": 1142.6999750666173,
-            "statuses_count": 1099,
-            "listed_count": 102,
-            "utc_offset": null,
-            "favourites_count": 1372,
-            "count_followers_in_query": 17,
-            "screen_name": "geovisual",
-            "id": 78865306,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/536580974520193025/zdXWrWhI_normal.jpeg",
-            "influential": true,
-            "original": true,
-            "memberSince": "2009-10-01T10:19:06.000Z",
-            "name": "Christoph Kinkeldey",
-            "location": "Berlin",
-            "memberFor_days": 3590,
-            "type": "person",
-            "continent": "Europe",
-            "shortName": "Kinkeldey",
-            "x": 806.2170747711975,
-            "y": 358.88743181684526,
-            "neighbors": [
-                201277609,
-                16112517,
-                247943631,
-                1055379531731796000
-            ],
-            "edges": [
-                "201277609_78865306_retweet",
-                "16112517_78865306_retweet",
-                "78865306_247943631_mentions",
-                "1055379531731796000_78865306_retweet"
+                "6146692_81658145_retweet",
+                "201277609_81658145_retweet",
+                "395853499_81658145_retweet",
+                "81658145_85844572_mentions",
+                "81658145_270431596_mentions",
+                "81658145_16112517_retweet",
+                "1652270612_81658145_retweet",
+                "446672281_81658145_retweet",
+                "2527017636_81658145_retweet",
+                "19299318_81658145_mentions",
+                "81658145_1085199426837188600_mentions",
+                "81658145_909697437694087200_mentions",
+                "92951551_81658145_retweet",
+                "701375574_81658145_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -317,8 +321,8 @@
             "type": "person",
             "continent": "North America",
             "shortName": "Rob Kosara",
-            "x": 878.8211568775124,
-            "y": 441.2768216031975,
+            "x": 833.5979433208945,
+            "y": 571.3345904495098,
             "neighbors": [
                 201277609,
                 78865306,
@@ -328,7 +332,25 @@
                 40219508,
                 270431596,
                 19299318,
-                944216617268973600
+                944216617268973600,
+                395853499,
+                1325316703,
+                18406335,
+                81658145,
+                30009655,
+                84043985,
+                18704160,
+                1652270612,
+                318046158,
+                91169926,
+                1556132462,
+                22766040,
+                6146692,
+                21084111,
+                1068137549355515900,
+                19283433,
+                136400506,
+                31638712
             ],
             "edges": [
                 "201277609_16112517_retweet",
@@ -339,71 +361,25 @@
                 "16112517_40219508_mentions",
                 "16112517_270431596_mentions",
                 "16112517_19299318_retweet",
-                "944216617268973600_16112517_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 849.6745009810703,
-            "query_tweet_count": 2,
-            "friends_count": 763,
-            "statuses_count": 4338,
-            "listed_count": 100,
-            "utc_offset": null,
-            "favourites_count": 5089,
-            "count_followers_in_query": 22,
-            "screen_name": "laneharrison",
-            "id": 10414152,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/932285276520701954/sQXVag20_normal.jpg",
-            "influential": true,
-            "original": false,
-            "memberSince": "2007-11-20T15:02:19.000Z",
-            "name": "Lane Harrison",
-            "location": "Worcester, MA",
-            "memberFor_days": 4271,
-            "type": "person",
-            "continent": "North America",
-            "shortName": "Lane",
-            "x": 515.8338506099835,
-            "y": 749.5381410684068,
-            "neighbors": [
-                81658145
-            ],
-            "edges": [
-                "81658145_10414152_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 856.7462361239643,
-            "query_tweet_count": 0,
-            "friends_count": 1077,
-            "statuses_count": 770,
-            "listed_count": 87,
-            "utc_offset": null,
-            "favourites_count": 1065,
-            "count_followers_in_query": 7,
-            "screen_name": "eytanadar",
-            "id": 1314101,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1336587806/adar_eytan_normal.jpg",
-            "influential": true,
-            "original": false,
-            "memberSince": "2007-03-16T21:25:12.000Z",
-            "name": "Eytan Adar",
-            "location": "",
-            "memberFor_days": 4404.294794788336,
-            "type": "person",
-            "continent": "North America",
-            "shortName": "Eytan Adar",
-            "x": 1002.2490883260799,
-            "y": 283.0376914385147,
-            "neighbors": [
-                16112517
-            ],
-            "edges": [
-                "16112517_1314101_mentions"
+                "944216617268973600_16112517_retweet",
+                "395853499_16112517_mentions",
+                "16112517_1325316703_retweet",
+                "18406335_16112517_retweet",
+                "81658145_16112517_retweet",
+                "30009655_16112517_mentions",
+                "84043985_16112517_retweet",
+                "18704160_16112517_retweet",
+                "1652270612_16112517_retweet",
+                "318046158_16112517_retweet",
+                "91169926_16112517_retweet",
+                "1556132462_16112517_retweet",
+                "22766040_16112517_retweet",
+                "6146692_16112517_retweet",
+                "21084111_16112517_retweet",
+                "16112517_1068137549355515900_mentions",
+                "19283433_16112517_retweet",
+                "136400506_16112517_retweet",
+                "31638712_16112517_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -429,17 +405,65 @@
             "type": "person",
             "continent": "North America",
             "shortName": "Jeff Heer",
-            "x": 510.8470419477808,
-            "y": 515.5380405861367,
+            "x": 631.2669819224202,
+            "y": 642.8903195530158,
             "neighbors": [
                 16112517,
                 78865306,
-                19299318
+                19299318,
+                79908341,
+                4893004803,
+                2889052877,
+                1035496563743842300,
+                14905766,
+                318046158,
+                824684769543741400,
+                49457800,
+                711885257549680600,
+                1873322353,
+                1556132462,
+                18704160,
+                1652270612,
+                31638712,
+                9527212,
+                16557883,
+                208312922,
+                136400506,
+                82890309,
+                1667081238,
+                2527017636,
+                44195788,
+                10414152,
+                2873695769
             ],
             "edges": [
                 "16112517_247943631_mentions",
                 "78865306_247943631_mentions",
-                "19299318_247943631_mentions"
+                "19299318_247943631_mentions",
+                "79908341_247943631_retweet",
+                "4893004803_247943631_retweet",
+                "2889052877_247943631_retweet",
+                "1035496563743842300_247943631_retweet",
+                "14905766_247943631_retweet",
+                "318046158_247943631_retweet",
+                "824684769543741400_247943631_retweet",
+                "49457800_247943631_retweet",
+                "711885257549680600_247943631_retweet",
+                "1873322353_247943631_retweet",
+                "1556132462_247943631_retweet",
+                "18704160_247943631_retweet",
+                "1652270612_247943631_retweet",
+                "31638712_247943631_retweet",
+                "9527212_247943631_retweet",
+                "16557883_247943631_retweet",
+                "208312922_247943631_retweet",
+                "136400506_247943631_retweet",
+                "82890309_247943631_retweet",
+                "1667081238_247943631_retweet",
+                "2527017636_247943631_retweet",
+                "44195788_247943631_retweet",
+                "10414152_247943631_mentions",
+                "2873695769_247943631_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -465,13 +489,19 @@
             "type": "institution",
             "continent": "North America",
             "shortName": "IDL",
-            "x": 683.961317302552,
-            "y": 365.627570921182,
+            "x": 626.5945303989201,
+            "y": 880.9677166667532,
             "neighbors": [
-                16112517
+                16112517,
+                247943631,
+                91169926,
+                136400506
             ],
             "edges": [
-                "16112517_1873322353_mentions"
+                "16112517_1873322353_mentions",
+                "1873322353_247943631_retweet",
+                "91169926_1873322353_retweet",
+                "136400506_1873322353_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -497,13 +527,27 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "J.Scott-Brown",
-            "x": 1030.193510064023,
-            "y": 605.7834780848615,
+            "x": 1179.6779916562502,
+            "y": 625.5663869986258,
             "neighbors": [
-                81658145
+                81658145,
+                1085199426837188600,
+                201277609,
+                2596138699,
+                18325271,
+                16112517,
+                3230388598,
+                1652270612
             ],
             "edges": [
-                "30009655_81658145_mentions"
+                "30009655_81658145_mentions",
+                "1085199426837188600_30009655_retweet",
+                "30009655_201277609_mentions",
+                "30009655_2596138699_mentions",
+                "30009655_18325271_mentions",
+                "30009655_16112517_mentions",
+                "3230388598_30009655_retweet",
+                "1652270612_30009655_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -529,8 +573,8 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "Jason",
-            "x": 767.1845896108205,
-            "y": 414.60920600107136,
+            "x": 779.002319567105,
+            "y": 401.4527110460053,
             "neighbors": [
                 247943631,
                 2873695769,
@@ -539,7 +583,11 @@
                 16112517,
                 2889052877,
                 43953969,
-                19283433
+                19283433,
+                1667081238,
+                1085199426837188600,
+                81658145,
+                909697437694087200
             ],
             "edges": [
                 "19299318_247943631_mentions",
@@ -549,7 +597,11 @@
                 "16112517_19299318_retweet",
                 "2889052877_19299318_retweet",
                 "43953969_19299318_retweet",
-                "19283433_19299318_retweet"
+                "19283433_19299318_retweet",
+                "19299318_1667081238_mentions",
+                "1085199426837188600_19299318_retweet",
+                "19299318_81658145_mentions",
+                "19299318_909697437694087200_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -575,249 +627,17 @@
             "type": "person",
             "continent": "Europe",
             "shortName": "Roeland",
-            "x": 404.77897968783475,
-            "y": 324.91097522285395,
-            "neighbors": [
-                19299318
-            ],
-            "edges": [
-                "2873695769_19299318_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 311,
-            "query_tweet_count": 3,
-            "friends_count": 353,
-            "statuses_count": 442,
-            "listed_count": 9,
-            "utc_offset": null,
-            "favourites_count": 210,
-            "count_followers_in_query": 1,
-            "screen_name": "BangorCSEE",
-            "id": 2596138699,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1088803369265827841/2WW7VDPU_normal.jpg",
-            "influential": false,
-            "original": true,
-            "memberSince": "2014-06-30T09:55:39.000Z",
-            "name": "Computer Science Electronic Engineering Bangor Uni",
-            "location": "Bangor, Wales",
-            "memberFor_days": 1857,
-            "type": "institution",
-            "continent": "Europe",
-            "shortName": "CSEE Uni",
-            "x": 1294.22133621818,
-            "y": 593.6207167666408,
-            "neighbors": [
-                201277609
-            ],
-            "edges": [
-                "2596138699_201277609_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 552,
-            "query_tweet_count": 9.434774033998714,
-            "friends_count": 539,
-            "statuses_count": 1322,
-            "listed_count": 18,
-            "utc_offset": null,
-            "favourites_count": 1405,
-            "count_followers_in_query": 20,
-            "screen_name": "_Noeska_",
-            "id": 40219508,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1112783180891897856/SPZL_ZIN_normal.jpg",
-            "influential": true,
-            "original": true,
-            "memberSince": "2009-05-15T11:14:31.000Z",
-            "name": "Noeska",
-            "location": "Bergen, Norway",
-            "memberFor_days": 3729,
-            "type": "person",
-            "continent": "Europe",
-            "shortName": "Noeska",
-            "x": 977.2769820412536,
-            "y": 428.6638557001597,
-            "neighbors": [
-                1085199426837188600,
-                19299318,
-                16112517,
-                270431596
-            ],
-            "edges": [
-                "40219508_1085199426837188600_retweet",
-                "19299318_40219508_mentions",
-                "16112517_40219508_mentions",
-                "40219508_270431596_mentions"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 12,
-            "query_tweet_count": 3,
-            "friends_count": 184,
-            "statuses_count": 19,
-            "listed_count": 0,
-            "utc_offset": null,
-            "favourites_count": 157,
-            "count_followers_in_query": 3,
-            "screen_name": "klaus_lml",
-            "id": 270431596,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1055443128109408256/X2-Ekgv0_normal.jpg",
-            "influential": false,
-            "original": true,
-            "memberSince": "2011-03-22T16:18:02.000Z",
-            "name": "Klaus",
-            "location": "Linz, Austria",
-            "memberFor_days": 3053,
-            "type": "person",
-            "continent": "Europe",
-            "shortName": "Klaus",
-            "x": 1032.0243125181723,
-            "y": 503.51988099838945,
+            "x": 267.99663563395126,
+            "y": 560.1823129292675,
             "neighbors": [
                 19299318,
-                16112517,
-                40219508
+                208312922,
+                247943631
             ],
             "edges": [
-                "19299318_270431596_mentions",
-                "16112517_270431596_mentions",
-                "40219508_270431596_mentions"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 83,
-            "query_tweet_count": 4,
-            "friends_count": 306,
-            "statuses_count": 27,
-            "listed_count": 1,
-            "utc_offset": null,
-            "favourites_count": 227,
-            "count_followers_in_query": 5,
-            "screen_name": "johliem",
-            "id": 2889052877,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/823611425205735425/nabeu14v_normal.jpg",
-            "influential": false,
-            "original": true,
-            "memberSince": "2014-11-23T10:43:35.000Z",
-            "name": "Johannes Liem",
-            "location": "London",
-            "memberFor_days": 1711,
-            "type": "person",
-            "continent": "Europe",
-            "shortName": "Johannes",
-            "x": 492.73278169994904,
-            "y": 317.24207663003665,
-            "neighbors": [
-                19299318,
-                19283433
-            ],
-            "edges": [
-                "2889052877_19299318_retweet",
-                "19283433_2889052877_mentions"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 288,
-            "query_tweet_count": 3,
-            "friends_count": 399,
-            "statuses_count": 624,
-            "listed_count": 4,
-            "utc_offset": null,
-            "favourites_count": 2917,
-            "count_followers_in_query": 10,
-            "screen_name": "flekschas",
-            "id": 241173920,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/2195789972/Ich_normal.jpg",
-            "influential": true,
-            "original": true,
-            "memberSince": "2011-01-21T16:52:37.000Z",
-            "name": "Fritz Lekschas",
-            "location": "Cambridge, MA",
-            "memberFor_days": 3113,
-            "type": "person",
-            "continent": "North America",
-            "shortName": "Fritz",
-            "x": 1087.5172401046625,
-            "y": 751.1464961499986,
-            "neighbors": [
-                81658145
-            ],
-            "edges": [
-                "241173920_81658145_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 7,
-            "query_tweet_count": 5,
-            "friends_count": 29,
-            "statuses_count": 46,
-            "listed_count": 0,
-            "utc_offset": null,
-            "favourites_count": 45,
-            "count_followers_in_query": 4,
-            "screen_name": "MickaelSereno",
-            "id": 1055379531731796000,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1056163358951530497/qS4Ha1p1_normal.jpg",
-            "influential": false,
-            "original": true,
-            "memberSince": "2018-10-25T08:44:23.000Z",
-            "name": "Sereno Mickaël",
-            "location": "Ile-de-France, France",
-            "memberFor_days": 279,
-            "type": "person",
-            "continent": "Europe",
-            "shortName": "Sereno",
-            "x": 853.6648831859403,
-            "y": 129.02036226456906,
-            "neighbors": [
-                78865306
-            ],
-            "edges": [
-                "1055379531731796000_78865306_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 1028,
-            "query_tweet_count": 1,
-            "friends_count": 366,
-            "statuses_count": 1085,
-            "listed_count": 39,
-            "utc_offset": null,
-            "favourites_count": 362,
-            "count_followers_in_query": 22,
-            "screen_name": "jwoLondon",
-            "id": 43953969,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/925496113792241665/xgl2rqx0_normal.jpg",
-            "influential": true,
-            "original": false,
-            "memberSince": "2009-06-01T19:39:25.000Z",
-            "name": "Jo Wood",
-            "location": "London",
-            "memberFor_days": 3712,
-            "type": "person",
-            "continent": "Europe",
-            "shortName": "Jo Wood",
-            "x": 877.0283962914542,
-            "y": 194.11279207405164,
-            "neighbors": [
-                19299318
-            ],
-            "edges": [
-                "43953969_19299318_retweet"
+                "2873695769_19299318_retweet",
+                "2873695769_208312922_retweet",
+                "2873695769_247943631_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -843,215 +663,451 @@
             "type": "person",
             "continent": "North America",
             "shortName": "Micah",
-            "x": 578.9956671357771,
-            "y": 587.5725235706373,
+            "x": 659.7554996013321,
+            "y": 231.76771712783716,
             "neighbors": [
-                81658145
-            ],
-            "edges": [
-                "84043985_81658145_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 884.5957785031623,
-            "query_tweet_count": 4,
-            "friends_count": 822,
-            "statuses_count": 3835,
-            "listed_count": 90.02136107600698,
-            "utc_offset": null,
-            "favourites_count": 3200,
-            "count_followers_in_query": 20,
-            "screen_name": "ngehlenborg",
-            "id": 16557883,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1080154959176450050/0-eRx6J5_normal.jpg",
-            "influential": true,
-            "original": true,
-            "memberSince": "2008-10-02T11:21:35.000Z",
-            "name": "Nils Gehlenborg",
-            "location": "Boston, MA, USA",
-            "memberFor_days": 3954,
-            "type": "person",
-            "continent": "North America",
-            "shortName": "Nils",
-            "x": 611.1435478897722,
-            "y": 712.8864731862761,
-            "neighbors": [
-                81658145
-            ],
-            "edges": [
-                "16557883_81658145_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 941.4482397219042,
-            "query_tweet_count": 3,
-            "friends_count": 1113.4180667917149,
-            "statuses_count": 4082.525177920722,
-            "listed_count": 98.92479578614386,
-            "utc_offset": null,
-            "favourites_count": 6836.591385005452,
-            "count_followers_in_query": 19,
-            "screen_name": "arnicas",
-            "id": 6146692,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/53142956/Saw-whet_Owl_10_normal.jpg",
-            "influential": true,
-            "original": true,
-            "memberSince": "2007-05-18T20:32:44.000Z",
-            "name": "Lynn Cherny",
-            "location": "Lyon, France",
-            "memberFor_days": 4457,
-            "type": "person",
-            "continent": "Europe",
-            "shortName": "Cherny",
-            "x": 1119.5353921219616,
-            "y": 588.3096028301901,
-            "neighbors": [
-                81658145
-            ],
-            "edges": [
-                "6146692_81658145_retweet"
-            ],
-            "userSelectedNeighbors": [],
-            "selected": false
-        },
-        {
-            "followers_count": 47,
-            "query_tweet_count": 8,
-            "friends_count": 56,
-            "statuses_count": 551,
-            "listed_count": 1,
-            "utc_offset": null,
-            "favourites_count": 1093,
-            "count_followers_in_query": 1,
-            "screen_name": "MichaelAupetit",
-            "id": 944216617268973600,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1090573943692513281/-CAZ0HwY_normal.jpg",
-            "influential": false,
-            "original": true,
-            "memberSince": "2017-12-22T14:42:39.000Z",
-            "name": "Michael Aupetit",
-            "location": "Doha, Qatar  ",
-            "memberFor_days": 586,
-            "type": "person",
-            "continent": "Asia",
-            "shortName": "Michael",
-            "x": 1200.5722003325932,
-            "y": 503.01855881900406,
-            "neighbors": [
+                81658145,
+                208312922,
+                10414152,
                 16112517
             ],
             "edges": [
-                "944216617268973600_16112517_retweet"
+                "84043985_81658145_retweet",
+                "84043985_208312922_retweet",
+                "84043985_10414152_retweet",
+                "84043985_16112517_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
         },
         {
-            "followers_count": 558,
-            "query_tweet_count": 8.600977630336756,
-            "friends_count": 16,
-            "statuses_count": 339,
-            "listed_count": 24,
+            "followers_count": 885.3878457311387,
+            "query_tweet_count": 5,
+            "friends_count": 971,
+            "statuses_count": 4081.8642228321332,
+            "listed_count": 87.04782579444596,
             "utc_offset": null,
-            "favourites_count": 51,
-            "count_followers_in_query": 17,
-            "screen_name": "giCentre",
-            "id": 19283433,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1862515560/giC_normal.png",
+            "favourites_count": 7458,
+            "count_followers_in_query": 16,
+            "screen_name": "kristw",
+            "id": 318046158,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/663491026221305856/eibPwkEk_normal.jpg",
             "influential": true,
             "original": true,
-            "memberSince": "2009-01-21T10:49:52.000Z",
-            "name": "giCentre",
-            "location": "London",
-            "memberFor_days": 3843,
-            "type": "institution",
-            "continent": "Europe",
-            "shortName": "giCentre",
-            "x": 788.8988247133891,
-            "y": 258.41286309665895,
+            "memberSince": "2011-06-15T21:45:20.000Z",
+            "name": "Krist Wongsuphasawat",
+            "location": "From Bangkok, now in SF",
+            "memberFor_days": 2968,
+            "type": "person",
+            "continent": "Asia",
+            "shortName": "Krist",
+            "x": 356.1987478675103,
+            "y": 705.5042153335197,
             "neighbors": [
-                2889052877,
-                19283433,
-                19283433,
-                1667081238,
-                19299318,
-                188046229
+                208312922,
+                247943631,
+                16112517
             ],
             "edges": [
-                "19283433_2889052877_mentions",
-                "19283433_19283433_mentions",
-                "19283433_19283433_mentions",
-                "19283433_1667081238_mentions",
-                "19283433_19299318_retweet",
-                "188046229_19283433_mentions"
+                "318046158_208312922_retweet",
+                "318046158_247943631_retweet",
+                "318046158_16112517_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
         },
         {
-            "followers_count": 334,
-            "query_tweet_count": 3,
-            "friends_count": 189,
-            "statuses_count": 143,
-            "listed_count": 40,
+            "followers_count": 554,
+            "query_tweet_count": 5,
+            "friends_count": 306,
+            "statuses_count": 350,
+            "listed_count": 32,
             "utc_offset": null,
-            "favourites_count": 295,
-            "count_followers_in_query": 15,
-            "screen_name": "cagatay_turkay",
-            "id": 1667081238,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/539777998715502592/-q_KeAv3_normal.jpeg",
+            "favourites_count": 467,
+            "count_followers_in_query": 23,
+            "screen_name": "marc_streit",
+            "id": 395853499,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/706225986426130433/KC-K_2j0_normal.jpg",
             "influential": true,
             "original": true,
-            "memberSince": "2013-08-13T07:32:38.000Z",
-            "name": "Cagatay Turkay",
-            "location": "London, UK",
-            "memberFor_days": 2178,
+            "memberSince": "2011-10-22T10:52:04.000Z",
+            "name": "Marc Streit",
+            "location": "Linz, Austria",
+            "memberFor_days": 2839,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Cagatay",
-            "x": 577.6071828216782,
-            "y": 274.02727677117,
+            "shortName": "Marc",
+            "x": 962.8938049454725,
+            "y": 844.1983227301109,
             "neighbors": [
-                19283433
+                40219508,
+                241173920,
+                81658145,
+                18406335,
+                16112517,
+                79908341
             ],
             "edges": [
-                "19283433_1667081238_mentions"
+                "40219508_395853499_retweet",
+                "241173920_395853499_retweet",
+                "395853499_81658145_retweet",
+                "18406335_395853499_retweet",
+                "395853499_16112517_mentions",
+                "79908341_395853499_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
         },
         {
-            "followers_count": 910.1194485740077,
-            "query_tweet_count": 2,
-            "friends_count": 838,
-            "statuses_count": 1578,
-            "listed_count": 73,
+            "followers_count": 931.2807357572171,
+            "query_tweet_count": 4,
+            "friends_count": 957.7988574621627,
+            "statuses_count": 4655.659678193788,
+            "listed_count": 106.39309751906771,
             "utc_offset": null,
-            "favourites_count": 1624,
-            "count_followers_in_query": 28,
-            "screen_name": "benjbach",
-            "id": 188046229,
-            "profile_image_url": "http://pbs.twimg.com/profile_images/1103673747549102080/EBjzgFyD_normal.png",
+            "favourites_count": 7921.288080195596,
+            "count_followers_in_query": 1,
+            "screen_name": "dogvile",
+            "id": 18406335,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/461862990262710272/VqV2sKZR_normal.jpeg",
+            "influential": false,
+            "original": true,
+            "memberSince": "2008-12-27T11:00:32.000Z",
+            "name": "Papadopoulos Teo",
+            "location": "Athens/Brussels",
+            "memberFor_days": 3868,
+            "type": "person",
+            "continent": "Europe",
+            "shortName": "Teo",
+            "x": 464.27243491337344,
+            "y": 802.9505963988946,
+            "neighbors": [
+                395853499,
+                16112517,
+                208312922
+            ],
+            "edges": [
+                "18406335_395853499_retweet",
+                "18406335_16112517_retweet",
+                "18406335_208312922_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 171,
+            "query_tweet_count": 8,
+            "friends_count": 226,
+            "statuses_count": 252,
+            "listed_count": 4,
+            "utc_offset": null,
+            "favourites_count": 48,
+            "count_followers_in_query": 11,
+            "screen_name": "ThomasHollt",
+            "id": 2527017636,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/762550732511911936/0D-RF82P_normal.jpg",
+            "influential": true,
+            "original": true,
+            "memberSince": "2014-05-27T09:29:14.000Z",
+            "name": "Thomas Höllt",
+            "location": "Delft, Nederland",
+            "memberFor_days": 1891,
+            "type": "person",
+            "continent": "Europe",
+            "shortName": "Thomas",
+            "x": 1133.2427711024243,
+            "y": 320.8929098379619,
+            "neighbors": [
+                40219508,
+                446672281,
+                92951551,
+                1085199426837188600,
+                158685605,
+                247943631,
+                81658145
+            ],
+            "edges": [
+                "40219508_2527017636_retweet",
+                "446672281_2527017636_retweet",
+                "92951551_2527017636_retweet",
+                "1085199426837188600_2527017636_retweet",
+                "2527017636_158685605_mentions",
+                "2527017636_247943631_retweet",
+                "2527017636_81658145_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 38,
+            "query_tweet_count": 4,
+            "friends_count": 187,
+            "statuses_count": 525,
+            "listed_count": 0,
+            "utc_offset": null,
+            "favourites_count": 84,
+            "count_followers_in_query": 3,
+            "screen_name": "avilanova01",
+            "id": 446672281,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/1085255409613590528/kYus7FWS_normal.jpg",
+            "influential": false,
+            "original": true,
+            "memberSince": "2011-12-26T01:21:45.000Z",
+            "name": "Anna Vilanova",
+            "location": "",
+            "memberFor_days": 2775,
+            "type": "person",
+            "continent": "Europe",
+            "shortName": "Anna",
+            "x": 1258,
+            "y": 433.31040591556115,
+            "neighbors": [
+                2527017636,
+                40219508,
+                81658145
+            ],
+            "edges": [
+                "446672281_2527017636_retweet",
+                "446672281_40219508_retweet",
+                "446672281_81658145_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 579,
+            "query_tweet_count": 2,
+            "friends_count": 400,
+            "statuses_count": 235,
+            "listed_count": 12,
+            "utc_offset": null,
+            "favourites_count": 573,
+            "count_followers_in_query": 9,
+            "screen_name": "nicolapezzotti",
+            "id": 92951551,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/1033497331302322176/qNLE7C4I_normal.jpg",
             "influential": true,
             "original": false,
-            "memberSince": "2010-09-07T20:11:04.000Z",
-            "name": "Benjamin Bach",
-            "location": "Edinburgh, Scotland",
-            "memberFor_days": 3249,
+            "memberSince": "2009-11-27T11:31:21.000Z",
+            "name": "Nicola Pezzotti",
+            "location": "Eindhoven, Nederland",
+            "memberFor_days": 3533,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Ben Bach",
-            "x": 584.2396720541951,
-            "y": 115.15259959113966,
+            "shortName": "Nicola",
+            "x": 1079.9265304277676,
+            "y": 189.4340878184033,
             "neighbors": [
-                19283433
+                2527017636,
+                81658145
             ],
             "edges": [
-                "188046229_19283433_mentions"
+                "92951551_2527017636_retweet",
+                "92951551_81658145_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 544,
+            "query_tweet_count": 2,
+            "friends_count": 369,
+            "statuses_count": 2876,
+            "listed_count": 60,
+            "utc_offset": null,
+            "favourites_count": 1860,
+            "count_followers_in_query": 14,
+            "screen_name": "sjengle",
+            "id": 227831457,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/890741206950436864/-tqXqZnC_normal.jpg",
+            "influential": true,
+            "original": false,
+            "memberSince": "2010-12-17T23:11:34.000Z",
+            "name": "Sophie Engle",
+            "location": "San Francisco, California",
+            "memberFor_days": 3148,
+            "type": "person",
+            "continent": "North America",
+            "shortName": "Soph Engle",
+            "x": 250.00329416233683,
+            "y": 335.0840403281927,
+            "neighbors": [
+                208312922
+            ],
+            "edges": [
+                "227831457_208312922_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 224,
+            "query_tweet_count": 1,
+            "friends_count": 308,
+            "statuses_count": 191,
+            "listed_count": 14,
+            "utc_offset": null,
+            "favourites_count": 276,
+            "count_followers_in_query": 8,
+            "screen_name": "BCKwon",
+            "id": 29700681,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/857232987670360064/np2ggzaL_normal.jpg",
+            "influential": true,
+            "original": false,
+            "memberSince": "2009-04-08T12:13:03.000Z",
+            "name": "Bum Chul Kwon",
+            "location": "",
+            "memberFor_days": 3766,
+            "type": "person",
+            "continent": "North America",
+            "shortName": "BC Kwon",
+            "x": 229,
+            "y": 451.1074829918404,
+            "neighbors": [
+                208312922
+            ],
+            "edges": [
+                "29700681_208312922_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 851.8748889410733,
+            "query_tweet_count": 0,
+            "friends_count": 1,
+            "statuses_count": 134,
+            "listed_count": 84.83833668719865,
+            "utc_offset": null,
+            "favourites_count": 37,
+            "count_followers_in_query": 20,
+            "screen_name": "d3js_org",
+            "id": 4597853354,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/875787068621832193/HgKolWB5_normal.jpg",
+            "influential": true,
+            "original": false,
+            "memberSince": "2015-12-18T23:14:29.000Z",
+            "name": "D3.js",
+            "location": "San Francisco, CA",
+            "memberFor_days": 1321,
+            "type": "institution",
+            "continent": "North America",
+            "shortName": "D3js",
+            "x": 342.62899164161894,
+            "y": 240.97503804720407,
+            "neighbors": [
+                208312922
+            ],
+            "edges": [
+                "208312922_4597853354_mentions"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 859.8913613770936,
+            "query_tweet_count": 9.517182812539518,
+            "friends_count": 337,
+            "statuses_count": 2873,
+            "listed_count": 87.17262233910336,
+            "utc_offset": null,
+            "favourites_count": 7248.4406096629245,
+            "count_followers_in_query": 32,
+            "screen_name": "tamaramunzner",
+            "id": 1652270612,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/927793489575690241/TWEirFl2_normal.jpg",
+            "influential": true,
+            "original": true,
+            "memberSince": "2013-08-07T06:57:15.000Z",
+            "name": "Tamara Munzner",
+            "location": "Vancouver, Canada",
+            "memberFor_days": 2184,
+            "type": "person",
+            "continent": "North America",
+            "shortName": "Tamara",
+            "x": 1087.7199224597202,
+            "y": 786.4631921390361,
+            "neighbors": [
+                247943631,
+                10414152,
+                16112517,
+                30009655,
+                81658145
+            ],
+            "edges": [
+                "1652270612_247943631_retweet",
+                "1652270612_10414152_retweet",
+                "1652270612_16112517_retweet",
+                "1652270612_30009655_retweet",
+                "1652270612_81658145_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 1074.1283817550147,
+            "query_tweet_count": 3,
+            "friends_count": 908.93613586317,
+            "statuses_count": 4139,
+            "listed_count": 92.54414235080714,
+            "utc_offset": null,
+            "favourites_count": 3624,
+            "count_followers_in_query": 11,
+            "screen_name": "mathisonian",
+            "id": 136400506,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/1041846793745526785/EMec2LKx_normal.jpg",
+            "influential": true,
+            "original": true,
+            "memberSince": "2010-04-23T21:12:19.000Z",
+            "name": "Matthew Conlen",
+            "location": "Los Angeles, CA",
+            "memberFor_days": 3386,
+            "type": "person",
+            "continent": "North America",
+            "shortName": "Matthew",
+            "x": 840.1117749281142,
+            "y": 785,
+            "neighbors": [
+                247943631,
+                16112517,
+                1873322353
+            ],
+            "edges": [
+                "136400506_247943631_retweet",
+                "136400506_16112517_retweet",
+                "136400506_1873322353_retweet"
+            ],
+            "userSelectedNeighbors": [],
+            "selected": false
+        },
+        {
+            "followers_count": 273,
+            "query_tweet_count": 3,
+            "friends_count": 70,
+            "statuses_count": 711,
+            "listed_count": 14,
+            "utc_offset": null,
+            "favourites_count": 54,
+            "count_followers_in_query": 4,
+            "screen_name": "uusci",
+            "id": 701375574,
+            "profile_image_url": "http://pbs.twimg.com/profile_images/2406412533/rou58w7wrtcyzm7kw7q8_normal.jpeg",
+            "influential": false,
+            "original": true,
+            "memberSince": "2012-07-17T16:46:44.000Z",
+            "name": "SCI Institute",
+            "location": "Salt Lake City, UT",
+            "memberFor_days": 2570,
+            "type": "institution",
+            "continent": "North America",
+            "shortName": "SCI",
+            "x": 964.7605930952677,
+            "y": 179,
+            "neighbors": [
+                81658145
+            ],
+            "edges": [
+                "701375574_81658145_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -1062,7 +1118,7 @@
             "source": 91169926,
             "target": 208312922,
             "type": "combined",
-            "count": 2,
+            "count": 6,
             "id": "91169926_208312922_retweet",
             "selected": false
         },
@@ -1070,7 +1126,7 @@
             "source": 191257554,
             "target": 208312922,
             "type": "combined",
-            "count": 1,
+            "count": 2,
             "id": "191257554_208312922_retweet",
             "selected": false
         },
@@ -1078,23 +1134,15 @@
             "source": 208312922,
             "target": 1085199426837188600,
             "type": "combined",
-            "count": 1,
+            "count": 2,
             "id": "208312922_1085199426837188600_mentions",
-            "selected": false
-        },
-        {
-            "source": 4058687172,
-            "target": 1085199426837188600,
-            "type": "combined",
-            "count": 1,
-            "id": "4058687172_1085199426837188600_retweet",
             "selected": false
         },
         {
             "source": 201277609,
             "target": 1085199426837188600,
             "type": "combined",
-            "count": 5,
+            "count": 6,
             "id": "201277609_1085199426837188600_mentions",
             "selected": false
         },
@@ -1108,14 +1156,6 @@
         },
         {
             "source": 201277609,
-            "target": 78865306,
-            "type": "combined",
-            "count": 1,
-            "id": "201277609_78865306_retweet",
-            "selected": false
-        },
-        {
-            "source": 201277609,
             "target": 16112517,
             "type": "combined",
             "count": 1,
@@ -1123,34 +1163,10 @@
             "selected": false
         },
         {
-            "source": 81658145,
-            "target": 10414152,
-            "type": "combined",
-            "count": 1,
-            "id": "81658145_10414152_retweet",
-            "selected": false
-        },
-        {
-            "source": 16112517,
-            "target": 78865306,
-            "type": "combined",
-            "count": 1,
-            "id": "16112517_78865306_retweet",
-            "selected": false
-        },
-        {
-            "source": 16112517,
-            "target": 1314101,
-            "type": "combined",
-            "count": 1,
-            "id": "16112517_1314101_mentions",
-            "selected": false
-        },
-        {
             "source": 16112517,
             "target": 247943631,
             "type": "combined",
-            "count": 4,
+            "count": 11,
             "id": "16112517_247943631_mentions",
             "selected": false
         },
@@ -1158,16 +1174,8 @@
             "source": 16112517,
             "target": 1873322353,
             "type": "combined",
-            "count": 1,
+            "count": 3,
             "id": "16112517_1873322353_mentions",
-            "selected": false
-        },
-        {
-            "source": 78865306,
-            "target": 247943631,
-            "type": "combined",
-            "count": 1,
-            "id": "78865306_247943631_mentions",
             "selected": false
         },
         {
@@ -1182,7 +1190,7 @@
             "source": 19299318,
             "target": 247943631,
             "type": "combined",
-            "count": 1,
+            "count": 5,
             "id": "19299318_247943631_mentions",
             "selected": false
         },
@@ -1195,99 +1203,11 @@
             "selected": false
         },
         {
-            "source": 2596138699,
-            "target": 201277609,
-            "type": "combined",
-            "count": 2,
-            "id": "2596138699_201277609_retweet",
-            "selected": false
-        },
-        {
-            "source": 40219508,
-            "target": 1085199426837188600,
-            "type": "combined",
-            "count": 1,
-            "id": "40219508_1085199426837188600_retweet",
-            "selected": false
-        },
-        {
-            "source": 19299318,
-            "target": 40219508,
-            "type": "combined",
-            "count": 1,
-            "id": "19299318_40219508_mentions",
-            "selected": false
-        },
-        {
-            "source": 19299318,
-            "target": 270431596,
-            "type": "combined",
-            "count": 1,
-            "id": "19299318_270431596_mentions",
-            "selected": false
-        },
-        {
-            "source": 16112517,
-            "target": 40219508,
-            "type": "combined",
-            "count": 1,
-            "id": "16112517_40219508_mentions",
-            "selected": false
-        },
-        {
-            "source": 16112517,
-            "target": 270431596,
-            "type": "combined",
-            "count": 1,
-            "id": "16112517_270431596_mentions",
-            "selected": false
-        },
-        {
             "source": 16112517,
             "target": 19299318,
             "type": "combined",
             "count": 2,
             "id": "16112517_19299318_retweet",
-            "selected": false
-        },
-        {
-            "source": 40219508,
-            "target": 270431596,
-            "type": "combined",
-            "count": 1,
-            "id": "40219508_270431596_mentions",
-            "selected": false
-        },
-        {
-            "source": 2889052877,
-            "target": 19299318,
-            "type": "combined",
-            "count": 1,
-            "id": "2889052877_19299318_retweet",
-            "selected": false
-        },
-        {
-            "source": 241173920,
-            "target": 81658145,
-            "type": "combined",
-            "count": 1,
-            "id": "241173920_81658145_retweet",
-            "selected": false
-        },
-        {
-            "source": 1055379531731796000,
-            "target": 78865306,
-            "type": "combined",
-            "count": 2,
-            "id": "1055379531731796000_78865306_retweet",
-            "selected": false
-        },
-        {
-            "source": 43953969,
-            "target": 19299318,
-            "type": "combined",
-            "count": 1,
-            "id": "43953969_19299318_retweet",
             "selected": false
         },
         {
@@ -1302,72 +1222,344 @@
             "source": 191257554,
             "target": 81658145,
             "type": "combined",
-            "count": 1,
+            "count": 2,
             "id": "191257554_81658145_retweet",
             "selected": false
         },
         {
-            "source": 16557883,
+            "source": 201277609,
             "target": 81658145,
             "type": "combined",
             "count": 1,
-            "id": "16557883_81658145_retweet",
+            "id": "201277609_81658145_retweet",
             "selected": false
         },
         {
-            "source": 6146692,
+            "source": 318046158,
+            "target": 208312922,
+            "type": "combined",
+            "count": 2,
+            "id": "318046158_208312922_retweet",
+            "selected": false
+        },
+        {
+            "source": 395853499,
             "target": 81658145,
             "type": "combined",
-            "count": 1,
-            "id": "6146692_81658145_retweet",
+            "count": 6,
+            "id": "395853499_81658145_retweet",
             "selected": false
         },
         {
-            "source": 944216617268973600,
+            "source": 18406335,
+            "target": 395853499,
+            "type": "combined",
+            "count": 1,
+            "id": "18406335_395853499_retweet",
+            "selected": false
+        },
+        {
+            "source": 395853499,
+            "target": 16112517,
+            "type": "combined",
+            "count": 1,
+            "id": "395853499_16112517_mentions",
+            "selected": false
+        },
+        {
+            "source": 18406335,
             "target": 16112517,
             "type": "combined",
             "count": 2,
-            "id": "944216617268973600_16112517_retweet",
+            "id": "18406335_16112517_retweet",
             "selected": false
         },
         {
-            "source": 19283433,
-            "target": 2889052877,
+            "source": 81658145,
+            "target": 16112517,
             "type": "combined",
-            "count": 2,
-            "id": "19283433_2889052877_mentions",
+            "count": 1,
+            "id": "81658145_16112517_retweet",
             "selected": false
         },
         {
-            "source": 19283433,
-            "target": 19283433,
+            "source": 18406335,
+            "target": 208312922,
+            "type": "combined",
+            "count": 1,
+            "id": "18406335_208312922_retweet",
+            "selected": false
+        },
+        {
+            "source": 446672281,
+            "target": 2527017636,
             "type": "combined",
             "count": 3,
-            "id": "19283433_19283433_mentions",
+            "id": "446672281_2527017636_retweet",
             "selected": false
         },
         {
-            "source": 19283433,
-            "target": 1667081238,
+            "source": 92951551,
+            "target": 2527017636,
+            "type": "combined",
+            "count": 3,
+            "id": "92951551_2527017636_retweet",
+            "selected": false
+        },
+        {
+            "source": 1085199426837188600,
+            "target": 2527017636,
+            "type": "combined",
+            "count": 4,
+            "id": "1085199426837188600_2527017636_retweet",
+            "selected": false
+        },
+        {
+            "source": 1085199426837188600,
+            "target": 30009655,
+            "type": "combined",
+            "count": 2,
+            "id": "1085199426837188600_30009655_retweet",
+            "selected": false
+        },
+        {
+            "source": 30009655,
+            "target": 201277609,
             "type": "combined",
             "count": 1,
-            "id": "19283433_1667081238_mentions",
+            "id": "30009655_201277609_mentions",
             "selected": false
         },
         {
-            "source": 19283433,
+            "source": 227831457,
+            "target": 208312922,
+            "type": "combined",
+            "count": 1,
+            "id": "227831457_208312922_retweet",
+            "selected": false
+        },
+        {
+            "source": 84043985,
+            "target": 208312922,
+            "type": "combined",
+            "count": 1,
+            "id": "84043985_208312922_retweet",
+            "selected": false
+        },
+        {
+            "source": 29700681,
+            "target": 208312922,
+            "type": "combined",
+            "count": 1,
+            "id": "29700681_208312922_retweet",
+            "selected": false
+        },
+        {
+            "source": 208312922,
+            "target": 4597853354,
+            "type": "combined",
+            "count": 1,
+            "id": "208312922_4597853354_mentions",
+            "selected": false
+        },
+        {
+            "source": 1085199426837188600,
             "target": 19299318,
             "type": "combined",
-            "count": 1,
-            "id": "19283433_19299318_retweet",
+            "count": 2,
+            "id": "1085199426837188600_19299318_retweet",
             "selected": false
         },
         {
-            "source": 188046229,
-            "target": 19283433,
+            "source": 318046158,
+            "target": 247943631,
             "type": "combined",
             "count": 1,
-            "id": "188046229_19283433_mentions",
+            "id": "318046158_247943631_retweet",
+            "selected": false
+        },
+        {
+            "source": 30009655,
+            "target": 16112517,
+            "type": "combined",
+            "count": 1,
+            "id": "30009655_16112517_mentions",
+            "selected": false
+        },
+        {
+            "source": 1873322353,
+            "target": 247943631,
+            "type": "combined",
+            "count": 1,
+            "id": "1873322353_247943631_retweet",
+            "selected": false
+        },
+        {
+            "source": 1652270612,
+            "target": 247943631,
+            "type": "combined",
+            "count": 1,
+            "id": "1652270612_247943631_retweet",
+            "selected": false
+        },
+        {
+            "source": 208312922,
+            "target": 247943631,
+            "type": "combined",
+            "count": 1,
+            "id": "208312922_247943631_retweet",
+            "selected": false
+        },
+        {
+            "source": 136400506,
+            "target": 247943631,
+            "type": "combined",
+            "count": 1,
+            "id": "136400506_247943631_retweet",
+            "selected": false
+        },
+        {
+            "source": 2527017636,
+            "target": 247943631,
+            "type": "combined",
+            "count": 1,
+            "id": "2527017636_247943631_retweet",
+            "selected": false
+        },
+        {
+            "source": 84043985,
+            "target": 16112517,
+            "type": "combined",
+            "count": 1,
+            "id": "84043985_16112517_retweet",
+            "selected": false
+        },
+        {
+            "source": 1652270612,
+            "target": 16112517,
+            "type": "combined",
+            "count": 6,
+            "id": "1652270612_16112517_retweet",
+            "selected": false
+        },
+        {
+            "source": 1652270612,
+            "target": 30009655,
+            "type": "combined",
+            "count": 1,
+            "id": "1652270612_30009655_retweet",
+            "selected": false
+        },
+        {
+            "source": 1652270612,
+            "target": 81658145,
+            "type": "combined",
+            "count": 1,
+            "id": "1652270612_81658145_retweet",
+            "selected": false
+        },
+        {
+            "source": 446672281,
+            "target": 81658145,
+            "type": "combined",
+            "count": 1,
+            "id": "446672281_81658145_retweet",
+            "selected": false
+        },
+        {
+            "source": 2873695769,
+            "target": 208312922,
+            "type": "combined",
+            "count": 1,
+            "id": "2873695769_208312922_retweet",
+            "selected": false
+        },
+        {
+            "source": 318046158,
+            "target": 16112517,
+            "type": "combined",
+            "count": 1,
+            "id": "318046158_16112517_retweet",
+            "selected": false
+        },
+        {
+            "source": 91169926,
+            "target": 16112517,
+            "type": "combined",
+            "count": 3,
+            "id": "91169926_16112517_retweet",
+            "selected": false
+        },
+        {
+            "source": 2527017636,
+            "target": 81658145,
+            "type": "combined",
+            "count": 1,
+            "id": "2527017636_81658145_retweet",
+            "selected": false
+        },
+        {
+            "source": 91169926,
+            "target": 1873322353,
+            "type": "combined",
+            "count": 1,
+            "id": "91169926_1873322353_retweet",
+            "selected": false
+        },
+        {
+            "source": 19299318,
+            "target": 81658145,
+            "type": "combined",
+            "count": 2,
+            "id": "19299318_81658145_mentions",
+            "selected": false
+        },
+        {
+            "source": 81658145,
+            "target": 1085199426837188600,
+            "type": "combined",
+            "count": 1,
+            "id": "81658145_1085199426837188600_mentions",
+            "selected": false
+        },
+        {
+            "source": 2873695769,
+            "target": 247943631,
+            "type": "combined",
+            "count": 2,
+            "id": "2873695769_247943631_mentions",
+            "selected": false
+        },
+        {
+            "source": 92951551,
+            "target": 81658145,
+            "type": "combined",
+            "count": 1,
+            "id": "92951551_81658145_retweet",
+            "selected": false
+        },
+        {
+            "source": 136400506,
+            "target": 16112517,
+            "type": "combined",
+            "count": 1,
+            "id": "136400506_16112517_retweet",
+            "selected": false
+        },
+        {
+            "source": 136400506,
+            "target": 1873322353,
+            "type": "combined",
+            "count": 2,
+            "id": "136400506_1873322353_retweet",
+            "selected": false
+        },
+        {
+            "source": 701375574,
+            "target": 81658145,
+            "type": "combined",
+            "count": 3,
+            "id": "701375574_81658145_retweet",
             "selected": false
         }
     ]

@@ -185,10 +185,10 @@
                 "neighborHighlightColor": ""
             },
             "taskID": "task1",
-            "loadedGraph": "large_undirected_singleEdge",
+            "loadedGraph": "small_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
-            "graphSize": "large",
+            "graphSize": "small",
             "nodeAttributes": [
                 "followers_count",
                 "continent"
@@ -209,7 +209,7 @@
             "value": ""
         },
         "feedback": "",
-        "prompt": "Select all of R.Kosara's neighbors that are *people* and have more followers than following.",
+        "prompt": "Select all of Rob Kosara's neighbors that are *people* and have more followers than following.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -390,10 +390,10 @@
                 "neighborHighlightColor": ""
             },
             "taskID": "task1",
-            "loadedGraph": "large_undirected_singleEdge",
+            "loadedGraph": "small_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
-            "graphSize": "large",
+            "graphSize": "small",
             "nodeAttributes": [
                 "followers_count",
                 "friends_count",
