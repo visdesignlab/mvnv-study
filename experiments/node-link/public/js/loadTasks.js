@@ -45,13 +45,7 @@ function updateAnswer(answer) {
       selectedList.text(d => d.shortName);
 
   }
-<<<<<<< HEAD
   
-=======
-
-  console.log("after updating answer, answer is ", taskObj.answer);
-
->>>>>>> 4dabd9743e59eaaddcc07df9821a55bb3ff65ee0
   //validate the entire answer object, but error check for only the field that is being updated
   validateAnswer(taskObj.answer,answerType == 'string' ? 'value' : 'nodes');
 }
@@ -231,7 +225,7 @@ function resetPanel() {
     .selectAll("li")
     .remove();
 
-    
+
   //clear any selected Radio buttons in the feedback box;
   d3.select(".modalFeedback")
     .selectAll("input")
