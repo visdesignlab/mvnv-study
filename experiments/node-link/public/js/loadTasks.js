@@ -201,12 +201,13 @@ d3.select("#nextTask").on("click", async () => {
   }
 });
 
+
 function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
-
   //Only start off with the submit button enabled for when the task only requires an unspecified node count;
+
   let flexibleAnswer = task.replyType.includes ('multipleNodeSelection') && task.replyCount.type === 'at least';
 
   // clear any values in the feedback or search box;
@@ -440,7 +441,7 @@ async function loadTasks() {
     console.log("Error getting document:", error);
   });
 
-  let group = 0; //assignedGroup.data().currentGroup;
+  let group = assignedGroup.data().currentGroup;
   studyTracking.group = group;
 
   let selectedCondition = conditions[group];

@@ -17,8 +17,6 @@ var taskNum = 0;
 var config;
 var allConfigs = {};
 
-let tasks; //list of tasks
-
 //compute default data domains once and use when needed
 var defaultDomains = { node: {}, edge: {} };
 
@@ -227,12 +225,6 @@ function loadVis(id) {
 
   svg.append("g").attr("class", "nodes");
 
-  let cover = svg.append("rect").attr("id", "disableInteraction");
-  cover
-    .attr("width", visDimensions.width)
-    .attr("height", visDimensions.height)
-    .style("display", "none");
-
   let parentWidth = d3
     .select("#visPanel")
     .select(".content")
@@ -262,9 +254,9 @@ function loadVis(id) {
 
   //TODO combine these two variables into one;
 
-  tasks = taskList;
+  // tasks = taskList;
   //load in firstTask
-  resetPanel();
+  // resetPanel();
   // loadTask(taskList[currentTask])
 
   // (async function() {
@@ -715,7 +707,7 @@ function updateVis() {
       //if there is no selection to be made for this task, don't draw the checkbox
       .attr(
         "height",
-        tasks[currentTask].replyType !== "value" ? checkboxSize : 0
+        taskList[currentTask].replyType !== "value" ? checkboxSize : 0
       )
       .attr("x", function(d) {
         let nodeLabel = d3
