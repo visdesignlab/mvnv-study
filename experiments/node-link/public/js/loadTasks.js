@@ -47,7 +47,7 @@ function updateAnswer(answer) {
   }
 
   console.log("after updating answer, answer is ", taskObj.answer);
-  
+
   //validate the entire answer object, but error check for only the field that is being updated
   validateAnswer(taskObj.answer,answerType == 'string' ? 'value' : 'nodes');
 }
@@ -355,12 +355,12 @@ function sanitizeWorkerID(workerID) {
 }
 
 //validates answer
-//validates the entire answer object before assigning the submit button enable/disabled; 
+//validates the entire answer object before assigning the submit button enable/disabled;
 //error checks the field specified to show any error msgs.
 function validateAnswer(answer,errorCheckField) {
-  
+
   //validate fields of answer as required by the task config (string/node);
-  
+
   //infer type of answer
   let answerIsNode = errorCheckField === "nodes";
   let numSelectedNodes = answer.nodes.length;
@@ -368,7 +368,7 @@ function validateAnswer(answer,errorCheckField) {
   let isValid;
   let errorMsg;
 
-  
+
   let task = taskList[currentTask];
 
   let replyTypes = task.replyType;
@@ -469,7 +469,7 @@ async function loadTasks() {
 
   console.log("selected Vis is ", selectedVis);
 
-  vis = selectedVis = 'adjMatrix'//='nodeLink' //
+  vis = selectedVis// = 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
