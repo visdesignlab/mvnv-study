@@ -257,6 +257,8 @@ function resetPanel() {
 }
 
 async function pushProvenance(provGraph) {
+ //stop pushing to provenance for now;
+  return; 
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
     .collection(workerID)
