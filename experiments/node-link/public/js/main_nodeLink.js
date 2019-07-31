@@ -245,7 +245,6 @@ function loadVis(id) {
     .attr("width", parentWidth) //size + margin.left + margin.right)
     .attr("height", 250);
 
-
   simulation = d3
     .forceSimulation()
     .force(
@@ -296,7 +295,6 @@ function loadVis(id) {
 }
 
 async function loadTask(task) {
-
   config = task.config;
 
   await loadNewGraph(config.graphFiles[config.loadedGraph]);
@@ -345,8 +343,7 @@ async function loadTask(task) {
 }
 
 function highlightSelectedNodes(state) {
-
-  console.log('calling highlightSelectedNodes')
+  console.log("calling highlightSelectedNodes");
   // see if there is at least one node 'clicked'
   //check state not ui, since ui has not yet been updated;
   let hasUserSelection = state.selected.length > 0;
@@ -416,13 +413,12 @@ function selectNode(node) {
     args: []
   };
 
-  
   provenance.applyAction(action);
   pushProvenance(app.currentState());
 }
 
 function highlightHardSelectedNodes(state) {
-  console.log("triggered highlightHardSelectedNodes")
+  console.log("triggered highlightHardSelectedNodes");
   d3.selectAll(".selectBox").classed("selected", d =>
     state.hardSelected.includes(d.id)
   );
@@ -451,8 +447,7 @@ function dragNode() {
   });
 }
 function updatePos(state) {
-
-  console.log('calling  updatePos')
+  console.log("calling  updatePos");
   d3.selectAll(".linkGroup")
     .select("path")
     .attr("d", function(d) {
@@ -1064,7 +1059,11 @@ function updateVis() {
       selected.push(node.id);
     }
 
-    let neighbors = tagNeighbors(node, !wasSelected, currentState.userSelectedNeighbors);
+    let neighbors = tagNeighbors(
+      node,
+      !wasSelected,
+      currentState.userSelectedNeighbors
+    );
 
     let label = search
       ? "Searched for Node"
@@ -1118,24 +1117,21 @@ function updateVis() {
 
     //helper function that adds or removes the clicked node id from the userSelectedNeighbors map as necessary
     function toggleSelection(target) {
-
-      
       if (wasClicked) {
         userSelectedNeighbors[target]
           ? userSelectedNeighbors[target].push(clickedNode.id)
           : (userSelectedNeighbors[target] = [clickedNode.id]);
-
       } else {
-        // if (!userSelectedNeighbors[target]){
-        //   debugger;
-        // }
-        userSelectedNeighbors[target] = userSelectedNeighbors[target].filter(
-          n => n !== clickedNode.id
-        );
-        //if array is empty, remove key from dict;
-        // if (userSelectedNeighbors[target].length === 0) {
-        //   delete userSelectedNeighbors[target];
-        // }
+        if (userSelectedNeighbors[target]) {
+          userSelectedNeighbors[target] = userSelectedNeighbors[target].filter(
+            n => n !== clickedNode.id
+          );
+
+          // if array is empty, remove key from dict;
+          if (userSelectedNeighbors[target].length === 0) {
+            delete userSelectedNeighbors[target];
+          }
+        }
       }
     }
 
