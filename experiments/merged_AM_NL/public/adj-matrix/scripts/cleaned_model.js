@@ -2110,12 +2110,7 @@ var Controller = /** @class */ (function () {
         this.task = this.tasks[this.taskNum];
         this.configuration = this.task.config;
         var prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
-        //d3.select("#taskArea").selectAll('.card-header-title')
-        //  .text(prompt);
-        console.log(d3.select("#taskArea")
-            .select('.card taskCard')
-            .select(".card-header-title"), d3.select("#taskArea").selectAll('.card-header-title'));
-        console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt, d3.select("#taskArea").select(".card-header-title"));
+        //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
         if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
             if (!this.configuration.nodeAttributes.includes('selected')) {
                 this.configuration.nodeAttributes.unshift('selected');
@@ -2129,7 +2124,6 @@ var Controller = /** @class */ (function () {
                 this.configuration.attributeScales.node['selected'] = obj;
             }
             console.log(this.configuration.nodeAttributes, d3.min([100 * this.configuration.nodeAttributes.length, 450]));
-            //this.configuration = result;
         }
         this.configuration.adjMatrix['toggle'] = false;
         this.configuration.adjMatrix.neighborSelect = true;
@@ -2147,69 +2141,9 @@ var Controller = /** @class */ (function () {
     };
     Controller.prototype.loadTasks = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var task;
-            var _this = this;
             return __generator(this, function (_a) {
                 this.taskNum = 0;
                 this.tasks = taskList;
-                // work here to disambiguate task stuff TODO
-                /*
-                let taskConfigs = await d3.json("./../../taskLists/am_large.json").then((data) => {
-                  //this.tasks = data.tasks;
-                  this.configuration = data.task1.config;
-                  this.tasks = [data.task1];
-            
-                  let obj = {
-                    "domain": [true, false],
-                    "range": ["#e86b45", '#fff'],
-                    "labels": ['answer', 'not answer'],
-                    'glyph': 'rect',
-                    'label': 'selected'
-                  }
-            
-                  //this.configuration = result;
-                  this.configuration.attributeScales.node['selected'] = obj;
-                  this.configuration.state = {}
-                  this.configuration.state.adjMatrix = {};
-                  this.configuration.state.adjMatrix.sortKey = 'shortName'
-                  //configuration.state.adjMatrix.sortKey
-                  this.reload();
-            
-                });*/
-                //let taskConfig = "../configs/task" + (this.taskNum + 1).toString() + "Config.json";
-                //if (this.tenAttr) {
-                //  taskConfig = "../configs/10AttrConfig.json"
-                //} else if (this.fiveAttr) {
-                //  taskConfig = "../configs/5AttrConfig.json"
-                //}
-                //let that = this;
-                /*
-                Promise.all([
-                  d3.json("../configs/baseConfig.json"),
-                  d3.json(taskConfig),
-                  d3.json("../configs/state.json")
-                ]).then((configComponents) => {
-                  /*that.setupCSS(configComponents[0]);
-                  that.setupExports(configComponents[0], configComponents[1]);
-                  let components = [configComponents[0], configComponents[1], configComponents[2]];
-                  let result = deepmerge.all(components);
-            */
-                // added selected attribute scale
-                //that.finishConstructing(result);
-                //})
-                this.taskNum = 0;
-                task = this.tasks[this.taskNum];
-                d3.select("#taskArea")
-                    .select(".card-header-title")
-                    .text('Task ' + (this.taskNum + 1) + ' - ' + task.prompt);
-                d3.select("#next").on("click", function () {
-                    _this.taskNum = d3.min([_this.taskNum + 1, _this.tasks.length - 1]);
-                    _this.loadConfigs();
-                });
-                d3.select("#previous").on("click", function () {
-                    _this.taskNum = d3.max([_this.taskNum - 1, 0]);
-                    _this.loadConfigs();
-                });
                 return [2 /*return*/];
             });
         });
