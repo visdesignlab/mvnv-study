@@ -1,0 +1,122 @@
+
+ <div id = '#consent' class="card">
+    <header class="card-header">
+        <p class="card-header-title">
+            Analyzing a Network with a Node-Link Diagram
+        </p>
+
+    </header>
+    <div class="card-content">
+        <div class="content">
+            <p>
+                We will ask you to perform a few tasks on a network by interacting with a node-link diagram. 
+                There is no time limit.
+            </p>
+
+            <p>
+                Please enter your Amazon Worker Id. <strong>You may only complete this HIT once.</strong> Subsequent completions cannot be accepted:
+                <br>
+    
+                <input class="input" type="text" placeholder="Enter Worker Id" id="workerId" name="workerId" size="30" />
+                <a class="button" id="checkId" >Check ID</a>
+                <br>
+    
+                <span id="invalidMessage">
+                    Our records show that you have taken part in this study before, so we cannot allow you to take this HIT again at this time. Please contact us if you feel this is in error.
+                </span>
+            </p>
+
+            <p>
+                <a class="button" id="consentYes" disabled="true">I Agree</a>
+            </p>
+    
+            <p>
+                <strong>Note: </br>1. This HIT requires a modern browser. If you are not using Chrome or Firefox, the "I Agree" button may not activate even after entering your Worker ID. </strong></br><strong style="color:red">2. Please do not use mobile devices (touchscreen) for this task.</strong>
+            </p>
+    
+            
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<style>
+    #invalidMessage {
+        display: none;
+        color: red;
+    }
+    #consentForm {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        height: 200px;
+        overflow-y: scroll;
+        padding: 15px;
+    }
+</style>
+
+<script>
+    (function () {
+        var data = {}
+        , workers = null;
+        init();
+        function init() {
+            experimentr.hideNext();
+            d3.select('#workerId').attr('disabled', null);
+
+            d3.selectAll('#workerId')
+                    .on('keypress', function () {
+                        data.workerId = this.value;
+                    })
+                    .on('blur', function () {
+                        data.workerId = this.value;
+                    });
+            d3.select('#consentYes').on('click',function(){
+                //if the user consents to particpate in the study, create a random completion code, add him to the list of particpants, and set the global
+                // memberID variable
+                
+                //set global variable to be the santizied version of the input workerID; 
+                workerID = sanitizeWorkerID(data.workerId);
+            db.collection('participants').doc(workerID).set({
+                    startTime: Date.now(),
+                    completionCode:makeid(6)
+                }); 
+
+                experimentr.next();
+            });
+
+            d3.select('#checkId').on('click', validate );
+        }
+
+        async function validate() {
+
+            if (data.workerId) {
+                // experimentr.addData(data);
+                console.log('workerId is ', data.workerId)
+
+                //Check firebase to see if this participant has already participated: 
+                let pastParticipants = await db.collection("participants").get();
+
+                let firstTimer = true;
+                pastParticipants.forEach(function(doc) {
+                    if (doc.id == data.workerId) {
+                        firstTimer = false;
+                    }
+                });
+
+                if (firstTimer) {
+                    d3.select('#consentYes').attr('disabled', null);
+                    d3.select('#invalidMessage').style('display', 'none');
+
+                } else {
+                    d3.select('#consentYes').attr('disabled', true);
+                    d3.select('#invalidMessage').style('display', 'inline');
+                }
+            }
+        }
+ 
+    }());
+</script>

@@ -1,0 +1,103 @@
+* {
+    color: #333;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+body {
+    margin: 0px;
+    /* width: 90%; */
+}
+
+
+#targetSize{
+    width:1900px;
+    height:1060px;
+    /* width:1920px; */
+    /* height:1080px; */
+}
+
+#visPanel{
+    height:1060px;
+}
+
+#easyLabel{
+    padding-left:0px;
+}
+
+.selectBox.selected{
+    fill:rgb(255, 111, 0);
+    stroke:rgb(255, 111, 0);;
+}
+
+#hardLabel{
+    padding-left:190px;
+}
+
+#easyHardRating{
+    padding:0px 5px;
+}
+
+
+#taskArea .taskCard{
+    background-color:#4285f4;
+}
+
+#taskArea .taskCard .card-header-title{
+    color:white;
+}
+
+#submitButton{
+    color:white;
+    background-color:#4285f4;
+}
+
+#submitButton[disabled]{
+    color:darkgrey;
+    background-color:lightgrey;
+}
+
+.errorMsg{
+    color:red;
+    font-style:italic;
+}
+
+#submitSuccessful{
+    color:#4285f4;
+    font-weight:bold;
+}
+
+#nextTask{
+    margin:10px 0px;
+
+    padding:10px;
+    color:white;
+    background-color:#4285f4;
+    font-size:18px;
+    font-weight:bold;
+}
+
+
+
+#experimentr {
+    margin: 4em auto 1em auto;
+    width: 720px;
+}
+
+#control {
+    margin-top: 1em;
+}
+
+#next-button {
+    float: right;
+}
+
+.placeholder {
+    color: #7A378B;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+
+#workerId{
+    width:60%
+}

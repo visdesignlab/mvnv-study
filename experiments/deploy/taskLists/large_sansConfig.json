@@ -1,0 +1,41 @@
+{
+  "task1": 
+    {
+      "workerID":null,
+      "order":null,
+      "answer": {"nodes":[],"value":""},
+      "feedback":"",
+      "prompt": "Select the European account which has liked the most tweets.",
+      "replyType":["singleNodeSelection"],
+      "replyCount":1,
+      "config":{}
+    },
+    "task2": 
+    {
+      "workerID":null,
+      "order":null,
+      "answer": {"nodes":[],"value":""},
+      "feedback":"",
+      "prompt": "Select all of Rob Kosara's neighbors that are *people* and have more followers than following.",
+      "replyType":["multipleNodeSelection"],
+      "replyCount":{
+         "type":"at least",
+         "value":1
+        },
+      "config":{}
+    },
+    "task3": 
+    {
+      "workerID":null,
+      "order":null,
+      "answer": {"nodes":[],"value":""},
+      "feedback":"",
+      "prompt": "Select the *institution* from North America that has retweeted Jeff Heer and mentioned R.Kosara. Does this account have more tweets, likes, or followers? ",
+      "replyType":["singleNodeSelection","value"],
+      "replyCount":{
+        "type":"exactly",
+        "value":1
+       },
+      "config":{}
+    }
+  }

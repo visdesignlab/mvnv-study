@@ -1,21 +1,16 @@
 
-//create global variables that save the baseConfig and taskConfigs for easy export; 
-
-var baseConfig;
 
 (async ()=>{
 
     let taskListNames = ['large'];
 
     taskListNames.map(async taskListName=>{
-        baseConfig = await d3.json("./configs/baseConfig.json");
-        let taskList =  await d3.json("./taskLists/" + taskListName + '_sansConfig.json');
+        let taskList =  await d3.json("taskLists/" + taskListName + '_sansConfig.json');
 
         //iterate through each taskKey and add config object;
         let allConfigs = Object.keys(taskList).map(async (key)=>{
             let taskConfig = await d3.json("configs/"+ key + "Config.json");
-            config = mergeConfigs(baseConfig, taskConfig);
-            taskList[key].config=config;
+            taskList[key].config=taskConfig;
         })
 
         //export taskList now with configs for each task. 

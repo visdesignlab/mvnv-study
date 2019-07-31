@@ -1,0 +1,28 @@
+<div>
+</div>
+
+<script>
+      (async function(){
+
+      experimentr.hideNext();
+      await loadTasks();
+      assignTasks();
+
+      d3.select('.hit').style('display', 'inline');
+      if (vis === 'nodeLink') {
+        // d3.selectAll('.development').remove();
+        loadVis("vis");
+                
+      } else {
+       // included script already auto loads the vis. 
+      }
+
+      resetPanel();
+      experimentr.startTimer('exploration');
+
+      })()
+
+    
+      
+</script>
+
