@@ -1,47 +1,9 @@
 // Helper functions to export config files
 
-//Function to save exportedGraph to file automatically;
-function saveToFile(data, filename) {
-    if (!data) {
-      console.error("Console.save: No data");
-      return;
-    }
-  
-    if (!filename) filename = "output.json";
-  
-    if (typeof data === "object") {
-      data = JSON.stringify(data, undefined, 4);
-    }
-  
-    var blob = new Blob([data], { type: "text/json" }),
-      e = document.createEvent("MouseEvents"),
-      a = document.createElement("a");
-  
-    a.download = filename;
-    a.href = window.URL.createObjectURL(blob);
-    a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
-    e.initMouseEvent(
-      "click",
-      true,
-      false,
-      window,
-      0,
-      0,
-      0,
-      0,
-      0,
-      false,
-      false,
-      false,
-      false,
-      0,
-      null
-    );
-    a.dispatchEvent(e);
-  }
 
   function exportConfig(baseKeys, nodeLinkKeys, isTaskConfig) {
     let configCopy = JSON.parse(JSON.stringify(config));
+
   
     //only keep keys for this particular config file;
   
@@ -57,15 +19,16 @@ function saveToFile(data, filename) {
       }
     });
   
-    //find out which 'state' you're saving : optimal, 5attr, or 10attr;
-    let state = d3.select(".button.clicked").attr("id");
-    let fileName = {
-      optimalConfig: "task" + (taskNum + 1) + "Config.json",
-      nodeLinkConfig: "5AttrConfig.json",
-      saturatedConfig: "10AttrConfig.json"
-    };
-  
-    saveToFile(configCopy, isTaskConfig ? fileName[state] : "baseConfig.json");
+    let fileName = "taskConfig.json"
+    // //find out which 'state' you're saving : optimal, 5attr, or 10attr;
+    // let state = d3.select(".button.clicked").attr("id");
+    // let fileName = {
+    //   optimalConfig: "task" + (taskNum + 1) + "Config.json",
+    //   nodeLinkConfig: "5AttrConfig.json",
+    //   saturatedConfig: "10AttrConfig.json"
+    // };
+
+    saveToFile(configCopy, isTaskConfig ? fileName : "baseConfig.json");
   }
 
 
@@ -99,21 +62,6 @@ function countSiblingLinks(graph, source, target) {
     return siblings;
   }
 
-//   Function that will merge a baseConfig with a taskConfig;
-  function mergeConfigs(baseConfig, taskConfig) {
-    //copy over the nodeLink key/value pairs from the baseConfig to the taskConfig;
-    Object.keys(baseConfig.nodeLink).map(nodeAttr => {
-      taskConfig.nodeLink[nodeAttr] = baseConfig.nodeLink[nodeAttr];
-    });
-  
-    //rehape both config values into a single dictionary.
-    let config = {
-      ...baseConfig,
-      ...taskConfig
-    };
-  
-    return config;
-  }
 
 
   //Functions related to the control panel. 
@@ -894,73 +842,91 @@ function isQuant(attr) {
     return nodeMap;
   }
 
-  function setConfigCallbacks(baseConfig,taskConfig){
-        
-        d3.select("#exportBaseConfig").on("click", function() {
-            exportConfig(
-              Object.keys(baseConfig),
-              Object.keys(baseConfig.nodeLink),
-              false
-            );
-          });
-    
-          d3.select("#exportConfig").on("click", function() {
-            exportConfig(
-              Object.keys(taskConfig),
-              Object.keys(taskConfig.nodeLink),
-              true
-            );
-          });
-    
-          // rehape relevant config values into a single dictionary.
-          config = mergeConfigs(baseConfig, taskConfig);
-    
-          allConfigs.optimalConfig = config;
-    
-          let task = tasks[taskNum];
-    
+  d3.select("#exportBaseConfig").on("click", function() {
+    exportConfig(
+      Object.keys(baseConfig),
+      Object.keys(baseConfig.nodeLink),
+      false
+    );
+  });
 
-          d3.select("#optimalConfig").on("click", () =>
-            applyConfig("optimalConfig")
-          );
-    
-          d3.select("#nodeLinkConfig").on("click", () =>
-            applyConfig("nodeLinkConfig")
-          );
-    
-          d3.select("#saturatedConfig").on("click", () =>
-            applyConfig("saturatedConfig")
-          );
-    
-          d3.select("#next").on("click", async () => {
-            taskNum = d3.min([taskNum + 1, tasks.length - 1]);
-            await loadConfigs(tasks[taskNum].id);
-            applyConfig("optimalConfig");
-          });
-    
-          d3.select("#previous").on("click", async () => {
-            taskNum = d3.max([taskNum - 1, 0]);
-            await loadConfigs(tasks[taskNum].id);
-            applyConfig("optimalConfig");
-          });
-
-  }
+  d3.select("#exportConfig").on("click", function() {
+    exportConfig(      
+      Object.keys(config),
+      Object.keys(config.nodeLink),
+      true
+    );
+  });
   
-  function applyConfig(configType) {
-    d3
-      .selectAll(".button")
-      .classed("clicked", false);
-    d3.select("#" + configType).classed("clicked", true);
-    config = JSON.parse(JSON.stringify(allConfigs[configType]));
+
+  // function setConfigCallbacks(baseConfig,taskConfig){
+        
+  //       d3.select("#exportBaseConfig").on("click", function() {
+  //           exportConfig(
+  //             Object.keys(baseConfig),
+  //             Object.keys(baseConfig.nodeLink),
+  //             false
+  //           );
+  //         });
+    
+  //         d3.select("#exportConfig").on("click", function() {
+
+  //           exportConfig(
+  //             Object.keys(taskConfig),
+  //             Object.keys(taskConfig.nodeLink),
+  //             true
+  //           );
+  //         });
+    
+  //         // rehape relevant config values into a single dictionary.
+  //         config = mergeConfigs(baseConfig, taskConfig);
+    
+  //         allConfigs.optimalConfig = config;
+    
+  //         let task = tasks[taskNum];
+    
+
+  //         d3.select("#optimalConfig").on("click", () =>
+  //           applyConfig("optimalConfig")
+  //         );
+    
+  //         d3.select("#nodeLinkConfig").on("click", () =>
+  //           applyConfig("nodeLinkConfig")
+  //         );
+    
+  //         d3.select("#saturatedConfig").on("click", () =>
+  //           applyConfig("saturatedConfig")
+  //         );
+    
+  //         d3.select("#next").on("click", async () => {
+  //           taskNum = d3.min([taskNum + 1, tasks.length - 1]);
+  //           await loadConfigs(tasks[taskNum].id);
+  //           applyConfig("optimalConfig");
+  //         });
+    
+  //         d3.select("#previous").on("click", async () => {
+  //           taskNum = d3.max([taskNum - 1, 0]);
+  //           await loadConfigs(tasks[taskNum].id);
+  //           applyConfig("optimalConfig");
+  //         });
+
+  // }
+  
+  // function applyConfig(configType) {
+  //   d3
+  //     .selectAll(".button")
+  //     .classed("clicked", false);
+  //   d3.select("#" + configType).classed("clicked", true);
+  //   config = JSON.parse(JSON.stringify(allConfigs[configType]));
 
 
-    //Update Task Header and Answer type 
+  //   //Update Task Header and Answer type 
 
-     // update global variables from config;
-     setGlobalScales();
+  //    // update global variables from config;
+  //    setGlobalScales();
 
-    update();
-  }
+  //   update();
+  // }
 
   function setUpProvenance(nodes,taskID = 'noID', order = 'noOrder'){
 

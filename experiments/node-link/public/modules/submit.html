@@ -22,15 +22,8 @@
         <div id="sexes">
           <input type="radio" id="s1" name="sex" value="Male"> Male
           <input type="radio" id="s2" name="sex" value="Female"> Female
-          <input type="radio" id="s3" name="sex" value="Unspecified"> Unspecified
-        </div>
-      </div>
-      <br>
-      <div id="handed"><strong>Are you left or right handed:</strong> <strong style="color: red">*</strong>
-        <div id="handedness">
-          <input type="radio" id="s1" name="handed" value="Right"> Right
-          <input type="radio" id="s2" name="handed" value="Left"> Left
-          <input type="radio" id="s3" name="handed" value="Unspecified"> Unspecified
+          <input type="radio" id="s3" name="sex" value="other"> Other / Non-binary
+          <input type="radio" id="s3" name="sex" value="Prefer to not answer"> Unspecified
         </div>
       </div>
       <br>
@@ -198,7 +191,7 @@
 
         let demographics = {};
         let feedback = {};
-        let mandatoryQuestions = ['age','sex', 'handed', 'degree', 'screen_size','vis_experience', 'training']
+        let mandatoryQuestions = ['age','sex', 'degree', 'screen_size','vis_experience', 'training']
 
        //check to make sure there are values for all radioButtons. 
         let isValid = true;

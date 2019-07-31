@@ -1,9 +1,14 @@
+
+//create global variables that save the baseConfig and taskConfigs for easy export; 
+
+var baseConfig;
+
 (async ()=>{
 
     let taskListNames = ['large'];
 
     taskListNames.map(async taskListName=>{
-        let baseConfig = await d3.json("../../configs/baseConfig.json");
+        baseConfig = await d3.json("../../configs/baseConfig.json");
         let taskList =  await d3.json("../../taskLists/" + taskListName + '_sansConfig.json');
 
         //iterate through each taskKey and add config object;
@@ -14,10 +19,11 @@
         })
 
         //export taskList now with configs for each task. 
-        Promise.all(allConfigs).then((completed) => saveToFile(taskList, taskListName + ".json"));
+        // Promise.all(allConfigs).then((completed) => saveToFile(taskList, taskListName + ".json"));
         })
     
-} )();
+} )
+();
 
 
 //   Function that will merge a baseConfig with a taskConfig;
@@ -75,5 +81,7 @@ function saveToFile(data, filename) {
     );
     a.dispatchEvent(e);
   }
+
+ 
 
 
