@@ -663,10 +663,10 @@ function updateVis() {
     node
       .select(".node")
       .attr("x", d => -nodeLength(d) / 2 - 4)
-      .attr("y", d => -nodeHeight(d) / 2 - 4)
+      .attr("y", d => -nodeHeight(d) / 2 - 14)
       .attr("width", d => nodeLength(d) + 8)
       .attr("height", d =>
-        config.nodeIsRect ? nodeHeight(d) + 8 : nodeLength(d) + 8
+        config.nodeIsRect ? nodeHeight(d) + 18 : nodeLength(d) + 18
       )
       .style("fill", nodeFill)
       .style("stroke", d =>

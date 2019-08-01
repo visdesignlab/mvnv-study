@@ -2066,7 +2066,7 @@ var Controller = /** @class */ (function () {
         this.hoverCol = {};
         this.loadClearButton();
         this.loadTasks();
-        this.loadTask(0);
+        // this.loadTask(0);
         this.sizeLayout();
         //this.loadConfigs();
         /*console.log(this.configuration);

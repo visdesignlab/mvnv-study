@@ -2646,7 +2646,7 @@ class Controller {
     this.hoverCol = {}
     this.loadClearButton();
     this.loadTasks();
-    this.loadTask(0);
+    // this.loadTask(0);
     this.sizeLayout();
 
 
