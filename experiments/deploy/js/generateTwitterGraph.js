@@ -36,12 +36,15 @@
 
   tweets = tweets.tweets;
 
-  let nodes = await d3.json("data/raw/network_types.json");
+  let nodes = await d3.json("data/raw/curated_info.json");
 
   let config = await d3.json("configs/baseConfig.json");
 
-  // let mds = await d3.json("../data/raw/largeGraphVisone.json");
-  let mds = await d3.json("data/raw/smallGraphVisone.json")
+  // let mds = await d3.json("data/raw/largeGraphVisone.json");
+  let mds = await d3.json("data/raw/large_manual_pos.json");
+
+  
+  // let mds = await d3.json("data/raw/smallGraphVisone.json")
 
   let users = await d3.json("data/raw/userInfo.json");
 
@@ -224,7 +227,7 @@
             "_" +
             (hasEdgeTypes ? "multiEdge" : "singleEdge") +
             ".json";
-          // saveToFile(newGraph, filename);
+          saveToFile(newGraph, filename);
         }
       });
     });

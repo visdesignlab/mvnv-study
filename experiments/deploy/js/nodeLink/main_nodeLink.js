@@ -670,7 +670,7 @@ function updateVis() {
     nodeMarkerLength = config.nodeLink.drawBars? barAttrs.length * 10 + barPadding + radius*2 + padding : nodeMarkerLength ;
 
     let nodePadding = 2;
-    let sizeDiff = 50-nodeMarkerLength; 
+    let sizeDiff = 55-nodeMarkerLength; 
     let extraPadding = sizeDiff > 0 ? sizeDiff : 0;
 
     console.log('no. bars' , barAttrs.length , ' extraPadding ', extraPadding ,  'nodeMarkerLength', nodeMarkerLength)
