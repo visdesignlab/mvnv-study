@@ -593,7 +593,7 @@ function updateVis() {
   );
 
   //Drawing Graph
-  {
+  
     //Draw Links
     let link = d3
       .select(".links")
@@ -660,11 +660,29 @@ function updateVis() {
 
     node.classed("muted", false);
 
-    node
+    //determine the size of the node here: 
+    let barAttrs = config.nodeLink.drawBars
+    ? config.nodeAttributes.filter(isQuant)
+    : [];
+
+    let drawCat = Object.keys(config.nodeAttributes.filter(isCategorical)).length > 0;
+    let radius = drawCat ? nodeMarkerHeight * 0.15 : 0;
+    let padding = drawCat ? 3 : 0;
+
+
+    nodeMarkerLength = config.nodeLink.drawBars? barAttrs.length * 10 + barPadding + radius*2 + padding : nodeMarkerLength ;
+
+    let sizeDiff = 50-nodeMarkerLength; 
+    let extraPadding = sizeDiff > 0 ? sizeDiff : 0;
+
+    console.log('no. bars' , barAttrs.length , ' extraPadding ', extraPadding ,  'nodeMarkerLength', nodeMarkerLength)
+
+
+      node
       .select(".node")
-      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 14  :-nodeLength(d) / 2 - 4)
+      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 9 -extraPadding/2  :-nodeLength(d) / 2 - 4)
       .attr("y", d => config.nodeIsRect ? -nodeHeight(d) / 2 - 14 :-nodeHeight(d) / 2 - 4 )
-      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 28: nodeLength(d) + 8)
+      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 18 + extraPadding: nodeLength(d) + 8)
       .attr("height", d =>
         config.nodeIsRect ? nodeHeight(d) + 18 : nodeLength(d) + 8
       )
@@ -684,6 +702,7 @@ function updateVis() {
       .attr("y", d =>
         config.nodeLink.drawBars ? -nodeMarkerHeight/2 -2  : ".5em"
       )
+      .attr('dy', config.nodeLink.drawBars ? 0 : -2)
       // .attr("dx", function(d) {
       //   return (
       //     -d3
@@ -692,32 +711,42 @@ function updateVis() {
       //       .getBBox().width / 2
       //   );
       // })
-      .attr('x',-nodeMarkerLength / 2 + 3 )
+      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 2 -extraPadding/2 + checkboxSize  :-nodeLength(d) / 2 + checkboxSize)
+
+      // .attr('x',-nodeMarkerLength / 2 + 3 )
       .on("click", selectNode);
 
     node
       .select(".labelBackground")
-      .attr("width", function(d) {
-        let textWidth = d3
-          .select(d3.select(this).node().parentNode)
-          .select(".label")
-          .node()
-          .getBBox().width;
+      .classed('nested',config.nodeLink.drawBars)
+      // .attr("width", function(d) {
+      //   let textWidth = d3
+      //     .select(d3.select(this).node().parentNode)
+      //     .select(".label")
+      //     .node()
+      //     .getBBox().width;
 
-        //make sure label box spans the width of the node
-        return config.nodeLink.drawBars ? nodeMarkerLength + 30 : d3.max([textWidth, nodeLength(d)])+4;
-      })
+      //   //make sure label box spans the width of the node
+      //   return config.nodeLink.drawBars ? nodeMarkerLength + 30 : d3.max([textWidth, nodeLength(d)])+4;
+      // })
+      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 18 + extraPadding: nodeLength(d) + 8)
+      .on("click", selectNode)
+
+
       .attr('height',config.nodeLink.drawBars ? 15 : "1em")
-      .attr("x", function(d) {
-        let textWidth = d3
-          .select(d3.select(this).node().parentNode)
-          .select("text")
-          .node()
-          .getBBox().width;
+      // .attr("x", function(d) {
+      //   let textWidth = d3
+      //     .select(d3.select(this).node().parentNode)
+      //     .select("text")
+      //     .node()
+      //     .getBBox().width;
 
-        //make sure label box spans the width of the node
-        return config.nodeLink.drawBars ? -nodeMarkerLength / 2 -15  : d3.min([-textWidth / 2, -nodeLength(d) / 2 - 2]);
-      })
+      //   //make sure label box spans the width of the node
+      //   return config.nodeLink.drawBars ? -nodeMarkerLength / 2 -15  : d3.min([-textWidth / 2, -nodeLength(d) / 2 - 2]);
+      // })
+
+      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 9 -extraPadding/2  :-nodeLength(d) / 2 - 4)
+
       .attr("y", d =>
       config.nodeLink.drawBars ? -nodeMarkerHeight/2 - 14 : "-.5em"
       );
@@ -749,7 +778,9 @@ function updateVis() {
           ? -(nodeMarkerHeight/2) - 10
           : -checkboxSize / 2
       )
-      .attr("x", -nodeMarkerLength/2 -checkboxSize)
+      // .attr("x", -nodeMarkerLength/2 -checkboxSize)
+      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 5 -extraPadding/2  :-nodeLength(d) / 2 - 4)
+
       // .attr("y", -checkboxSize / 2 - 5)
       .on("click", selectNode);
 
@@ -760,21 +791,13 @@ function updateVis() {
         .on("drag", dragged)
         .on("end", dragended)
     );
-  }
+  
 
   //Drawing Nested Bar Charts
-  {
+  
     // //  Separate enter/exit/update for bars so as to bind to the correct data;
 
-    let drawCat =
-      Object.keys(config.nodeAttributes.filter(isCategorical)).length > 0;
-    let radius = drawCat ? nodeMarkerHeight * 0.15 : 0;
-    let padding = drawCat ? 3 : 0;
     let xPos = drawCat ? nodeMarkerLength / 2 - radius : 0;
-
-    let barAttrs = config.nodeLink.drawBars
-      ? config.nodeAttributes.filter(isQuant)
-      : [];
 
     let numBars = barAttrs.length;
     let nodeWidth = nodeMarkerLength - barPadding - radius * 2 - padding;
@@ -931,7 +954,7 @@ function updateVis() {
       .attr("y", radius * 2)
       .attr("x", radius * 2)
       .style("text-anchor", "start");
-  }
+  
 
   d3.select("#exportGraph").on("click", () => {
     let graphCopy = JSON.parse(JSON.stringify(graph));
