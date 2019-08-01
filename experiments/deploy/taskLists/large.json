@@ -14,12 +14,12 @@
         "replyCount": 1,
         "config": {
             "graphFiles": {
-                "small_directed_multiEdge": "../data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge": "../data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge": "../data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge": "../data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge": "../data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "../data/network_large_undirected_singleEdge.json"
+                "small_directed_multiEdge":"data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge":"data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge":"data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge":"data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge":"data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge":"data/network_large_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -149,18 +149,9 @@
             "nodeLink": {
                 "drawBars": false,
                 "selectNeighbors": false,
-                "nodeHeight": {
-                    "large": 40,
-                    "small": 60
-                },
-                "nodeWidth": {
-                    "large": 40,
-                    "small": 80
-                },
-                "labelSize": {
-                    "large": 12,
-                    "small": 14
-                },
+                "nodeHeight": 40,
+                "nodeWidth": 40,
+                "labelSize": 12,
                 "labelAttr": "shortName",
                 "nodeFillAttr": "continent",
                 "nodeSizeAttr": "favourites_count",
@@ -217,12 +208,12 @@
         },
         "config": {
             "graphFiles": {
-                "small_directed_multiEdge": "../data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge": "../data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge": "../data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge": "../data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge": "../data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "../data/network_large_undirected_singleEdge.json"
+                "small_directed_multiEdge":"data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge":"data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge":"data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge":"data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge":"data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge":"data/network_large_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -352,18 +343,9 @@
             "nodeLink": {
                 "drawBars": true,
                 "selectNeighbors": true,
-                "nodeHeight": {
-                    "large": 40,
-                    "small": 60
-                },
-                "nodeWidth": {
-                    "large": 40,
-                    "small": 80
-                },
-                "labelSize": {
-                    "large": 12,
-                    "small": 14
-                },
+                "nodeHeight": 40,
+                "nodeWidth": 40,
+                "labelSize": 12,
                 "labelAttr": "shortName",
                 "nodeFillAttr": "continent",
                 "nodeSizeAttr": "favourites_count",
@@ -423,12 +405,12 @@
         },
         "config": {
             "graphFiles": {
-                "small_directed_multiEdge": "../data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge": "../data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge": "../data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge": "../data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge": "../data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "../data/network_large_undirected_singleEdge.json"
+                "small_directed_multiEdge":"data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge":"data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge":"data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge":"data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge":"data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge":"data/network_large_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -558,18 +540,9 @@
             "nodeLink": {
                 "drawBars": true,
                 "selectNeighbors": true,
-                "nodeHeight": {
-                    "large": 40,
-                    "small": 60
-                },
-                "nodeWidth": {
-                    "large": 60,
-                    "small": 80
-                },
-                "labelSize": {
-                    "large": 12,
-                    "small": 14
-                },
+                "nodeHeight": 40,
+                "nodeWidth": 40,
+                "labelSize": 12,
                 "labelAttr": "shortName",
                 "nodeFillAttr": "continent",
                 "nodeSizeAttr": "favourites_count",

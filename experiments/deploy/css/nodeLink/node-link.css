@@ -159,8 +159,8 @@
     }
 
     .labelBackground{
-        opacity:.7;
-        fill:white;
+        opacity:.2;
+        fill:rgb(112, 112, 112);
     }
 
     /* #node-link-svg{

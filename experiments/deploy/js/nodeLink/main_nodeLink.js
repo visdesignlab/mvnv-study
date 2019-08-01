@@ -61,9 +61,8 @@ let nodeLength,
   edgeWidth;
 
 function setGlobalScales() {
-  nodeMarkerLength = config.nodeLink.nodeWidth[config.graphSize] || 60;
-  nodeMarkerHeight = config.nodeLink.nodeHeight[config.graphSize] || 35;
-
+  nodeMarkerLength = config.nodeLink.nodeWidth || 60;
+  nodeMarkerHeight = config.nodeLink.nodeHeight || 35;
   checkboxSize = nodeMarkerHeight / 4;
   //Create Scale Functions
 
@@ -296,9 +295,8 @@ async function loadTask(task) {
 
   await loadNewGraph(config.graphFiles[config.loadedGraph]);
 
-
   // update global variables from config;
-  setGlobalScales();
+  // setGlobalScales();
 
   //determine x and y positions before starting provenance;
   if (graph.nodes[0].fx === undefined) {
@@ -522,6 +520,9 @@ function arcPath(leftHand, d, state = false) {
 }
 
 function updateVis() {
+
+  setGlobalScales();
+
   config.nodeIsRect = config.nodeLink.drawBars;
 
   let fakeSmallNode = {};
@@ -557,7 +558,6 @@ function updateVis() {
 
   
   
-
 
   //create scales for bars;
   let barAttributes = config.nodeAttributes.filter(isQuant);
@@ -662,36 +662,37 @@ function updateVis() {
 
     node
       .select(".node")
-      .attr("x", d => -nodeLength(d) / 2 - 4)
-      .attr("y", d => -nodeHeight(d) / 2 - 14)
-      .attr("width", d => nodeLength(d) + 8)
+      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 14  :-nodeLength(d) / 2 - 4)
+      .attr("y", d => config.nodeIsRect ? -nodeHeight(d) / 2 - 14 :-nodeHeight(d) / 2 - 4 )
+      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 28: nodeLength(d) + 8)
       .attr("height", d =>
-        config.nodeIsRect ? nodeHeight(d) + 18 : nodeLength(d) + 18
+        config.nodeIsRect ? nodeHeight(d) + 18 : nodeLength(d) + 8
       )
       .style("fill", nodeFill)
       .style("stroke", d =>
         nodeStroke(app.currentState().selected.includes(d.id))
       )
-      .attr("rx", d => (config.nodeIsRect ? nodeLength(d) / 20 : nodeLength(d)))
-      .attr("ry", d => (config.nodeIsRect ? nodeHeight(d) / 20 : nodeHeight(d)))
+      .attr("rx", d => (config.nodeIsRect ? 0 : nodeLength(d))) //nodeLength(d)/20
+      .attr("ry", d => (config.nodeIsRect ? 0 : nodeHeight(d)))
       .classed("clicked", d => app.currentState().selected.includes(d.id));
 
     node
       .select("text")
       .classed("selected", d => d.hardSelect)
-      .style("font-size", config.nodeLink.labelSize[config.graphSize])
+      .style("font-size", config.nodeLink.labelSize)
       .text(d => d[config.nodeLink.labelAttr])
       .attr("y", d =>
-        config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 4 : ".5em"
+        config.nodeLink.drawBars ? -nodeMarkerHeight/2 -2  : ".5em"
       )
-      .attr("dx", function(d) {
-        return (
-          -d3
-            .select(this)
-            .node()
-            .getBBox().width / 2
-        );
-      })
+      // .attr("dx", function(d) {
+      //   return (
+      //     -d3
+      //       .select(this)
+      //       .node()
+      //       .getBBox().width / 2
+      //   );
+      // })
+      .attr('x',-nodeMarkerLength / 2 + 3 )
       .on("click", selectNode);
 
     node
@@ -704,9 +705,9 @@ function updateVis() {
           .getBBox().width;
 
         //make sure label box spans the width of the node
-        return d3.max([textWidth, nodeLength(d) + 4]);
+        return config.nodeLink.drawBars ? nodeMarkerLength + 30 : d3.max([textWidth, nodeLength(d)])+4;
       })
-      .attr("height", "1em")
+      .attr('height',config.nodeLink.drawBars ? 15 : "1em")
       .attr("x", function(d) {
         let textWidth = d3
           .select(d3.select(this).node().parentNode)
@@ -715,10 +716,10 @@ function updateVis() {
           .getBBox().width;
 
         //make sure label box spans the width of the node
-        return d3.min([-textWidth / 2, -nodeLength(d) / 2 - 2]);
+        return config.nodeLink.drawBars ? -nodeMarkerLength / 2 -15  : d3.min([-textWidth / 2, -nodeLength(d) / 2 - 2]);
       })
       .attr("y", d =>
-        config.nodeLink.drawBars ? -nodeHeight(d) * 0.5 - 16 : "-.5em"
+      config.nodeLink.drawBars ? -nodeMarkerHeight/2 - 14 : "-.5em"
       );
 
     node
@@ -730,19 +731,26 @@ function updateVis() {
         "height",
         taskList[currentTask].replyType !== "value" ? checkboxSize : 0
       )
-      .attr("x", function(d) {
-        let nodeLabel = d3
-          .select(d3.select(this).node().parentNode)
-          .select("text");
+      // .attr("x", function(d) {
+      //   let nodeLabel = d3
+      //     .select(d3.select(this).node().parentNode)
+      //     .select("text");
 
-        let textWidth = nodeLabel.node().getBBox().width;
-        return -textWidth / 2 - checkboxSize - 5;
-      })
+      //   let textWidth = nodeLabel.node().getBBox().width;
+      //   return -textWidth / 2 - checkboxSize - 5;
+      // })
+      // .attr("y", d =>
+      //   config.nodeLink.drawBars
+      //     ? -(nodeHeight(d) / 2 + 4 + checkboxSize)
+      //     : -checkboxSize / 2
+      // )
       .attr("y", d =>
         config.nodeLink.drawBars
-          ? -(nodeHeight(d) / 2 + 4 + checkboxSize)
+          ? -(nodeMarkerHeight/2) - 10
           : -checkboxSize / 2
       )
+      .attr("x", -nodeMarkerLength/2 -checkboxSize)
+      // .attr("y", -checkboxSize / 2 - 5)
       .on("click", selectNode);
 
     node.call(

@@ -488,9 +488,9 @@ async function loadTasks(visType) {
   let selectedVis = selectedCondition.type;
 
   //(force the task list if this is a heuristics run)
-  if (visType) {
-    selectedCondition.taskList = "taskLists/heuristics.json";
-  }
+  // if (visType) {
+  //   selectedCondition.taskList = "taskLists/heuristics.json";
+  // }
 
   vis = selectedVis; // = 'adjMatrix'//='nodeLink' //
 

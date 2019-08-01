@@ -101,15 +101,15 @@ function setPanelValuesFromFile() {    [["node", "nodes"], ["edge", "links"]].ma
   
     d3.select("#fontSlider").on("input", function() {
       d3.select("#fontSliderValue").text(this.value);
-      config.nodeLink.labelSize[config.graphSize] = eval(this.value);
+      config.nodeLink.labelSize = eval(this.value);
     });
   
     d3.select("#fontSlider").property(
       "value",
-      config.nodeLink.labelSize[config.graphSize]
+      config.nodeLink.labelSize
     );
     d3.select("#fontSliderValue").text(
-      config.nodeLink.labelSize[config.graphSize]
+      config.nodeLink.labelSize
     );
   
     d3.select("#fontSlider").on("change", function() {
@@ -118,15 +118,16 @@ function setPanelValuesFromFile() {    [["node", "nodes"], ["edge", "links"]].ma
   
     d3.select("#markerSize").property(
       "value",
-      config.nodeLink.nodeWidth[config.graphSize] +
+      config.nodeLink.nodeWidth +
         "," +
-        config.nodeLink.nodeHeight[config.graphSize]
+        config.nodeLink.nodeHeight
     );
   
     d3.select("#markerSize").on("change", function() {
       let markerSize = this.value.split(",");
-      config.nodeLink.nodeWidth[config.graphSize] = eval(markerSize[0]);
-      config.nodeLink.nodeHeight[config.graphSize] = eval(markerSize[1]);
+
+      config.nodeLink.nodeWidth = eval(markerSize[0]);
+      config.nodeLink.nodeHeight= eval(markerSize[1]);
       updateVis();
     });
   
@@ -1013,6 +1014,8 @@ function isQuant(attr) {
   }
 
   async function loadNewGraph(fileName) {
+
+    console.log('loading ', fileName)
     graph = await d3.json(fileName);
 
     //update the datalist associated to the search box (in case the nodes in the new graph have changed)

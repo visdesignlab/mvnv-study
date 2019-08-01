@@ -135,18 +135,9 @@
     "nodeLink": {
         "drawBars": false,
         "selectNeighbors": false,
-        "nodeHeight": {
-            "large": 40,
-            "small": 60
-        },
-        "nodeWidth": {
-            "large": 40,
-            "small": 80
-        },
-        "labelSize": {
-            "large": 12,
-            "small": 14
-        },
+        "nodeHeight": 40,
+        "nodeWidth":40,
+        "labelSize": 12,
         "labelAttr": "shortName",
         "nodeFillAttr": "continent",
         "nodeSizeAttr": "favourites_count",
