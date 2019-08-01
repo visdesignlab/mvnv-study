@@ -14,12 +14,12 @@
         "replyCount": 1,
         "config": {
             "graphFiles": {
-                "small_directed_multiEdge":"data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge":"data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge":"data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge":"data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge":"data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge":"data/network_large_undirected_singleEdge.json"
+                "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -198,7 +198,7 @@
             "value": ""
         },
         "feedback": "",
-        "prompt": "Select all of Rob Kosara's neighbors that are *people* and have more followers than following.",
+        "prompt": "Select all of Rob Kosara's neighbors that are *people* and have more following than followers.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -208,12 +208,12 @@
         },
         "config": {
             "graphFiles": {
-                "small_directed_multiEdge":"data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge":"data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge":"data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge":"data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge":"data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge":"data/network_large_undirected_singleEdge.json"
+                "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -368,7 +368,7 @@
             "adjMatrix": {
                 "neighborHighlightColor": ""
             },
-            "taskID": "task1",
+            "taskID": "task2",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -394,23 +394,19 @@
             "value": ""
         },
         "feedback": "",
-        "prompt": "Select the *institution* from North America that has retweeted Jeff Heer and mentioned R.Kosara. Does this account have more tweets, likes, or followers? ",
+        "prompt": "Select the *institution* from North America that has retweeted Jeff Heer and mentioned R.Kosara. ",
         "replyType": [
-            "singleNodeSelection",
-            "value"
+            "singleNodeSelection"
         ],
-        "replyCount": {
-            "type": "exactly",
-            "value": 1
-        },
+        "replyCount": 1,
         "config": {
             "graphFiles": {
-                "small_directed_multiEdge":"data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge":"data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge":"data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge":"data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge":"data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge":"data/network_large_undirected_singleEdge.json"
+                "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -565,7 +561,7 @@
             "adjMatrix": {
                 "neighborHighlightColor": ""
             },
-            "taskID": "task1",
+            "taskID": "task3",
             "loadedGraph": "large_undirected_multiEdge",
             "isDirected": false,
             "isMultiEdge": true,
@@ -573,6 +569,7 @@
             "nodeAttributes": [
                 "followers_count",
                 "continent",
+                "type",
                 "favourites_count",
                 "statuses_count"
             ],

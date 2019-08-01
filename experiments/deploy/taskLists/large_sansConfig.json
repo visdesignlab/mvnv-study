@@ -16,7 +16,7 @@
       "order":null,
       "answer": {"nodes":[],"value":""},
       "feedback":"",
-      "prompt": "Select all of Rob Kosara's neighbors that are *people* and have more followers than following.",
+      "prompt": "Select all of Rob Kosara's neighbors that are *people* and have more following than followers.",
       "replyType":["multipleNodeSelection"],
       "replyCount":{
          "type":"at least",
@@ -30,12 +30,9 @@
       "order":null,
       "answer": {"nodes":[],"value":""},
       "feedback":"",
-      "prompt": "Select the *institution* from North America that has retweeted Jeff Heer and mentioned R.Kosara. Does this account have more tweets, likes, or followers? ",
-      "replyType":["singleNodeSelection","value"],
-      "replyCount":{
-        "type":"exactly",
-        "value":1
-       },
+      "prompt": "Select the *institution* from North America that has retweeted Jeff Heer and mentioned R.Kosara. ",
+      "replyType":["singleNodeSelection"],
+      "replyCount":1,
       "config":{}
     }
   }
