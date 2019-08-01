@@ -351,6 +351,7 @@ function highlightSelectedNodes(state) {
       return (
         config.nodeLink.selectNeighbors &&
         hasUserSelection &&
+        !state.hardSelected.includes(d.id) &&
         !state.selected.includes(d.id) &&
         !state.userSelectedNeighbors[d.id] //this id exists in the dict
       );
@@ -552,12 +553,8 @@ function updateVis() {
     edgeScale.range([edgeWidth(fakeSmallNode), edgeWidth(fakeLargeNode)]);
 
   } else {
-    edgeScale.range([0,0]).clamp(true);
-
+    edgeScale.range([5,5]).clamp(true);
   }
-
-  
-  
 
   //create scales for bars;
   let barAttributes = config.nodeAttributes.filter(isQuant);
@@ -672,6 +669,7 @@ function updateVis() {
 
     nodeMarkerLength = config.nodeLink.drawBars? barAttrs.length * 10 + barPadding + radius*2 + padding : nodeMarkerLength ;
 
+    let nodePadding = 2;
     let sizeDiff = 50-nodeMarkerLength; 
     let extraPadding = sizeDiff > 0 ? sizeDiff : 0;
 
@@ -680,9 +678,9 @@ function updateVis() {
 
       node
       .select(".node")
-      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 9 -extraPadding/2  :-nodeLength(d) / 2 - 4)
+      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 4 - nodePadding/2 -extraPadding/2  :-nodeLength(d) / 2 - 4)
       .attr("y", d => config.nodeIsRect ? -nodeHeight(d) / 2 - 14 :-nodeHeight(d) / 2 - 4 )
-      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 18 + extraPadding: nodeLength(d) + 8)
+      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 8 + nodePadding + extraPadding: nodeLength(d) + 8)
       .attr("height", d =>
         config.nodeIsRect ? nodeHeight(d) + 18 : nodeLength(d) + 8
       )
@@ -711,7 +709,7 @@ function updateVis() {
       //       .getBBox().width / 2
       //   );
       // })
-      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 2 -extraPadding/2 + checkboxSize  :-nodeLength(d) / 2 + checkboxSize)
+      .attr("x", d => config.nodeIsRect ? -nodeMarkerLength/ 2 -barPadding/2 -extraPadding/2 + checkboxSize+ 3  :-nodeLength(d) / 2 + checkboxSize)
 
       // .attr('x',-nodeMarkerLength / 2 + 3 )
       .on("click", selectNode);
@@ -729,11 +727,11 @@ function updateVis() {
       //   //make sure label box spans the width of the node
       //   return config.nodeLink.drawBars ? nodeMarkerLength + 30 : d3.max([textWidth, nodeLength(d)])+4;
       // })
-      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 18 + extraPadding: nodeLength(d) + 8)
+      .attr("width", d => config.nodeIsRect ? nodeLength(d) + 8 + nodePadding + extraPadding: nodeLength(d) + 8)
       .on("click", selectNode)
 
 
-      .attr('height',config.nodeLink.drawBars ? 15 : "1em")
+      .attr('height',config.nodeLink.drawBars ? 16 : "1em")
       // .attr("x", function(d) {
       //   let textWidth = d3
       //     .select(d3.select(this).node().parentNode)
@@ -745,7 +743,7 @@ function updateVis() {
       //   return config.nodeLink.drawBars ? -nodeMarkerLength / 2 -15  : d3.min([-textWidth / 2, -nodeLength(d) / 2 - 2]);
       // })
 
-      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 9 -extraPadding/2  :-nodeLength(d) / 2 - 4)
+      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 4 -nodePadding/2 -extraPadding/2  :-nodeLength(d) / 2 - 4)
 
       .attr("y", d =>
       config.nodeLink.drawBars ? -nodeMarkerHeight/2 - 14 : "-.5em"
@@ -775,11 +773,11 @@ function updateVis() {
       // )
       .attr("y", d =>
         config.nodeLink.drawBars
-          ? -(nodeMarkerHeight/2) - 10
+          ? -(nodeMarkerHeight/2) - 11
           : -checkboxSize / 2
       )
       // .attr("x", -nodeMarkerLength/2 -checkboxSize)
-      .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 5 -extraPadding/2  :-nodeLength(d) / 2 - 4)
+      .attr("x", d => config.nodeIsRect ? -nodeMarkerLength/2 - nodePadding/2 -extraPadding/2  :-nodeLength(d) / 2 - 4)
 
       // .attr("y", -checkboxSize / 2 - 5)
       .on("click", selectNode);
@@ -848,7 +846,7 @@ function updateVis() {
     });
 
     bars.attr("transform", (d, i) => {
-      return "translate(" + barXScale(i) + ",0)";
+      return "translate(" + barXScale(i) + ",2)";
     });
 
     bars
@@ -886,8 +884,8 @@ function updateVis() {
 
     let yRange =
       catAttrs.length < 2
-        ? [0, 0]
-        : [-nodeMarkerHeight * 0.2, nodeMarkerHeight * 0.2];
+        ? [1,1]
+        : [-nodeMarkerHeight * 0.2+1, nodeMarkerHeight * 0.2+1];
 
     let catYScale = d3
       .scaleLinear()
@@ -1714,12 +1712,11 @@ function drawLegend() {
 
   sizeCircles
     .select(".sizeCircle")
-    .attr("height", (d, i) =>
-      d.type === "edgeType"
-        ? edgeScale(1)
-        : d.type === "edgeWidth"
-        ? edgeScale(i)
-        : circleScale(i)
+    .attr("height", (d, i) =>d.type === "edgeType"
+      ? edgeScale(1)
+      : d.type === "edgeWidth"
+      ? edgeScale(i)
+      : circleScale(i)     
     )
     .attr("width", (d, i) => (d.type === "node" ? circleScale(i) : 30))
     .attr("y", (d, i) =>

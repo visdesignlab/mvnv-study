@@ -26,7 +26,6 @@ body {
 
 .selectBox.selected{
     fill:rgb(255, 111, 0);
-    stroke:rgb(255, 111, 0);;
 }
 
 #hardLabel{
