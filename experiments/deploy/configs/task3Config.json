@@ -1,11 +1,11 @@
 {
     "graphFiles": {
-        "small_directed_multiEdge": "../data/network_small_directed_multiEdge.json",
-        "large_directed_multiEdge": "../data/network_large_directed_multiEdge.json",
-        "small_undirected_multiEdge": "../data/network_small_undirected_multiEdge.json",
-        "large_undirected_multiEdge": "../data/network_large_undirected_multiEdge.json",
-        "small_undirected_singleEdge": "../data/network_small_undirected_singleEdge.json",
-        "large_undirected_singleEdge": "../data/network_large_undirected_singleEdge.json"
+        "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
+        "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
+        "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
+        "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
+        "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
+        "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
     },
     "attributeScales": {
         "node": {
@@ -160,7 +160,7 @@
     "adjMatrix": {
         "neighborHighlightColor": ""
     },
-    "taskID": "task1",
+    "taskID": "task3",
     "loadedGraph": "large_undirected_multiEdge",
     "isDirected": false,
     "isMultiEdge": true,
@@ -168,6 +168,7 @@
     "nodeAttributes": [
         "followers_count",
         "continent",
+        "type",
         "favourites_count",
         "statuses_count"
     ],
