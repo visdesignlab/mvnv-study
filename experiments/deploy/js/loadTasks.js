@@ -12,11 +12,43 @@ let studyTracking = {
   numConditions: null
 };
 
+let provenance; 
+//  SET LISTENER FOR CTRL OR COMMAND Z AND CALL PROVENANCE.GOBACKONESTEP();
+  function KeyPress(e) {
+    var evtobj = window.event ? event : e;
+    if (
+      (evtobj.keyCode == 90 && evtobj.ctrlKey) ||
+      (evtobj.keyCode == 90 && evtobj.metaKey)
+    ) {
+      if(provenance){
+        provenance.goBackOneStep();
+      }else {
+        window.controller.model.provenance.goBackOneStep();
+      }
+    }
+  }
+
+  document.onkeydown = KeyPress;
+
+
+
 //common data validation and submission code
+function screenTest(width, height) {
+  let widthTest = window.screen.availWidth >= width;
+  let heightTest = window.screen.availHeight >= height;
 
+  //remove orientation from window.screen object
+  let screenSpecs = {
+    availWidth: screen.availWidth,
+    availHeight: screen.availHeight,
+    width: screen.width,
+    height: screen.height,
+    colorDepth: screen.colorDepth,
+    pixelDepth: screen.pixelDepth
+  };
 
-//  SET LISTENER FOR CTRL OR COMMAND Z AND CALL PROVENANCE.DOBACKONESTEP();
-//set callback for free form answer input box
+  return widthTest && heightTest ? screenSpecs : false;
+}
 
 d3.select("#answerBox").on("input", function() {
   updateAnswer(d3.select(this).property("value"));
@@ -29,27 +61,28 @@ function updateAnswer(answer) {
   let taskObj = taskList[currentTask];
   let answerType = typeof answer;
 
-  if (answerType === 'string'){
+  if (answerType === "string") {
     taskObj.answer.value = answer;
   } else {
-    taskObj.answer.nodes = answer.map(a => {return {"id":a.id, "name":a.shortName}});
+    taskObj.answer.nodes = answer.map(a => {
+      return { id: a.id, name: a.shortName };
+    });
 
     let selectedList = d3
-    .select("#selectedNodeList")
-    .selectAll("li")
-    .data(answer);
+      .select("#selectedNodeList")
+      .selectAll("li")
+      .data(answer);
 
-      let selectedListEnter = selectedList.enter().append("li");
+    let selectedListEnter = selectedList.enter().append("li");
 
-      selectedList.exit().remove();
+    selectedList.exit().remove();
 
-      selectedList = selectedListEnter.merge(selectedList);
-      selectedList.text(d => d.shortName);
-
+    selectedList = selectedListEnter.merge(selectedList);
+    selectedList.text(d => d.shortName);
   }
 
   //validate the entire answer object, but error check for only the field that is being updated
-  validateAnswer(taskObj.answer,answerType == 'string' ? 'value' : 'nodes');
+  validateAnswer(taskObj.answer, answerType == "string" ? "value" : "nodes");
 }
 
 // Set submit button callback.
@@ -64,22 +97,22 @@ d3.select("#submitButton").on("click", async function() {
 
   //TO DO validate answers that were not enforced with validateAnswer (such as a minimum number of selected nodes);
   let task = taskList[currentTask];
-  let flexibleAnswer = task.replyType.includes ('multipleNodeSelection') && task.replyCount.type === 'at least';
+  let flexibleAnswer =
+    task.replyType.includes("multipleNodeSelection") &&
+    task.replyCount.type === "at least";
 
   //force validate answer;
 
-  if (flexibleAnswer){
-    let isValid = validateAnswer(task.answer,'nodes',true);
-    if (task.replyType.includes('value')){
-      let validateValue = validateAnswer(task.answer,'value',true);
+  if (flexibleAnswer) {
+    let isValid = validateAnswer(task.answer, "nodes", true);
+    if (task.replyType.includes("value")) {
+      let validateValue = validateAnswer(task.answer, "value", true);
       isValid = isValid && validateValue;
     }
-    if (!isValid){
+    if (!isValid) {
       return;
     }
   }
-
-
 
   if (vis === "nodeLink") {
     //   updateState('Finished Task');
@@ -203,14 +236,15 @@ d3.select("#nextTask").on("click", async () => {
   }
 });
 
-
 function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
   //Only start off with the submit button enabled for when the task only requires an unspecified node count;
 
-  let flexibleAnswer = task.replyType.includes ('multipleNodeSelection') && task.replyCount.type === 'at least';
+  let flexibleAnswer =
+    task.replyType.includes("multipleNodeSelection") &&
+    task.replyCount.type === "at least";
 
   // clear any values in the feedback or search box;
   d3.select(".modalFeedback")
@@ -221,32 +255,34 @@ function resetPanel() {
 
   d3.select("#answerBox").property("value", "");
 
-  d3.selectAll(".submit").attr("disabled", flexibleAnswer ? null : true );
+  d3.selectAll(".submit").attr("disabled", flexibleAnswer ? null : true);
 
   // //Clear Selected Node List
   d3.select("#selectedNodeList")
     .selectAll("li")
     .remove();
 
-
   //clear any selected Radio buttons in the feedback box;
   d3.select(".modalFeedback")
     .selectAll("input")
     .property("checked", false);
 
-    //check for different reply types
+  //check for different reply types
 
-    if (task.replyType.includes("value")){
-      d3.select('#valueAnswer').style('display','inline');
-    }else{
-      d3.select('#valueAnswer').style('display','none');
-    }
+  if (task.replyType.includes("value")) {
+    d3.select("#valueAnswer").style("display", "inline");
+  } else {
+    d3.select("#valueAnswer").style("display", "none");
+  }
 
-    if (task.replyType.includes("singleNodeSelection") || task.replyType.includes("multipleNodeSelection") ){
-      d3.select('#nodeAnswer').style('display','block');
-    }else{
-      d3.select('#nodeAnswer').style('display','none');
-    }
+  if (
+    task.replyType.includes("singleNodeSelection") ||
+    task.replyType.includes("multipleNodeSelection")
+  ) {
+    d3.select("#nodeAnswer").style("display", "block");
+  } else {
+    d3.select("#nodeAnswer").style("display", "none");
+  }
 
   d3.select("#taskArea")
     .select(".card-header-title")
@@ -260,7 +296,7 @@ function resetPanel() {
 }
 
 async function pushProvenance(provGraph) {
- //stop pushing to provenance for now;
+  //stop pushing to provenance for now;
   return;
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
@@ -281,40 +317,33 @@ async function pushProvenance(provGraph) {
       "Provenance Graph for this user is too large! Considering storing each state in its own document"
     );
   } else {
-      let docRef =  db.collection(workerID)
-      .doc(taskList[currentTask].taskID);
-      if (doc){
-        docRef.update({
-            provGraphs: firebase.firestore.FieldValue.arrayUnion(
-              provGraph
-            )
-          });
-      } else {
-        docRef.set({
-            provGraphs: firebase.firestore.FieldValue.arrayUnion(
-              provGraph
-            )
-          });
-      }
+    let docRef = db.collection(workerID).doc(taskList[currentTask].taskID);
+    if (doc) {
+      docRef.update({
+        provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
+      });
+    } else {
+      docRef.set({
+        provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
+      });
+    }
   }
 }
 //Function to ensure that the workerID is a valid database document ID;
-function sanitizeWorkerID(workerID){
-
-    // Must be valid UTF-8 characters
-    // Must be no longer than 1,500 bytes
-    // Cannot contain a forward slash (/)
-    // Cannot solely consist of a single period (.) or double periods (..)
-    // Cannot match the regular expression __.*__
-    return workerID
+function sanitizeWorkerID(workerID) {
+  // Must be valid UTF-8 characters
+  // Must be no longer than 1,500 bytes
+  // Cannot contain a forward slash (/)
+  // Cannot solely consist of a single period (.) or double periods (..)
+  // Cannot match the regular expression __.*__
+  return workerID;
 }
 
 //validates answer
 //validates the entire answer object before assigning the submit button enable/disabled;
 //error checks the field specified to show any error msgs.
 //force argument is true when this is run from the submit button. Forces error message to show up that wouldn't otherwise.
-function validateAnswer(answer,errorCheckField,force=false) {
-
+function validateAnswer(answer, errorCheckField, force = false) {
   let task = taskList[currentTask];
   let replyTypes = task.replyType;
 
@@ -324,13 +353,14 @@ function validateAnswer(answer,errorCheckField,force=false) {
   let isValid = true;
   let errorMsg;
 
-  let isFlexibleAnswer = replyTypes.includes("multipleNodeSelection") && task.replyCount.type == "at least"
+  let isFlexibleAnswer =
+    replyTypes.includes("multipleNodeSelection") &&
+    task.replyCount.type == "at least";
 
-
-  if (replyTypes.includes("singleNodeSelection")){
+  if (replyTypes.includes("singleNodeSelection")) {
     isValid = isValid && numSelectedNodes === 1;
 
-    if(errorCheckField === 'nodes'){
+    if (errorCheckField === "nodes") {
       if (numSelectedNodes > 1) {
         errorMsg =
           "Too many nodes selected, please select a single node as your answer.";
@@ -340,12 +370,12 @@ function validateAnswer(answer,errorCheckField,force=false) {
         errorMsg = "No nodes selected.";
       }
     }
-  } else if (replyTypes.includes("multipleNodeSelection")){
+  } else if (replyTypes.includes("multipleNodeSelection")) {
     //only naturally perform 'isValid' check for counts that are exactly
     if (task.replyCount.type === "exactly") {
       isValid = isValid && numSelectedNodes == task.replyCount.value;
 
-      if (errorCheckField === 'nodes'){
+      if (errorCheckField === "nodes") {
         if (numSelectedNodes < task.replyCount.value) {
           errorMsg =
             "Keep going! This question requires " +
@@ -365,44 +395,50 @@ function validateAnswer(answer,errorCheckField,force=false) {
         }
       }
     }
-}
+  }
 
-if (replyTypes.includes("value")){
-  isValid = isValid &&  d3.select("#answerBox").property("value").length > 0;
+  if (replyTypes.includes("value")) {
+    isValid = isValid && d3.select("#answerBox").property("value").length > 0;
 
-  if (errorCheckField === 'value'){
-    if (d3.select("#answerBox").property("value").length < 1){
-      errorMsg = "Please enter a value in the answer box.";
-      console.log('should be here')
+    if (errorCheckField === "value") {
+      if (d3.select("#answerBox").property("value").length < 1) {
+        errorMsg = "Please enter a value in the answer box.";
+        console.log("should be here");
+      }
     }
   }
-}
 
-//when running Validate answer with 'force' = true, then this is happening on submit;
-if (force && errorCheckField==='nodes' && task.replyCount.type === "at least"){
-  console.log('forcing!')
-  isValid = isValid && numSelectedNodes >= task.replyCount.value;
-  if (numSelectedNodes <1 ) {
-    errorMsg =  "No nodes selected!";
-  } else if (numSelectedNodes < task.replyCount.value) {
-      errorMsg =
-        "Please select at least  " +
-        task.replyCount.value +
-        " nodes.";
+  //when running Validate answer with 'force' = true, then this is happening on submit;
+  if (
+    force &&
+    errorCheckField === "nodes" &&
+    task.replyCount.type === "at least"
+  ) {
+    console.log("forcing!");
+    isValid = isValid && numSelectedNodes >= task.replyCount.value;
+    if (numSelectedNodes < 1) {
+      errorMsg = "No nodes selected!";
+    } else if (numSelectedNodes < task.replyCount.value) {
+      errorMsg = "Please select at least  " + task.replyCount.value + " nodes.";
     }
-}
+  }
 
-console.log('answer is valid ', isValid)
-console.log('errorMsg is ', errorMsg)
-  d3.select('#submitButton').attr("disabled", isValid || isFlexibleAnswer ? null : true);
+  console.log("answer is valid ", isValid);
+  console.log("errorMsg is ", errorMsg);
+  d3.select("#submitButton").attr(
+    "disabled",
+    isValid || isFlexibleAnswer ? null : true
+  );
   //toggle visibility of error message;
 
-
-  let errorMsgSelector = errorCheckField === 'value' ? d3.select('#valueAnswer').select('.errorMsg') : d3.select('#nodeAnswer').select('.errorMsg')
+  let errorMsgSelector =
+    errorCheckField === "value"
+      ? d3.select("#valueAnswer").select(".errorMsg")
+      : d3.select("#nodeAnswer").select(".errorMsg");
 
   errorMsgSelector
-  .style("display", !isValid ? "inline" : "none")
-  .text(errorMsg);
+    .style("display", !isValid ? "inline" : "none")
+    .text(errorMsg);
 
   return isValid;
 }
@@ -420,6 +456,7 @@ function makeid(length) {
 }
 
 async function loadTasks(visType) {
+
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -443,20 +480,19 @@ async function loadTasks(visType) {
     console.log("Error getting document:", error);
   });
 
-  let group = visType ? (visType === 'nodeLink' ? 0 : 1 ) : assignedGroup.data().currentGroup;
-
+  let group = visType ? visType === "nodeLink" ? 0 : 1 : assignedGroup.data().currentGroup;
 
   studyTracking.group = group;
 
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-   //(force the task list if this is a heuristics run)
-  if (visType){
-    selectedCondition.taskList = 'taskLists/heuristics.json'
+  //(force the task list if this is a heuristics run)
+  if (visType) {
+    selectedCondition.taskList = "taskLists/heuristics.json";
   }
 
-  vis = selectedVis// = 'adjMatrix'//='nodeLink' //
+  vis = selectedVis; // = 'adjMatrix'//='nodeLink' //
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
@@ -485,7 +521,10 @@ async function loadTasks(visType) {
 
   //load script tags for the appropriate vis technique;
   let scriptTags = {
-    nodeLink: ["js/nodeLink/main_nodeLink.js", "js/nodeLink/helperFunctions.js"], //,"js/createTaskConfig.js"],
+    nodeLink: [
+      "js/nodeLink/main_nodeLink.js",
+      "js/nodeLink/helperFunctions.js"
+    ], //,"js/createTaskConfig.js"],
     adjMatrix: [
       "js/adjMatrix/libs/reorder/science.v1.js",
       "js/adjMatrix/libs/reorder/tiny-queue.js",
@@ -497,8 +536,11 @@ async function loadTasks(visType) {
     ]
   };
   let cssTags = {
-    nodeLink: ["css/nodeLink/node-link.css","css/nodeLink/bulma-checkradio.min.css"],
-    adjMatrix: ["css/adjMatrix/adj-matrix.css",]
+    nodeLink: [
+      "css/nodeLink/node-link.css",
+      "css/nodeLink/bulma-checkradio.min.css"
+    ],
+    adjMatrix: ["css/adjMatrix/adj-matrix.css"]
   };
 
   // //   dynamically load only js/css relevant to the vis approach being used;
@@ -554,7 +596,6 @@ function loadScript(url, callback) {
 
 //Once a user has signed the consent form. Update the 'currentGroup' and push the taskList to their name;
 async function assignTasks() {
-
   //create a pared down copy of this taskList to store in firebase (no need to store configs);
   let configLessTaskList = JSON.parse(
     JSON.stringify(studyTracking.taskListObj)

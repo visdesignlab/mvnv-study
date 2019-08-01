@@ -20,6 +20,10 @@
                 <input class="input" type="text" placeholder="Enter Worker Id" id="workerId" name="workerId" size="30" />
                 <a class="button" id="checkId" >Check ID</a>
                 <br>
+
+                <span id="screenErrorMsg">
+                    It seems your are on a screen that is smaller than the minimum required 15'' laptop size. Please attempt to take this hit again on a larger screen. 
+                </span>
     
                 <span id="invalidMessage">
                     Our records show that you have taken part in this study before, so we cannot allow you to take this HIT again at this time. Please contact us if you feel this is in error.
@@ -45,7 +49,7 @@
 
 
 <style>
-    #invalidMessage {
+    #invalidMessage, #screenErrorMsg {
         display: none;
         color: red;
     }
@@ -77,10 +81,20 @@
             d3.select('#consentYes').on('click',function(){
                 //if the user consents to particpate in the study, create a random completion code, add him to the list of particpants, and set the global
                 // memberID variable
-                
+
+                let screenSize = screenTest(1920,1080);
+                //check screen size before allowing the user to proceed; 
+                if (!screenSize){
+                    d3.select('#consentYes').attr('disabled', true);
+                    d3.select('#screenErrorMsg').style('display', 'inline');  
+                    return;              
+                }
+
+            
                 //set global variable to be the santizied version of the input workerID; 
                 workerID = sanitizeWorkerID(data.workerId);
-            db.collection('participants').doc(workerID).set({
+                db.collection('participants').doc(workerID).set({
+                    screenSize,
                     startTime: Date.now(),
                     completionCode:makeid(6)
                 }); 

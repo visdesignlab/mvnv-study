@@ -24,7 +24,7 @@ var defaultDomains = { node: {}, edge: {} };
 var scales = {};
 
 //global app and provenance objects;
-let app, provenance;
+let app
 
 //Legend Scales
 var circleScale = d3.scaleLinear().domain([0, 1]);

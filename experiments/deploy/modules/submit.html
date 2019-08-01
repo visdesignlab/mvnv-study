@@ -38,19 +38,6 @@
         </div>
       </div>
       <br>
-      <div id="screen_size"><strong>Your screen size is closest to:</strong> <strong style="color: red">*</strong>
-        <div id="screen_sizes">
-          <input type="radio" id="m4" name="screen_size" value="9 or smaller"> 9" or smaller
-          <input type="radio" id="m4" name="screen_size" value=11> 11"
-          <input type="radio" id="m4" name="screen_size" value=13> 13"
-          <input type="radio" id="m4" name="screen_size" value=15> 15"
-          <input type="radio" id="m4" name="screen_size" value=17> 17"
-          <input type="radio" id="m4" name="screen_size" value=19> 19"
-          <input type="radio" id="m4" name="screen_size" value=21> 21"
-          <input type="radio" id="m5" name="screen_size" value="23 or larger"> 23" or larger
-          <input type="radio" id="m5" name="screen_size" value="unsure"> I'm not sure
-        </div>
-      </div>
       <br>
       <div id="visualizations"><strong>How familiar are you with data visualizations (1 not familiar at all, 7 very
           familiar)?</strong> <strong style="color: red">*</strong>
@@ -186,7 +173,7 @@
 
         let demographics = {};
         let feedback = {};
-        let mandatoryQuestions = ['age','sex', 'degree', 'screen_size','vis_experience', 'training']
+        let mandatoryQuestions = ['age','sex', 'degree','vis_experience', 'training']
 
        //check to make sure there are values for all radioButtons. 
         let isValid = true;
