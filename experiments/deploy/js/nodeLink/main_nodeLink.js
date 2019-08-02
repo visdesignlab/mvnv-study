@@ -679,7 +679,9 @@ function updateVis() {
 
     node = nodeEnter.merge(node);
 
-    node.classed("muted", false);
+    node.classed("muted", false)
+    .classed("selected", false)
+
 
     //determine the size of the node here: 
     let barAttrs = config.nodeLink.drawBars
@@ -727,15 +729,13 @@ function updateVis() {
         config.nodeLink.drawBars ? -nodeMarkerHeight/2 -2  : ".5em"
       )
       .attr('dy', config.nodeLink.drawBars ? 0 : -2)
-      // .attr("dx", function(d) {
-      //   return (
-      //     -d3
-      //       .select(this)
-      //       .node()
-      //       .getBBox().width / 2
-      //   );
-      // })
-      .attr("x", d => config.nodeIsRect ? -nodeMarkerLength/ 2 -barPadding/2 -extraPadding/2 + checkboxSize+ 3  :-nodeLength(d) / 2 + checkboxSize)
+      .attr("dx", function(d) {
+
+        let textWidth = -d3.select(this).node().getBBox().width / 2
+
+        return config.nodeIsRect ? -nodeMarkerLength/ 2 -barPadding/2 -extraPadding/2 + checkboxSize+ 3 : textWidth + 8   
+      })
+      // .attr("x", d => config.nodeIsRect ? -nodeMarkerLength/ 2 -barPadding/2 -extraPadding/2 + checkboxSize+ 3  :-nodeLength(d) / 2 + checkboxSize)
 
       // .attr('x',-nodeMarkerLength / 2 + 3 )
       .on("click", selectNode);
@@ -784,14 +784,17 @@ function updateVis() {
         "height",
         taskList[currentTask].replyType !== "value" ? checkboxSize : 0
       )
-      // .attr("x", function(d) {
-      //   let nodeLabel = d3
-      //     .select(d3.select(this).node().parentNode)
-      //     .select("text");
+      .attr("x", function(d) {
+        let nodeLabel = d3
+          .select(d3.select(this).node().parentNode)
+          .select("text");
 
-      //   let textWidth = nodeLabel.node().getBBox().width;
-      //   return -textWidth / 2 - checkboxSize - 5;
-      // })
+        let textWidth = nodeLabel.node().getBBox().width;
+        // return -textWidth / 2 - checkboxSize - 5;
+
+        return config.nodeIsRect ? -nodeMarkerLength/2 - nodePadding/2 -extraPadding/2  :-textWidth / 2 - checkboxSize/2;
+
+      })
       // .attr("y", d =>
       //   config.nodeLink.drawBars
       //     ? -(nodeHeight(d) / 2 + 4 + checkboxSize)
@@ -803,7 +806,16 @@ function updateVis() {
           : -checkboxSize / 2
       )
       // .attr("x", -nodeMarkerLength/2 -checkboxSize)
-      .attr("x", d => config.nodeIsRect ? -nodeMarkerLength/2 - nodePadding/2 -extraPadding/2  :-nodeLength(d) / 2 - 4)
+      // .attr("x", d => {
+      //   // let nodeLabel = d3
+      //   //     .select(d3.select(this).node().parentNode)
+      //   //     .select("text");
+  
+      //   //   let textWidth = nodeLabel.node().getBBox().width;
+      //   //   return -textWidth / 2 - checkboxSize/2;
+        
+      //   return config.nodeIsRect ? -nodeMarkerLength/2 - nodePadding/2 -extraPadding/2  :-nodeLength(d) / 2 - 4;
+      // })
 
       // .attr("y", -checkboxSize / 2 - 5)
       .on("click", selectNode);
