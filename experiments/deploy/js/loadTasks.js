@@ -39,12 +39,12 @@ function screenTest(width, height) {
 
   //remove orientation from window.screen object
   let screenSpecs = {
-    availWidth: screen.availWidth,
-    availHeight: screen.availHeight,
-    width: screen.width,
-    height: screen.height,
-    colorDepth: screen.colorDepth,
-    pixelDepth: screen.pixelDepth
+    availWidth: window.screen.availWidth,
+    availHeight: window.screen.availHeight,
+    width: window.screen.width,
+    height: window.screen.height,
+    colorDepth: window.screen.colorDepth,
+    pixelDepth: window.screen.pixelDepth
   };
 
   return widthTest && heightTest ? screenSpecs : false;
@@ -296,8 +296,6 @@ function resetPanel() {
 }
 
 async function pushProvenance(provGraph) {
-  //stop pushing to provenance for now;
-  return;
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
     .collection(workerID)

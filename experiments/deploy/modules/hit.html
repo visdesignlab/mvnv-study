@@ -4,6 +4,26 @@
 <script>
   (async function () {
 
+    //set up an anonymous user on firestore to track answers and usage;
+    if (heuristics) {
+
+      let screenSize = {
+        availWidth: window.screen.availWidth,
+        availHeight: window.screen.availHeight,
+        width: window.screen.width,
+        height: window.screen.height,
+        colorDepth: window.screen.colorDepth,
+        pixelDepth: window.screen.pixelDepth
+      };
+
+      workerID = makeid(6);
+      db.collection('participants').doc(workerID).set({
+        screenSize,
+        startTime: JSON.stringify(Date.now())
+      });
+
+    }
+
     function getUrlVars() {
       var vars = {};
       var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -29,7 +49,7 @@
     }
 
     resetPanel();
-    experimentr.startTimer('exploration');
+    // experimentr.startTimer('exploration');
 
   })()
 </script>
