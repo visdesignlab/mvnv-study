@@ -47,10 +47,8 @@ var Model = /** @class */ (function () {
     function Model(controller) {
         var _this = this;
         this.controller = controller;
-        
-        // d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then(function (data) {
-            d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then(function (data) {
-
+        d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then(function (data) {
+            // d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
             //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
             //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
@@ -431,7 +429,7 @@ var View = /** @class */ (function () {
     View.prototype.renderView = function () {
         d3.select('.loading').style('display', 'block').style('opacity', 1);
         this.viewWidth = 1000;
-        this.margins = { left: 95, top: 95, right: 0, bottom: 10 };
+        this.margins = { left: 75, top: 75, right: 0, bottom: 10 };
         this.initalizeEdges();
         this.initalizeAttributes();
         d3.select('.loading').style('display', 'none');
