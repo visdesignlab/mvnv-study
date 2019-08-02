@@ -1044,20 +1044,26 @@ class View {
         let rowID = d[0].rowid;
 
         that.removeHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
+        that.removeHighlightNodesToDict(this.controller.hoverCol, rowID, rowID);  // Add row (rowid)
 
         //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Row');
 
       })
       .on('mouseover', (d, i, nodes) => {
         let rowID = d[0].rowid;
 
         that.addHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
+        that.addHighlightNodesToDict(this.controller.hoverCol, rowID, rowID);  // Add row (rowid)
+
         this.mouseoverEvents.push({time:new Date().getTime(),event:'rowLabel'+rowID})
 
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+
       })
       .on('click', this.clickFunction)
 
@@ -1091,10 +1097,13 @@ class View {
         let colID = d[0].rowid; // as rows and columns are flipped
 
         that.removeHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
+        that.removeHighlightNodesToDict(this.controller.hoverRow, colID, colID);  // Add row (rowid)
 
         //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
@@ -1102,11 +1111,13 @@ class View {
         let colID = d[0].rowid;
 
         that.addHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
+        that.addHighlightNodesToDict(this.controller.hoverRow, colID, colID);  // Add row (rowid)
+
         this.mouseoverEvents.push({time:new Date().getTime(),event:'colLabel'+colID})
         //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
-        //that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
       });
 
       //make rowlabel and collabel
@@ -1872,15 +1883,20 @@ class View {
       .attr("fill-opacity", 0)
       .on('mouseover', (d: any) => {
         that.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+        that.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
 
         this.mouseoverEvents.push({time:new Date().getTime(),event:'attrRow'+d[this.datumID]})
 
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+
       })
       .on('mouseout', (d)=> {
 
         that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+        that.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+
         d3.selectAll('.hovered').classed('hovered', false);
 
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
