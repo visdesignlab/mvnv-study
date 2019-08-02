@@ -163,18 +163,19 @@ class Model {
 
     let elementNamesFromSelection = {
       cellcol: rowElements.concat(columnElements),
-      colLabel: columnElements,
-      rowLabel: rowElements,
+      colLabel: rowElements.concat(columnElements),
+      rowLabel: rowElements.concat(columnElements),
       attrRow: rowElements,
       cellrow: rowElements.concat(columnElements),
       neighborSelect: rowElements,
-      answerBox: rowElements,
+      answerBox: rowElements.concat(columnElements),
       search: rowElements.concat(columnElements)
     }
 
     function classAllHighlights(state) {
       let clickedElements = new Set();
       let answerElements = new Set();
+      let neighborElements = new Set();
 
 
       for (let selectionType in state.selections) {
@@ -184,6 +185,8 @@ class Model {
 
             if (selectionType == 'answerBox') {
               answerElements.add('#' + selectionElement + node)
+            } else if(selectionType == 'neighborSelect'){
+              neighborElements.add('#' + selectionElement + node)
             } else {
               if(selectionType =='attrRow' || selectionType =='rowLabel'){
                 // if both in attrRow and rowLabel, don't highlight element
@@ -198,11 +201,13 @@ class Model {
 
       let clickedSelectorQuery = Array.from(clickedElements).join(',')
       let answerSelectorQuery = Array.from(answerElements).join(',')
-
+      let neighborSelectQuery = Array.from(neighborElements).join(',')
+      console.log(neighborSelectQuery);
 
       clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
       answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
-
+      neighborSelectQuery != [] ? d3.selectAll(neighborSelectQuery).classed('neighbor', true) : null;
+      //console.log(d3.selectAll(neighborSelectQuery));
 
       return;
     }
@@ -211,6 +216,8 @@ class Model {
       let updateHighlights = (state) => {
         d3.selectAll('.clicked').classed('clicked', false);
         d3.selectAll('.answer').classed('answer', false);
+        d3.selectAll('.neighbor').classed('neighbor', false);
+
         classAllHighlights(state);
       };
 
@@ -457,6 +464,7 @@ class View {
       interaction = interaction.replace(' hovered', '');
       interaction = interaction.replace(' clicked', '');
       interaction = interaction.replace(' answer', '');
+      interaction = interaction.replace(' neighbor','');
       let action = this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
       this.controller.model.provenance.applyAction(action);
       console.log(JSON.stringify(this.controller.model.app.currentState()).length,this.controller.model.app.currentState())
@@ -1138,13 +1146,15 @@ class View {
 
           this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
           this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+          if(cellData.cellName != cellData.correspondingCell){
+            interactedElement = cellData.correspondingCell;// + cellData.rowid;
+            nodeID = cellData.rowid;
 
-          interactedElement = cellData.correspondingCell;// + cellData.rowid;
-          nodeID = cellData.rowid;
+            this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
+            this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+            return currentState;
+          }
 
-          this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
-          this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-          return currentState;
           //nodeID = cellData.rowid;
           //interactionName = interactionName + 'row'
         } else if (interactionName == 'neighborSelect'){

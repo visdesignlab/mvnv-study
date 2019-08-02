@@ -159,23 +159,27 @@ var Model = /** @class */ (function () {
         var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
         var elementNamesFromSelection = {
             cellcol: rowElements.concat(columnElements),
-            colLabel: columnElements,
-            rowLabel: rowElements,
+            colLabel: rowElements.concat(columnElements),
+            rowLabel: rowElements.concat(columnElements),
             attrRow: rowElements,
             cellrow: rowElements.concat(columnElements),
             neighborSelect: rowElements,
-            answerBox: rowElements,
+            answerBox: rowElements.concat(columnElements),
             search: rowElements.concat(columnElements)
         };
         function classAllHighlights(state) {
             var clickedElements = new Set();
             var answerElements = new Set();
+            var neighborElements = new Set();
             for (var selectionType in state.selections) {
                 for (var selectionElement in elementNamesFromSelection[selectionType]) {
                     selectionElement = elementNamesFromSelection[selectionType][selectionElement];
                     for (var node in state.selections[selectionType]) {
                         if (selectionType == 'answerBox') {
                             answerElements.add('#' + selectionElement + node);
+                        }
+                        else if (selectionType == 'neighborSelect') {
+                            neighborElements.add('#' + selectionElement + node);
                         }
                         else {
                             if (selectionType == 'attrRow' || selectionType == 'rowLabel') {
@@ -191,8 +195,12 @@ var Model = /** @class */ (function () {
             console.log(clickedElements);
             var clickedSelectorQuery = Array.from(clickedElements).join(',');
             var answerSelectorQuery = Array.from(answerElements).join(',');
+            var neighborSelectQuery = Array.from(neighborElements).join(',');
+            console.log(neighborSelectQuery);
             clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
             answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
+            neighborSelectQuery != [] ? d3.selectAll(neighborSelectQuery).classed('neighbor', true) : null;
+            //console.log(d3.selectAll(neighborSelectQuery));
             return;
         }
         function setUpObservers() {
@@ -200,6 +208,7 @@ var Model = /** @class */ (function () {
             var updateHighlights = function (state) {
                 d3.selectAll('.clicked').classed('clicked', false);
                 d3.selectAll('.answer').classed('answer', false);
+                d3.selectAll('.neighbor').classed('neighbor', false);
                 classAllHighlights(state);
             };
             var updateCellClicks = function (state) {
@@ -397,6 +406,7 @@ var View = /** @class */ (function () {
             interaction = interaction.replace(' hovered', '');
             interaction = interaction.replace(' clicked', '');
             interaction = interaction.replace(' answer', '');
+            interaction = interaction.replace(' neighbor', '');
             var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
             _this.controller.model.provenance.applyAction(action);
             console.log(JSON.stringify(_this.controller.model.app.currentState()).length, _this.controller.model.app.currentState());
@@ -982,11 +992,13 @@ var View = /** @class */ (function () {
                     interactedElement = cellData.cellName; // + cellData.rowid;
                     _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
                     _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-                    interactedElement = cellData.correspondingCell; // + cellData.rowid;
-                    nodeID = cellData.rowid;
-                    _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
-                    _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-                    return currentState;
+                    if (cellData.cellName != cellData.correspondingCell) {
+                        interactedElement = cellData.correspondingCell; // + cellData.rowid;
+                        nodeID = cellData.rowid;
+                        _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
+                        _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+                        return currentState;
+                    }
                     //nodeID = cellData.rowid;
                     //interactionName = interactionName + 'row'
                 }

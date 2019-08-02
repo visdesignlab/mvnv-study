@@ -30,6 +30,15 @@ input[type=text] {
   stroke:darkgray;
 }
 
+.neighbor rect{
+  fill:#CAFFC7;
+  fill-opacity:1;
+}
+
+.neighbor{
+  fill:#CAFFC7;
+  fill-opacity:1;
+}
 
 /*<input type="button" id ="clearButton" value="Clear Selections">*/
 .autocomplete-items {
