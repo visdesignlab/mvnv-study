@@ -21,7 +21,7 @@
 
 
 <!-- Helper scripts to generate graphs and complete task Configurations -->
-<script src="js/generateTwitterGraph.js" type="text/javascript"></script>
+<!-- <script src="js/generateTwitterGraph.js" type="text/javascript"></script> -->
 <script src="js/createTaskConfig.js" type="text/javascript"></script>
 
 
@@ -485,9 +485,6 @@
             //connect to firestore;
             fireStore.connect();
             experimentr.sequence([
-                // 'modules/consent.html',
-                // 'modules/training.html',
-                // 'modules/practice.html',
                 'modules/hit.html',
                 'modules/submit.html'
             ]).start();
