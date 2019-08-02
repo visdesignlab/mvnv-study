@@ -1452,23 +1452,23 @@ var View = /** @class */ (function () {
         this.verticalScale.domain(this.order);
         var transitionTime = 500;
         d3.selectAll(".row")
-            .transition()
-            .duration(transitionTime)
-            .delay(function (d, i) { return _this.verticalScale(i) * 4; })
+            //.transition()
+            //.duration(transitionTime)
+            //.delay((d, i) => { return this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(0," + _this.verticalScale(i) + ")"; })
             .selectAll(".cell").selectAll('rect')
-            .delay(function (d) { return _this.verticalScale(d.x) * 4; })
+            //.delay((d) => { return this.verticalScale(d.x) * 4; })
             .attr("x", function (d, i) { return _this.verticalScale(d.x); }); //
         this.attributeRows
-            .transition()
-            .duration(transitionTime)
-            .delay(function (d, i) { return _this.verticalScale(i) * 4; })
+            //.transition()
+            //.duration(transitionTime)
+            //.delay((d, i) => { return this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(0," + _this.verticalScale(i) + ")"; });
         // update each highlightRowsIndex
         //.attr('fill',(d,i)=>{console.log(this.order[i]);return this.order[i]%2 == 0 ? "#fff" : "#eee"})
-        var t = this.edges.transition().duration(transitionTime);
+        var t = this.edges; //.transition().duration(transitionTime);
         t.selectAll(".column")
-            .delay(function (d, i) { return _this.verticalScale(i) * 4; })
+            //.delay((d, i) => { return this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(" + _this.verticalScale(i) + ",0)rotate(-90)"; });
         /*d3.selectAll('.highlightRow') // taken care of as they're apart of row and column groupings already
           .transition()
@@ -1888,8 +1888,10 @@ var View = /** @class */ (function () {
             that.tooltip.transition().duration(250).style("opacity", 0);
         })
             .on('click', function (d) {
-            console.log(d);
-            _this.sort(d);
+            if (d !== 'selected') {
+                console.log(d);
+                _this.sort(d);
+            }
         });
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('font-weight', 650); //.attr('y', 35).attr('x', 10);

@@ -1665,18 +1665,18 @@ class View {
     this.verticalScale.domain(this.order);
     let transitionTime = 500;
     d3.selectAll(".row")
-      .transition()
-      .duration(transitionTime)
-      .delay((d, i) => { return this.verticalScale(i) * 4; })
+      //.transition()
+      //.duration(transitionTime)
+      //.delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(0," + this.verticalScale(i) + ")"; })
       .selectAll(".cell").selectAll('rect')
-      .delay((d) => { return this.verticalScale(d.x) * 4; })
+      //.delay((d) => { return this.verticalScale(d.x) * 4; })
       .attr("x", (d, i) => this.verticalScale(d.x));//
 
     this.attributeRows
-      .transition()
-      .duration(transitionTime)
-      .delay((d, i) => { return this.verticalScale(i) * 4; })
+      //.transition()
+      //.duration(transitionTime)
+      //.delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(0," + this.verticalScale(i) + ")"; })
 
     // update each highlightRowsIndex
@@ -1685,9 +1685,9 @@ class View {
 
     //.attr('fill',(d,i)=>{console.log(this.order[i]);return this.order[i]%2 == 0 ? "#fff" : "#eee"})
 
-    var t = this.edges.transition().duration(transitionTime);
+    var t = this.edges//.transition().duration(transitionTime);
     t.selectAll(".column")
-      .delay((d, i) => { return this.verticalScale(i) * 4; })
+      //.delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ",0)rotate(-90)"; });
 
     /*d3.selectAll('.highlightRow') // taken care of as they're apart of row and column groupings already
@@ -2189,8 +2189,11 @@ class View {
         that.tooltip.transition().duration(250).style("opacity", 0);
       })
       .on('click', (d)=>{
-        console.log(d);
-        this.sort(d);
+        if(d !== 'selected'){
+          console.log(d);
+          this.sort(d);
+        }
+
       })
 
     let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
