@@ -3,6 +3,10 @@
 (async ()=>{
 
     let taskListNames = ['large'];
+    let baseConfig = await d3.json("configs/baseConfig.json");
+
+    console.log(baseConfig.attributeScales);
+
 
     taskListNames.map(async taskListName=>{
         let taskList =  await d3.json("taskLists/" + taskListName + '_sansConfig.json');
@@ -10,7 +14,8 @@
         //iterate through each taskKey and add config object;
         let allConfigs = Object.keys(taskList).map(async (key)=>{
             let taskConfig = await d3.json("configs/"+ key + "Config.json");
-            taskList[key].config=taskConfig;
+            let mergedConfig = mergeConfigs(baseConfig,taskConfig)
+            taskList[key].config=mergedConfig;
         })
 
         //export taskList now with configs for each task. 

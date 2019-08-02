@@ -131,10 +131,22 @@
 
     .node {
         stroke-width: 1px;
+        stroke:rgb(200, 200, 200);
     }
 
     .node.clicked{
-        stroke-width: 6px;
+        stroke-width: 3px;
+        stroke:#F8CF91;
+    }
+
+    /* .node.selected{
+        stroke-width: 3px;
+        stroke: #ea9b0f;
+    } */
+
+    .selected .labelBackground.nested{
+        fill: #ea9b0f;
+        opacity:.6;
     }
 
     #finished, #next, #previous{

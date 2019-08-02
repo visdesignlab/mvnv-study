@@ -17,7 +17,7 @@
                 ]
             },
             "friends_count": {
-                "label":"Following",
+                "label":"Friends",
                 "domain": [
                     0,
                     1200

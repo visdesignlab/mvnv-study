@@ -31,7 +31,7 @@
                         ]
                     },
                     "friends_count": {
-                        "label": "Following",
+                        "label": "Friends",
                         "domain": [
                             0,
                             1200
@@ -198,7 +198,7 @@
             "value": ""
         },
         "feedback": "",
-        "prompt": "Select all of Rob Kosara's neighbors that are *people* and have more following than followers.",
+        "prompt": "Select all of Robert's neighbors that are *people* and have more friends than followers.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -225,7 +225,7 @@
                         ]
                     },
                     "friends_count": {
-                        "label": "Following",
+                        "label": "Friends",
                         "domain": [
                             0,
                             1200
@@ -394,7 +394,7 @@
             "value": ""
         },
         "feedback": "",
-        "prompt": "Select the *institution* from North America that has retweeted Jeff Heer and mentioned R.Kosara. ",
+        "prompt": "Select the *institution* from North America that has retweeted Jeffrey and mentioned Robert. ",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -418,7 +418,7 @@
                         ]
                     },
                     "friends_count": {
-                        "label": "Following",
+                        "label": "Friends",
                         "domain": [
                             0,
                             1200

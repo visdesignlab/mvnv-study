@@ -56,7 +56,7 @@ let nodeLength,
   nodeHeight,
   nodeFill,
   catFill,
-  nodeStroke,
+  // nodeStroke,
   edgeColor,
   edgeWidth;
 
@@ -145,11 +145,11 @@ function setGlobalScales() {
     return nodeFillScale(value);
   };
 
-  nodeStroke = function(selected) {
-    return selected
-      ? config.style.selectedNodeColor
-      : config.nodeLink.noNodeStroke;
-  };
+  // nodeStroke = function(selected) {
+  //   return selected
+  //     ? config.style.selectedNodeColor
+  //     : config.nodeLink.noNodeStroke;
+  // };
 
   edgeColor = function(edge) {
     let edgeStrokeScale = d3.scaleOrdinal();
@@ -359,7 +359,9 @@ function highlightSelectedNodes(state) {
 
   d3.select(".nodes")
     .selectAll(".node")
-    .classed("clicked", d => state.selected.includes(d.id));
+    .classed("clicked", d => state.selected.includes(d.id))
+    .classed("selected", d => state.hardSelected.includes(d.id));
+
 
   d3.select(".links")
     .selectAll(".linkGroup")
@@ -376,7 +378,7 @@ function highlightSelectedNodes(state) {
   d3.selectAll(".nodeGroup")
     .select(".node")
     .style("fill", nodeFill) //using local bound data, ok, since state should not influence the fill
-    .style("stroke", d => nodeStroke(state.selected.includes(d.id)));
+    // .style("stroke", d => nodeStroke(state.selected.includes(d.id)));
 }
 
 function selectNode(node) {
@@ -415,10 +417,32 @@ function selectNode(node) {
 }
 
 function highlightHardSelectedNodes(state) {
+
+  let hasUserSelection = state.selected.length > 0;
+
+
   console.log("triggered highlightHardSelectedNodes");
   d3.selectAll(".selectBox").classed("selected", d =>
     state.hardSelected.includes(d.id)
   );
+  d3.select(".nodes")
+  .selectAll(".nodeGroup")
+  .classed("selected", d => state.hardSelected.includes(d.id))
+  .classed("muted", d => {
+    return (
+      config.nodeLink.selectNeighbors &&
+      hasUserSelection &&
+      !state.hardSelected.includes(d.id) &&
+      !state.selected.includes(d.id) &&
+      !state.userSelectedNeighbors[d.id] //this id exists in the dict
+    );
+  });
+
+  d3.select(".nodes")
+  .selectAll(".node")
+  .classed("selected", d => state.hardSelected.includes(d.id));
+
+
 
   //update the list of selected nodes in the answer panel.
   updateAnswer(graph.nodes.filter(n => state.hardSelected.includes(n.id)));
@@ -685,12 +709,14 @@ function updateVis() {
         config.nodeIsRect ? nodeHeight(d) + 18 : nodeLength(d) + 8
       )
       .style("fill", nodeFill)
-      .style("stroke", d =>
-        nodeStroke(app.currentState().selected.includes(d.id))
-      )
+      // .style("stroke", d =>
+      //   nodeStroke(app.currentState().selected.includes(d.id))
+      // )
       .attr("rx", d => (config.nodeIsRect ? 0 : nodeLength(d))) //nodeLength(d)/20
       .attr("ry", d => (config.nodeIsRect ? 0 : nodeHeight(d)))
-      .classed("clicked", d => app.currentState().selected.includes(d.id));
+      .classed("clicked", d => app.currentState().selected.includes(d.id))
+      .classed("selected", d => app.currentState().hardSelected.includes(d.id));
+
 
     node
       .select("text")
