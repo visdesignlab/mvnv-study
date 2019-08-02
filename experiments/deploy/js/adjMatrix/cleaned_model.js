@@ -47,6 +47,7 @@ var Model = /** @class */ (function () {
     function Model(controller) {
         var _this = this;
         this.controller = controller;
+        this.datumID = controller.datumID;
         d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then(function (data) {
             // d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
             //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
@@ -104,7 +105,7 @@ var Model = /** @class */ (function () {
             }
             var name = _this.nodes.filter(function (node) { return node.shortName == nodeID; });
             console.log(name);
-            name = name[0].screen_name;
+            name = name[0][_this.datumID];
             var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
             _this.controller.model.provenance.applyAction(action);
             //pushProvenance(this.controller.model.app.currentState())
@@ -157,11 +158,11 @@ var Model = /** @class */ (function () {
         var columnElements = ['colLabel', 'topoCol'];
         var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
         var elementNamesFromSelection = {
-            cellcol: columnElements,
+            cellcol: rowElements.concat(columnElements),
             colLabel: columnElements,
             rowLabel: rowElements,
             attrRow: rowElements,
-            cellrow: rowElements,
+            cellrow: rowElements.concat(columnElements),
             neighborSelect: rowElements,
             answerBox: rowElements,
             search: rowElements.concat(columnElements)
@@ -204,13 +205,24 @@ var Model = /** @class */ (function () {
             var updateCellClicks = function (state) {
                 var cellNames = [];
                 Object.keys(state.selections.cellcol).map(function (key) {
-                    cellNames = cellNames.concat(state.selections.cellcol[key]);
+                    var names = state.selections.cellcol[key];
+                    names.map(function (name) {
+                        var cellsNames = splitCellNames(name);
+                        console.log(names);
+                        cellNames = cellNames.concat(cellsNames);
+                        console.log(cellNames);
+                    });
+                    //names.map(name=>{
+                    //})
                 });
+                console.log(cellNames);
                 var cellSelectorQuery = '#' + cellNames.join(',#');
                 // if no cells selected, return
+                console.log(cellSelectorQuery);
                 d3.selectAll('.clickedCell').classed('clickedCell', false);
                 if (cellSelectorQuery == '#')
                     return;
+                console.log(d3.selectAll(cellSelectorQuery));
                 d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true);
             };
             var updateAnswerBox = function (state) {
@@ -303,10 +315,11 @@ var Model = /** @class */ (function () {
             rowNode.statuses_count = +rowNode.statuses_count;
             rowNode.favourites_count = +rowNode.favourites_count;
             rowNode.count_followers_in_query = +rowNode.count_followers_in_query;
-            rowNode.id = +rowNode.id;
+            //rowNode.id = +rowNode.id;
             rowNode.y = i;
+            console.log(rowNode[_this.datumID]);
             /* matrix used for edge attributes, otherwise should we hide */
-            _this.matrix[i] = _this.nodes.map(function (colNode) { return { rowid: rowNode.screen_name, colid: colNode.screen_name, x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
+            _this.matrix[i] = _this.nodes.map(function (colNode) { return { cellName: 'cell' + rowNode[_this.datumID] + '_' + colNode[_this.datumID], correspondingCell: 'cell' + colNode[_this.datumID] + '_' + rowNode[_this.datumID], rowid: rowNode[_this.datumID], colid: colNode[_this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
             _this.scalarMatrix[i] = _this.nodes.map(function (colNode) { return 0; });
         });
         function checkEdge(edge) {
@@ -374,12 +387,13 @@ var View = /** @class */ (function () {
         var _this = this;
         this.controller = controller;
         this.controller.clickedCells = new Set();
-        this.datumID = 'screen_name';
+        this.datumID = controller.datumID;
         this.clickFunction = function (d, i, nodes) {
             var nodeID = _this.controller.view.determineID(d);
             // remove hover or clicked from the class name of the objects that are interacted
             // this is necessary as the click events are attached to the hovered rect in attrRow
             var interaction = d3.select(nodes[i]).attr('class');
+            interaction = interaction.replace(' hoveredCell', '');
             interaction = interaction.replace(' hovered', '');
             interaction = interaction.replace(' clicked', '');
             interaction = interaction.replace(' answer', '');
@@ -627,7 +641,7 @@ var View = /** @class */ (function () {
             .data(function (d) { return d; /*.filter(item => item.z > 0)*/ })
             .enter().append('g')
             .attr("class", "cell")
-            .attr('id', function (d) { return d.colid + d.rowid; });
+            .attr('id', function (d) { return d.cellName; });
         if (this.controller.configuration.adjMatrixValues.edgeBars) {
             // bind squares to cells for the mouse over effect
             cells
@@ -681,10 +695,18 @@ var View = /** @class */ (function () {
         var that = this;
         cells
             .on("mouseover", function (cell) {
-            var cellID = cell.rowid + cell.colid;
+            var cellIDs = [cell.cellName, cell.correspondingCell];
+            console.log(cellIDs);
+            _this.selectedCells = cellIDs;
+            _this.selectedCells.map(function (cellID) {
+                console.log(d3.selectAll('#' + cellID));
+                d3.selectAll('#' + cellID).classed('hoveredCell', true);
+            });
+            var cellID = cellIDs[0];
             that.addHighlightNodesToDict(_this.controller.hoverRow, cell.rowid, cellID); // Add row (rowid)
             if (cell.colid !== cell.rowid) {
                 that.addHighlightNodesToDict(_this.controller.hoverRow, cell.colid, cellID); // Add row (colid)
+                that.addHighlightNodesToDict(_this.controller.hoverCol, cell.rowid, cellID); // Add col (rowid)
             }
             // add mouseover events
             _this.mouseoverEvents.push({ time: new Date().getTime(), event: cellID });
@@ -695,10 +717,13 @@ var View = /** @class */ (function () {
         })
             .on("mouseout", function (cell) {
             var func = _this.removeHighlightNodesToDict;
-            var cellID = cell.rowid + cell.colid;
+            d3.selectAll('.hoveredCell').classed('hoveredCell', false);
+            _this.selectedCells = [];
+            var cellID = cell.cellName;
             that.removeHighlightNodesToDict(_this.controller.hoverRow, cell.rowid, cellID); // Add row (rowid)
             if (cell.colid !== cell.rowid) {
                 that.removeHighlightNodesToDict(_this.controller.hoverRow, cell.colid, cellID);
+                that.removeHighlightNodesToDict(_this.controller.hoverCol, cell.rowid, cellID); // Add col (rowid)
             }
             // Add row (colid)
             that.removeHighlightNodesToDict(_this.controller.hoverCol, cell.colid, cellID); // Add col (colid)
@@ -949,14 +974,21 @@ var View = /** @class */ (function () {
                 currentState.event = interactionType;
                 var interactionName = interactionType; //cell, search, etc
                 var interactedElement = interactionType;
+                console.log(interactionName, interactionType);
                 if (interactionName == 'cell') {
                     var cellData = d3.select(node).data()[0]; //
                     nodeID = cellData.colid;
-                    interactedElement = cellData.colid + cellData.rowid;
+                    console.log(interactionName, interactedElement, nodeID);
+                    interactedElement = cellData.cellName; // + cellData.rowid;
                     _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
                     _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+                    interactedElement = cellData.correspondingCell; // + cellData.rowid;
                     nodeID = cellData.rowid;
-                    interactionName = interactionName + 'row';
+                    _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
+                    _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+                    return currentState;
+                    //nodeID = cellData.rowid;
+                    //interactionName = interactionName + 'row'
                 }
                 else if (interactionName == 'neighborSelect') {
                     //this.controller.model.provenance.applyAction(action);
@@ -994,6 +1026,17 @@ var View = /** @class */ (function () {
             return data[0].rowid;
         }
     };
+    View.prototype.alreadyCellInState = function (state, nodeID) {
+        var cellNames = splitCellNames(nodeID);
+        var flag = false;
+        cellNames.map(function (name) {
+            if (state.selections['cell'][name]) {
+                delete state.selections['cell'][name];
+                flag = true;
+            }
+        });
+        return flag;
+    };
     /**
      * Adds the interacted node to the state object.
      * @param  state           [description]
@@ -1009,7 +1052,7 @@ var View = /** @class */ (function () {
             state.selections.previousMouseovers = this.mouseoverEvents;
             this.mouseoverEvents = [];
         }
-        console.log(nodeID, interaction, interactionName);
+        console.log(nodeID, interaction, interactionName, state.selections);
         if (nodeID in state.selections[interaction]) {
             // Remove element if in list, if list is empty, delete key
             var currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
@@ -1235,28 +1278,30 @@ var View = /** @class */ (function () {
      * @param  node [description]
      * @return      [description]
      */
-    View.prototype.highlightRow = function (node) {
-        var nodeID = node.screen_name;
-        if (nodeID == null) {
-            nodeID = node.rowid;
-        }
-        // highlight attr
-        this.highlightNode(nodeID, 'attr');
-        this.highlightNode(nodeID, 'topo');
-    };
-    View.prototype.highlightRowAndCol = function (node) {
-        var nodeID = node.screen_name;
-        if (node.screen_name == null) {
-            nodeID = node.colid;
-        }
-        this.highlightNode(nodeID, 'attr');
-        this.highlightNode(nodeID, '', 'Col');
-    };
-    View.prototype.highlightNode = function (nodeID, attrOrTopo, rowOrCol) {
-        if (rowOrCol === void 0) { rowOrCol = 'Row'; }
-        d3.selectAll('.' + attrOrTopo + rowOrCol + nodeID)
-            .classed('hovered', true);
-    };
+    /*highlightRow(node) {
+      let nodeID = node[this.datumID];
+      if (nodeID == null) {
+        nodeID = node.rowid;
+      }
+      // highlight attr
+      this.highlightNode(nodeID, 'attr');
+      this.highlightNode(nodeID, 'topo');
+    }
+  
+    highlightRowAndCol(node) {
+      let nodeID = node.screen_name;
+      if (node.screen_name == null) {
+        nodeID = node.colid;
+      }
+  
+      this.highlightNode(nodeID, 'attr');
+      this.highlightNode(nodeID, '', 'Col');
+    }
+  
+    highlightNode(nodeID: string, attrOrTopo: string, rowOrCol: string = 'Row') {
+      d3.selectAll('.' + attrOrTopo + rowOrCol + nodeID)
+        .classed('hovered', true);
+    }*/
     //u: BCC    BCCINVITADOS2019
     //p:
     //private selectedNodes : any;
@@ -1264,7 +1309,7 @@ var View = /** @class */ (function () {
     View.prototype.addHighlightNode = function (addingNode) {
         // if node is in
         var nodeIndex = this.nodes.findIndex(function (item, i) {
-            return item.screen_name == addingNode;
+            return item[this.datumID] == addingNode;
         });
         for (var i = 0; i < this.matrix[0].length; i++) {
             if (this.matrix[i][nodeIndex].z > 0) {
@@ -1570,7 +1615,7 @@ var View = /** @class */ (function () {
             .attr('y', 0)
             .classed('attrRow', true)
             .attr('id', function (d, i) {
-            return "attrRow" + d.screen_name;
+            return "attrRow" + d[_this.datumID];
         })
             .attr('width', width)
             .attr('height', this.verticalScale.bandwidth()) // end addition
@@ -2064,6 +2109,7 @@ var Controller = /** @class */ (function () {
         this.answerRow = {};
         this.hoverRow = {};
         this.hoverCol = {};
+        this.datumID = 'id';
         this.loadClearButton();
         this.loadTasks();
         // this.loadTask(0);
@@ -2318,4 +2364,11 @@ function deepmerge(target, source, optionsArgument) {
     else {
         return mergeObject(target, source, optionsArgument);
     }
+}
+function splitCellNames(name) {
+    console.log(name);
+    //remove cell
+    var cleanedCellName = name.replace('cell', '');
+    var ids = cleanedCellName.split('_');
+    return ['cell' + ids[0] + '_' + ids[1], 'cell' + ids[1] + '_' + ids[0]];
 }

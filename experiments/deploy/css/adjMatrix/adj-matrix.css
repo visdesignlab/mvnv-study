@@ -24,7 +24,11 @@ input[type=text] {
   color: #fff;
   margin-bottom: 20px;
 }
+.hoveredCell{
 
+  stroke-width:2px;
+  stroke:darkgray;
+}
 
 
 /*<input type="button" id ="clearButton" value="Clear Selections">*/
