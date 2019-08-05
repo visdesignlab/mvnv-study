@@ -242,7 +242,7 @@ class Model {
         d3.selectAll('.clickedCell').classed('clickedCell', false);
         if(cellSelectorQuery=='#') return;
         console.log(d3.selectAll(cellSelectorQuery))
-        d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true)
+        d3.selectAll(cellSelectorQuery).selectAll('.baseCell').classed('clickedCell', true)
 
       }
 

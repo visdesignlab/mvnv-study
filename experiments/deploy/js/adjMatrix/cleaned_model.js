@@ -232,7 +232,7 @@ var Model = /** @class */ (function () {
                 if (cellSelectorQuery == '#')
                     return;
                 console.log(d3.selectAll(cellSelectorQuery));
-                d3.selectAll(cellSelectorQuery).selectAll('rect').classed('clickedCell', true);
+                d3.selectAll(cellSelectorQuery).selectAll('.baseCell').classed('clickedCell', true);
             };
             var updateAnswerBox = function (state) {
                 console.log("In answer update");
