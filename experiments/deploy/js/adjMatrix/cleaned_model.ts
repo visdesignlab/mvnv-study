@@ -757,10 +757,11 @@ class View {
       .attr("class", "cell")
       .attr('id', d => d.cellName);
 
-    if (this.controller.configuration.adjMatrixValues.edgeBars) {
+    if (this.controller.configuration.adjMatrix.edgeBars) {
       // bind squares to cells for the mouse over effect
       cells
         .append("rect")
+        .classed('baseCell',true)
         .attr("x", d => this.verticalScale(d.x))
         .attr('height', this.verticalScale.bandwidth())
         .attr('width', this.verticalScale.bandwidth())
@@ -769,38 +770,43 @@ class View {
 
       let dividers = this.controller.configuration.isMultiEdge ? 2 : 1;
 
-
-
       let squares = cells
+      let offset = 0;
+      let squareSize = this.verticalScale.bandwidth() - 2*offset;
       for (let index = 0; index < dividers; index++) {
 
         let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
         let scale = this.edgeScales[type];
         let typeColor = scale.range()[1];
         // change encoding to position
-        scale.range([0, this.verticalScale.bandwidth()])
-        scale.clamp(true);
+        //scale.range([0, this.verticalScale.bandwidth()])
+        //scale.clamp(true);
 
         cells
-          .filter(d => {
-            return d[type] !== 0;
-          })
+          //.filter(d => {
+          //  return d[type] !== 0;
+          //})
           .append("rect")
-          .attr('x', (d, i) => { return this.verticalScale(d.x) + index * this.verticalScale.bandwidth() / dividers })
+          .classed('nestedEdges',true)
+          .attr('x', (d, i) => { return this.verticalScale(d.x) + offset})// index * this.verticalScale.bandwidth() / dividers })
           .attr('y', (d) => {
-            return this.verticalScale.bandwidth() - scale(d[type]);
+            return offset//this.verticalScale.bandwidth() - scale(d[type]);
           })
-          .attr('height', d => this.edgeScales[type](d[type]))
-          .attr('width', this.verticalScale.bandwidth() / dividers)
-          .attr('fill', typeColor)
+          .attr('height', squareSize)//)
+          .attr('width', squareSize)
+          .attr('fill', d => this.edgeScales[type](d[type]));
+          offset = squareSize/4;
+          squareSize = squareSize-2*offset;
+
       }
+      cells
+        .selectAll('.nestedEdges')
+        .filter(d=>{
+          console.log(d);
+          return d.mentions == 0 && d.retweet == 0 && d.combined == 0;
+        })
+        .remove();
 
-
-
-
-
-      // determine scales for height
-      // append 3 bars of different heights, filtering out 0's
 
     } else {
       let squares = cells
@@ -825,7 +831,7 @@ class View {
         this.selectedCells = cellIDs;
         this.selectedCells.map(cellID => {
           console.log(d3.selectAll('#'+cellID));
-          d3.selectAll('#'+cellID).classed('hoveredCell',true);
+          d3.selectAll('#'+cellID).selectAll('.baseCell').classed('hoveredCell',true);
         })
         let cellID = cellIDs[0];
 
@@ -1329,7 +1335,7 @@ class View {
   }
 
   generateScaleLegend(type, numberOfEdge) {
-    if (this.controller.configuration.adjMatrixValues.edgeBars) {
+    if (this.controller.configuration.adjMatrix.edgeBars) {
       let legendFile = 'assets/';
       legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge'
       legendFile += '.png';
@@ -2532,7 +2538,7 @@ class Controller {
     //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
 
     //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
-
+    this.configuration.adjMatrix.edgeBars = true;
     if(this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')){
       if(!this.configuration.nodeAttributes.includes('selected')){
         this.configuration.nodeAttributes.unshift('selected');

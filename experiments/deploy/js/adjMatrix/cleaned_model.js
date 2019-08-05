@@ -652,42 +652,53 @@ var View = /** @class */ (function () {
             .enter().append('g')
             .attr("class", "cell")
             .attr('id', function (d) { return d.cellName; });
-        if (this.controller.configuration.adjMatrixValues.edgeBars) {
+        if (this.controller.configuration.adjMatrix.edgeBars) {
             // bind squares to cells for the mouse over effect
             cells
                 .append("rect")
+                .classed('baseCell', true)
                 .attr("x", function (d) { return _this.verticalScale(d.x); })
                 .attr('height', this.verticalScale.bandwidth())
                 .attr('width', this.verticalScale.bandwidth())
                 .attr('fill-opacity', 0);
-            var dividers_1 = this.controller.configuration.isMultiEdge ? 2 : 1;
+            var dividers = this.controller.configuration.isMultiEdge ? 2 : 1;
             var squares = cells;
+            var offset_1 = 0;
+            var squareSize = this.verticalScale.bandwidth() - 2 * offset_1;
             var _loop_1 = function (index) {
                 var type = this_1.controller.configuration.isMultiEdge ? this_1.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
                 var scale = this_1.edgeScales[type];
                 var typeColor = scale.range()[1];
                 // change encoding to position
-                scale.range([0, this_1.verticalScale.bandwidth()]);
-                scale.clamp(true);
+                //scale.range([0, this.verticalScale.bandwidth()])
+                //scale.clamp(true);
                 cells
-                    .filter(function (d) {
-                    return d[type] !== 0;
-                })
+                    //.filter(d => {
+                    //  return d[type] !== 0;
+                    //})
                     .append("rect")
-                    .attr('x', function (d, i) { return _this.verticalScale(d.x) + index * _this.verticalScale.bandwidth() / dividers_1; })
+                    .classed('nestedEdges', true)
+                    .attr('x', function (d, i) { return _this.verticalScale(d.x) + offset_1; }) // index * this.verticalScale.bandwidth() / dividers })
                     .attr('y', function (d) {
-                    return _this.verticalScale.bandwidth() - scale(d[type]);
+                    return offset_1; //this.verticalScale.bandwidth() - scale(d[type]);
                 })
-                    .attr('height', function (d) { return _this.edgeScales[type](d[type]); })
-                    .attr('width', this_1.verticalScale.bandwidth() / dividers_1)
-                    .attr('fill', typeColor);
+                    .attr('height', squareSize) //)
+                    .attr('width', squareSize)
+                    .attr('fill', function (d) { return _this.edgeScales[type](d[type]); });
+                offset_1 = squareSize / 4;
+                squareSize = squareSize - 2 * offset_1;
             };
             var this_1 = this;
-            for (var index = 0; index < dividers_1; index++) {
+            for (var index = 0; index < dividers; index++) {
                 _loop_1(index);
             }
-            // determine scales for height
-            // append 3 bars of different heights, filtering out 0's
+            cells
+                .selectAll('.nestedEdges')
+                .filter(function (d) {
+                console.log(d);
+                return d.mentions == 0 && d.retweet == 0 && d.combined == 0;
+            })
+                .remove();
         }
         else {
             var squares = cells
@@ -710,7 +721,7 @@ var View = /** @class */ (function () {
             _this.selectedCells = cellIDs;
             _this.selectedCells.map(function (cellID) {
                 console.log(d3.selectAll('#' + cellID));
-                d3.selectAll('#' + cellID).classed('hoveredCell', true);
+                d3.selectAll('#' + cellID).selectAll('.baseCell').classed('hoveredCell', true);
             });
             var cellID = cellIDs[0];
             that.addHighlightNodesToDict(_this.controller.hoverRow, cell.rowid, cellID); // Add row (rowid)
@@ -1170,7 +1181,7 @@ var View = /** @class */ (function () {
     };
     View.prototype.generateScaleLegend = function (type, numberOfEdge) {
         var _this = this;
-        if (this.controller.configuration.adjMatrixValues.edgeBars) {
+        if (this.controller.configuration.adjMatrix.edgeBars) {
             var legendFile = 'assets/';
             legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge';
             legendFile += '.png';
@@ -2183,6 +2194,7 @@ var Controller = /** @class */ (function () {
         this.configuration = this.task.config;
         //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
         //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
+        this.configuration.adjMatrix.edgeBars = true;
         if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
             if (!this.configuration.nodeAttributes.includes('selected')) {
                 this.configuration.nodeAttributes.unshift('selected');
