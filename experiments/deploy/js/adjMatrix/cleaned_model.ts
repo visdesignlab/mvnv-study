@@ -1015,7 +1015,8 @@ class View {
 
     this.order = this.controller.getOrder();
 
-
+    let labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5:11;
+    console.log(labelSize);
     this.edgeRows.append("text")
       .attr('class', 'rowLabel')
       .attr("id", (d, i) => {
@@ -1026,7 +1027,7 @@ class View {
       .attr("y", this.verticalScale.bandwidth() / 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "end")
-      .style("font-size", 11)
+      .style("font-size", labelSize)
       .text((d, i) => this.nodes[i].shortName)
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
@@ -1068,7 +1069,7 @@ class View {
       .attr('x', 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
-      .style("font-size", 11)
+      .style("font-size", labelSize)
       .text((d, i) => this.nodes[i].shortName)
       .on('click', (d,i,nodes)=>{
         if(this.controller.configuration.adjMatrix.neighborSelect){
