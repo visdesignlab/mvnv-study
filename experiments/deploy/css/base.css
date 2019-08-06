@@ -8,6 +8,19 @@ body {
     /* width: 90%; */
 }
 
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    font-size:11px;
+    width: 100px;
+    border-radius: 5px;
+    padding: 2px;
+    background: white;
+    border: 0px;
+    pointer-events: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    }
 
 #targetSize{
     width:1920px;

@@ -241,6 +241,12 @@ function loadVis(id) {
     .attr("width", parentWidth) //size + margin.left + margin.right)
     .attr("height", 250);
 
+    //add tooltip
+    d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
   simulation = d3
     .forceSimulation()
     .force(
@@ -544,6 +550,23 @@ function arcPath(leftHand, d, state = false) {
   //    + " " + x2 + "," + y2)
 }
 
+function showTooltip(context,data){
+
+  let tooltip = d3.select('.tooltip');
+    tooltip.transition().duration(200).style("opacity", .9);
+
+    var matrix = context.getScreenCTM()
+    .translate(+context.getAttribute("x"), +context.getAttribute("y"));
+
+    tooltip.html(data)
+    .style("left", (window.pageXOffset + matrix.e + 10) + "px")
+    .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+}
+
+function hideTooltip(){
+  d3.select('.tooltip').transition().duration(200).style("opacity",0);
+}
+
 function updateVis() {
 
   setGlobalScales();
@@ -717,7 +740,22 @@ function updateVis() {
       .attr("rx", d => (config.nodeIsRect ? 0 : nodeLength(d))) //nodeLength(d)/20
       .attr("ry", d => (config.nodeIsRect ? 0 : nodeHeight(d)))
       .classed("clicked", d => app.currentState().selected.includes(d.id))
-      .classed("selected", d => app.currentState().hardSelected.includes(d.id));
+      .classed("selected", d => app.currentState().hardSelected.includes(d.id))
+      
+      .on("mouseover",function(d){
+
+        let tooltipData = '';
+        
+        if (config.nodeLink.nodeFillAttr){
+          tooltipData = tooltipData.concat(config.nodeLink.nodeFillAttr + ":" + d[config.nodeLink.nodeFillAttr] + " " )
+        }; 
+        
+        if (config.nodeLink.nodeSizeAttr){
+          tooltipData = tooltipData.concat(config.attributeScales.node[config.nodeLink.nodeSizeAttr].label + ":" + Math.round(d[config.nodeLink.nodeSizeAttr]) + " " )
+        }
+
+        config.nodeLink.nodeFillAttr || config.nodeLabel.sizeAttribute ? showTooltip(this,tooltipData) : ""
+      })
 
 
     node
@@ -879,10 +917,15 @@ function updateVis() {
 
     bars.selectAll("rect").attr("width", barWidth);
 
-    bars.selectAll("title").text(function(d) {
-      return d.attr + " : " + d.data;
-    });
+    // bars.selectAll("title").text(function(d) {
+    //   return d.attr + " : " + d.data;
+    // });
 
+    bars.on("mouseover",function(d){
+      let label = config.attributeScales.node[d.attr].label
+      showTooltip(this,label + " : " + Math.round(d.data))
+    })
+  
     bars.attr("transform", (d, i) => {
       return "translate(" + barXScale(i) + ",2)";
     });
@@ -959,6 +1002,11 @@ function updateVis() {
     catGlyphs.exit().remove();
 
     catGlyphs = catGlyphsEnter.merge(catGlyphs);
+
+    catGlyphs.on("mouseover",function(d){
+      showTooltip(this,d.attr  + ":" + d.label)
+    })
+  
 
     catGlyphs.attr(
       "transform",
@@ -1122,6 +1170,11 @@ function updateVis() {
       nodeClick(node, true);
     }
   });
+
+
+  node.on("mouseout",()=>{
+    hideTooltip()
+  })
 
   node.on("click", d => nodeClick(d));
 
