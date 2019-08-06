@@ -1845,7 +1845,7 @@ var View = /** @class */ (function () {
         this.columnNames = {
             "followers_count": "Followers",
             "query_tweet_count": "On-Topic Tweets",
-            "friends_count": "Following",
+            "friends_count": "Friends",
             "statuses_count": "Tweets",
             "favourites_count": "Liked Tweets",
             "count_followers_in_query": "In-Network Followers",

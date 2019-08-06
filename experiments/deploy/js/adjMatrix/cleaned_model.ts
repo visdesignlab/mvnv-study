@@ -2142,7 +2142,7 @@ class View {
     this.columnNames = {
       "followers_count": "Followers",
       "query_tweet_count": "On-Topic Tweets", // not going to be used (how active this person was on the conference)
-      "friends_count": "Following",
+      "friends_count": "Friends",
       "statuses_count": "Tweets",
       "favourites_count": "Liked Tweets",
       "count_followers_in_query": "In-Network Followers",
