@@ -731,7 +731,11 @@ class View {
       //model.maxTracker[type]]
       // set up scale
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
-      let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
+      //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
+      let otherColors = ['#064B6E','#4F0664','#000000']
+      let scale = d3.scaleSqrt().domain(extent).range(["white", otherColors[typeIndex]);
+
+
       scale.clamp(true);
       // store scales
       this.edgeScales[type] = scale;
