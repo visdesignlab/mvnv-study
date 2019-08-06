@@ -104,7 +104,6 @@ var Model = /** @class */ (function () {
                 return;
             }
             var name = _this.nodes.filter(function (node) { return node.shortName == nodeID; });
-            console.log(name);
             name = name[0][_this.datumID];
             var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
             _this.controller.model.provenance.applyAction(action);
@@ -117,7 +116,7 @@ var Model = /** @class */ (function () {
             var e = document.createEvent('UIEvents');
             e.initUIEvent('click', true, true, /* ... */ /*);
             cell.select("rect").node().dispatchEvent(e);
-            console.log(cell.select("rect"));*/
+            */
         });
     };
     Model.prototype.getApplicationState = function () {
@@ -192,15 +191,12 @@ var Model = /** @class */ (function () {
                     }
                 }
             }
-            console.log(clickedElements);
             var clickedSelectorQuery = Array.from(clickedElements).join(',');
             var answerSelectorQuery = Array.from(answerElements).join(',');
             var neighborSelectQuery = Array.from(neighborElements).join(',');
-            console.log(neighborSelectQuery);
             clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
             answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
             neighborSelectQuery != [] ? d3.selectAll(neighborSelectQuery).classed('neighbor', true) : null;
-            //console.log(d3.selectAll(neighborSelectQuery));
             return;
         }
         function setUpObservers() {
@@ -217,35 +213,27 @@ var Model = /** @class */ (function () {
                     var names = state.selections.cellcol[key];
                     names.map(function (name) {
                         var cellsNames = splitCellNames(name);
-                        console.log(names);
                         cellNames = cellNames.concat(cellsNames);
-                        console.log(cellNames);
                     });
                     //names.map(name=>{
                     //})
                 });
-                console.log(cellNames);
                 var cellSelectorQuery = '#' + cellNames.join(',#');
                 // if no cells selected, return
-                console.log(cellSelectorQuery);
                 d3.selectAll('.clickedCell').classed('clickedCell', false);
                 if (cellSelectorQuery == '#')
                     return;
-                console.log(d3.selectAll(cellSelectorQuery));
                 d3.selectAll(cellSelectorQuery).selectAll('.baseCell').classed('clickedCell', true);
             };
             var updateAnswerBox = function (state) {
-                console.log("In answer update");
                 window.controller.configuration.adjMatrix['toggle'] ? window.controller.view.updateAnswerToggles(state) : window.controller.view.updateCheckBox(state);
                 //window.controller.view.updateAnswerToggles(state)
                 var answer = [];
                 for (var i = 0; i < window.controller.model.nodes.length; i++) {
-                    //console.log(window.controller.model.nodes[i][this.controller.view.datumID],this.controller.view.datumID)
                     if (window.controller.model.nodes[i][_this.controller.view.datumID] in state.selections.answerBox) {
                         answer.push(window.controller.model.nodes[i]);
                     }
                 }
-                //console.log(answer)
                 updateAnswer(answer);
             };
             provenance.addObserver("selections.attrRow", updateHighlights);
@@ -326,7 +314,6 @@ var Model = /** @class */ (function () {
             rowNode.count_followers_in_query = +rowNode.count_followers_in_query;
             //rowNode.id = +rowNode.id;
             rowNode.y = i;
-            console.log(rowNode[_this.datumID]);
             /* matrix used for edge attributes, otherwise should we hide */
             _this.matrix[i] = _this.nodes.map(function (colNode) { return { cellName: 'cell' + rowNode[_this.datumID] + '_' + colNode[_this.datumID], correspondingCell: 'cell' + colNode[_this.datumID] + '_' + rowNode[_this.datumID], rowid: rowNode[_this.datumID], colid: colNode[_this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
             _this.scalarMatrix[i] = _this.nodes.map(function (colNode) { return 0; });
@@ -409,7 +396,6 @@ var View = /** @class */ (function () {
             interaction = interaction.replace(' neighbor', '');
             var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
             _this.controller.model.provenance.applyAction(action);
-            console.log(JSON.stringify(_this.controller.model.app.currentState()).length, _this.controller.model.app.currentState());
             //pushProvenance(this.controller.model.app.currentState())
         };
         // set up load
@@ -696,7 +682,6 @@ var View = /** @class */ (function () {
             cells
                 .selectAll('.nestedEdges')
                 .filter(function (d) {
-                console.log(d);
                 return d.mentions == 0 && d.retweet == 0 && d.combined == 0;
             })
                 .remove();
@@ -718,10 +703,8 @@ var View = /** @class */ (function () {
         cells
             .on("mouseover", function (cell) {
             var cellIDs = [cell.cellName, cell.correspondingCell];
-            console.log(cellIDs);
             _this.selectedCells = cellIDs;
             _this.selectedCells.map(function (cellID) {
-                console.log(d3.selectAll('#' + cellID));
                 d3.selectAll('#' + cellID).selectAll('.baseCell').classed('hoveredCell', true);
             });
             var cellID = cellIDs[0];
@@ -772,14 +755,12 @@ var View = /** @class */ (function () {
         /*      .on("click", (cell, index, nodes) => {
                 let cellElement = d3.select(nodes[index]).selectAll('rect');
                 let cellID = cell.rowid + cell.colid;
-                console.log(cellElement);
     
                 if (cell.combined != 0 || cell.mentions != 0 || cell.retweets != 0) {
     
                 }
     
                 cellElement.classed('clickedCell', !this.controller.clickedCells.has(cellID))
-                console.log(cellElement.classed('clickedCell'));
     
     
                 if (this.controller.clickedCells.has(cellID)) {
@@ -811,7 +792,6 @@ var View = /** @class */ (function () {
         this.controller.hoverRow = {};
         this.controller.hoverCol = {};
         function mouseoverCell(p) {
-            console.log(p);
             // Add row (colid)
             // Add col (colid)
             /*let attrPrimaryRow = that.selectHighlight(p,"Row","Attr"),
@@ -852,7 +832,6 @@ var View = /** @class */ (function () {
                 return d[i].x == p.x;
               })
               .classed("hovered", true);
-            console.log(test,test1);]
       
       
       
@@ -869,7 +848,6 @@ var View = /** @class */ (function () {
             });
       
             d3.selectAll(".column text").classed("active", (d, i) => {
-              console.log(d[i],p)
               return d[i].screen_name == p.colid;
             });*/
             // determine the updated
@@ -999,15 +977,12 @@ var View = /** @class */ (function () {
                 var currentState = _this.controller.model.app.currentState();
                 //add time stamp to the state graph
                 currentState.time = Date.now();
-                console.log(currentState);
                 currentState.event = interactionType;
                 var interactionName = interactionType; //cell, search, etc
                 var interactedElement = interactionType;
-                console.log(interactionName, interactionType);
                 if (interactionName == 'cell') {
                     var cellData = d3.select(node).data()[0]; //
                     nodeID = cellData.colid;
-                    console.log(interactionName, interactedElement, nodeID);
                     interactedElement = cellData.cellName; // + cellData.rowid;
                     _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
                     _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
@@ -1027,7 +1002,6 @@ var View = /** @class */ (function () {
                     interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
                     columnData.map(function (node) {
                         if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
-                            console.log(node);
                             var neighbor = node.colid;
                             _this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
                         }
@@ -1083,7 +1057,6 @@ var View = /** @class */ (function () {
             state.selections.previousMouseovers = this.mouseoverEvents;
             this.mouseoverEvents = [];
         }
-        console.log(nodeID, interaction, interactionName, state.selections);
         if (nodeID in state.selections[interaction]) {
             // Remove element if in list, if list is empty, delete key
             var currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
@@ -1510,7 +1483,6 @@ var View = /** @class */ (function () {
             return !
           });//!attrRow.classed('selected')
     
-        console.log(attrRow,attrRow.classed('selected'));
     
         let topoRow = d3.selectAll('#highlight'+'Topo'+'Row'+nodeID);
         topoRow
@@ -1526,7 +1498,6 @@ var View = /** @class */ (function () {
     View.prototype.sort = function (order) {
         var _this = this;
         this.order = this.controller.changeOrder(order);
-        console.log(this.order);
         this.verticalScale.domain(this.order);
         var transitionTime = 500;
         d3.selectAll(".row")
@@ -1544,19 +1515,15 @@ var View = /** @class */ (function () {
             //.delay((d, i) => { return this.verticalScale(i) * 4; })
             //.delay((d) => { return this.verticalScale(d.x) * 4; })
             .attr("transform", function (d, i) {
-            //console.log(this.verticalScale(d.x),d,this.verticalScale(d.y));
             return 'translate(' + _this.verticalScale(d.x) + ',0)';
         });
-        console.log(d3.selectAll(".cell"), cells);
         this.attributeRows
             //.transition()
             //.duration(transitionTime)
             //.delay((d, i) => { return this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(0," + _this.verticalScale(i) + ")"; });
         // update each highlightRowsIndex
-        //.attr('fill',(d,i)=>{console.log(this.order[i]);return this.order[i]%2 == 0 ? "#fff" : "#eee"})
         var t = this.edges; //.transition().duration(transitionTime);
-        console.log(t);
         t.selectAll(".column")
             //.delay((d, i) => { return this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(" + _this.verticalScale(i) + ",0)rotate(-90)"; });
@@ -1578,7 +1545,6 @@ var View = /** @class */ (function () {
             return;
         }
         var color = this.controller.configuration.attributeScales.node.selected.range[0];
-        console.log(d3.selectAll('.answerBox'));
         d3.selectAll('.answerBox').selectAll('rect').transition().duration(250)
             .style("fill", function (d) {
             var answerStatus = d[_this.datumID] in state.selections.answerBox;
@@ -1587,17 +1553,14 @@ var View = /** @class */ (function () {
     };
     View.prototype.updateAnswerToggles = function (state) {
         var _this = this;
-        console.log(state);
         //let answerStatus = nodeID in this.controller.answerRow;
         if (this.controller.configuration.attributeScales.node.selected == undefined) {
             return;
         }
         var color = this.controller.configuration.attributeScales.node.selected.range[0];
-        console.log(d3.selectAll('.answerBox'));
         d3.selectAll('.answerBox').selectAll('circle').transition().duration(500)
             .attr("cx", function (d) {
             var answerStatus = d[_this.datumID] in state.selections.answerBox;
-            console.log(answerStatus);
             return (answerStatus ? 3 * _this.columnWidths['selected'] / 4 : 1.15 * _this.columnWidths['selected'] / 4);
         })
             .style("fill", function (d) {
@@ -1682,22 +1645,17 @@ var View = /** @class */ (function () {
         /*.on('click', (d, i, nodes) => {
     
           /*let cellElement = d3.select(nodes[index]).selectAll('rect');
-          console.log(cellElement);
           cellElement.classed('clickedCell', !cellElement.classed('clickedCell'))
-          console.log(cellElement.classed('clickedCell'));
           let cellID = cell.rowid + cell.colid;
-          console.log(d);
           let nodeID = d.screen_name;
           /*
           // will add or remove node
-          console.log(nodeID, this.controller.answerRow, nodeID in this.controller.answerRow)
           that.addHighlightNodesToDict(this.controller.answerRow, nodeID, nodeID);  // Add row (rowid)
           d3.selectAll('.answer').classed('answer', nodeID in this.controller.answerRow);
           that.renderHighlightNodesFromDict(this.controller.answerRow, 'answer', 'Row');
     
     
           that.addHighlightNodesToDict(this.controller.clickedRow, nodeID, nodeID);  // FOR ANSWER
-          console.log(nodeID, this.controller.clickedRow, nodeID in this.controller.clickedRow)
           //d3.selectAll('.answer').classed('answer', false);
           d3.selectAll('.clicked').classed('clicked', nodeID in this.controller.clickedRow);
     
@@ -1742,14 +1700,12 @@ var View = /** @class */ (function () {
             xRange += columnWidths[col];
         });
         this.attributeScales = attributeScales;
-        console.log(columnRange);
         // need max and min of each column
         /*this.barWidthScale = d3.scaleLinear()
           .domain([0, 1400])
           .range([0, 140]);*/
         var placementScale = {};
         this.columnScale.range(columnRange);
-        console.log(this.columnScale, columns, columnRange);
         for (var _i = 0, _a = Object.entries(attributeScales); _i < _a.length; _i++) {
             var _b = _a[_i], column = _b[0], scale = _b[1];
             if (categoricalAttributes.indexOf(column) > -1) { // if not selected categorical
@@ -1836,7 +1792,6 @@ var View = /** @class */ (function () {
                         .attr("r", barHeight / 2)
                         .style("fill", "white")
                         .style('stroke', 'lightgray');
-                    console.log(circle);
                 }
                 else {
                     var rect = answerBox.append("rect")
@@ -1938,7 +1893,6 @@ var View = /** @class */ (function () {
             .enter()
             .append('g')
             .attr('transform', function (d) { return 'translate(' + (_this.columnScale(d)) + ',' + (-65) + ')'; });
-        console.log(columnHeaderGroups);
         columnHeaderGroups
             .append('rect')
             .attr('width', function (d) { return _this.columnWidths[d]; })
@@ -1982,7 +1936,6 @@ var View = /** @class */ (function () {
         })
             .on('click', function (d) {
             if (d !== 'selected') {
-                console.log(d);
                 _this.sort(d);
             }
         });
@@ -2163,13 +2116,6 @@ var Controller = /** @class */ (function () {
         // this.loadTask(0);
         this.sizeLayout();
         //this.loadConfigs();
-        /*console.log(this.configuration);
-    
-        this.configuration.then(data => {
-          console.log(data);
-          this.configuration = data;
-        })
-        console.log(this.configuration);*/
     }
     Controller.prototype.setupExports = function (base, task) {
         d3.select("#exportBaseConfig").on("click", function () {
@@ -2193,7 +2139,6 @@ var Controller = /** @class */ (function () {
         // sheet.addRule(".node", (nodeIsRect? 'rx: 2; ry:2'  : 'rx:20; ry:20' ) , 1);
     
           let ruleString = "fill :" + base.style.selectedNodeColor +" !important;";
-          console.log(ruleString);
           sheet.addRule(".rect.selected", ruleString, 1);
           */
     };
@@ -2203,12 +2148,10 @@ var Controller = /** @class */ (function () {
         this.model = new Model(this); // start reading in data
     };
     Controller.prototype.loadTask = function (taskNum) {
-        console.log('in development!');
         this.taskNum = taskNum;
         this.task = this.tasks[this.taskNum];
         this.configuration = this.task.config;
         //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
-        //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
         this.configuration.adjMatrix.edgeBars = true;
         if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
             if (!this.configuration.nodeAttributes.includes('selected')) {
@@ -2222,7 +2165,6 @@ var Controller = /** @class */ (function () {
                 };
                 this.configuration.attributeScales.node['selected'] = obj;
             }
-            console.log(this.configuration.nodeAttributes, d3.min([100 * this.configuration.nodeAttributes.length, 450]));
         }
         this.configuration.adjMatrix['toggle'] = false;
         //this.configuration.adjMatrix.neighborSelect = true;
@@ -2288,14 +2230,11 @@ var Controller = /** @class */ (function () {
         var panelDimensions = {};
         panelDimensions.width = width * 0.2;
         panelDimensions.height = height - taskBarHeight;
-        console.log(panelDimensions);
         d3.select("#visPanel").style("width", panelDimensions.width + "px");
         d3.select('#panelDiv').style('display', 'none');
-        console.log(d3.select('.adjMatrix.vis'), width * .8);
         this.visHeight = panelDimensions.height;
         this.visWidth = width * 0.8 - 40;
         this.edgeWidth = this.visWidth - this.attrWidth;
-        console.log(this.attrWidth); //,this.edgePorportion)
         var filler = 0;
         if (panelDimensions.height < this.edgeWidth) {
             this.edgeWidth = panelDimensions.height;
@@ -2311,10 +2250,8 @@ var Controller = /** @class */ (function () {
         d3.select('.topocontainer').style('height', (this.visHeight).toString() + 'px');
         d3.select('.attrcontainer').style('width', (100 * this.attributePorportion).toString() + '%');
         d3.select('.attrcontainer').style('height', (this.visHeight).toString() + 'px');
-        console.log(this.attributePorportion, this.edgePorportion);
         //d3.select('.adjMatrix.vis').style('width',width*0.8);
         d3.select('.adjMatrix.vis').style('width', (this.visWidth).toString() + 'px');
-        console.log();
     };
     Controller.prototype.clearView = function () {
         d3.select('#topology').selectAll('*').remove();
@@ -2415,7 +2352,6 @@ function deepmerge(target, source, optionsArgument) {
     }
 }
 function splitCellNames(name) {
-    console.log(name);
     //remove cell
     var cleanedCellName = name.replace('cell', '');
     var ids = cleanedCellName.split('_');
