@@ -25,7 +25,9 @@
         ]
     },
     "adjMatrix": {
-        "neighborHighlightColor": ""
+        "neighborHighlightColor": "",
+        "neighborSelect":true,
+        "edgeBars":true
     },
     "taskID": "task1",
     "loadedGraph": "large_undirected_singleEdge",

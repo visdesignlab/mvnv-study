@@ -8,7 +8,7 @@
         "labelAttr": "shortName",
         "nodeFillAttr": "continent",
         "nodeSizeAttr": "favourites_count",
-        "edgeWidthAttr": null,
+        "edgeWidthAttr": "count",
         "edgeStrokeAttr": "type",
         "noEdgeColor": "black",
         "noNodeFill": "white",
@@ -29,14 +29,13 @@
         "neighborSelect":true,
         "edgeBars":true
     },
-    "taskID": "task3",
+    "taskID": "task4",
     "loadedGraph": "large_undirected_multiEdge",
     "isDirected": false,
     "isMultiEdge": true,
     "graphSize": "large",
     "nodeAttributes": [
         "followers_count",
-        "continent",
         "type",
         "favourites_count",
         "statuses_count"

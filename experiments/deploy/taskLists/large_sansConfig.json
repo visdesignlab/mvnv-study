@@ -34,5 +34,16 @@
       "replyType":["singleNodeSelection"],
       "replyCount":1,
       "config":{}
+    },
+    "task4": 
+    {
+      "workerID":null,
+      "order":null,
+      "answer": {"nodes":[],"value":""},
+      "feedback":"",
+      "prompt": "Which person is frequently retweeted and followed despite being relatively inactive on twitter?",
+      "replyType":["singleNodeSelection"],
+      "replyCount":1,
+      "config":{}
     }
   }
