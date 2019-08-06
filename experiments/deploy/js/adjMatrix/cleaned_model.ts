@@ -755,11 +755,12 @@ class View {
       .data(d => { return d/*.filter(item => item.z > 0)*/ })
       .enter().append('g')
       .attr("class", "cell")
-      .attr('id', d => d.cellName);
+      .attr('id', d => d.cellName)
+      .attr('transform',d=>'translate('+this.verticalScale(d.x)+',0)')
     let squares = cells
       .append("rect")
       .classed('baseCell',true)
-      .attr("x", d => this.verticalScale(d.x))
+      .attr("x", d => 0)
       .attr('height', this.verticalScale.bandwidth())
       .attr('width', this.verticalScale.bandwidth())
       .attr('fill-opacity', 0);
@@ -787,8 +788,8 @@ class View {
           //  return d[type] !== 0;
           //})
           .append("rect")
-          .classed('nestedEdges',true)
-          .attr('x', (d, i) => { return this.verticalScale(d.x) + offset})// index * this.verticalScale.bandwidth() / dividers })
+          .classed('nestedEdges nestedEdges'+type,true)
+          .attr('x',  offset)// index * this.verticalScale.bandwidth() / dividers })
           .attr('y', (d) => {
             return offset//this.verticalScale.bandwidth() - scale(d[type]);
           })
@@ -811,7 +812,7 @@ class View {
     } else {
       let squares = cells
         .append("rect")
-        .attr("x", d => this.verticalScale(d.x))
+        .attr("x", 0)//d => this.verticalScale(d.x))
         //.filter(d=>{return d.item >0})
         .attr("width", this.verticalScale.bandwidth())
         .attr("height", this.verticalScale.bandwidth())
@@ -1740,17 +1741,28 @@ class View {
    */
   sort(order) {
     this.order = this.controller.changeOrder(order);
+    console.log(this.order);
     this.verticalScale.domain(this.order);
     let transitionTime = 500;
     d3.selectAll(".row")
-      //.transition()
-      //.duration(transitionTime)
-      //.delay((d, i) => { return this.verticalScale(i) * 4; })
-      .attr("transform", (d, i) => { return "translate(0," + this.verticalScale(i) + ")"; })
-      .selectAll(".cell").selectAll('rect')
-      //.delay((d) => { return this.verticalScale(d.x) * 4; })
-      .attr("x", (d, i) => this.verticalScale(d.x));//
+      .transition()
+      .duration(transitionTime)
+      .delay((d, i) => { return this.verticalScale(i) * 4; })
+      .attr("transform", (d, i) => {
+        if(i > this.order.length-1) return;
+        return "translate(0," + this.verticalScale(i) + ")";
+      })
 
+    let cells = d3.selectAll(".cell")//.selectAll('rect')
+    .transition()
+    .duration(transitionTime)
+    //.delay((d, i) => { return this.verticalScale(i) * 4; })
+      //.delay((d) => { return this.verticalScale(d.x) * 4; })
+      .attr("transform", (d, i) => {
+        //console.log(this.verticalScale(d.x),d,this.verticalScale(d.y));
+        return 'translate('+this.verticalScale(d.x)+',0)'});
+
+    console.log(d3.selectAll(".cell"),cells)
     this.attributeRows
       //.transition()
       //.duration(transitionTime)
@@ -1764,6 +1776,7 @@ class View {
     //.attr('fill',(d,i)=>{console.log(this.order[i]);return this.order[i]%2 == 0 ? "#fff" : "#eee"})
 
     var t = this.edges//.transition().duration(transitionTime);
+    console.log(t);
     t.selectAll(".column")
       //.delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ",0)rotate(-90)"; });
@@ -2541,7 +2554,7 @@ class Controller {
     //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
 
     //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
-    //this.configuration.adjMatrix.edgeBars = true;
+    this.configuration.adjMatrix.edgeBars = true;
     if(this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')){
       if(!this.configuration.nodeAttributes.includes('selected')){
         this.configuration.nodeAttributes.unshift('selected');

@@ -651,11 +651,12 @@ var View = /** @class */ (function () {
             .data(function (d) { return d; /*.filter(item => item.z > 0)*/ })
             .enter().append('g')
             .attr("class", "cell")
-            .attr('id', function (d) { return d.cellName; });
+            .attr('id', function (d) { return d.cellName; })
+            .attr('transform', function (d) { return 'translate(' + _this.verticalScale(d.x) + ',0)'; });
         var squares = cells
             .append("rect")
             .classed('baseCell', true)
-            .attr("x", function (d) { return _this.verticalScale(d.x); })
+            .attr("x", function (d) { return 0; })
             .attr('height', this.verticalScale.bandwidth())
             .attr('width', this.verticalScale.bandwidth())
             .attr('fill-opacity', 0);
@@ -677,8 +678,8 @@ var View = /** @class */ (function () {
                     //  return d[type] !== 0;
                     //})
                     .append("rect")
-                    .classed('nestedEdges', true)
-                    .attr('x', function (d, i) { return _this.verticalScale(d.x) + offset_1; }) // index * this.verticalScale.bandwidth() / dividers })
+                    .classed('nestedEdges nestedEdges' + type, true)
+                    .attr('x', offset_1) // index * this.verticalScale.bandwidth() / dividers })
                     .attr('y', function (d) {
                     return offset_1; //this.verticalScale.bandwidth() - scale(d[type]);
                 })
@@ -703,7 +704,7 @@ var View = /** @class */ (function () {
         else {
             var squares_1 = cells
                 .append("rect")
-                .attr("x", function (d) { return _this.verticalScale(d.x); })
+                .attr("x", 0) //d => this.verticalScale(d.x))
                 //.filter(d=>{return d.item >0})
                 .attr("width", this.verticalScale.bandwidth())
                 .attr("height", this.verticalScale.bandwidth())
@@ -1525,16 +1526,28 @@ var View = /** @class */ (function () {
     View.prototype.sort = function (order) {
         var _this = this;
         this.order = this.controller.changeOrder(order);
+        console.log(this.order);
         this.verticalScale.domain(this.order);
         var transitionTime = 500;
         d3.selectAll(".row")
-            //.transition()
-            //.duration(transitionTime)
+            .transition()
+            .duration(transitionTime)
+            .delay(function (d, i) { return _this.verticalScale(i) * 4; })
+            .attr("transform", function (d, i) {
+            if (i > _this.order.length - 1)
+                return;
+            return "translate(0," + _this.verticalScale(i) + ")";
+        });
+        var cells = d3.selectAll(".cell") //.selectAll('rect')
+            .transition()
+            .duration(transitionTime)
             //.delay((d, i) => { return this.verticalScale(i) * 4; })
-            .attr("transform", function (d, i) { return "translate(0," + _this.verticalScale(i) + ")"; })
-            .selectAll(".cell").selectAll('rect')
             //.delay((d) => { return this.verticalScale(d.x) * 4; })
-            .attr("x", function (d, i) { return _this.verticalScale(d.x); }); //
+            .attr("transform", function (d, i) {
+            //console.log(this.verticalScale(d.x),d,this.verticalScale(d.y));
+            return 'translate(' + _this.verticalScale(d.x) + ',0)';
+        });
+        console.log(d3.selectAll(".cell"), cells);
         this.attributeRows
             //.transition()
             //.duration(transitionTime)
@@ -1543,6 +1556,7 @@ var View = /** @class */ (function () {
         // update each highlightRowsIndex
         //.attr('fill',(d,i)=>{console.log(this.order[i]);return this.order[i]%2 == 0 ? "#fff" : "#eee"})
         var t = this.edges; //.transition().duration(transitionTime);
+        console.log(t);
         t.selectAll(".column")
             //.delay((d, i) => { return this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(" + _this.verticalScale(i) + ",0)rotate(-90)"; });
@@ -2195,7 +2209,7 @@ var Controller = /** @class */ (function () {
         this.configuration = this.task.config;
         //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
         //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
-        //this.configuration.adjMatrix.edgeBars = true;
+        this.configuration.adjMatrix.edgeBars = true;
         if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
             if (!this.configuration.nodeAttributes.includes('selected')) {
                 this.configuration.nodeAttributes.unshift('selected');
