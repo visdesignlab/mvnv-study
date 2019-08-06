@@ -1337,7 +1337,8 @@ class View {
     let extent = scale.domain();
     let number = 5
 
-    let sampleNumbers = this.linspace(extent[0], extent[1], number);
+    let sampleNumbers = [0,1,3,5]//this.linspace(extent[0], extent[1], number);
+
     let svg = d3.select('#legend-svg').append("g")
       .attr("id", "legendLinear" + type)
       .attr("transform", (d, i) => "translate(" + xOffset + "," + yOffset + ")")
@@ -1382,12 +1383,13 @@ class View {
       .attr('y', 8)
       .attr('text-anchor', 'middle')
       .text("# of " + pluralType)
+    let sideMargin = ((boxWidth) - (sampleNumbers.length*(rectWidth + 5)))/2
 
     let groups = svg.selectAll('g')
       .data(sampleNumbers)
       .enter()
       .append('g')
-      .attr('transform', (d, i) => 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')')
+      .attr('transform', (d, i) => 'translate(' + (sideMargin + i * (rectWidth + 5)) + ',' + 15 + ')')
 
     groups
       .append('rect')

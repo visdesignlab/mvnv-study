@@ -1179,7 +1179,7 @@ var View = /** @class */ (function () {
         var scale = this.edgeScales[type];
         var extent = scale.domain();
         var number = 5;
-        var sampleNumbers = this.linspace(extent[0], extent[1], number);
+        var sampleNumbers = [0, 1, 3, 5]; //this.linspace(extent[0], extent[1], number);
         var svg = d3.select('#legend-svg').append("g")
             .attr("id", "legendLinear" + type)
             .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
@@ -1221,11 +1221,12 @@ var View = /** @class */ (function () {
             .attr('y', 8)
             .attr('text-anchor', 'middle')
             .text("# of " + pluralType);
+        var sideMargin = ((boxWidth) - (sampleNumbers.length * (rectWidth + 5))) / 2;
         var groups = svg.selectAll('g')
             .data(sampleNumbers)
             .enter()
             .append('g')
-            .attr('transform', function (d, i) { return 'translate(' + (10 + i * (rectWidth + 5)) + ',' + 15 + ')'; });
+            .attr('transform', function (d, i) { return 'translate(' + (sideMargin + i * (rectWidth + 5)) + ',' + 15 + ')'; });
         groups
             .append('rect')
             .attr('width', rectWidth)
