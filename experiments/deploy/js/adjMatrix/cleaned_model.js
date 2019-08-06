@@ -1181,20 +1181,21 @@ var View = /** @class */ (function () {
     };
     View.prototype.generateScaleLegend = function (type, numberOfEdge) {
         var _this = this;
-        if (this.controller.configuration.adjMatrix.edgeBars) {
-            var legendFile = 'assets/';
-            legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge';
+        var yOffset = 10;
+        var xOffset = 10;
+        if (this.controller.configuration.adjMatrix.edgeBars && this.controller.configuration.isMultiEdge) {
+            var legendFile = 'assets/adj-matrix/';
+            legendFile += this.controller.configuration.isMultiEdge ? 'nestedSquaresLegend' : 'edgeBarsLegendSingleEdge';
             legendFile += '.png';
             d3.select('#legend-svg').append('g').append("svg:image")
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr('width', 170)
-                .attr('height', 170)
+                .attr('width', 90)
+                .attr('height', 120)
                 .attr("xlink:href", legendFile);
-            return;
+            //return;
+            xOffset = 100;
         }
-        var yOffset = 10;
-        var xOffset = 10;
         var rectWidth = 18;
         var rectHeight = 10;
         var legendWidth = 175;

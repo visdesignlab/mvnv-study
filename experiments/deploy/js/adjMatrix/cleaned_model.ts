@@ -1335,20 +1335,23 @@ class View {
   }
 
   generateScaleLegend(type, numberOfEdge) {
-    if (this.controller.configuration.adjMatrix.edgeBars) {
-      let legendFile = 'assets/';
-      legendFile += this.controller.configuration.isMultiEdge ? 'edgeBarsLegendMultiEdge' : 'edgeBarsLegendSingleEdge'
+    let yOffset = 10;
+    let xOffset = 10;
+
+    if (this.controller.configuration.adjMatrix.edgeBars && this.controller.configuration.isMultiEdge) {
+      let legendFile = 'assets/adj-matrix/';
+      legendFile += this.controller.configuration.isMultiEdge ? 'nestedSquaresLegend' : 'edgeBarsLegendSingleEdge'
       legendFile += '.png';
       d3.select('#legend-svg').append('g').append("svg:image")
         .attr('x', 0)
         .attr('y', 0)
-        .attr('width', 170)
-        .attr('height', 170)
+        .attr('width', 90)
+        .attr('height', 120)
         .attr("xlink:href", legendFile)
-      return;
+      //return;
+      xOffset = 100;
     }
-    let yOffset = 10;
-    let xOffset = 10;
+
     let rectWidth = 18;
     let rectHeight = 10;
     let legendWidth = 175;
