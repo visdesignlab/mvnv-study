@@ -1857,6 +1857,26 @@ class View {
       .attr('stroke', '2px')
       .attr('stroke-opacity', 0.3);
 
+    let attributeMouseOver = (d)=>{
+      that.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      that.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+
+      this.mouseoverEvents.push({time:new Date().getTime(),event:'attrRow'+d[this.datumID]})
+
+      d3.selectAll('.hovered').classed('hovered', false);
+      that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+      that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+    };
+    let attributeMouseOut = (d)=> {
+
+      that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      that.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+
+      d3.selectAll('.hovered').classed('hovered', false);
+
+      that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+
+    };
     this.attributeRows.append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -1867,27 +1887,8 @@ class View {
       .attr('width', width)
       .attr('height', this.verticalScale.bandwidth()) // end addition
       .attr("fill-opacity", 0)
-      .on('mouseover', (d: any) => {
-        that.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-        that.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-
-        this.mouseoverEvents.push({time:new Date().getTime(),event:'attrRow'+d[this.datumID]})
-
-        d3.selectAll('.hovered').classed('hovered', false);
-        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
-        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
-
-      })
-      .on('mouseout', (d)=> {
-
-        that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-        that.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-
-        d3.selectAll('.hovered').classed('hovered', false);
-
-        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
-
-      }).on('click', this.clickFunction);
+      .on('mouseover', attributeMouseOver)
+      .on('mouseout', attributeMouseOut).on('click', this.clickFunction);
 
 
     /*.on('click', (d, i, nodes) => {
@@ -2034,11 +2035,12 @@ class View {
                 .duration(200)
                 .style("opacity", .9);
 
-
+              attributeMouseOver(d);
             //}
           })
           .on('mouseout', (d)=>  {
             that.tooltip.transition().duration(25).style("opacity", 0);
+            attributeMouseOut(d);
           })
           .transition()
           .duration(2000)
@@ -2068,6 +2070,8 @@ class View {
             .attr("width", columnWidths[column] / 2)
             .attr("height", barHeight)
             .attr('stroke', 'lightgray')
+            .on('mouseover',attributeMouseOver)
+            .on('mouseout',attributeMouseOut);
 
           let circle = answerBox.append("circle")
             .attr("cx", (1.15 * columnWidths[column] / 4))
@@ -2085,6 +2089,8 @@ class View {
             .attr("width", barHeight)
             .attr("height", barHeight)
             .attr('stroke', 'lightgray')
+            .on('mouseover',attributeMouseOver)
+            .on('mouseout',attributeMouseOut);
         }
 
 
