@@ -59,8 +59,8 @@ var Model = /** @class */ (function () {
             _this.nodes = data.nodes;
             _this.populateSearchBox();
             _this.idMap = {};
-            _this.orderType = _this.controller.configuration.state.adjMatrix.sortKey;
-            _this.order = _this.changeOrder(_this.controller.configuration.state.adjMatrix.sortKey);
+            _this.orderType = _this.controller.configuration.adjMatrix.sortKey;
+            _this.order = _this.changeOrder(_this.controller.configuration.adjMatrix.sortKey);
             if (!_this.isQuant(_this.orderType)) { // == "screen_name" || this.orderType == "name") {
                 _this.nodes = _this.nodes.sort(function (a, b) { return a[_this.orderType].localeCompare(b[_this.orderType]); });
             }
@@ -262,7 +262,7 @@ var Model = /** @class */ (function () {
         var _this = this;
         var order;
         this.orderType = type;
-        this.controller.configuration.state.adjMatrix.sortKey = type;
+        this.controller.configuration.adjMatrix.sortKey = type;
         if (type == "clusterSpectral" || type == "clusterBary" || type == "clusterLeaf") {
             /*var graph = reorder.graph()
               .nodes(this.nodes)
@@ -2171,9 +2171,11 @@ var Controller = /** @class */ (function () {
         this.attrWidth = d3.min([125 * this.configuration.nodeAttributes.length, 650]);
         this.configuration.state = {};
         this.configuration.state.adjMatrix = {};
-        this.configuration.state.adjMatrix.sortKey = 'shortName';
+        if (this.configuration.adjMatrix.sortKey == null || this.configuration.adjMatrix.sortKey == '') {
+            this.configuration.adjMatrix.sortKey = 'shortName';
+        }
         this.sizeLayout();
-        //configuration.state.adjMatrix.sortKey
+        //configuration.adjMatrix.sortKey
         this.reload();
         // load data file
         // render vis from configurations
@@ -2287,7 +2289,7 @@ var Controller = /** @class */ (function () {
      * @return [description]
      */
     Controller.prototype.changeOrder = function (order) {
-        this.configuration.state.adjMatrix.sortKey = order;
+        this.configuration.adjMatrix.sortKey = order;
         return this.model.changeOrder(order);
     };
     return Controller;
