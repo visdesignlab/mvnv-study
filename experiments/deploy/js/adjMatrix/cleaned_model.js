@@ -1627,12 +1627,14 @@ var View = /** @class */ (function () {
             that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
             that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         };
+        this.attributeMouseOver = attributeMouseOver;
         var attributeMouseOut = function (d) {
             that.removeHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
             that.removeHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
             d3.selectAll('.hovered').classed('hovered', false);
             that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
         };
+        this.attributeMouseOut = attributeMouseOut;
         this.attributeRows.append('rect')
             .attr('x', 0)
             .attr('y', 0)
@@ -2012,7 +2014,9 @@ var View = /** @class */ (function () {
                 return d[column] == placementScaleForAttr[i].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
             })
                 .attr('width', width)
-                .attr('height', height);
+                .attr('height', height)
+                .on('mouseover', this_2.attributeMouseOver)
+                .on('mouseout', this_2.attributeMouseOut);
         };
         var this_2 = this;
         for (var i = 0; i < placementScaleForAttr.length; i++) {

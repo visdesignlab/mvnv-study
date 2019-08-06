@@ -1867,6 +1867,7 @@ class View {
       that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
       that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
     };
+    this.attributeMouseOver = attributeMouseOver;
     let attributeMouseOut = (d)=> {
 
       that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
@@ -1877,6 +1878,8 @@ class View {
       that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
 
     };
+    this.attributeMouseOut = attributeMouseOut;
+
     this.attributeRows.append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -2345,7 +2348,9 @@ class View {
           return d[column] == placementScaleForAttr[i].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
         })
         .attr('width', width)
-        .attr('height', height);
+        .attr('height', height)
+        .on('mouseover',this.attributeMouseOver)
+        .on('mouseout',this.attributeMouseOut);
     }
 
 
