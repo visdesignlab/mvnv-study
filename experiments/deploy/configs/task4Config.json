@@ -35,7 +35,6 @@
     "isMultiEdge": true,
     "graphSize": "large",
     "nodeAttributes": [
-        "followers_count",
         "type",
         "favourites_count",
         "statuses_count"

@@ -307,7 +307,7 @@ async function pushProvenance(provGraph) {
   let docSize =
     calcFirestoreDocSize("provenanceGraph", workerID, doc) / 1000000;
 
-  console.log("Provenance graph size is ", docSize, " MB");
+  console.log("Provenance graph size for ", workerID ,  " is ", docSize, " MB");
   console.log("Provenance graph has ", doc, "elements");
 
   if (docSize > 0.75) {
