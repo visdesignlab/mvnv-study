@@ -652,17 +652,17 @@ var View = /** @class */ (function () {
             .enter().append('g')
             .attr("class", "cell")
             .attr('id', function (d) { return d.cellName; });
+        var squares = cells
+            .append("rect")
+            .classed('baseCell', true)
+            .attr("x", function (d) { return _this.verticalScale(d.x); })
+            .attr('height', this.verticalScale.bandwidth())
+            .attr('width', this.verticalScale.bandwidth())
+            .attr('fill-opacity', 0);
         if (this.controller.configuration.adjMatrix.edgeBars) {
             // bind squares to cells for the mouse over effect
-            cells
-                .append("rect")
-                .classed('baseCell', true)
-                .attr("x", function (d) { return _this.verticalScale(d.x); })
-                .attr('height', this.verticalScale.bandwidth())
-                .attr('width', this.verticalScale.bandwidth())
-                .attr('fill-opacity', 0);
             var dividers = this.controller.configuration.isMultiEdge ? 2 : 1;
-            var squares = cells;
+            //let squares = cells
             var offset_1 = 0;
             var squareSize = this.verticalScale.bandwidth() - 2 * offset_1;
             var _loop_1 = function (index) {
@@ -701,14 +701,14 @@ var View = /** @class */ (function () {
                 .remove();
         }
         else {
-            var squares = cells
+            var squares_1 = cells
                 .append("rect")
                 .attr("x", function (d) { return _this.verticalScale(d.x); })
                 //.filter(d=>{return d.item >0})
                 .attr("width", this.verticalScale.bandwidth())
                 .attr("height", this.verticalScale.bandwidth())
                 .style("fill", 'white');
-            squares
+            squares_1
                 .filter(function (d) { return d.z == 0; })
                 .style("fill-opacity", 0);
             this.setSquareColors('all');
@@ -2195,7 +2195,7 @@ var Controller = /** @class */ (function () {
         this.configuration = this.task.config;
         //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
         //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
-        this.configuration.adjMatrix.edgeBars = true;
+        //this.configuration.adjMatrix.edgeBars = true;
         if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
             if (!this.configuration.nodeAttributes.includes('selected')) {
                 this.configuration.nodeAttributes.unshift('selected');
@@ -2211,7 +2211,7 @@ var Controller = /** @class */ (function () {
             console.log(this.configuration.nodeAttributes, d3.min([100 * this.configuration.nodeAttributes.length, 450]));
         }
         this.configuration.adjMatrix['toggle'] = false;
-        this.configuration.adjMatrix.neighborSelect = true;
+        //this.configuration.adjMatrix.neighborSelect = true;
         this.attrWidth = d3.min([125 * this.configuration.nodeAttributes.length, 650]);
         this.configuration.state = {};
         this.configuration.state.adjMatrix = {};

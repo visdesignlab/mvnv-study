@@ -756,21 +756,21 @@ class View {
       .enter().append('g')
       .attr("class", "cell")
       .attr('id', d => d.cellName);
-
+    let squares = cells
+      .append("rect")
+      .classed('baseCell',true)
+      .attr("x", d => this.verticalScale(d.x))
+      .attr('height', this.verticalScale.bandwidth())
+      .attr('width', this.verticalScale.bandwidth())
+      .attr('fill-opacity', 0);
     if (this.controller.configuration.adjMatrix.edgeBars) {
       // bind squares to cells for the mouse over effect
-      cells
-        .append("rect")
-        .classed('baseCell',true)
-        .attr("x", d => this.verticalScale(d.x))
-        .attr('height', this.verticalScale.bandwidth())
-        .attr('width', this.verticalScale.bandwidth())
-        .attr('fill-opacity', 0);
+
 
 
       let dividers = this.controller.configuration.isMultiEdge ? 2 : 1;
 
-      let squares = cells
+      //let squares = cells
       let offset = 0;
       let squareSize = this.verticalScale.bandwidth() - 2*offset;
       for (let index = 0; index < dividers; index++) {
@@ -2541,7 +2541,7 @@ class Controller {
     //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
 
     //console.log('Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt,d3.select("#taskArea").select(".card-header-title"));
-    this.configuration.adjMatrix.edgeBars = true;
+    //this.configuration.adjMatrix.edgeBars = true;
     if(this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')){
       if(!this.configuration.nodeAttributes.includes('selected')){
         this.configuration.nodeAttributes.unshift('selected');
@@ -2560,7 +2560,7 @@ class Controller {
 
     }
     this.configuration.adjMatrix['toggle'] = false;
-    this.configuration.adjMatrix.neighborSelect = true;
+    //this.configuration.adjMatrix.neighborSelect = true;
 
     this.attrWidth = d3.min([125*this.configuration.nodeAttributes.length,650]);
 
