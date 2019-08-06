@@ -4,7 +4,6 @@
 
     let taskListNames = ['large'];
     let baseConfig = await d3.json("configs/baseConfig.json");
-
     taskListNames.map(async taskListName=>{
         let taskList =  await d3.json("taskLists/" + taskListName + '_sansConfig.json');
 
