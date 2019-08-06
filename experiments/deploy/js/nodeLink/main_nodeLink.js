@@ -550,21 +550,20 @@ function arcPath(leftHand, d, state = false) {
   //    + " " + x2 + "," + y2)
 }
 
-function showTooltip(context,data){
+function showTooltip(data,delay=200){
 
   let tooltip = d3.select('.tooltip');
-    tooltip.transition().duration(200).style("opacity", .9);
-
-    var matrix = context.getScreenCTM()
-    .translate(+context.getAttribute("x"), +context.getAttribute("y"));
 
     tooltip.html(data)
-    .style("left", (window.pageXOffset + matrix.e + 10) + "px")
-    .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+    .style("left", (window.event.clientX + 10) + "px")
+    .style("top", (window.event.clientY - 20) + "px"); 
+
+    tooltip.transition().duration(delay).style("opacity", .9);
+
 }
 
 function hideTooltip(){
-  d3.select('.tooltip').transition().duration(200).style("opacity",0);
+  d3.select('.tooltip').transition().duration(100).style("opacity",0);
 }
 
 function updateVis() {
@@ -662,6 +661,7 @@ function updateVis() {
 
     link = linkEnter.merge(link);
 
+    
     link.classed("muted", false);
 
     link
@@ -669,7 +669,14 @@ function updateVis() {
       .style("stroke-width", edgeWidth)
       .style("stroke", edgeColor)
       .style("opacity", 0.4)
-      .attr("id", d => d.id);
+      .attr("id", d => d.id)
+      .on("mouseover",function(d){
+         showTooltip(d.type,400)
+      })
+  
+      .on("mouseout",function(d){ 
+        hideTooltip();
+     })
 
     // TO DO , set ARROW DIRECTION DYNAMICALLY
     link
@@ -677,7 +684,8 @@ function updateVis() {
       .attr("xlink:href", d => "#" + d.id)
       .text(d => (config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""))
       .style("fill", edgeColor)
-      .style("stroke", edgeColor);
+      .style("stroke", edgeColor)
+     
 
     //draw Nodes
     var node = d3
@@ -754,7 +762,7 @@ function updateVis() {
           tooltipData = tooltipData.concat(config.attributeScales.node[config.nodeLink.nodeSizeAttr].label + ":" + Math.round(d[config.nodeLink.nodeSizeAttr]) + " " )
         }
 
-        config.nodeLink.drawBars ? "" : showTooltip(this,tooltipData)
+        config.nodeLink.drawBars ? "" : showTooltip(tooltipData)
       })
 
 
@@ -923,7 +931,7 @@ function updateVis() {
 
     bars.on("mouseover",function(d){
       let label = config.attributeScales.node[d.attr].label
-      showTooltip(this,label + " : " + Math.round(d.data))
+      showTooltip(label + " : " + Math.round(d.data))
     })
   
     bars.attr("transform", (d, i) => {
@@ -1004,7 +1012,7 @@ function updateVis() {
     catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
     catGlyphs.on("mouseover",function(d){
-      showTooltip(this,d.attr  + ":" + d.label)
+      showTooltip(d.attr  + ":" + d.label)
     })
   
 
