@@ -1716,17 +1716,17 @@ class View {
     this.verticalScale.domain(this.order);
     let transitionTime = 500;
     d3.selectAll(".row")
-      .transition()
-      .duration(transitionTime)
-      .delay((d, i) => { return this.verticalScale(i) * 4; })
+      //.transition()
+      //.duration(transitionTime)
+      //.delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => {
         if(i > this.order.length-1) return;
         return "translate(0," + this.verticalScale(i) + ")";
       })
 
     let cells = d3.selectAll(".cell")//.selectAll('rect')
-    .transition()
-    .duration(transitionTime)
+    //.transition()
+    //.duration(transitionTime)
     //.delay((d, i) => { return this.verticalScale(i) * 4; })
       //.delay((d) => { return this.verticalScale(d.x) * 4; })
       .attr("transform", (d, i) => {

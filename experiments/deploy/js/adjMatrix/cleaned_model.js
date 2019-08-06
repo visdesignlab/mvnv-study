@@ -1501,17 +1501,17 @@ var View = /** @class */ (function () {
         this.verticalScale.domain(this.order);
         var transitionTime = 500;
         d3.selectAll(".row")
-            .transition()
-            .duration(transitionTime)
-            .delay(function (d, i) { return _this.verticalScale(i) * 4; })
+            //.transition()
+            //.duration(transitionTime)
+            //.delay((d, i) => { return this.verticalScale(i) * 4; })
             .attr("transform", function (d, i) {
             if (i > _this.order.length - 1)
                 return;
             return "translate(0," + _this.verticalScale(i) + ")";
         });
         var cells = d3.selectAll(".cell") //.selectAll('rect')
-            .transition()
-            .duration(transitionTime)
+            //.transition()
+            //.duration(transitionTime)
             //.delay((d, i) => { return this.verticalScale(i) * 4; })
             //.delay((d) => { return this.verticalScale(d.x) * 4; })
             .attr("transform", function (d, i) {
