@@ -60,7 +60,8 @@ var Model = /** @class */ (function () {
             _this.populateSearchBox();
             _this.idMap = {};
             _this.orderType = _this.controller.configuration.adjMatrix.sortKey;
-            _this.order = _this.changeOrder(_this.controller.configuration.adjMatrix.sortKey);
+            _this.order = _this.changeOrder(_this.orderType);
+            console.log(_this.order);
             if (!_this.isQuant(_this.orderType)) { // == "screen_name" || this.orderType == "name") {
                 _this.nodes = _this.nodes.sort(function (a, b) { return a[_this.orderType].localeCompare(b[_this.orderType]); });
             }

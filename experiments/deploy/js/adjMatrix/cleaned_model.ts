@@ -84,8 +84,9 @@ class Model {
       this.nodes = data.nodes
       this.populateSearchBox();
       this.idMap = {};
-      this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
-      this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
+      this.orderType = this.controller.configuration.adjMatrix.sortKey;
+      this.order = this.changeOrder(this.orderType);
+      console.log(this.order);
       if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
         this.nodes = this.nodes.sort((a, b) => a[this.orderType].localeCompare(b[this.orderType]));
       } else {
@@ -287,7 +288,7 @@ class Model {
   changeOrder(type: string) {
     let order;
     this.orderType = type;
-    this.controller.configuration.state.adjMatrix.sortKey = type;
+    this.controller.configuration.adjMatrix.sortKey = type;
     if (type == "clusterSpectral" || type == "clusterBary" || type == "clusterLeaf") {
       /*var graph = reorder.graph()
         .nodes(this.nodes)
@@ -2528,9 +2529,12 @@ class Controller {
 
     this.configuration.state = {}
     this.configuration.state.adjMatrix = {};
-    this.configuration.state.adjMatrix.sortKey = 'shortName'
+    if(this.configuration.adjMatrix.sortKey == null || this.configuration.adjMatrix.sortKey == ''){
+      this.configuration.adjMatrix.sortKey = 'shortName'
+    }
+
     this.sizeLayout();
-    //configuration.state.adjMatrix.sortKey
+    //configuration.adjMatrix.sortKey
     this.reload();
 
     // load data file
@@ -2560,8 +2564,8 @@ class Controller {
       this.configuration.attributeScales.node['selected'] = obj;
       this.configuration.state = {}
       this.configuration.state.adjMatrix = {};
-      this.configuration.state.adjMatrix.sortKey = 'shortName'
-      //configuration.state.adjMatrix.sortKey
+      this.configuration.adjMatrix.sortKey = 'shortName'
+      //configuration.adjMatrix.sortKey
       this.reload();
 
     });*/
@@ -2742,7 +2746,7 @@ class Controller {
    * @return [description]
    */
   changeOrder(order: string) {
-    this.configuration.state.adjMatrix.sortKey = order;
+    this.configuration.adjMatrix.sortKey = order;
     return this.model.changeOrder(order);
   }
 
