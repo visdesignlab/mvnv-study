@@ -883,6 +883,8 @@ var View = /** @class */ (function () {
                 .classed('hovered', false);
         }
         this.order = this.controller.getOrder();
+        var labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5 : 11;
+        console.log(labelSize);
         this.edgeRows.append("text")
             .attr('class', 'rowLabel')
             .attr("id", function (d, i) {
@@ -893,7 +895,7 @@ var View = /** @class */ (function () {
             .attr("y", this.verticalScale.bandwidth() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
-            .style("font-size", 11)
+            .style("font-size", labelSize)
             .text(function (d, i) { return _this.nodes[i].shortName; })
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
@@ -925,7 +927,7 @@ var View = /** @class */ (function () {
             .attr('x', 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
-            .style("font-size", 11)
+            .style("font-size", labelSize)
             .text(function (d, i) { return _this.nodes[i].shortName; })
             .on('click', function (d, i, nodes) {
             if (_this.controller.configuration.adjMatrix.neighborSelect) {
