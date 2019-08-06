@@ -2504,7 +2504,7 @@ class Controller {
     this.configuration = this.task.config;
     //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
 
-    this.configuration.adjMatrix.edgeBars = true;
+    //this.configuration.adjMatrix.edgeBars = true;
     if(this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')){
       if(!this.configuration.nodeAttributes.includes('selected')){
         this.configuration.nodeAttributes.unshift('selected');
