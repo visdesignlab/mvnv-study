@@ -28,6 +28,18 @@ body {
     fill:rgb(255, 111, 0);
 }
 
+.taskMenu .button{
+    padding:10px 10px;
+    color:white;
+    background-color:#4285f4;
+}
+
+.taskShortcut.currentTask{
+    padding:10px 10px;
+    color:white;
+    background-color:#244d90;
+}
+
 #hardLabel{
     padding-left:190px;
 }

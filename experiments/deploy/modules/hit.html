@@ -19,8 +19,10 @@
       workerID = makeid(6);
       db.collection('participants').doc(workerID).set({
         screenSize,
-        startTime: JSON.stringify(Date.now())
+        startTime: new Date().toString()
       });
+
+      console.log('making a new workerID', workerID)
 
     }
 
@@ -41,7 +43,7 @@
 
     d3.select('.hit').style('display', 'inline');
     if (vis === 'nodeLink') {
-      // d3.selectAll('.development').remove();
+      d3.selectAll('.development').remove();
       loadVis("vis");
 
     } else {

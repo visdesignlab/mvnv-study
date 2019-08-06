@@ -110,15 +110,33 @@
                                             <br />
                                             <p class='errorMsg' style=display:none></p>
                                         </span>
-
-
-
-
-
                                     </div>
-                                </div>
+                                </div>                        
 
                             </div>
+
+                            <div class="card taskMenu">
+                                    <header class="card-header">
+                                        <p class="card-header-title">
+                                            Task Shortcuts
+                                        </p>
+    
+                                    </header>
+                                    <div class="card-content">
+                                            <div class="content">
+        
+                                                <a class="button taskShortcut" id="task1">Task1</a>
+                                                <a class="button taskShortcut" id="task2">Task2</a>
+                                                <a class="button taskShortcut" id="task3">Task3</a>
+                                                <a class="button taskShortcut" id="task4">Task4</a>
+        
+                                            </div>
+                                        </div>                   
+    
+                                </div>
+
+
+                            
 
                             <div class="modal modalFeedback">
                                 <div class="modal-background"></div>
@@ -492,7 +510,7 @@
     (async function () {
 
         //flag that indicates whether hit.html should create an anonymouse participant id to track our experts responses and interactions; 
-             heuristics = false; 
+            heuristics = false; 
             //connect to firestore;
             fireStore.connect();
             experimentr.sequence([

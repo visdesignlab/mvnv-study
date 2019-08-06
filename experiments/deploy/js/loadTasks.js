@@ -236,9 +236,22 @@ d3.select("#nextTask").on("click", async () => {
   }
 });
 
+//set up callback for taskShortcuts
+
+d3.selectAll('.taskShortcut')
+.on("click",function(){
+  //set new currentTask then call resetPanel;
+  currentTask = taskList.findIndex(t=>t.taskID == d3.select(this).attr('id'));
+  resetPanel();
+})
+
+
 function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
+
+  d3.selectAll('.taskShortcut')
+  .classed('currentTask',function(){ return d3.select(this).attr('id') === taskList[currentTask].taskID});
 
   //Only start off with the submit button enabled for when the task only requires an unspecified node count;
 
@@ -512,8 +525,6 @@ async function loadTasks(visType) {
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (selectedVis === "nodeLink") {
     d3.selectAll(".adjMatrix").remove();
-    d3.selectAll(".development").remove();
-
   } else {
     d3.selectAll(".nodeLink").remove();
     d3.selectAll(".development").remove();

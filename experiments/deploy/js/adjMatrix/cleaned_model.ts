@@ -84,8 +84,9 @@ class Model {
       this.nodes = data.nodes
       this.populateSearchBox();
       this.idMap = {};
-      this.orderType = this.controller.configuration.state.adjMatrix.sortKey;
-      this.order = this.changeOrder(this.controller.configuration.state.adjMatrix.sortKey);
+      this.orderType = this.controller.configuration.adjMatrix.sortKey;
+      this.order = this.changeOrder(this.orderType);
+      console.log(this.order);
       if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
         this.nodes = this.nodes.sort((a, b) => a[this.orderType].localeCompare(b[this.orderType]));
       } else {
@@ -287,7 +288,7 @@ class Model {
   changeOrder(type: string) {
     let order;
     this.orderType = type;
-    this.controller.configuration.state.adjMatrix.sortKey = type;
+    this.controller.configuration.adjMatrix.sortKey = type;
     if (type == "clusterSpectral" || type == "clusterBary" || type == "clusterLeaf") {
       /*var graph = reorder.graph()
         .nodes(this.nodes)
@@ -1856,6 +1857,29 @@ class View {
       .attr('stroke', '2px')
       .attr('stroke-opacity', 0.3);
 
+    let attributeMouseOver = (d)=>{
+      that.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      that.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+
+      this.mouseoverEvents.push({time:new Date().getTime(),event:'attrRow'+d[this.datumID]})
+
+      d3.selectAll('.hovered').classed('hovered', false);
+      that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+      that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+    };
+    this.attributeMouseOver = attributeMouseOver;
+    let attributeMouseOut = (d)=> {
+
+      that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      that.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+
+      d3.selectAll('.hovered').classed('hovered', false);
+
+      that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+
+    };
+    this.attributeMouseOut = attributeMouseOut;
+
     this.attributeRows.append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -1866,27 +1890,8 @@ class View {
       .attr('width', width)
       .attr('height', this.verticalScale.bandwidth()) // end addition
       .attr("fill-opacity", 0)
-      .on('mouseover', (d: any) => {
-        that.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-        that.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-
-        this.mouseoverEvents.push({time:new Date().getTime(),event:'attrRow'+d[this.datumID]})
-
-        d3.selectAll('.hovered').classed('hovered', false);
-        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
-        that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
-
-      })
-      .on('mouseout', (d)=> {
-
-        that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-        that.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-
-        d3.selectAll('.hovered').classed('hovered', false);
-
-        that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
-
-      }).on('click', this.clickFunction);
+      .on('mouseover', attributeMouseOver)
+      .on('mouseout', attributeMouseOut).on('click', this.clickFunction);
 
 
     /*.on('click', (d, i, nodes) => {
@@ -2033,11 +2038,12 @@ class View {
                 .duration(200)
                 .style("opacity", .9);
 
-
+              attributeMouseOver(d);
             //}
           })
           .on('mouseout', (d)=>  {
             that.tooltip.transition().duration(25).style("opacity", 0);
+            attributeMouseOut(d);
           })
           .transition()
           .duration(2000)
@@ -2067,6 +2073,8 @@ class View {
             .attr("width", columnWidths[column] / 2)
             .attr("height", barHeight)
             .attr('stroke', 'lightgray')
+            .on('mouseover',attributeMouseOver)
+            .on('mouseout',attributeMouseOut);
 
           let circle = answerBox.append("circle")
             .attr("cx", (1.15 * columnWidths[column] / 4))
@@ -2084,6 +2092,8 @@ class View {
             .attr("width", barHeight)
             .attr("height", barHeight)
             .attr('stroke', 'lightgray')
+            .on('mouseover',attributeMouseOver)
+            .on('mouseout',attributeMouseOut);
         }
 
 
@@ -2142,7 +2152,7 @@ class View {
     this.columnNames = {
       "followers_count": "Followers",
       "query_tweet_count": "On-Topic Tweets", // not going to be used (how active this person was on the conference)
-      "friends_count": "Following",
+      "friends_count": "Friends",
       "statuses_count": "Tweets",
       "favourites_count": "Liked Tweets",
       "count_followers_in_query": "In-Network Followers",
@@ -2338,7 +2348,9 @@ class View {
           return d[column] == placementScaleForAttr[i].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
         })
         .attr('width', width)
-        .attr('height', height);
+        .attr('height', height)
+        .on('mouseover',this.attributeMouseOver)
+        .on('mouseout',this.attributeMouseOut);
     }
 
 
@@ -2528,9 +2540,12 @@ class Controller {
 
     this.configuration.state = {}
     this.configuration.state.adjMatrix = {};
-    this.configuration.state.adjMatrix.sortKey = 'shortName'
+    if(this.configuration.adjMatrix.sortKey == null || this.configuration.adjMatrix.sortKey == ''){
+      this.configuration.adjMatrix.sortKey = 'shortName'
+    }
+
     this.sizeLayout();
-    //configuration.state.adjMatrix.sortKey
+    //configuration.adjMatrix.sortKey
     this.reload();
 
     // load data file
@@ -2560,8 +2575,8 @@ class Controller {
       this.configuration.attributeScales.node['selected'] = obj;
       this.configuration.state = {}
       this.configuration.state.adjMatrix = {};
-      this.configuration.state.adjMatrix.sortKey = 'shortName'
-      //configuration.state.adjMatrix.sortKey
+      this.configuration.adjMatrix.sortKey = 'shortName'
+      //configuration.adjMatrix.sortKey
       this.reload();
 
     });*/
@@ -2742,7 +2757,7 @@ class Controller {
    * @return [description]
    */
   changeOrder(order: string) {
-    this.configuration.state.adjMatrix.sortKey = order;
+    this.configuration.adjMatrix.sortKey = order;
     return this.model.changeOrder(order);
   }
 

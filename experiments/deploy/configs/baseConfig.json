@@ -52,7 +52,7 @@
                 ]
             },
             "memberFor_days": {
-                "label":"Account Age",
+                "label":"Acct. Age",
                 "domain": [
                     175,
                     4498

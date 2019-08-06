@@ -66,7 +66,7 @@
                         ]
                     },
                     "memberFor_days": {
-                        "label": "Account Age",
+                        "label": "Acct. Age",
                         "domain": [
                             175,
                             4498
@@ -175,7 +175,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": ""
+                "sortKey": "favourites_count"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -263,7 +263,7 @@
                         ]
                     },
                     "memberFor_days": {
-                        "label": "Account Age",
+                        "label": "Acct. Age",
                         "domain": [
                             175,
                             4498
@@ -372,7 +372,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": ""
+                "sortKey": "favourites_count"
             },
             "taskID": "task2",
             "loadedGraph": "large_undirected_singleEdge",
@@ -459,7 +459,7 @@
                         ]
                     },
                     "memberFor_days": {
-                        "label": "Account Age",
+                        "label": "Acct. Age",
                         "domain": [
                             175,
                             4498
@@ -568,7 +568,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": ""
+                "sortKey": "shortName"
             },
             "taskID": "task3",
             "loadedGraph": "large_undirected_multiEdge",
@@ -577,10 +577,13 @@
             "graphSize": "large",
             "nodeAttributes": [
                 "followers_count",
-                "continent",
-                "type",
                 "favourites_count",
-                "statuses_count"
+                "statuses_count",
+                "friends_count",
+                "listed_count",
+                "memberFor_days",
+                "type",
+                "continent"
             ],
             "edgeAttributes": [
                 "type",
@@ -600,9 +603,12 @@
         "feedback": "",
         "prompt": "Which person is frequently retweeted in this network despite being relatively inactive on twitter?",
         "replyType": [
-            "singleNodeSelection"
+            "multipleNodeSelection"
         ],
-        "replyCount": 1,
+        "replyCount": {
+            "type": "at least",
+            "value": 1
+        },
         "config": {
             "graphFiles": {
                 "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
@@ -657,7 +663,7 @@
                         ]
                     },
                     "memberFor_days": {
-                        "label": "Account Age",
+                        "label": "Acct. Age",
                         "domain": [
                             175,
                             4498
@@ -766,7 +772,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": ""
+                "sortKey": "shortName"
             },
             "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
