@@ -28,7 +28,7 @@
         "neighborHighlightColor": "",
         "neighborSelect":true,
         "edgeBars":true,
-        "sortKey":"shortName"
+        "sortKey":"type"
     },
     "taskID": "task3",
     "loadedGraph": "large_undirected_multiEdge",

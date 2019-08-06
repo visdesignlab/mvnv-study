@@ -134,8 +134,8 @@
                             "combined"
                         ],
                         "range": [
-                            "#427d9b",
-                            "#88419d",
+                            "#064B6E",
+                            "#4F0664",
                             "rgb(0, 0, 0)"
                         ]
                     }
@@ -331,8 +331,8 @@
                             "combined"
                         ],
                         "range": [
-                            "#427d9b",
-                            "#88419d",
+                            "#064B6E",
+                            "#4F0664",
                             "rgb(0, 0, 0)"
                         ]
                     }
@@ -527,8 +527,8 @@
                             "combined"
                         ],
                         "range": [
-                            "#427d9b",
-                            "#88419d",
+                            "#064B6E",
+                            "#4F0664",
                             "rgb(0, 0, 0)"
                         ]
                     }
@@ -568,7 +568,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "shortName"
+                "sortKey": "type"
             },
             "taskID": "task3",
             "loadedGraph": "large_undirected_multiEdge",
@@ -731,8 +731,8 @@
                             "combined"
                         ],
                         "range": [
-                            "#427d9b",
-                            "#88419d",
+                            "#064B6E",
+                            "#4F0664",
                             "rgb(0, 0, 0)"
                         ]
                     }
@@ -772,7 +772,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "shortName"
+                "sortKey": "favourites_count"
             },
             "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
