@@ -27,7 +27,9 @@
     "adjMatrix": {
         "neighborHighlightColor": "",
         "neighborSelect":true,
-        "edgeBars":true
+        "edgeBars":true,
+        "sortKey":""
+
     },
     "taskID": "task2",
     "loadedGraph": "large_undirected_singleEdge",
