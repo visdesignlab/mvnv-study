@@ -372,7 +372,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "followers_count"
             },
             "taskID": "task2",
             "loadedGraph": "large_undirected_singleEdge",

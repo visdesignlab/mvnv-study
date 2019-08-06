@@ -754,7 +754,7 @@ function updateVis() {
           tooltipData = tooltipData.concat(config.attributeScales.node[config.nodeLink.nodeSizeAttr].label + ":" + Math.round(d[config.nodeLink.nodeSizeAttr]) + " " )
         }
 
-        config.nodeLink.nodeFillAttr || config.nodeLabel.sizeAttribute ? showTooltip(this,tooltipData) : ""
+        config.nodeLink.drawBars ? "" : showTooltip(this,tooltipData)
       })
 
 
