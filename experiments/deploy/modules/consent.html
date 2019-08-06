@@ -95,7 +95,7 @@
                 workerID = sanitizeWorkerID(data.workerId);
                 db.collection('participants').doc(workerID).set({
                     screenSize,
-                    startTime: Date.now(),
+                    startTime: new Date().toString(),
                     completionCode:makeid(6)
                 }); 
 

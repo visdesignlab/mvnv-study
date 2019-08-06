@@ -200,7 +200,7 @@
             "value": ""
         },
         "feedback": "",
-        "prompt": "Select all of Robert's neighbors that are *people* and have more friends than followers.",
+        "prompt": "Select all of Lane's neighbors that are *people* and have more friends than followers.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -595,7 +595,7 @@
             "value": ""
         },
         "feedback": "",
-        "prompt": "Which person is frequently retweeted and followed despite being relatively inactive on twitter?",
+        "prompt": "Which person is frequently retweeted in this network despite being relatively inactive on twitter?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -770,7 +770,6 @@
             "isMultiEdge": true,
             "graphSize": "large",
             "nodeAttributes": [
-                "followers_count",
                 "type",
                 "favourites_count",
                 "statuses_count"
