@@ -524,7 +524,9 @@ async function loadTasks(visType) {
   d3.select('.quickStart')
   .select('img')
   .attr('src',(vis === 'nodeLink' ? 'training/nodeLink_quickStart.png' :  'training/adjMatrix_quickStart.png')
-  )                                                
+  )
+  
+  d3.select('.quickStart').select('.modal-card').style('width','calc(100vh - 100px)')
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
