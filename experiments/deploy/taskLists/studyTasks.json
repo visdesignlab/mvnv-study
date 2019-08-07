@@ -42,8 +42,11 @@
       "answer": {"nodes":[],"value":""},
       "feedback":"",
       "prompt": "Which person is frequently retweeted in this network despite being relatively inactive on twitter?",
-      "replyType":["singleNodeSelection"],
-      "replyCount":1,
+      "replyType":["multipleNodeSelection"],
+      "replyCount":{
+         "type":"at least",
+         "value":1
+      },
       "config":{}
     }
   }

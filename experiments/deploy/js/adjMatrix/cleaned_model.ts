@@ -135,6 +135,7 @@ class Model {
       time: Date.now(), //timestamp for the current state of the graph;
       count: 0,
       clicked: [],
+      sortKey:this.controller.configuration.adjMatrix.sortKey,
       selections: {
 
         answerBox: {},

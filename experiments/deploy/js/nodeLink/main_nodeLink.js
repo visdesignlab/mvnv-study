@@ -241,6 +241,12 @@ function loadVis(id) {
     .attr("width", parentWidth) //size + margin.left + margin.right)
     .attr("height", 250);
 
+    //add tooltip
+    d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
   simulation = d3
     .forceSimulation()
     .force(
@@ -544,6 +550,22 @@ function arcPath(leftHand, d, state = false) {
   //    + " " + x2 + "," + y2)
 }
 
+function showTooltip(data,delay=200){
+
+  let tooltip = d3.select('.tooltip');
+
+    tooltip.html(data)
+    .style("left", (window.event.clientX + 10) + "px")
+    .style("top", (window.event.clientY - 20) + "px"); 
+
+    tooltip.transition().duration(delay).style("opacity", .9);
+
+}
+
+function hideTooltip(){
+  d3.select('.tooltip').transition().duration(100).style("opacity",0);
+}
+
 function updateVis() {
 
   setGlobalScales();
@@ -639,6 +661,7 @@ function updateVis() {
 
     link = linkEnter.merge(link);
 
+    
     link.classed("muted", false);
 
     link
@@ -646,7 +669,14 @@ function updateVis() {
       .style("stroke-width", edgeWidth)
       .style("stroke", edgeColor)
       .style("opacity", 0.4)
-      .attr("id", d => d.id);
+      .attr("id", d => d.id)
+      .on("mouseover",function(d){
+         showTooltip(d.type,400)
+      })
+  
+      .on("mouseout",function(d){ 
+        hideTooltip();
+     })
 
     // TO DO , set ARROW DIRECTION DYNAMICALLY
     link
@@ -654,7 +684,8 @@ function updateVis() {
       .attr("xlink:href", d => "#" + d.id)
       .text(d => (config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""))
       .style("fill", edgeColor)
-      .style("stroke", edgeColor);
+      .style("stroke", edgeColor)
+     
 
     //draw Nodes
     var node = d3
@@ -717,7 +748,22 @@ function updateVis() {
       .attr("rx", d => (config.nodeIsRect ? 0 : nodeLength(d))) //nodeLength(d)/20
       .attr("ry", d => (config.nodeIsRect ? 0 : nodeHeight(d)))
       .classed("clicked", d => app.currentState().selected.includes(d.id))
-      .classed("selected", d => app.currentState().hardSelected.includes(d.id));
+      .classed("selected", d => app.currentState().hardSelected.includes(d.id))
+      
+      .on("mouseover",function(d){
+
+        let tooltipData = '';
+        
+        if (config.nodeLink.nodeFillAttr){
+          tooltipData = tooltipData.concat(config.nodeLink.nodeFillAttr + ":" + d[config.nodeLink.nodeFillAttr] + " " )
+        }; 
+        
+        if (config.nodeLink.nodeSizeAttr){
+          tooltipData = tooltipData.concat(config.attributeScales.node[config.nodeLink.nodeSizeAttr].label + ":" + Math.round(d[config.nodeLink.nodeSizeAttr]) + " " )
+        }
+
+        config.nodeLink.drawBars ? "" : showTooltip(tooltipData)
+      })
 
 
     node
@@ -879,10 +925,15 @@ function updateVis() {
 
     bars.selectAll("rect").attr("width", barWidth);
 
-    bars.selectAll("title").text(function(d) {
-      return d.attr + " : " + d.data;
-    });
+    // bars.selectAll("title").text(function(d) {
+    //   return d.attr + " : " + d.data;
+    // });
 
+    bars.on("mouseover",function(d){
+      let label = config.attributeScales.node[d.attr].label
+      showTooltip(label + " : " + Math.round(d.data))
+    })
+  
     bars.attr("transform", (d, i) => {
       return "translate(" + barXScale(i) + ",2)";
     });
@@ -959,6 +1010,11 @@ function updateVis() {
     catGlyphs.exit().remove();
 
     catGlyphs = catGlyphsEnter.merge(catGlyphs);
+
+    catGlyphs.on("mouseover",function(d){
+      showTooltip(d.attr  + ":" + d.label)
+    })
+  
 
     catGlyphs.attr(
       "transform",
@@ -1122,6 +1178,11 @@ function updateVis() {
       nodeClick(node, true);
     }
   });
+
+
+  node.on("mouseout",()=>{
+    hideTooltip()
+  })
 
   node.on("click", d => nodeClick(d));
 

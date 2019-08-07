@@ -137,6 +137,7 @@ var Model = /** @class */ (function () {
             time: Date.now(),
             count: 0,
             clicked: [],
+            sortKey: this.controller.configuration.adjMatrix.sortKey,
             selections: {
                 answerBox: {},
                 attrRow: {},

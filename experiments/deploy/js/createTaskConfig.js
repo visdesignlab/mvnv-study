@@ -5,7 +5,7 @@
     let taskListNames = ['large'];
     let baseConfig = await d3.json("configs/baseConfig.json");
     taskListNames.map(async taskListName=>{
-        let taskList =  await d3.json("taskLists/" + taskListName + '_sansConfig.json');
+        let taskList =  await d3.json("taskLists/studyTasks.json");
 
         //iterate through each taskKey and add config object;
         let allConfigs = Object.keys(taskList).map(async (key)=>{

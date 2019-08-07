@@ -3,7 +3,7 @@
         "drawBars": true,
         "selectNeighbors": true,
         "nodeHeight": 40,
-        "nodeWidth":40,
+        "nodeWidth": 40,
         "labelSize": 12,
         "labelAttr": "shortName",
         "nodeFillAttr": "continent",
@@ -28,7 +28,7 @@
         "neighborHighlightColor": "",
         "neighborSelect":true,
         "edgeBars":true,
-        "sortKey":"shortName"
+        "sortKey":"type"
     },
     "taskID": "task3",
     "loadedGraph": "large_undirected_multiEdge",
@@ -37,10 +37,13 @@
     "graphSize": "large",
     "nodeAttributes": [
         "followers_count",
-        "continent",
-        "type",
         "favourites_count",
-        "statuses_count"
+        "statuses_count",
+        "friends_count",
+        "listed_count",
+        "memberFor_days",
+        "type",
+        "continent"
     ],
     "edgeAttributes": [
         "type",
