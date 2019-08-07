@@ -35,7 +35,7 @@
     }
 
     // //see if url parameter was passed as to what type of vis to show for this link
-    let visType = getUrlVars()["vis"] == 'nodeLink' ? "nodeLink" : 'adjMatrix';
+    let visType = getUrlVars()["vis"].includes('nodeLink') ? "nodeLink" : 'adjMatrix';
 
     experimentr.hideNext();
     await loadTasks(visType);
