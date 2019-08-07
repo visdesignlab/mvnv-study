@@ -1,6 +1,7 @@
 {
-  "task1": 
+  "trainTask1": 
     {
+      "train":true,
       "workerID":null,
       "order":null,
       "answerKey": {"nodes":[{"id":"6146692"}],"value":""},
@@ -11,8 +12,9 @@
       "replyCount":1,
       "config":{}
     },
-    "task2": 
+    "trainTask2": 
     {
+      "train":true,
       "workerID":null,
       "order":null,
       "answerKey": {"nodes":[{"id":"36853217"}],"value":""},
@@ -26,8 +28,9 @@
         },
       "config":{}
     },
-    "task3": 
+    "trainTask3": 
     {
+      "train":true,
       "workerID":null,
       "order":null,
       "answer": {"nodes":[],"value":""},
@@ -38,8 +41,9 @@
       "replyCount":1,
       "config":{}
     },
-    "task4": 
+    "trainTask4": 
     {
+      "train":true,
       "workerID":null,
       "order":null,
       "answer": {"nodes":[],"value":""},

@@ -157,6 +157,20 @@ d3.select("#submitButton").on("click", async function() {
   d3.select(".modalFeedback").classed("is-active", true);
 });
 
+d3.selectAll('.helpIcon').on("click",()=>{
+
+
+  d3.select(".quickStart").classed("is-active", true);
+
+})
+
+d3.selectAll('#closeModal').on("click",()=>{
+
+
+  d3.select(".quickStart").classed("is-active", false);
+
+})
+
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
@@ -505,14 +519,25 @@ async function loadTasks(visType) {
 
   vis = selectedVis; // = 'adjMatrix'//='nodeLink' //
 
+  //set the source for the quickStart guide image in the modal; 
+
+  d3.select('.quickStart')
+  .select('img')
+  .attr('src',(vis === 'nodeLink' ? 'training/nodeLink_quickStart.png' :  'training/adjMatrix_quickStart.png')
+  )
+  
+  d3.select('.quickStart').select('.modal-card').style('width','calc(100vh - 100px)')
+
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
 
   let taskListEntries = Object.entries(taskListObj);
-  //Randomly order the tasks.
+  
+  if (!heuristics){
+    //Randomly order the tasks.
   shuffle(taskListEntries);
-
+  }
   // insert order and taskID into each element in this list
   taskList = taskListEntries.map((t, i) => {
     let task = t[1];
@@ -614,6 +639,7 @@ async function assignTasks() {
 
   Object.keys(configLessTaskList).map(key => {
     delete configLessTaskList[key].config;
+    configLessTaskList[key].visType = vis;
   });
 
   var taskListRef = db.collection("results").doc(workerID);

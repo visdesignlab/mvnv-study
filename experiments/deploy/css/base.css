@@ -1,5 +1,5 @@
 * {
-    color: #333;
+    /* color: #333; */
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
@@ -8,10 +8,15 @@ body {
     /* width: 90%; */
 }
 
+.helpIcon{
+    cursor:pointer;
+}
+
 div.tooltip {
     position: absolute;
+    color:black;
     text-align: center;
-    font-size:11px;
+    font-size:13px;
     width: 100px;
     border-radius: 5px;
     padding: 2px;

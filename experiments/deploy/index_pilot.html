@@ -12,9 +12,6 @@
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/bulma.css">
 
-<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-
-
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css"> -->
 
 <!-- Adding Provenance and Experimentr Libraries  -->
@@ -69,11 +66,9 @@
                                 </div>
                             </div>
                             <div class="card">
-                                <header class="is-pulled-right card-header">
+                                <header class="card-header">
                                     <p class="card-header-title">
-                                        <span class="helpIcon icon has-text-info">
-                                            <i class="fas fa-lg fa-question-circle"></i> &nbsp
-                                        </span> <strong>Help</strong>
+                                        <!-- Instructions on interactions available to the user -->
                                     </p>
                                 </header>
                                 <div class="card-content">
@@ -116,32 +111,32 @@
                                             <p class='errorMsg' style=display:none></p>
                                         </span>
                                     </div>
-                                </div>
+                                </div>                        
 
                             </div>
 
                             <div class="card taskMenu">
-                                <header class="card-header">
-                                    <p class="card-header-title">
-                                        Task Shortcuts
-                                    </p>
-
-                                </header>
-                                <div class="card-content">
-                                    <div class="content">
-
-                                        <a class="button taskShortcut" id="task1">Task1</a>
-                                        <a class="button taskShortcut" id="task2">Task2</a>
-                                        <a class="button taskShortcut" id="task3">Task3</a>
-                                        <a class="button taskShortcut" id="task4">Task4</a>
-
-                                    </div>
+                                    <header class="card-header">
+                                        <p class="card-header-title">
+                                            Task Shortcuts
+                                        </p>
+    
+                                    </header>
+                                    <div class="card-content">
+                                            <div class="content">
+        
+                                                <a class="button taskShortcut" id="task1">Task1</a>
+                                                <a class="button taskShortcut" id="task2">Task2</a>
+                                                <a class="button taskShortcut" id="task3">Task3</a>
+                                                <a class="button taskShortcut" id="task4">Task4</a>
+        
+                                            </div>
+                                        </div>                   
+    
                                 </div>
 
-                            </div>
 
-
-
+                            
 
                             <div class="modal modalFeedback">
                                 <div class="modal-background"></div>
@@ -209,25 +204,6 @@
                                     </section>
                                     <footer class="modal-card-foot">
                                         <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
-                                    </footer>
-                                </div>
-                            </div>
-
-
-                            <!-- Modal that shows a summary on vis interactions available -->
-                            <div class="modal quickStart">
-                                <div class="modal-background"></div>
-                                <div class="modal-card">
-
-                                    <section class="modal-card-body">
-                                        <div class="content">
-
-                                            <img src="" alt="">
-
-                                        </div>
-                                    </section>
-                                    <footer class="modal-card-foot">
-                                        <a href="#" id="closeModal" class="button is-pulled-right">Close</a>
                                     </footer>
                                 </div>
                             </div>
@@ -529,12 +505,12 @@
 
 
 <script>
-    var heuristics;
+    var heuristics; 
 
     (async function () {
 
-            //flag that indicates whether hit.html should create an anonymouse participant id to track our experts responses and interactions; 
-            heuristics = true;
+        //flag that indicates whether hit.html should create an anonymouse participant id to track our experts responses and interactions; 
+            heuristics = false; 
             //connect to firestore;
             fireStore.connect();
             experimentr.sequence([
