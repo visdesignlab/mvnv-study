@@ -1395,7 +1395,7 @@ class View {
     let extent = scale.domain();
     let number = 5
 
-    let sampleNumbers = [0,3,7,11]//this.linspace(extent[0], extent[1], number);
+    let sampleNumbers = [0,1,3,5]//this.linspace(extent[0], extent[1], number);
 
     let svg = d3.select('#legend-svg').append("g")
       .attr("id", "legendLinear" + type)

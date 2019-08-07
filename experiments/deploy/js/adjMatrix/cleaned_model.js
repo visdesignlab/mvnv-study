@@ -1225,7 +1225,7 @@ var View = /** @class */ (function () {
         var scale = this.edgeScales[type];
         var extent = scale.domain();
         var number = 5;
-        var sampleNumbers = [0, 3, 7, 11]; //this.linspace(extent[0], extent[1], number);
+        var sampleNumbers = [0, 1, 3, 5]; //this.linspace(extent[0], extent[1], number);
         var svg = d3.select('#legend-svg').append("g")
             .attr("id", "legendLinear" + type)
             .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
