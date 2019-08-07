@@ -531,9 +531,11 @@ async function loadTasks(visType) {
   studyTracking.taskListObj = taskListObj;
 
   let taskListEntries = Object.entries(taskListObj);
-  //Randomly order the tasks.
+  
+  if (!heuristics){
+    //Randomly order the tasks.
   shuffle(taskListEntries);
-
+  }
   // insert order and taskID into each element in this list
   taskList = taskListEntries.map((t, i) => {
     let task = t[1];
