@@ -704,7 +704,34 @@ var View = /** @class */ (function () {
         }
         var that = this;
         cells
-            .on("mouseover", function (cell) {
+            .on("mouseover", function (cell, i, nodes) {
+            var matrix = nodes[i].getScreenCTM()
+                .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+            var combinedMessage = cell.combined > 0 ? cell.combined.toString() + " interactions" : '';
+            if (cell.combined == 1) {
+                combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1);
+            }
+            var retweetMessage = cell.retweet > 0 ? cell.retweet.toString() + " retweets" : '';
+            if (cell.retweet == 1) {
+                retweetMessage = retweetMessage.substring(0, retweetMessage.length - 1);
+            }
+            var mentionsMessage = cell.mentions > 0 ? cell.mentions.toString() + " mentions" : '';
+            if (cell.mentions == 1) {
+                mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1);
+            }
+            var message = [combinedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>"); //retweetMessage+'</br>'+mentionsMessage
+            console.log(message);
+            if (message !== '') {
+                var yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45 : 30;
+                console.log(yOffset);
+                _this.tooltip.html(message)
+                    .style("left", (window.pageXOffset + matrix.e - 30) + "px")
+                    .style("top", (window.pageYOffset + matrix.f - yOffset) + "px");
+                _this.tooltip.transition()
+                    .delay(100)
+                    .duration(200)
+                    .style("opacity", .9);
+            }
             var cellIDs = [cell.cellName, cell.correspondingCell];
             _this.selectedCells = cellIDs;
             _this.selectedCells.map(function (cellID) {
@@ -724,6 +751,8 @@ var View = /** @class */ (function () {
             that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         })
             .on("mouseout", function (cell) {
+            _this.tooltip.transition(25)
+                .style("opacity", 0);
             var func = _this.removeHighlightNodesToDict;
             d3.selectAll('.hoveredCell').classed('hoveredCell', false);
             _this.selectedCells = [];

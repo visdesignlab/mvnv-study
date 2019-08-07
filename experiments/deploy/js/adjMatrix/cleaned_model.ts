@@ -814,7 +814,35 @@ class View {
     }
     let that = this;
     cells
-      .on("mouseover", (cell) => {
+      .on("mouseover", (cell,i,nodes) => {
+
+        let matrix = nodes[i].getScreenCTM()
+          .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+
+        let combinedMessage = cell.combined > 0 ?  cell.combined.toString()+" interactions": '';
+        let retweetMessage = cell.retweet > 0 ? cell.retweet.toString()+" retweets"  : '';
+        if(cell.retweet == 1){
+          retweetMessage = retweetMessage.substring(0,retweetMessage.length-1)
+        }
+        let mentionsMessage = cell.mentions> 0 ? cell.mentions.toString()+" mentions"  : '';
+
+        let message =[combinedMessage,retweetMessage,mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
+        console.log(message);
+
+        if(message !== ''){
+          let yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45: 30;
+          console.log(yOffset);
+          this.tooltip.html(message)
+              .style("left", (window.pageXOffset + matrix.e -30 ) + "px")
+              .style("top", (window.pageYOffset + matrix.f - yOffset) + "px");
+
+          this.tooltip.transition()
+            .delay(100)
+            .duration(200)
+            .style("opacity", .9);
+        }
+
+
 
         let cellIDs = [cell.cellName,cell.correspondingCell];
 
@@ -839,6 +867,8 @@ class View {
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       })
       .on("mouseout", (cell) => {
+        this.tooltip.transition(25)
+          .style("opacity", 0);
         let func = this.removeHighlightNodesToDict;
         d3.selectAll('.hoveredCell').classed('hoveredCell',false);
         this.selectedCells = [];
