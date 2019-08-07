@@ -156,8 +156,9 @@ fill: #eee;
 div.tooltip {
 position: absolute;
 text-align: center;
-font-size:11px;
-width: 85px;
+font-size:12.5px;
+color:black;
+width: 100px;
 border-radius: 5px;
 padding: 2px;
 background: white;
