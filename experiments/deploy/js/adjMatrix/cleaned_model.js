@@ -137,6 +137,7 @@ var Model = /** @class */ (function () {
             time: Date.now(),
             count: 0,
             clicked: [],
+            sortKey: this.controller.configuration.adjMatrix.sortKey,
             selections: {
                 answerBox: {},
                 attrRow: {},
@@ -704,7 +705,34 @@ var View = /** @class */ (function () {
         }
         var that = this;
         cells
-            .on("mouseover", function (cell) {
+            .on("mouseover", function (cell, i, nodes) {
+            var matrix = nodes[i].getScreenCTM()
+                .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+            var combinedMessage = cell.combined > 0 ? "interactions" : ''; //cell.combined.toString() + " interactions"
+            if (cell.combined == 1) {
+                combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1);
+            }
+            var retweetMessage = cell.retweet > 0 ? "retweets" : ''; //cell.retweet.toString() + " retweets"
+            if (cell.retweet == 1) {
+                retweetMessage = retweetMessage.substring(0, retweetMessage.length - 1);
+            }
+            var mentionsMessage = cell.mentions > 0 ? "mention" : ''; //cell.mentions.toString() + " mentions"
+            if (cell.mentions == 1) {
+                mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1);
+            }
+            var message = [combinedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>"); //retweetMessage+'</br>'+mentionsMessage
+            console.log(message);
+            if (message !== '') {
+                var yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45 : 30;
+                console.log(yOffset);
+                _this.tooltip.html(message)
+                    .style("left", (window.pageXOffset + matrix.e - 30) + "px")
+                    .style("top", (window.pageYOffset + matrix.f - yOffset) + "px");
+                _this.tooltip.transition()
+                    .delay(100)
+                    .duration(200)
+                    .style("opacity", .9);
+            }
             var cellIDs = [cell.cellName, cell.correspondingCell];
             _this.selectedCells = cellIDs;
             _this.selectedCells.map(function (cellID) {
@@ -724,6 +752,8 @@ var View = /** @class */ (function () {
             that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         })
             .on("mouseout", function (cell) {
+            _this.tooltip.transition(25)
+                .style("opacity", 0);
             var func = _this.removeHighlightNodesToDict;
             d3.selectAll('.hoveredCell').classed('hoveredCell', false);
             _this.selectedCells = [];
@@ -996,8 +1026,8 @@ var View = /** @class */ (function () {
                         nodeID = cellData.rowid;
                         _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
                         _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-                        return currentState;
                     }
+                    return currentState;
                     //nodeID = cellData.rowid;
                     //interactionName = interactionName + 'row'
                 }
@@ -1183,7 +1213,7 @@ var View = /** @class */ (function () {
         var scale = this.edgeScales[type];
         var extent = scale.domain();
         var number = 5;
-        var sampleNumbers = [0, 1, 3, 5]; //this.linspace(extent[0], extent[1], number);
+        var sampleNumbers = [0, 3, 7, 11]; //this.linspace(extent[0], extent[1], number);
         var svg = d3.select('#legend-svg').append("g")
             .attr("id", "legendLinear" + type)
             .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
@@ -2010,22 +2040,40 @@ var View = /** @class */ (function () {
         var topMargin = 1;
         var height = this.verticalScale.bandwidth() - 2 * topMargin;
         var width = this.verticalScale.bandwidth() * 2;
-        var _loop_2 = function (i) {
+        var _loop_2 = function (index) {
             this_2.attributeRows
                 .append('rect')
-                .attr('x', placementScaleForAttr[i].position)
+                .attr('x', placementScaleForAttr[index].position)
                 .attr('y', 1)
                 .attr('fill', function (d) {
-                return d[column] == placementScaleForAttr[i].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+                return d[column] == placementScaleForAttr[index].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
             })
                 .attr('width', width)
                 .attr('height', height)
-                .on('mouseover', this_2.attributeMouseOver)
-                .on('mouseout', this_2.attributeMouseOut);
+                .on('mouseover', function (d, i, nodes) {
+                if (d[column] == placementScaleForAttr[index].value) {
+                    var matrix = nodes[i].getScreenCTM()
+                        .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+                    _this.tooltip.html(d[column])
+                        .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+                        .style("top", (window.pageYOffset + matrix.f - 25) + "px");
+                    _this.tooltip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                }
+                _this.attributeMouseOver(d);
+            })
+                .on('mouseout', function (d, i, nodes) {
+                _this.tooltip.transition()
+                    .duration(25)
+                    .style("opacity", 0);
+                //that.tooltip.transition().duration(25).style("opacity", 0);
+                _this.attributeMouseOut(d);
+            });
         };
         var this_2 = this;
-        for (var i = 0; i < placementScaleForAttr.length; i++) {
-            _loop_2(i);
+        for (var index = 0; index < placementScaleForAttr.length; index++) {
+            _loop_2(index);
         }
         return;
     };
@@ -2274,6 +2322,7 @@ var Controller = /** @class */ (function () {
         d3.select('.adjMatrix.vis').style('width', (this.visWidth).toString() + 'px');
     };
     Controller.prototype.clearView = function () {
+        d3.select('.tooltip').remove();
         d3.select('#topology').selectAll('*').remove();
         d3.select('#attributes').selectAll('*').remove();
         d3.select('#legend-svg').selectAll('*').remove();

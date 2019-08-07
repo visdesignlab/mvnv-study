@@ -41,7 +41,7 @@ class Model {
   populateSearchBox() {
     let names = this.nodes.map(node => node.shortName);
     autocomplete(document.getElementById("myInput"), names);
-    d3.selectAll('.autocomplete').style('width',150);
+    d3.selectAll('.autocomplete').style('width', 150);
     d3.select('#searchButton').classed('search', true);
     d3.select('#searchButton')
       .on('click', () => {
@@ -50,7 +50,7 @@ class Model {
         if (index == -1) {
           return;
         }
-        let name = this.nodes.filter(node=>{return node.shortName == nodeID});
+        let name = this.nodes.filter(node => { return node.shortName == nodeID });
         name = name[0][this.datumID];
         let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
         this.controller.model.provenance.applyAction(action);
@@ -73,7 +73,7 @@ class Model {
     this.controller = controller;
     this.datumID = controller.datumID;
     d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then((data: any) => {
-    // d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
+      // d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
       //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
       //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
@@ -126,8 +126,8 @@ class Model {
 
   setUpProvenance() {
     const initialState = {
-      workerID:workerID,
-      taskID:this.controller.tasks[this.controller.taskNum],
+      workerID: workerID,
+      taskID: this.controller.tasks[this.controller.taskNum],
       nodes: '',//array of nodes that keep track of their position, whether they were softSelect or hardSelected;
       search: '', //field to store the id of a searched node;
       startTime: Date.now(), //time this provenance graph was created and the task initialized;
@@ -135,6 +135,7 @@ class Model {
       time: Date.now(), //timestamp for the current state of the graph;
       count: 0,
       clicked: [],
+      sortKey:this.controller.configuration.adjMatrix.sortKey,
       selections: {
 
         answerBox: {},
@@ -185,12 +186,12 @@ class Model {
 
             if (selectionType == 'answerBox') {
               answerElements.add('#' + selectionElement + node)
-            } else if(selectionType == 'neighborSelect'){
+            } else if (selectionType == 'neighborSelect') {
               neighborElements.add('#' + selectionElement + node)
             } else {
-              if(selectionType =='attrRow' || selectionType =='rowLabel'){
+              if (selectionType == 'attrRow' || selectionType == 'rowLabel') {
                 // if both in attrRow and rowLabel, don't highlight element
-                if(node in state.selections['attrRow'] && node in state.selections['rowLabel']) continue;
+                if (node in state.selections['attrRow'] && node in state.selections['rowLabel']) continue;
               }
               clickedElements.add('#' + selectionElement + node)
             }
@@ -222,7 +223,7 @@ class Model {
         let cellNames = [];
         Object.keys(state.selections.cellcol).map(key => {
           let names = state.selections.cellcol[key];
-          names.map(name=>{
+          names.map(name => {
             let cellsNames = splitCellNames(name);
             cellNames = cellNames.concat(cellsNames)
           })
@@ -233,17 +234,17 @@ class Model {
         let cellSelectorQuery = '#' + cellNames.join(',#')
         // if no cells selected, return
         d3.selectAll('.clickedCell').classed('clickedCell', false);
-        if(cellSelectorQuery=='#') return;
+        if (cellSelectorQuery == '#') return;
         d3.selectAll(cellSelectorQuery).selectAll('.baseCell').classed('clickedCell', true)
 
       }
 
       let updateAnswerBox = (state) => {
-        window.controller.configuration.adjMatrix['toggle']? window.controller.view.updateAnswerToggles(state): window.controller.view.updateCheckBox(state);
+        window.controller.configuration.adjMatrix['toggle'] ? window.controller.view.updateAnswerToggles(state) : window.controller.view.updateCheckBox(state);
         //window.controller.view.updateAnswerToggles(state)
         let answer = [];
-        for(let i = 0; i < window.controller.model.nodes.length; i++){
-          if(window.controller.model.nodes[i][this.controller.view.datumID] in state.selections.answerBox){
+        for (let i = 0; i < window.controller.model.nodes.length; i++) {
+          if (window.controller.model.nodes[i][this.controller.view.datumID] in state.selections.answerBox) {
             answer.push(window.controller.model.nodes[i]);
           }
         }
@@ -345,7 +346,7 @@ class Model {
 
 
       /* matrix used for edge attributes, otherwise should we hide */
-      this.matrix[i] = this.nodes.map((colNode) =>{ return { cellName:'cell'+rowNode[this.datumID]+'_'+colNode[this.datumID], correspondingCell:'cell'+colNode[this.datumID]+'_'+rowNode[this.datumID],rowid: rowNode[this.datumID], colid: colNode[this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
+      this.matrix[i] = this.nodes.map((colNode) => { return { cellName: 'cell' + rowNode[this.datumID] + '_' + colNode[this.datumID], correspondingCell: 'cell' + colNode[this.datumID] + '_' + rowNode[this.datumID], rowid: rowNode[this.datumID], colid: colNode[this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
       this.scalarMatrix[i] = this.nodes.map(function(colNode) { return 0; });
 
     });
@@ -452,7 +453,7 @@ class View {
       interaction = interaction.replace(' hovered', '');
       interaction = interaction.replace(' clicked', '');
       interaction = interaction.replace(' answer', '');
-      interaction = interaction.replace(' neighbor','');
+      interaction = interaction.replace(' neighbor', '');
       let action = this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
       this.controller.model.provenance.applyAction(action);
       //pushProvenance(this.controller.model.app.currentState())
@@ -568,14 +569,14 @@ class View {
     // Float edges so put edges and attr on same place
     d3.select('#topology').style('float', 'left');
 
-    let width = this.controller.visWidth*this.controller.edgePorportion;//this.edgeWidth + this.margins.left + this.margins.right;
+    let width = this.controller.visWidth * this.controller.edgePorportion;//this.edgeWidth + this.margins.left + this.margins.right;
     let height = this.controller.visHeight;//this.edgeHeight + this.margins.top + this.margins.bottom;
 
     this.edgeWidth = width - (this.margins.left + this.margins.right)//*this.controller.edgePorportion;
     this.edgeHeight = height - (this.margins.top + this.margins.bottom)//*this.controller.edgePorportion;
 
     this.edges = d3.select('#topology').append("svg")
-      .attr("viewBox", "0 0 " + (width)+ " " + height + "")
+      .attr("viewBox", "0 0 " + (width) + " " + height + "")
       .attr("preserveAspectRatio", "xMinYMin meet")
       .append("g")
       .classed("svg-content", true)
@@ -732,7 +733,7 @@ class View {
       // set up scale
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
       //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
-      let otherColors = ['#064B6E','#4F0664','#000000']
+      let otherColors = ['#064B6E', '#4F0664', '#000000']
       let scale = d3.scaleSqrt().domain(extent).range(["white", otherColors[typeIndex]);
 
 
@@ -747,10 +748,10 @@ class View {
       .enter().append('g')
       .attr("class", "cell")
       .attr('id', d => d.cellName)
-      .attr('transform',d=>'translate('+this.verticalScale(d.x)+',0)')
+      .attr('transform', d => 'translate(' + this.verticalScale(d.x) + ',0)')
     let squares = cells
       .append("rect")
-      .classed('baseCell',true)
+      .classed('baseCell', true)
       .attr("x", d => 0)
       .attr('height', this.verticalScale.bandwidth())
       .attr('width', this.verticalScale.bandwidth())
@@ -764,7 +765,7 @@ class View {
 
       //let squares = cells
       let offset = 0;
-      let squareSize = this.verticalScale.bandwidth() - 2*offset;
+      let squareSize = this.verticalScale.bandwidth() - 2 * offset;
       for (let index = 0; index < dividers; index++) {
 
         let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
@@ -779,21 +780,21 @@ class View {
           //  return d[type] !== 0;
           //})
           .append("rect")
-          .classed('nestedEdges nestedEdges'+type,true)
-          .attr('x',  offset)// index * this.verticalScale.bandwidth() / dividers })
+          .classed('nestedEdges nestedEdges' + type, true)
+          .attr('x', offset)// index * this.verticalScale.bandwidth() / dividers })
           .attr('y', (d) => {
             return offset//this.verticalScale.bandwidth() - scale(d[type]);
           })
           .attr('height', squareSize)//)
           .attr('width', squareSize)
           .attr('fill', d => this.edgeScales[type](d[type]));
-          offset = squareSize/4;
-          squareSize = squareSize-2*offset;
+        offset = squareSize / 4;
+        squareSize = squareSize - 2 * offset;
 
       }
       cells
         .selectAll('.nestedEdges')
-        .filter(d=>{
+        .filter(d => {
           return d.mentions == 0 && d.retweet == 0 && d.combined == 0;
         })
         .remove();
@@ -814,13 +815,47 @@ class View {
     }
     let that = this;
     cells
-      .on("mouseover", (cell) => {
+      .on("mouseover", (cell, i, nodes) => {
 
-        let cellIDs = [cell.cellName,cell.correspondingCell];
+        let matrix = nodes[i].getScreenCTM()
+          .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+
+        let combinedMessage = cell.combined > 0 ? "interactions" : '';//cell.combined.toString() + " interactions"
+        if (cell.combined == 1) {
+          combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1)
+        }
+        let retweetMessage = cell.retweet > 0 ? "retweets" : '';//cell.retweet.toString() + " retweets"
+        if (cell.retweet == 1) {
+          retweetMessage = retweetMessage.substring(0, retweetMessage.length - 1)
+        }
+        let mentionsMessage = cell.mentions > 0 ? "mention" : '';//cell.mentions.toString() + " mentions"
+        if (cell.mentions == 1) {
+          mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1)
+        }
+
+        let message = [combinedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
+        console.log(message);
+
+        if (message !== '') {
+          let yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45 : 30;
+          console.log(yOffset);
+          this.tooltip.html(message)
+            .style("left", (window.pageXOffset + matrix.e - 30) + "px")
+            .style("top", (window.pageYOffset + matrix.f - yOffset) + "px");
+
+          this.tooltip.transition()
+            .delay(100)
+            .duration(200)
+            .style("opacity", .9);
+        }
+
+
+
+        let cellIDs = [cell.cellName, cell.correspondingCell];
 
         this.selectedCells = cellIDs;
         this.selectedCells.map(cellID => {
-          d3.selectAll('#'+cellID).selectAll('.baseCell').classed('hoveredCell',true);
+          d3.selectAll('#' + cellID).selectAll('.baseCell').classed('hoveredCell', true);
         })
         let cellID = cellIDs[0];
 
@@ -831,7 +866,7 @@ class View {
         }
 
         // add mouseover events
-        this.mouseoverEvents.push({time:new Date().getTime(),event:cellID})
+        this.mouseoverEvents.push({ time: new Date().getTime(), event: cellID })
 
         that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
@@ -839,8 +874,10 @@ class View {
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
       })
       .on("mouseout", (cell) => {
+        this.tooltip.transition(25)
+          .style("opacity", 0);
         let func = this.removeHighlightNodesToDict;
-        d3.selectAll('.hoveredCell').classed('hoveredCell',false);
+        d3.selectAll('.hoveredCell').classed('hoveredCell', false);
         this.selectedCells = [];
 
         let cellID = cell.cellName;
@@ -855,10 +892,10 @@ class View {
         //that.renderHighlightNodesFromDict(this.controller.hoverRow,'hovered','Row');
         //that.renderHighlightNodesFromDict(this.controller.hoverCol,'hovered','Col');
       })
-      .on('click', (d,i,nodes)=>{
+      .on('click', (d, i, nodes) => {
         // only trigger click if edge exists
-        if(d.combined != 0 || d.retweet != 0 || d.mentions != 0){
-          this.clickFunction(d,i,nodes);
+        if (d.combined != 0 || d.retweet != 0 || d.mentions != 0) {
+          this.clickFunction(d, i, nodes);
 
         }
         return;
@@ -1015,7 +1052,7 @@ class View {
 
     this.order = this.controller.getOrder();
 
-    let labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5:11;
+    let labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5 : 11;
     console.log(labelSize);
     this.edgeRows.append("text")
       .attr('class', 'rowLabel')
@@ -1049,7 +1086,7 @@ class View {
         that.addHighlightNodesToDict(this.controller.hoverRow, rowID, rowID);  // Add row (rowid)
         that.addHighlightNodesToDict(this.controller.hoverCol, rowID, rowID);  // Add row (rowid)
 
-        this.mouseoverEvents.push({time:new Date().getTime(),event:'rowLabel'+rowID})
+        this.mouseoverEvents.push({ time: new Date().getTime(), event: 'rowLabel' + rowID })
 
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
@@ -1071,15 +1108,15 @@ class View {
       .attr("text-anchor", "start")
       .style("font-size", labelSize)
       .text((d, i) => this.nodes[i].shortName)
-      .on('click', (d,i,nodes)=>{
-        if(this.controller.configuration.adjMatrix.neighborSelect){
-          this.clickFunction(d,i,nodes);
+      .on('click', (d, i, nodes) => {
+        if (this.controller.configuration.adjMatrix.neighborSelect) {
+          this.clickFunction(d, i, nodes);
           let action = this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
           this.controller.model.provenance.applyAction(action);
 
 
         } else {
-          this.clickFunction(d,i,nodes);
+          this.clickFunction(d, i, nodes);
         }
       })
       .on("mouseout", (d, i, nodes) => {
@@ -1104,14 +1141,14 @@ class View {
         that.addHighlightNodesToDict(this.controller.hoverCol, colID, colID);  // Add row (rowid)
         that.addHighlightNodesToDict(this.controller.hoverRow, colID, colID);  // Add row (rowid)
 
-        this.mouseoverEvents.push({time:new Date().getTime(),event:'colLabel'+colID})
+        this.mouseoverEvents.push({ time: new Date().getTime(), event: 'colLabel' + colID })
         //that.addHighlightNodesToDict(this.controller.hoverCol, cell.colid, cellID);  // Add col (colid)
         d3.selectAll('.hovered').classed('hovered', false);
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
         that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
       });
 
-      //make rowlabel and collabel
+    //make rowlabel and collabel
 
 
     this.tooltip = d3.select("body")
@@ -1145,24 +1182,24 @@ class View {
 
           this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
           this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-          if(cellData.cellName != cellData.correspondingCell){
+          if (cellData.cellName != cellData.correspondingCell) {
             interactedElement = cellData.correspondingCell;// + cellData.rowid;
             nodeID = cellData.rowid;
 
             this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
             this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-            return currentState;
           }
+          return currentState
 
           //nodeID = cellData.rowid;
           //interactionName = interactionName + 'row'
-        } else if (interactionName == 'neighborSelect'){
+        } else if (interactionName == 'neighborSelect') {
 
           //this.controller.model.provenance.applyAction(action);
           let columnData = d3.select(node).data()[0];
-          interactedElement = 'colClick'+d3.select(node).data()[0][0].rowid;
-          columnData.map(node=>{
-            if(node.mentions != 0 || node.combined != 0 || node.retweet != 0){
+          interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
+          columnData.map(node => {
+            if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
               let neighbor = node.colid;
               this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
 
@@ -1193,16 +1230,16 @@ class View {
       return data[0].rowid;
     }
   }
-  alreadyCellInState(state,nodeID){
+  alreadyCellInState(state, nodeID) {
     let cellNames = splitCellNames(nodeID);
     let flag = false;
-    cellNames.map(name=>{
-      if(state.selections['cell'][name]){
+    cellNames.map(name => {
+      if (state.selections['cell'][name]) {
         delete state.selections['cell'][name]
         flag = true;
       }
     })
-    return  flag;
+    return flag;
   }
   /**
    * Adds the interacted node to the state object.
@@ -1224,7 +1261,7 @@ class View {
     if (nodeID in state.selections[interaction]) {
       // Remove element if in list, if list is empty, delete key
       let currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);
-      if (currentIndex > -1 ) {
+      if (currentIndex > -1) {
         state.selections[interaction][nodeID].splice(currentIndex, 1);
         if (state.selections[interaction][nodeID].length == 0) delete state.selections[interaction][nodeID];
       } else {
@@ -1342,7 +1379,7 @@ class View {
     let extent = scale.domain();
     let number = 5
 
-    let sampleNumbers = [0,1,3,5]//this.linspace(extent[0], extent[1], number);
+    let sampleNumbers = [0,3,7,11]//this.linspace(extent[0], extent[1], number);
 
     let svg = d3.select('#legend-svg').append("g")
       .attr("id", "legendLinear" + type)
@@ -1388,7 +1425,7 @@ class View {
       .attr('y', 8)
       .attr('text-anchor', 'middle')
       .text("# of " + pluralType)
-    let sideMargin = ((boxWidth) - (sampleNumbers.length*(rectWidth + 5)))/2
+    let sideMargin = ((boxWidth) - (sampleNumbers.length * (rectWidth + 5))) / 2
 
     let groups = svg.selectAll('g')
       .data(sampleNumbers)
@@ -1606,7 +1643,7 @@ class View {
     let cssSelector = '';
     for (let nodeID in dict) {
       if (rowOrCol == 'Row') {
-        cssSelector += '#attr' + rowOrCol + nodeID + ',' ;
+        cssSelector += '#attr' + rowOrCol + nodeID + ',';
       }
       cssSelector += '#topo' + rowOrCol + nodeID + ','
 
@@ -1728,17 +1765,18 @@ class View {
       //.duration(transitionTime)
       //.delay((d, i) => { return this.verticalScale(i) * 4; })
       .attr("transform", (d, i) => {
-        if(i > this.order.length-1) return;
+        if (i > this.order.length - 1) return;
         return "translate(0," + this.verticalScale(i) + ")";
       })
 
     let cells = d3.selectAll(".cell")//.selectAll('rect')
-    //.transition()
-    //.duration(transitionTime)
-    //.delay((d, i) => { return this.verticalScale(i) * 4; })
+      //.transition()
+      //.duration(transitionTime)
+      //.delay((d, i) => { return this.verticalScale(i) * 4; })
       //.delay((d) => { return this.verticalScale(d.x) * 4; })
       .attr("transform", (d, i) => {
-        return 'translate('+this.verticalScale(d.x)+',0)'});
+        return 'translate(' + this.verticalScale(d.x) + ',0)'
+});
 
     this.attributeRows
       //.transition()
@@ -1769,37 +1807,37 @@ class View {
       .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
   }
 
-  updateCheckBox(state){
-    if(this.controller.configuration.attributeScales.node.selected == undefined){
+  updateCheckBox(state) {
+    if (this.controller.configuration.attributeScales.node.selected == undefined) {
       return;
     }
     let color = this.controller.configuration.attributeScales.node.selected.range[0];
 
     d3.selectAll('.answerBox').selectAll('rect').transition().duration(250)
-      .style("fill", d=>{
+      .style("fill", d => {
         let answerStatus = d[this.datumID] in state.selections.answerBox;
         return answerStatus ? color : "white"
       })
   }
-  updateAnswerToggles(state){
+  updateAnswerToggles(state) {
     //let answerStatus = nodeID in this.controller.answerRow;
-    if(this.controller.configuration.attributeScales.node.selected == undefined){
+    if (this.controller.configuration.attributeScales.node.selected == undefined) {
       return;
     }
     let color = this.controller.configuration.attributeScales.node.selected.range[0];
     d3.selectAll('.answerBox').selectAll('circle').transition().duration(500)
-      .attr("cx", d=>{
+      .attr("cx", d => {
         let answerStatus = d[this.datumID] in state.selections.answerBox;
-        return(answerStatus ? 3 * this.columnWidths['selected'] / 4 : 1.15 * this.columnWidths['selected'] / 4)
+        return (answerStatus ? 3 * this.columnWidths['selected'] / 4 : 1.15 * this.columnWidths['selected'] / 4)
       })
-      .style("fill", d=>{
+      .style("fill", d => {
         let answerStatus = d[this.datumID] in state.selections.answerBox;
         return answerStatus ? color : "white";
       })
 
 
     d3.select('.answerBox').selectAll('rect').transition().duration(500)
-      .style("fill", d=>{
+      .style("fill", d => {
         let answerStatus = d[this.datumID] in state.selections.answerBox;
         return answerStatus ? "#8B8B8B" : "lightgray"
       })
@@ -1816,13 +1854,13 @@ class View {
 
 
 
-    let width = this.controller.visWidth*this.controller.attributePorportion;//this.edgeWidth + this.margins.left + this.margins.right;
+    let width = this.controller.visWidth * this.controller.attributePorportion;//this.edgeWidth + this.margins.left + this.margins.right;
     let height = this.controller.visHeight;//this.edgeHeight + this.margins.top + this.margins.bottom;
-    this.attributeWidth =  width - (this.margins.left + this.margins.right) //* this.controller.attributePorportion;
+    this.attributeWidth = width - (this.margins.left + this.margins.right) //* this.controller.attributePorportion;
     this.attributeHeight = height - (this.margins.top + this.margins.bottom)// * this.controller.attributePorportion;
 
     this.attributes = d3.select('#attributes').append("svg")
-      .attr("viewBox", "0 0 " + (width)+ " " + height + "")
+      .attr("viewBox", "0 0 " + (width) + " " + height + "")
       .attr("preserveAspectRatio", "xMinYMin meet")
       .append("g")
       .classed("svg-content", true)
@@ -1864,18 +1902,18 @@ class View {
       .attr('stroke', '2px')
       .attr('stroke-opacity', 0.3);
 
-    let attributeMouseOver = (d)=>{
+    let attributeMouseOver = (d) => {
       that.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
       that.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
 
-      this.mouseoverEvents.push({time:new Date().getTime(),event:'attrRow'+d[this.datumID]})
+      this.mouseoverEvents.push({ time: new Date().getTime(), event: 'attrRow' + d[this.datumID] })
 
       d3.selectAll('.hovered').classed('hovered', false);
       that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
       that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
     };
     this.attributeMouseOver = attributeMouseOver;
-    let attributeMouseOut = (d)=> {
+    let attributeMouseOut = (d) => {
 
       that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
       that.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
@@ -2030,25 +2068,25 @@ class View {
           .attr('x', columnPosition + barMargin.left)
           .attr('y', barMargin.top) // as y is set by translate
           .attr('fill', '#8B8B8B')
-          .on('mouseover', function (d) {
+          .on('mouseover', function(d) {
             //if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
-              //that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
+            //that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
 
-              let matrix = this.getScreenCTM()
-                .translate(+this.getAttribute("x"), +this.getAttribute("y"));
+            let matrix = this.getScreenCTM()
+              .translate(+this.getAttribute("x"), +this.getAttribute("y"));
 
-              that.tooltip.html(Math.round(d[column]))
-                  .style("left", (window.pageXOffset + matrix.e + columnWidths[column]/2 - 35) + "px")
-                  .style("top", (window.pageYOffset + matrix.f - 5) + "px");
+            that.tooltip.html(Math.round(d[column]))
+              .style("left", (window.pageXOffset + matrix.e + columnWidths[column] / 2 - 35) + "px")
+              .style("top", (window.pageYOffset + matrix.f - 5) + "px");
 
-              that.tooltip.transition()
-                .duration(200)
-                .style("opacity", .9);
+            that.tooltip.transition()
+              .duration(200)
+              .style("opacity", .9);
 
-              attributeMouseOver(d);
+            attributeMouseOver(d);
             //}
           })
-          .on('mouseout', (d)=>  {
+          .on('mouseout', (d) => {
             that.tooltip.transition().duration(25).style("opacity", 0);
             attributeMouseOut(d);
           })
@@ -2068,9 +2106,9 @@ class View {
         let answerBox = this.attributeRows
           .append('g')
           .attr("class", "answerBox")
-          .attr("id", d=> "answerBox" + d[this.datumID])
+          .attr("id", d => "answerBox" + d[this.datumID])
           .attr('transform', 'translate(' + (columnPosition + barMargin.left) + ',' + 0 + ')');
-        if(this.controller.configuration.adjMatrix.toggle){
+        if (this.controller.configuration.adjMatrix.toggle) {
           let rect = answerBox.append("rect")
             .attr("x", (columnWidths[column] / 4)) // if column with is 1, we want this at 1/4, and 1/2 being mid point
             .attr("y", barMargin.top)
@@ -2080,15 +2118,15 @@ class View {
             .attr("width", columnWidths[column] / 2)
             .attr("height", barHeight)
             .attr('stroke', 'lightgray')
-            .on('mouseover',attributeMouseOver)
-            .on('mouseout',attributeMouseOut);
+            .on('mouseover', attributeMouseOver)
+            .on('mouseout', attributeMouseOut);
 
           let circle = answerBox.append("circle")
             .attr("cx", (1.15 * columnWidths[column] / 4))
             .attr("cy", barHeight / 2 + barMargin.top)
             .attr("r", barHeight / 2)
             .style("fill", "white")
-            .style('stroke','lightgray');
+            .style('stroke', 'lightgray');
         } else {
           let rect = answerBox.append("rect")
             .attr("x", (columnWidths[column] / 2) - barHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
@@ -2099,8 +2137,8 @@ class View {
             .attr("width", barHeight)
             .attr("height", barHeight)
             .attr('stroke', 'lightgray')
-            .on('mouseover',attributeMouseOver)
-            .on('mouseout',attributeMouseOut);
+            .on('mouseover', attributeMouseOver)
+            .on('mouseout', attributeMouseOut);
         }
 
 
@@ -2116,7 +2154,7 @@ class View {
 
             /*Visual chagne */
             let answerStatus = nodeID in this.controller.answerRow;
-            if(this.controller.configuration.adjMatrix.toggle){
+            if (this.controller.configuration.adjMatrix.toggle) {
               d3.select(nodes[i]).selectAll('circle').transition().duration(500)
                 .attr("cx", (answerStatus ? 3 * columnWidths[column] / 4 : 1.15 * columnWidths[column] / 4))
                 .style("fill", answerStatus ? color : "white");
@@ -2208,17 +2246,17 @@ class View {
       .data(columns)
       .enter()
       .append('g')
-      .attr('transform', (d) => 'translate(' + (this.columnScale(d) ) + ',' + (-65) + ')')
+      .attr('transform', (d) => 'translate(' + (this.columnScale(d)) + ',' + (-65) + ')')
 
     columnHeaderGroups
       .append('rect')
-      .attr('width',d=>this.columnWidths[d])
-      .attr('height',20)
-      .attr('y',0)
-      .attr('x',0)
-      .attr('fill','none')
-      .attr('stroke','lightgray')
-      .attr('stroke-width',1)
+      .attr('width', d => this.columnWidths[d])
+      .attr('height', 20)
+      .attr('y', 0)
+      .attr('x', 0)
+      .attr('fill', 'none')
+      .attr('stroke', 'lightgray')
+      .attr('stroke-width', 1)
 
     columnHeaderGroups
       .append('text')
@@ -2234,8 +2272,8 @@ class View {
         }
         return this.columnNames[d];
       })
-      .attr('x',d=>this.columnWidths[d]/2)
-      .attr('y',14)
+      .attr('x', d => this.columnWidths[d] / 2)
+      .attr('y', 14)
       .on('mouseover', function(d) {
         if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
           that.tooltip.transition().duration(200).style("opacity", .9);
@@ -2255,8 +2293,8 @@ class View {
       .on('mouseout', function(d) {
         that.tooltip.transition().duration(250).style("opacity", 0);
       })
-      .on('click', (d)=>{
-        if(d !== 'selected'){
+      .on('click', (d) => {
+        if (d !== 'selected') {
           this.sort(d);
         }
 
@@ -2311,7 +2349,7 @@ class View {
       let column = columns[i];
       // if column is categorical
       if (this.isCategorical(column)) {
-        let width = (bandwidthScale*bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3/bandwidthScale)
+        let width = (bandwidthScale * bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3 / bandwidthScale)
 
         if (column == "selected") {
           width = 60;
@@ -2345,19 +2383,42 @@ class View {
     let columnPosition = this.columnScale(column);
     let topMargin = 1;
     let height = this.verticalScale.bandwidth() - 2 * topMargin;
-    let width = this.verticalScale.bandwidth()*2
-    for (let i = 0; i < placementScaleForAttr.length; i++) {
+    let width = this.verticalScale.bandwidth() * 2
+    for (let index = 0; index < placementScaleForAttr.length; index++) {
       this.attributeRows
         .append('rect')
-        .attr('x', placementScaleForAttr[i].position)
+        .attr('x', placementScaleForAttr[index].position)
         .attr('y', 1)
         .attr('fill', (d) => {
-          return d[column] == placementScaleForAttr[i].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+          return d[column] == placementScaleForAttr[index].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
         })
         .attr('width', width)
         .attr('height', height)
-        .on('mouseover',this.attributeMouseOver)
-        .on('mouseout',this.attributeMouseOut);
+        .on('mouseover', (d, i, nodes) => {
+          if (d[column] == placementScaleForAttr[index].value) {
+            let matrix = nodes[i].getScreenCTM()
+              .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+
+            this.tooltip.html(d[column])
+              .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+              .style("top", (window.pageYOffset + matrix.f - 25) + "px");
+
+            this.tooltip.transition()
+              .duration(200)
+              .style("opacity", .9);
+          }
+
+
+          this.attributeMouseOver(d);
+        })
+        .on('mouseout', (d, i, nodes) => {
+          this.tooltip.transition()
+            .duration(25)
+            .style("opacity", 0);
+          //that.tooltip.transition().duration(25).style("opacity", 0);
+
+          this.attributeMouseOut(d);
+        });
     }
 
 
@@ -2371,9 +2432,9 @@ class View {
     let bandwidthScale = 2
     let bandwidth = this.verticalScale.bandwidth();
 
-    let legendItemSize = bandwidth*bandwidthScale;
+    let legendItemSize = bandwidth * bandwidthScale;
     //(legendWidth) / (dividers + 3/bandwidthScale);
-    let margin = bandwidth*bandwidthScale / dividers;
+    let margin = bandwidth * bandwidthScale / dividers;
 
     let xRange = [];
 
@@ -2402,11 +2463,11 @@ class View {
       rect1
         .append('text')
         .text(attributeInfo.legendLabels[i])
-        .attr('x', legendItemSize/2)
+        .attr('x', legendItemSize / 2)
         .attr('y', -3)
         .attr('text-anchor', 'middle')
         .style('font-size', 11)
-        //.attr('transform', 'rotate(-90)')
+      //.attr('transform', 'rotate(-90)')
     }
 
     return xRange;
@@ -2517,15 +2578,15 @@ class Controller {
   private tasks: any;
   private taskNum: number;
 
-  loadTask(taskNum){
+  loadTask(taskNum) {
     this.taskNum = taskNum;
     this.task = this.tasks[this.taskNum];
     this.configuration = this.task.config;
     //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
 
     //this.configuration.adjMatrix.edgeBars = true;
-    if(this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')){
-      if(!this.configuration.nodeAttributes.includes('selected')){
+    if (this.task.replyType.includes('singleNodeSelection') || this.task.replyType.includes('multipleNodeSelection')) {
+      if (!this.configuration.nodeAttributes.includes('selected')) {
         this.configuration.nodeAttributes.unshift('selected');
         let obj = {
           "domain": [true, false],
@@ -2543,11 +2604,11 @@ class Controller {
     this.configuration.adjMatrix['toggle'] = false;
     //this.configuration.adjMatrix.neighborSelect = true;
 
-    this.attrWidth = d3.min([125*this.configuration.nodeAttributes.length,650]);
+    this.attrWidth = d3.min([125 * this.configuration.nodeAttributes.length, 650]);
 
     this.configuration.state = {}
     this.configuration.state.adjMatrix = {};
-    if(this.configuration.adjMatrix.sortKey == null || this.configuration.adjMatrix.sortKey == ''){
+    if (this.configuration.adjMatrix.sortKey == null || this.configuration.adjMatrix.sortKey == '') {
       this.configuration.adjMatrix.sortKey = 'shortName'
     }
 
@@ -2607,9 +2668,9 @@ class Controller {
       let components = [configComponents[0], configComponents[1], configComponents[2]];
       let result = deepmerge.all(components);
 */
-      // added selected attribute scale
+    // added selected attribute scale
 
-      //that.finishConstructing(result);
+    //that.finishConstructing(result);
     //})
 
 
@@ -2627,7 +2688,7 @@ class Controller {
           //add time stamp to the state graph
           currentState.time = Date.now();
           currentState.event = 'clear';
-          currentState.selections =  {
+          currentState.selections = {
             answerBox: {},
             attrRow: {},
             rowLabel: {},
@@ -2635,7 +2696,7 @@ class Controller {
             cellcol: {},
             cellrow: {},
             search: {},
-            neighborSelect : {}
+            neighborSelect: {}
           }
           return currentState;
         },
@@ -2664,43 +2725,43 @@ class Controller {
   private hoverRow: any;
   private hoverCol: any;
 
-  sizeLayout(){
+  sizeLayout() {
     let targetDiv = d3.select("#targetSize");
     let width = targetDiv.style("width").replace("px", ""),
       height = targetDiv.style("height").replace("px", "");
     let taskBarHeight = 74;
-    let panelDimensions  = {}
+    let panelDimensions = {}
     panelDimensions.width = width * 0.2;
     panelDimensions.height = height - taskBarHeight;
     d3.select("#visPanel").style("width", panelDimensions.width + "px");
-    d3.select('#panelDiv').style('display','none');
+    d3.select('#panelDiv').style('display', 'none');
     this.visHeight = panelDimensions.height;
-    this.visWidth = width*0.8-40;
-    this.edgeWidth = this.visWidth-this.attrWidth;
+    this.visWidth = width * 0.8 - 40;
+    this.edgeWidth = this.visWidth - this.attrWidth;
 
     let filler = 0;
-    if(panelDimensions.height < this.edgeWidth){
+    if (panelDimensions.height < this.edgeWidth) {
       this.edgeWidth = panelDimensions.height;
-      filler = this.visWidth-this.attrWidth-this.edgeWidth;
+      filler = this.visWidth - this.attrWidth - this.edgeWidth;
       this.visWidth = this.visWidth;
     }
 
 
-    this.attributePorportion = this.attrWidth/(this.edgeWidth+this.attrWidth + filler);
-    this.edgePorportion = this.edgeWidth/(this.edgeWidth+this.attrWidth+ filler);
+    this.attributePorportion = this.attrWidth / (this.edgeWidth + this.attrWidth + filler);
+    this.edgePorportion = this.edgeWidth / (this.edgeWidth + this.attrWidth + filler);
 
-    if(this.edgeWidth < panelDimensions.height){
-      this.visHeight = this.visWidth*this.edgePorportion;
+    if (this.edgeWidth < panelDimensions.height) {
+      this.visHeight = this.visWidth * this.edgePorportion;
     }
 
-    d3.select('.topocontainer').style('width',(100*this.edgePorportion).toString() + '%');
-    d3.select('.topocontainer').style('height',(this.visHeight).toString() + 'px');
-    d3.select('.attrcontainer').style('width',(100*this.attributePorportion).toString() + '%');
-    d3.select('.attrcontainer').style('height',(this.visHeight).toString() + 'px');
+    d3.select('.topocontainer').style('width', (100 * this.edgePorportion).toString() + '%');
+    d3.select('.topocontainer').style('height', (this.visHeight).toString() + 'px');
+    d3.select('.attrcontainer').style('width', (100 * this.attributePorportion).toString() + '%');
+    d3.select('.attrcontainer').style('height', (this.visHeight).toString() + 'px');
 
 
     //d3.select('.adjMatrix.vis').style('width',width*0.8);
-    d3.select('.adjMatrix.vis').style('width',(this.visWidth).toString()+'px')
+    d3.select('.adjMatrix.vis').style('width', (this.visWidth).toString() + 'px')
   }
 
   constructor() {
@@ -2726,9 +2787,12 @@ class Controller {
 
   }
   clearView() {
+      d3.select('.tooltip').remove();
+
     d3.select('#topology').selectAll('*').remove();
     d3.select('#attributes').selectAll('*').remove();
     d3.select('#legend-svg').selectAll('*').remove();
+
   }
 
   reload() {
@@ -2836,9 +2900,9 @@ function deepmerge(target, source, optionsArgument) {
   }
 }
 
-function splitCellNames(name: string){
+function splitCellNames(name: string) {
   //remove cell
-  let cleanedCellName = name.replace('cell','');
+  let cleanedCellName = name.replace('cell', '');
   let ids = cleanedCellName.split('_');
-  return ['cell'+ids[0]+'_'+ids[1],'cell'+ids[1]+'_'+ids[0]]
+  return ['cell' + ids[0] + '_' + ids[1], 'cell' + ids[1] + '_' + ids[0]]
 }
