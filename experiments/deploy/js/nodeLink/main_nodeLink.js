@@ -1012,7 +1012,7 @@ function updateVis() {
     catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
     catGlyphs.on("mouseover",function(d){
-      showTooltip(d.attr  + ":" + d.label)
+      showTooltip(d.attr  + ":" + d.data)
     })
   
 
