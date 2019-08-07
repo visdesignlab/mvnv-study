@@ -639,6 +639,7 @@ async function assignTasks() {
 
   Object.keys(configLessTaskList).map(key => {
     delete configLessTaskList[key].config;
+    configLessTaskList[key].visType = vis;
   });
 
   var taskListRef = db.collection("results").doc(workerID);
