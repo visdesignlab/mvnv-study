@@ -77,6 +77,8 @@ class Model {
       //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
       //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
+      this.edges = data.links;
+
       //setPanelValuesFromFile(controller.configuration, data);
       this.matrix = [];
       this.scalarMatrix = [];
@@ -84,9 +86,18 @@ class Model {
       this.nodes = data.nodes
       this.populateSearchBox();
       this.idMap = {};
-      this.orderType = this.controller.configuration.adjMatrix.sortKey;
+
+      let clusterFlag = false;
+      if(this.controller.configuration.adjMatrix.sortKey in ['clusterBary','clusterLeaf','clusterSpectral']){
+        this.orderType = 'shortName';//this.controller.configuration.adjMatrix.sortKey;
+        clusterFlag = true;
+      } else {
+        this.orderType = this.controller.configuration.adjMatrix.sortKey;
+        console.log(this.order);
+
+      }
       this.order = this.changeOrder(this.orderType);
-      console.log(this.order);
+
       if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
         this.nodes = this.nodes.sort((a, b) => a[this.orderType].localeCompare(b[this.orderType]));
       } else {
@@ -98,11 +109,15 @@ class Model {
         this.idMap[node.id] = index;
       })
 
-      this.edges = data.links;
 
       this.controller = controller;
 
       this.processData();
+      if(clusterFlag){
+        this.orderType = this.controller.configuration.adjMatrix.sortKey;
+
+        this.order = this.changeOrder(this.orderType);
+      }
 
 
 
@@ -294,7 +309,7 @@ class Model {
       /*var graph = reorder.graph()
         .nodes(this.nodes)
         .links(this.edges)
-        .init();*/
+        .init();*/ //"favourites_count"
       var graph = reorder.graph()
         .nodes(this.nodes)
         .links(this.edges)
@@ -731,6 +746,7 @@ class View {
       let extent = [0, this.controller.configuration.attributeScales.edge.count.domain[1]];
       //model.maxTracker[type]]
       // set up scale
+      console.log(extent);
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
       //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
       let otherColors = ['#064B6E', '#4F0664', '#000000']
@@ -820,15 +836,15 @@ class View {
         let matrix = nodes[i].getScreenCTM()
           .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
 
-        let combinedMessage = cell.combined > 0 ? "interactions" : '';//cell.combined.toString() + " interactions"
+        let combinedMessage = cell.combined > 0 ? cell.combined.toString() + " interactions" : '';//
         if (cell.combined == 1) {
           combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1)
         }
-        let retweetMessage = cell.retweet > 0 ? "retweets" : '';//cell.retweet.toString() + " retweets"
+        let retweetMessage = cell.retweet > 0 ? cell.retweet.toString() + " retweets" : '';//
         if (cell.retweet == 1) {
           retweetMessage = retweetMessage.substring(0, retweetMessage.length - 1)
         }
-        let mentionsMessage = cell.mentions > 0 ? "mention" : '';//cell.mentions.toString() + " mentions"
+        let mentionsMessage = cell.mentions > 0 ? cell.mentions.toString() + " mentions" : '';//
         if (cell.mentions == 1) {
           mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1)
         }
@@ -840,7 +856,7 @@ class View {
           let yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45 : 30;
           console.log(yOffset);
           this.tooltip.html(message)
-            .style("left", (window.pageXOffset + matrix.e - 30) + "px")
+            .style("left", (window.pageXOffset + matrix.e - 45) + "px")
             .style("top", (window.pageYOffset + matrix.f - yOffset) + "px");
 
           this.tooltip.transition()

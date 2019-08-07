@@ -53,15 +53,23 @@ var Model = /** @class */ (function () {
             //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
             //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
+            _this.edges = data.links;
             //setPanelValuesFromFile(controller.configuration, data);
             _this.matrix = [];
             _this.scalarMatrix = [];
             _this.nodes = data.nodes;
             _this.populateSearchBox();
             _this.idMap = {};
-            _this.orderType = _this.controller.configuration.adjMatrix.sortKey;
+            var clusterFlag = false;
+            if (_this.controller.configuration.adjMatrix.sortKey in ['clusterBary', 'clusterLeaf', 'clusterSpectral']) {
+                _this.orderType = 'shortName'; //this.controller.configuration.adjMatrix.sortKey;
+                clusterFlag = true;
+            }
+            else {
+                _this.orderType = _this.controller.configuration.adjMatrix.sortKey;
+                console.log(_this.order);
+            }
             _this.order = _this.changeOrder(_this.orderType);
-            console.log(_this.order);
             if (!_this.isQuant(_this.orderType)) { // == "screen_name" || this.orderType == "name") {
                 _this.nodes = _this.nodes.sort(function (a, b) { return a[_this.orderType].localeCompare(b[_this.orderType]); });
             }
@@ -72,9 +80,12 @@ var Model = /** @class */ (function () {
                 node.index = index;
                 _this.idMap[node.id] = index;
             });
-            _this.edges = data.links;
             _this.controller = controller;
             _this.processData();
+            if (clusterFlag) {
+                _this.orderType = _this.controller.configuration.adjMatrix.sortKey;
+                _this.order = _this.changeOrder(_this.orderType);
+            }
             _this.controller.loadData(_this.nodes, _this.edges, _this.matrix);
             //})
         });
@@ -269,7 +280,7 @@ var Model = /** @class */ (function () {
             /*var graph = reorder.graph()
               .nodes(this.nodes)
               .links(this.edges)
-              .init();*/
+              .init();*/ //"favourites_count"
             var graph = reorder.graph()
                 .nodes(this.nodes)
                 .links(this.edges)
@@ -628,6 +639,7 @@ var View = /** @class */ (function () {
             var extent = [0, _this.controller.configuration.attributeScales.edge.count.domain[1]];
             //model.maxTracker[type]]
             // set up scale
+            console.log(extent);
             var typeIndex = _this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
             //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
             var otherColors = ['#064B6E', '#4F0664', '#000000'];
@@ -708,15 +720,15 @@ var View = /** @class */ (function () {
             .on("mouseover", function (cell, i, nodes) {
             var matrix = nodes[i].getScreenCTM()
                 .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
-            var combinedMessage = cell.combined > 0 ? "interactions" : ''; //cell.combined.toString() + " interactions"
+            var combinedMessage = cell.combined > 0 ? cell.combined.toString() + " interactions" : ''; //
             if (cell.combined == 1) {
                 combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1);
             }
-            var retweetMessage = cell.retweet > 0 ? "retweets" : ''; //cell.retweet.toString() + " retweets"
+            var retweetMessage = cell.retweet > 0 ? cell.retweet.toString() + " retweets" : ''; //
             if (cell.retweet == 1) {
                 retweetMessage = retweetMessage.substring(0, retweetMessage.length - 1);
             }
-            var mentionsMessage = cell.mentions > 0 ? "mention" : ''; //cell.mentions.toString() + " mentions"
+            var mentionsMessage = cell.mentions > 0 ? cell.mentions.toString() + " mentions" : ''; //
             if (cell.mentions == 1) {
                 mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1);
             }
@@ -726,7 +738,7 @@ var View = /** @class */ (function () {
                 var yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45 : 30;
                 console.log(yOffset);
                 _this.tooltip.html(message)
-                    .style("left", (window.pageXOffset + matrix.e - 30) + "px")
+                    .style("left", (window.pageXOffset + matrix.e - 45) + "px")
                     .style("top", (window.pageYOffset + matrix.f - yOffset) + "px");
                 _this.tooltip.transition()
                     .delay(100)
