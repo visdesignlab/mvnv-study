@@ -2346,18 +2346,41 @@ class View {
     let topMargin = 1;
     let height = this.verticalScale.bandwidth() - 2 * topMargin;
     let width = this.verticalScale.bandwidth()*2
-    for (let i = 0; i < placementScaleForAttr.length; i++) {
+    for (let index = 0; index < placementScaleForAttr.length; index++) {
       this.attributeRows
         .append('rect')
-        .attr('x', placementScaleForAttr[i].position)
+        .attr('x', placementScaleForAttr[index].position)
         .attr('y', 1)
         .attr('fill', (d) => {
-          return d[column] == placementScaleForAttr[i].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+          return d[column] == placementScaleForAttr[index].value ? this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
         })
         .attr('width', width)
         .attr('height', height)
-        .on('mouseover',this.attributeMouseOver)
-        .on('mouseout',this.attributeMouseOut);
+        .on('mouseover',(d, i,nodes)=>{
+          if(d[column] == placementScaleForAttr[index].value){
+            let matrix = nodes[i].getScreenCTM()
+              .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+
+            this.tooltip.html(d[column])
+                .style("left", (window.pageXOffset + matrix.e -25 ) + "px")
+                .style("top", (window.pageYOffset + matrix.f - 25) + "px");
+
+            this.tooltip.transition()
+              .duration(200)
+              .style("opacity", .9);
+          }
+
+
+          this.attributeMouseOver(d);
+        })
+        .on('mouseout',(d,i,nodes)=>{
+          this.tooltip.transition()
+            .duration(25)
+            .style("opacity", 0);
+            //that.tooltip.transition().duration(25).style("opacity", 0);
+
+          this.attributeMouseOut(d);
+        });
     }
 
 

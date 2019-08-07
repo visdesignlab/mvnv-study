@@ -2010,22 +2010,40 @@ var View = /** @class */ (function () {
         var topMargin = 1;
         var height = this.verticalScale.bandwidth() - 2 * topMargin;
         var width = this.verticalScale.bandwidth() * 2;
-        var _loop_2 = function (i) {
+        var _loop_2 = function (index) {
             this_2.attributeRows
                 .append('rect')
-                .attr('x', placementScaleForAttr[i].position)
+                .attr('x', placementScaleForAttr[index].position)
                 .attr('y', 1)
                 .attr('fill', function (d) {
-                return d[column] == placementScaleForAttr[i].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
+                return d[column] == placementScaleForAttr[index].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
             })
                 .attr('width', width)
                 .attr('height', height)
-                .on('mouseover', this_2.attributeMouseOver)
-                .on('mouseout', this_2.attributeMouseOut);
+                .on('mouseover', function (d, i, nodes) {
+                if (d[column] == placementScaleForAttr[index].value) {
+                    var matrix = nodes[i].getScreenCTM()
+                        .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
+                    _this.tooltip.html(d[column])
+                        .style("left", (window.pageXOffset + matrix.e - 25) + "px")
+                        .style("top", (window.pageYOffset + matrix.f - 25) + "px");
+                    _this.tooltip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                }
+                _this.attributeMouseOver(d);
+            })
+                .on('mouseout', function (d, i, nodes) {
+                _this.tooltip.transition()
+                    .duration(25)
+                    .style("opacity", 0);
+                //that.tooltip.transition().duration(25).style("opacity", 0);
+                _this.attributeMouseOut(d);
+            });
         };
         var this_2 = this;
-        for (var i = 0; i < placementScaleForAttr.length; i++) {
-            _loop_2(i);
+        for (var index = 0; index < placementScaleForAttr.length; index++) {
+            _loop_2(index);
         }
         return;
     };
