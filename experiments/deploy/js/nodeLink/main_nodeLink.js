@@ -671,7 +671,8 @@ function updateVis() {
       .style("opacity", 0.4)
       .attr("id", d => d.id)
       .on("mouseover",function(d){
-         showTooltip(d.type,400)
+        // console.log (d)
+         showTooltip(d.type + " [" + d.count + "]",400)
       })
   
       .on("mouseout",function(d){ 
