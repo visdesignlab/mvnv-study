@@ -67,7 +67,6 @@
     }
   });
 
-  let graphSizes = {large: 80 };
   let isDirected;
   let hasEdgeTypes;
 
@@ -99,7 +98,7 @@
       let link = {
         source: source.id,
         target: target.id,
-        type: hasEdgeTypes ? type : "combined", //set type based on flag to combine edges or not;
+        type: hasEdgeTypes ? type : "interacted", //set type based on flag to combine edges or not;
         count: 1,
         id: source.id + "_" + target.id + "_" + type,
         selected: false
@@ -204,7 +203,7 @@
             }
           });
 
-          //adjust data that falls outside of the domains established in the config file;
+          //adjust node data that falls outside of the domains established in the config file;
           Object.keys(config.attributeScales.node).map(attr => {
             let scale = config.attributeScales.node[attr];
 
@@ -212,11 +211,30 @@
               //Randomly assign values within the top 20% of the scale for values that are greater than the established domain.
               let adjustmentWindow = (scale.domain[1] - scale.domain[0]) * 0.3;
               let maxValue = scale.domain[1];
-              graph.nodes.map(n => {
+              newGraph.nodes.map(n => {
                 n[attr] =
                   n[attr] >= maxValue
                     ? maxValue - Math.random() * adjustmentWindow
                     : n[attr];
+              });
+            }
+          });
+
+          //adjust edge data that falls outside of the domains established in the config file;
+          Object.keys(config.attributeScales.edge).map(attr => {
+            let scale = config.attributeScales.edge[attr];
+
+            if (typeof scale.domain[0] === typeof 2) {
+
+              //Randomly assign values within the top 30% of the scale for values that are greater than the established domain.
+              let adjustmentWindow = (scale.domain[1] - scale.domain[0]) * 0.3;
+              let maxValue = scale.domain[1];
+
+              newGraph.links.map(l => {
+                l[attr] =
+                  l[attr] >= maxValue
+                    ? Math.round(maxValue - Math.random() * adjustmentWindow)
+                    : l[attr];
               });
             }
           });

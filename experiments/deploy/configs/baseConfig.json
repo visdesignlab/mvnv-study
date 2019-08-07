@@ -115,7 +115,7 @@
                 "domain": [
                     "mentions",
                     "retweet",
-                    "combined"
+                    "interacted"
                 ],
                 "range": [
                     "#064B6E",

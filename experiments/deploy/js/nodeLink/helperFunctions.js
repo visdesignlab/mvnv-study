@@ -1018,6 +1018,8 @@ function isQuant(attr) {
     console.log('loading ', fileName)
     graph = await d3.json(fileName);
 
+    console.log(graph.links)
+
     //update the datalist associated to the search box (in case the nodes in the new graph have changed)
 
     {

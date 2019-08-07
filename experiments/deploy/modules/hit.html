@@ -4,26 +4,7 @@
 <script>
   (async function () {
 
-    //set up an anonymous user on firestore to track answers and usage;
-    if (heuristics) {
-
-      let screenSize = {
-        availWidth: window.screen.availWidth,
-        availHeight: window.screen.availHeight,
-        width: window.screen.width,
-        height: window.screen.height,
-        colorDepth: window.screen.colorDepth,
-        pixelDepth: window.screen.pixelDepth
-      };
-
-      workerID = makeid(6);
-      db.collection('participants').doc(workerID).set({
-        screenSize,
-        startTime: new Date().toString()
-      });
-
-    }
-
+  
     function getUrlVars() {
       var vars = {};
       var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -33,11 +14,39 @@
     }
 
     // //see if url parameter was passed as to what type of vis to show for this link
-    let visType = getUrlVars()["vis"].includes('nodeLink') ? "nodeLink" : 'adjMatrix';
+    let visType = getUrlVars()["vis"];
+    
+    //Only assign a visType if it has been passed in as a parameter
+    if (visType !== undefined){
+      visType = visType.includes('nodeLink') ? "nodeLink" : 'adjMatrix';
+    }
 
+    console.log('visType is ', visType);
     experimentr.hideNext();
     await loadTasks(visType);
-    assignTasks();
+
+    //set up an anonymous user on firestore to track answers and usage;
+    if (track){
+
+       workerID = develop ? 'DevelopUser' : makeid(6);
+      
+      let screenSize = {
+        availWidth: window.screen.availWidth,
+        availHeight: window.screen.availHeight,
+        width: window.screen.width,
+        height: window.screen.height,
+        colorDepth: window.screen.colorDepth,
+        pixelDepth: window.screen.pixelDepth
+      };
+
+      db.collection('participants').doc(workerID).set({
+        screenSize,
+        startTime: new Date().toString()
+      });
+
+      trackResults();
+    }
+  
 
     d3.select('.hit').style('display', 'inline');
     if (vis === 'nodeLink') {

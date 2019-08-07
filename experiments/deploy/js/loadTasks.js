@@ -1,6 +1,6 @@
 //global variable that defines the tasks to be shown to the user and the (randomized) order in which to show them
 let taskList;
-let workerID = "Carolina"; // to be populated when the user goes through the consent form;
+let workerID; // to be populated when the user goes through the consent form;
 let currentTask = 0; //start at task 0
 
 let vis;
@@ -12,25 +12,23 @@ let studyTracking = {
   numConditions: null
 };
 
-let provenance; 
+let provenance;
 //  SET LISTENER FOR CTRL OR COMMAND Z AND CALL PROVENANCE.GOBACKONESTEP();
-  function KeyPress(e) {
-    var evtobj = window.event ? event : e;
-    if (
-      (evtobj.keyCode == 90 && evtobj.ctrlKey) ||
-      (evtobj.keyCode == 90 && evtobj.metaKey)
-    ) {
-      if(provenance){
-        provenance.goBackOneStep();
-      }else {
-        window.controller.model.provenance.goBackOneStep();
-      }
+function KeyPress(e) {
+  var evtobj = window.event ? event : e;
+  if (
+    (evtobj.keyCode == 90 && evtobj.ctrlKey) ||
+    (evtobj.keyCode == 90 && evtobj.metaKey)
+  ) {
+    if (provenance) {
+      provenance.goBackOneStep();
+    } else {
+      window.controller.model.provenance.goBackOneStep();
     }
   }
+}
 
-  document.onkeydown = KeyPress;
-
-
+document.onkeydown = KeyPress;
 
 //common data validation and submission code
 function screenTest(width, height) {
@@ -157,19 +155,13 @@ d3.select("#submitButton").on("click", async function() {
   d3.select(".modalFeedback").classed("is-active", true);
 });
 
-d3.selectAll('.helpIcon').on("click",()=>{
-
-
+d3.selectAll(".helpIcon").on("click", () => {
   d3.select(".quickStart").classed("is-active", true);
+});
 
-})
-
-d3.selectAll('#closeModal').on("click",()=>{
-
-
+d3.selectAll("#closeModal").on("click", () => {
   d3.select(".quickStart").classed("is-active", false);
-
-})
+});
 
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
@@ -206,8 +198,9 @@ d3.select("#nextTask").on("click", async () => {
     explanation
   };
 
-  //update taskList with the answer for that task.
-  db.collection("results")
+  if (track){
+    //update taskList with the answer for that task.
+    db.collection("results")
     .doc(workerID)
     .update({
       [taskObj.taskID + ".answer"]: taskObj.answer,
@@ -217,6 +210,8 @@ d3.select("#nextTask").on("click", async () => {
       [taskObj.taskID + ".minutesToComplete"]: taskObj.minutesToComplete
     });
 
+  }
+  
   //increment current task;
   if (currentTask < taskList.length - 1) {
     currentTask = currentTask + 1;
@@ -235,8 +230,9 @@ d3.select("#nextTask").on("click", async () => {
     let endTime = Date.now();
     let startTime = participant.data().startTime;
 
-    //update endTime in database;
-    db.collection("participants")
+    if (track){
+      //update endTime in database;
+      db.collection("participants")
       .doc(workerID)
       .set(
         {
@@ -245,27 +241,27 @@ d3.select("#nextTask").on("click", async () => {
         },
         { merge: true }
       );
-
+    }
+  
     experimentr.next();
   }
 });
 
 //set up callback for taskShortcuts
 
-d3.selectAll('.taskShortcut')
-.on("click",function(){
+d3.selectAll(".taskShortcut").on("click", function() {
   //set new currentTask then call resetPanel;
-  currentTask = taskList.findIndex(t=>t.taskID == d3.select(this).attr('id'));
+  currentTask = taskList.findIndex(t => t.taskID == d3.select(this).attr("id"));
   resetPanel();
-})
-
+});
 
 function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
-  d3.selectAll('.taskShortcut')
-  .classed('currentTask',function(){ return d3.select(this).attr('id') === taskList[currentTask].taskID});
+  d3.selectAll(".taskShortcut").classed("currentTask", function() {
+    return d3.select(this).attr("id") === taskList[currentTask].taskID;
+  });
 
   //Only start off with the submit button enabled for when the task only requires an unspecified node count;
 
@@ -323,6 +319,12 @@ function resetPanel() {
 }
 
 async function pushProvenance(provGraph) {
+
+  //Only push provenance is tracking is set to true;
+  if (!track){
+    return;
+  }
+
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
     .collection(workerID)
@@ -334,7 +336,7 @@ async function pushProvenance(provGraph) {
   let docSize =
     calcFirestoreDocSize("provenanceGraph", workerID, doc) / 1000000;
 
-  console.log("Provenance graph size for ", workerID ,  " is ", docSize, " MB");
+  console.log("Provenance graph size for ", workerID, " is ", docSize, " MB");
   console.log("Provenance graph has ", doc, "elements");
 
   if (docSize > 0.75) {
@@ -481,7 +483,6 @@ function makeid(length) {
 }
 
 async function loadTasks(visType) {
-
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -500,43 +501,58 @@ async function loadTasks(visType) {
   let conditions = conditionsObj.data().conditionList;
   studyTracking.numConditions = conditions.length;
 
-  var assignedGroupDoc = db.collection("studyTracking").doc("currentGroup");
-  let assignedGroup = await assignedGroupDoc.get().catch(function(error) {
-    console.log("Error getting document:", error);
-  });
+  let group;
 
-  let group = visType ? visType === "nodeLink" ? 0 : 1 : assignedGroup.data().currentGroup;
+  // dynamically assign a vistype according to firebase tracking
+  if (visType === undefined) {
+    var assignedGroupDoc = db.collection("studyTracking").doc("currentGroup");
+    let assignedGroup = await assignedGroupDoc.get().catch(function(error) {
+      console.log("Error getting document:", error);
+    });
+
+    group = assignedGroup.data().currentGroup;
+
+    //update currentGroup
+    db.collection("studyTracking")
+    .doc("currentGroup")
+    .update({
+      currentGroup: (group + 1) % studyTracking.numConditions
+
+  });
+  } else {
+    group = visType === "nodeLink" ? 0 : 1;
+  }
 
   studyTracking.group = group;
 
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  //(force the task list if this is a heuristics run)
-  // if (visType) {
-  //   selectedCondition.taskList = "taskLists/heuristics.json";
-  // }
+  vis = selectedVis; 
 
-  vis = selectedVis; // = 'adjMatrix'//='nodeLink' //
+  //set the source for the quickStart guide image in the modal;
+  d3.select(".quickStart")
+    .select("img")
+    .attr(
+      "src",
+      vis === "nodeLink"
+        ? "training/nodeLink_quickStart.png"
+        : "training/adjMatrix_quickStart.png"
+    );
 
-  //set the source for the quickStart guide image in the modal; 
-
-  d3.select('.quickStart')
-  .select('img')
-  .attr('src',(vis === 'nodeLink' ? 'training/nodeLink_quickStart.png' :  'training/adjMatrix_quickStart.png')
-  )
-  
-  d3.select('.quickStart').select('.modal-card').style('width','calc(100vh - 100px)')
+  d3.select(".quickStart")
+    .select(".modal-card")
+    .style("width", "calc(100vh - 100px)");
 
   //do an async load of the designated task list;
   taskListObj = await d3.json(selectedCondition.taskList);
   studyTracking.taskListObj = taskListObj;
 
   let taskListEntries = Object.entries(taskListObj);
-  
-  if (!heuristics){
+
+  if (shuffleTasks) {
     //Randomly order the tasks.
-  shuffle(taskListEntries);
+    shuffle(taskListEntries);
   }
   // insert order and taskID into each element in this list
   taskList = taskListEntries.map((t, i) => {
@@ -630,27 +646,20 @@ function loadScript(url, callback) {
   });
 }
 
-//Once a user has signed the consent form. Update the 'currentGroup' and push the taskList to their name;
-async function assignTasks() {
-  //create a pared down copy of this taskList to store in firebase (no need to store configs);
-  let configLessTaskList = JSON.parse(
-    JSON.stringify(studyTracking.taskListObj)
-  );
-
-  Object.keys(configLessTaskList).map(key => {
-    delete configLessTaskList[key].config;
-    configLessTaskList[key].visType = vis;
-  });
-
-  var taskListRef = db.collection("results").doc(workerID);
-  taskListRef.set(configLessTaskList);
-
-  //update group;
-  db.collection("studyTracking")
-    .doc("currentGroup")
-    .update({
-      currentGroup: (studyTracking.group + 1) % studyTracking.numConditions
+//Push an empty taskList to a new doc under the results collection to start tracking the results
+function trackResults(){
+    //create a pared down copy of this taskList to store in firebase (no need to store configs);
+    let configLessTaskList = JSON.parse(
+      JSON.stringify(studyTracking.taskListObj)
+    );
+  
+    Object.keys(configLessTaskList).map(key => {
+      delete configLessTaskList[key].config;
+      configLessTaskList[key].visType = vis;
     });
+  
+    var taskListRef = db.collection("results").doc(workerID);
+    taskListRef.set(configLessTaskList);
 }
 
 function calcFirestoreDocSize(collectionName, docId, docObject) {

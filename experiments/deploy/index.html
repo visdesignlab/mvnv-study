@@ -529,12 +529,12 @@
 
 
 <script>
-    var heuristics;
+      var track = true; //track user interaction
+      var develop = false; //create new userID for every page load
+    var shuffleTasks = false;  // shuffle user task order 
 
     (async function () {
 
-            //flag that indicates whether hit.html should create an anonymouse participant id to track our experts responses and interactions; 
-            heuristics = true;
             //connect to firestore;
             fireStore.connect();
             experimentr.sequence([

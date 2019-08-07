@@ -672,7 +672,15 @@ function updateVis() {
       .attr("id", d => d.id)
       .on("mouseover",function(d){
         // console.log (d)
-         showTooltip(d.type + " [" + d.count + "]",400)
+        let tooltipData = d.type;
+        
+        if (config.nodeLink.edgeWidthAttr){
+          tooltipData = tooltipData.concat (" [" + d.count + "]")
+        }
+
+        showTooltip(tooltipData,400)
+
+
       })
   
       .on("mouseout",function(d){ 
