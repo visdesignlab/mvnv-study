@@ -34,7 +34,11 @@ input[type=text] {
   fill:#CAFFC7;
   fill-opacity:1;
 }
+#targetSize{
+  white-space: nowrap;
+  overflow: scroll; - whichever suits you;
 
+}
 .neighbor{
   fill:#CAFFC7;
   fill-opacity:1;

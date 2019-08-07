@@ -820,11 +820,17 @@ class View {
           .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
 
         let combinedMessage = cell.combined > 0 ?  cell.combined.toString()+" interactions": '';
+        if(cell.combined == 1){
+          combinedMessage = combinedMessage.substring(0,combinedMessage.length-1)
+        }
         let retweetMessage = cell.retweet > 0 ? cell.retweet.toString()+" retweets"  : '';
         if(cell.retweet == 1){
           retweetMessage = retweetMessage.substring(0,retweetMessage.length-1)
         }
         let mentionsMessage = cell.mentions> 0 ? cell.mentions.toString()+" mentions"  : '';
+        if(cell.mentions == 1){
+          mentionsMessage = mentionsMessage.substring(0,mentionsMessage.length-1)
+        }
 
         let message =[combinedMessage,retweetMessage,mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
         console.log(message);
