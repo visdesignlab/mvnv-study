@@ -707,15 +707,15 @@ var View = /** @class */ (function () {
             .on("mouseover", function (cell, i, nodes) {
             var matrix = nodes[i].getScreenCTM()
                 .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
-            var combinedMessage = cell.combined > 0 ? cell.combined.toString() + " interactions" : '';
+            var combinedMessage = cell.combined > 0 ? "interactions" : ''; //cell.combined.toString() + " interactions"
             if (cell.combined == 1) {
                 combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1);
             }
-            var retweetMessage = cell.retweet > 0 ? cell.retweet.toString() + " retweets" : '';
+            var retweetMessage = cell.retweet > 0 ? "retweets" : ''; //cell.retweet.toString() + " retweets"
             if (cell.retweet == 1) {
                 retweetMessage = retweetMessage.substring(0, retweetMessage.length - 1);
             }
-            var mentionsMessage = cell.mentions > 0 ? cell.mentions.toString() + " mentions" : '';
+            var mentionsMessage = cell.mentions > 0 ? "mention" : ''; //cell.mentions.toString() + " mentions"
             if (cell.mentions == 1) {
                 mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1);
             }
@@ -1025,8 +1025,8 @@ var View = /** @class */ (function () {
                         nodeID = cellData.rowid;
                         _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
                         _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-                        return currentState;
                     }
+                    return currentState;
                     //nodeID = cellData.rowid;
                     //interactionName = interactionName + 'row'
                 }
@@ -1212,7 +1212,7 @@ var View = /** @class */ (function () {
         var scale = this.edgeScales[type];
         var extent = scale.domain();
         var number = 5;
-        var sampleNumbers = [0, 1, 3, 5]; //this.linspace(extent[0], extent[1], number);
+        var sampleNumbers = [0, 3, 7, 11]; //this.linspace(extent[0], extent[1], number);
         var svg = d3.select('#legend-svg').append("g")
             .attr("id", "legendLinear" + type)
             .attr("transform", function (d, i) { return "translate(" + xOffset + "," + yOffset + ")"; })
@@ -2321,6 +2321,7 @@ var Controller = /** @class */ (function () {
         d3.select('.adjMatrix.vis').style('width', (this.visWidth).toString() + 'px');
     };
     Controller.prototype.clearView = function () {
+        d3.select('.tooltip').remove();
         d3.select('#topology').selectAll('*').remove();
         d3.select('#attributes').selectAll('*').remove();
         d3.select('#legend-svg').selectAll('*').remove();
