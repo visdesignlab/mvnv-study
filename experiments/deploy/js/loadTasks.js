@@ -576,7 +576,7 @@ async function loadTasks(visType) {
     nodeLink: [
       "js/nodeLink/main_nodeLink.js",
       "js/nodeLink/helperFunctions.js"
-    ], //,"js/createTaskConfig.js"],
+    ], 
     adjMatrix: [
       "js/adjMatrix/libs/reorder/science.v1.js",
       "js/adjMatrix/libs/reorder/tiny-queue.js",

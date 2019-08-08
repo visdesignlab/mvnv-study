@@ -529,27 +529,33 @@
 
 
 <script>
-   
     function getUrlVars() {
-      var vars = {};
-      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-        vars[key] = value;
-      });
-      return vars;
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+            vars[key] = value;
+        });
+        return vars;
     }
 
     //set global variables such as vis type, whether to track userInteraction, if develop mode, etc... from url params
-    var {vis, track, mode, shuffleTasks,taskMenu, configPanel} = getUrlVars();
+    var {
+        vis,
+        track,
+        mode,
+        shuffleTasks,
+        taskMenu,
+        configPanel
+    } = getUrlVars();
 
     mode = mode || 'heuristics'; //can be 'develop', 'heuristics', or 'study'
 
     //set default values for any variables not passed in: 
-    switch(mode) {
+    switch (mode) {
         case 'heuristics':
             track = track || true;
             shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
-            configPanel =false;
+            configPanel = false;
             break;
         case 'develop':
             track = track || true;
@@ -563,50 +569,62 @@
             taskMenu = false;
             configPanel = false;
             break;
-        }
+        case 'test':
+            track = track || false;
+            shuffleTasks = shuffleTasks || false;
+            taskMenu = taskMenu || true;
+            configPanel = configPanel || false;
+            break;
+    }
 
-        track = eval(track);
-        shuffleTasks = eval(shuffleTasks);
-        taskMenu = eval(taskMenu);
-        configPanel = eval(configPanel);
+    track = eval(track);
+    shuffleTasks = eval(shuffleTasks);
+    taskMenu = eval(taskMenu);
+    configPanel = eval(configPanel);
 
     //Only assign a vis if it has been passed in as a parameter
-    if (vis !== undefined){
-      vis = vis.includes('nodeLink') ? "nodeLink" : vis.includes('adjMatrix') ? 'adjMatrix' : undefined;
+    if (vis !== undefined) {
+        vis = vis.includes('nodeLink') ? "nodeLink" : vis.includes('adjMatrix') ? 'adjMatrix' : undefined;
     }
 
     (async function () {
             //connect to firestore;
             fireStore.connect();
 
-            let sequence; 
-            //heuristics or study
-            if (mode === 'heuristics'){
-                sequence = [
-                'modules/hit.html',
-                'modules/submit.html'
-            ];
-            };
-            
-            if (mode === 'study'){
-                sequence = [
-                'modules/consent.html',
-                'modules/training.html',
-                'modules/practice.html',
-                'modules/hit.html',
-                'modules/submit.html'
-            ]
+            let sequence;
+
+            switch (mode) {
+                case 'heuristics':
+                    sequence = [
+                        'modules/hit.html',
+                        'modules/submit.html'
+                    ];
+                    break;
+                case 'study':
+                    sequence = [
+                        'modules/consent.html',
+                        'modules/training.html',
+                        'modules/practice.html',
+                        'modules/hit.html',
+                        'modules/submit.html'
+                    ]
+                    break;
+                case 'test':
+                    sequence = [
+                        'modules/hit.html',
+                        'modules/submit.html'
+                    ]
+                    break;
+                case 'develop':
+                    sequence = [
+                        // 'modules/consent.html',
+                        // 'modules/training.html',
+                        // 'modules/practice.html',
+                        'modules/hit.html',
+                        'modules/submit.html'
+                    ]
             }
 
-            if (mode === 'develop'){
-                sequence = [
-                // 'modules/consent.html',
-                // 'modules/training.html',
-                // 'modules/practice.html',
-                'modules/hit.html',
-                'modules/submit.html'
-            ]
-            }
             experimentr.sequence(sequence).start();
         }
 
