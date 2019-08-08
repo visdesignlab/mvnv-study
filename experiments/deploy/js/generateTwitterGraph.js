@@ -36,12 +36,12 @@
 
   tweets = tweets.tweets;
 
-  let nodes = await d3.json("data/raw/curated_info.json");
+  let nodes = await d3.json("data/raw/sample_curated_info.json");
 
   let config = await d3.json("configs/baseConfig.json");
 
   // let mds = await d3.json("data/raw/largeGraphVisone.json");
-  let mds = await d3.json("data/raw/large_manual_pos.json");
+  let mds = await d3.json("data/raw/sample_manual_pos.json");
 
   
   // let mds = await d3.json("data/raw/smallGraphVisone.json")
