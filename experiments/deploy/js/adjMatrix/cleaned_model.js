@@ -103,6 +103,7 @@ var Model = /** @class */ (function () {
         }
     };
     Model.prototype.populateSearchBox = function () {
+        var _this = this;
         d3.select("#search-input").attr("list", "characters");
         var inputParent = d3.select("#search-input").node().parentNode;
         var datalist = d3
@@ -118,17 +119,19 @@ var Model = /** @class */ (function () {
         options = optionsEnter.merge(options);
         options.attr("value", function (d) { return d.shortName; });
         options.attr("id", function (d) { return d.id; });
-        d3.select("#search-input").on("change", function () {
-            var selectedOption = d3.select(this).property("value");
+        d3.select("#search-input").on("change", function (d, i, nodes) {
+            var selectedOption = d3.select(nodes[i]).property("value");
+            console.log(selectedOption);
             //empty search box;
             if (selectedOption.length === 0) {
                 return;
             }
             //find the right nodeObject
-            var name = this.nodes.filter(function (node) { return node.shortName == selectedOption; });
-            name = name[0][this.datumID];
-            var action = this.controller.view.changeInteractionWrapper(name, null, 'search');
-            this.controller.model.provenance.applyAction(action);
+            var name = _this.nodes.filter(function (node) { return node.shortName == selectedOption; });
+            console.log(name);
+            name = name[0][_this.datumID];
+            var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
+            _this.controller.model.provenance.applyAction(action);
             //let isSelected = node.selected;
             //Only 'click' node if it isn't already selected;
         });
@@ -1054,6 +1057,7 @@ var View = /** @class */ (function () {
             label: interactionType,
             action: function (nodeID) {
                 var currentState = _this.controller.model.app.currentState();
+                console.log(currentState);
                 //add time stamp to the state graph
                 currentState.time = Date.now();
                 currentState.event = interactionType;
@@ -2311,6 +2315,7 @@ var Controller = /** @class */ (function () {
                     //add time stamp to the state graph
                     currentState.time = Date.now();
                     currentState.event = 'clear';
+                    console.log("before Clear:", currentState);
                     currentState.selections = {
                         answerBox: {},
                         attrRow: {},
@@ -2321,6 +2326,7 @@ var Controller = /** @class */ (function () {
                         search: {},
                         neighborSelect: {}
                     };
+                    console.log("after Clear:", currentState);
                     return currentState;
                 },
                 args: []

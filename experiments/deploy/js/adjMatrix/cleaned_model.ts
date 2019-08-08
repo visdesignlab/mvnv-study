@@ -63,8 +63,9 @@ class Model {
     options.attr("value", d => d.shortName);
     options.attr("id", d => d.id);
 
-    d3.select("#search-input").on("change", function() {
-      let selectedOption = d3.select(this).property("value");
+    d3.select("#search-input").on("change", (d,i,nodes) => {
+      let selectedOption = d3.select(nodes[i]).property("value");
+      console.log(selectedOption);
 
       //empty search box;
       if (selectedOption.length === 0) {
@@ -73,6 +74,7 @@ class Model {
 
       //find the right nodeObject
       let name = this.nodes.filter(node => { return node.shortName == selectedOption });
+      console.log(name);
       name = name[0][this.datumID];
       let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
       this.controller.model.provenance.applyAction(action);
@@ -1232,6 +1234,7 @@ class View {
       label: interactionType,
       action: (nodeID) => {
         const currentState = this.controller.model.app.currentState();
+        console.log(currentState);
         //add time stamp to the state graph
         currentState.time = Date.now();
         currentState.event = interactionType;
@@ -2750,6 +2753,7 @@ class Controller {
           //add time stamp to the state graph
           currentState.time = Date.now();
           currentState.event = 'clear';
+          console.log("before Clear:",currentState)
           currentState.selections = {
             answerBox: {},
             attrRow: {},
@@ -2760,6 +2764,7 @@ class Controller {
             search: {},
             neighborSelect: {}
           }
+          console.log("after Clear:",currentState)
           return currentState;
         },
         args: []
