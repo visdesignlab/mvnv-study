@@ -4,59 +4,52 @@
 <script>
   (async function () {
 
-  
-    function getUrlVars() {
-      var vars = {};
-      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-        vars[key] = value;
-      });
-      return vars;
-    }
-
-    // //see if url parameter was passed as to what type of vis to show for this link
-    let visType = getUrlVars()["vis"];
-    
-    //Only assign a visType if it has been passed in as a parameter
-    if (visType !== undefined){
-      visType = visType.includes('nodeLink') ? "nodeLink" : 'adjMatrix';
-    }
-
-    console.log('visType is ', visType);
     experimentr.hideNext();
-    await loadTasks(visType);
+    await loadTasks(vis);
 
     //set up  user on firestore to track answers and usage;
     if (track){
 
-      let loggedInUser = workerID !== undefined;
+      switch(mode) {
+        case 'heuristics':
+            workerID = makeid(6);
+            break;
+        case 'develop':
+            workerID = 'DevelopUser';
+            break;
+        }
 
-      if (!loggedInUser){
-        workerID = develop ? 'DevelopUser' :  makeid(6);
+        if (mode!== 'study'){
+            let screenSize = {
+              availWidth: window.screen.availWidth,
+              availHeight: window.screen.availHeight,
+              width: window.screen.width,
+              height: window.screen.height,
+              colorDepth: window.screen.colorDepth,
+              pixelDepth: window.screen.pixelDepth
+            };
 
-        let screenSize = {
-        availWidth: window.screen.availWidth,
-        availHeight: window.screen.availHeight,
-        width: window.screen.width,
-        height: window.screen.height,
-        colorDepth: window.screen.colorDepth,
-        pixelDepth: window.screen.pixelDepth
-      };
-
-        db.collection('participants').doc(workerID).set({
-          screenSize,
-          startTime: new Date().toString()
-        });
-      }
-      
+              db.collection('participants').doc(workerID).set({
+                screenSize,
+                startTime: new Date().toString()
+              });
+        }
       trackResults();
     }
   
+    //remove ui components that are not relevant
+    if (!configPanel){
+        d3.selectAll('.development').remove();
+    }
+
+    if (!taskMenu){
+        d3.select('.taskMenu').remove();
+    }
 
     d3.select('.hit').style('display', 'inline');
-    if (vis === 'nodeLink') {
-      d3.selectAll('.development').remove();
-      loadVis("vis");
 
+    if (vis === 'nodeLink') {
+      loadVis("vis");
     } else {
       // included script already auto loads the vis. 
     }

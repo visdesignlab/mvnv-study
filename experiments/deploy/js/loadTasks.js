@@ -3,7 +3,7 @@ let taskList;
 let workerID; // to be populated when the user goes through the consent form;
 let currentTask = 0; //start at task 0
 
-let vis;
+// let vis;
 
 //bookkeeping vars
 let studyTracking = {
