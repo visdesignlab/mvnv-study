@@ -784,7 +784,7 @@ class View {
       let squareSize = this.verticalScale.bandwidth() - 2 * offset;
       for (let index = 0; index < dividers; index++) {
 
-        let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
+        let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'interacted';
         let scale = this.edgeScales[type];
         let typeColor = scale.range()[1];
         // change encoding to position

@@ -328,7 +328,7 @@ var Model = /** @class */ (function () {
             //rowNode.id = +rowNode.id;
             rowNode.y = i;
             /* matrix used for edge attributes, otherwise should we hide */
-            _this.matrix[i] = _this.nodes.map(function (colNode) { return { cellName: 'cell' + rowNode[_this.datumID] + '_' + colNode[_this.datumID], correspondingCell: 'cell' + colNode[_this.datumID] + '_' + rowNode[_this.datumID], rowid: rowNode[_this.datumID], colid: colNode[_this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
+            _this.matrix[i] = _this.nodes.map(function (colNode) { return { cellName: 'cell' + rowNode[_this.datumID] + '_' + colNode[_this.datumID], correspondingCell: 'cell' + colNode[_this.datumID] + '_' + rowNode[_this.datumID], rowid: rowNode[_this.datumID], colid: colNode[_this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, interacted: 0, retweet: 0, mentions: 0 }; });
             _this.scalarMatrix[i] = _this.nodes.map(function (colNode) { return 0; });
         });
         function checkEdge(edge) {
@@ -669,7 +669,7 @@ var View = /** @class */ (function () {
             var offset_1 = 0;
             var squareSize = this.verticalScale.bandwidth() - 2 * offset_1;
             var _loop_1 = function (index) {
-                var type = this_1.controller.configuration.isMultiEdge ? this_1.controller.configuration.attributeScales.edge.type.domain[index] : 'combined';
+                var type = this_1.controller.configuration.isMultiEdge ? this_1.controller.configuration.attributeScales.edge.type.domain[index] : 'interacted';
                 var scale = this_1.edgeScales[type];
                 var typeColor = scale.range()[1];
                 // change encoding to position
@@ -698,7 +698,7 @@ var View = /** @class */ (function () {
             cells
                 .selectAll('.nestedEdges')
                 .filter(function (d) {
-                return d.mentions == 0 && d.retweet == 0 && d.combined == 0;
+                return d.mentions == 0 && d.retweet == 0 && d.interacted == 0;
             })
                 .remove();
         }
@@ -720,9 +720,9 @@ var View = /** @class */ (function () {
             .on("mouseover", function (cell, i, nodes) {
             var matrix = nodes[i].getScreenCTM()
                 .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
-            var combinedMessage = cell.combined > 0 ? cell.combined.toString() + " interactions" : ''; //
-            if (cell.combined == 1) {
-                combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1);
+            var interactedMessage = cell.interacted > 0 ? cell.interacted.toString() + " interactions" : ''; //
+            if (cell.interacted == 1) {
+                interactedMessage = interactedMessage.substring(0, interactedMessage.length - 1);
             }
             var retweetMessage = cell.retweet > 0 ? cell.retweet.toString() + " retweets" : ''; //
             if (cell.retweet == 1) {
@@ -732,7 +732,7 @@ var View = /** @class */ (function () {
             if (cell.mentions == 1) {
                 mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1);
             }
-            var message = [combinedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>"); //retweetMessage+'</br>'+mentionsMessage
+            var message = [interactedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>"); //retweetMessage+'</br>'+mentionsMessage
             console.log(message);
             if (message !== '') {
                 var yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45 : 30;
@@ -783,7 +783,7 @@ var View = /** @class */ (function () {
         })
             .on('click', function (d, i, nodes) {
             // only trigger click if edge exists
-            if (d.combined != 0 || d.retweet != 0 || d.mentions != 0) {
+            if (d.interacted != 0 || d.retweet != 0 || d.mentions != 0) {
                 _this.clickFunction(d, i, nodes);
             }
             return;
@@ -801,7 +801,7 @@ var View = /** @class */ (function () {
                 let cellElement = d3.select(nodes[index]).selectAll('rect');
                 let cellID = cell.rowid + cell.colid;
     
-                if (cell.combined != 0 || cell.mentions != 0 || cell.retweets != 0) {
+                if (cell.interacted != 0 || cell.mentions != 0 || cell.retweets != 0) {
     
                 }
     
@@ -1048,7 +1048,7 @@ var View = /** @class */ (function () {
                     var columnData = d3.select(node).data()[0];
                     interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
                     columnData.map(function (node) {
-                        if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
+                        if (node.mentions != 0 || node.interacted != 0 || node.retweet != 0) {
                             var neighbor = node.colid;
                             _this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
                         }
@@ -1142,8 +1142,8 @@ var View = /** @class */ (function () {
         if (type == 'all') {
             squares
                 .style("fill", function (d) {
-                if (d.combined !== 0) {
-                    return _this.edgeScales["combined"](d.combined);
+                if (d.interacted !== 0) {
+                    return _this.edgeScales["interacted"](d.interacted);
                 }
                 else if (d.retweet !== 0) {
                     return _this.edgeScales["retweet"](d.retweet);
@@ -1155,22 +1155,22 @@ var View = /** @class */ (function () {
                     return "pink";
                 }
             })
-                .filter(function (d) { return d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0; })
+                .filter(function (d) { return d.interacted !== 0 || d.retweet !== 0 || d.mentions !== 0; })
                 .style("fill-opacity", function (d) {
-                return (d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
+                return (d.interacted !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
             });
         }
-        else if (type == "combined") {
+        else if (type == "interacted") {
             squares.style("fill", function (d) {
-                if (d.combined !== 0) {
-                    return _this.edgeScales["combined"](d.combined);
+                if (d.interacted !== 0) {
+                    return _this.edgeScales["interacted"](d.interacted);
                 }
                 else {
                     return "white";
                 }
             })
                 .style("fill-opacity", function (d) {
-                return d.combined !== 0 ? 1 : 0;
+                return d.interacted !== 0 ? 1 : 0;
             });
         }
         else if (type == "retweet") {
@@ -1259,7 +1259,7 @@ var View = /** @class */ (function () {
         if (pluralType == "retweet") {
             pluralType = "retweets";
         }
-        else if (pluralType == "combined") {
+        else if (pluralType == "interacted") {
             pluralType = "interactions";
         }
         svg.append('text')
@@ -1296,14 +1296,14 @@ var View = /** @class */ (function () {
         var counter = 0;
         for (var type in this.edgeScales) {
             if (this.controller.configuration.isMultiEdge) {
-                if (type == "combined") {
+                if (type == "interacted") {
                     continue;
                 }
                 this.generateScaleLegend(type, counter);
                 counter += 1;
             }
             else {
-                if (type != "combined") {
+                if (type != "interacted") {
                     continue;
                 }
                 this.generateScaleLegend(type, counter);
