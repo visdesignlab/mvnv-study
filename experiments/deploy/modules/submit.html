@@ -95,7 +95,7 @@
         <div>
 
           <p>
-            <strong>A code for Mechanical Turk will display below after you submit successfully. </strong>
+            <strong>A completion code for Prolific will display below after you submit successfully. </strong>
           </p>
 
           <a class="button" id="submitFeedback" type="button">Submit</a>
@@ -120,7 +120,7 @@
 
 
           <p>
-            <strong>Please copy and paste the following code back on Mechanical Turk before closing this
+            <strong>Please copy and paste the following code back on Prolific before closing this
               window:</strong>
           </p>
           <h2 id="postId"></h2>
@@ -158,12 +158,12 @@
 
       let startTime = participant.data().startTime;
 
-      let endTime = Date.now();
+      let endTime = new Date().toString()
       //set end time 
-       db.collection("participants").doc(workerID).set({
-                    endTime:endTime,
-                    minutesToComplete:(endTime-startTime)/60000 //60000 milliseconds in a minute 
-        },{ merge: true });
+       db.collection("participants").doc(workerID).update({
+                    endTime,
+                    minutesToComplete:(Date.parse(endTime)-Date.parse(startTime))/60000 //60000 milliseconds in a minute 
+        });
 
 
 
@@ -209,10 +209,10 @@
             console.log(demographics,feedback)
 
           //push their responses to firebase;
-            db.collection("participants").doc(workerID).set({
+            db.collection("participants").doc(workerID).update({
                           demographics,
                           feedback
-              },{ merge: true });
+              });
 
             //Hide any previous error msgs
             d3.select('#invalidAnswer').style('display', 'none');

@@ -25,12 +25,15 @@
     experimentr.hideNext();
     await loadTasks(visType);
 
-    //set up an anonymous user on firestore to track answers and usage;
+    //set up  user on firestore to track answers and usage;
     if (track){
 
-       workerID = develop ? 'DevelopUser' : makeid(6);
-      
-      let screenSize = {
+      let loggedInUser = workerID !== undefined;
+
+      if (!loggedInUser){
+        workerID = develop ? 'DevelopUser' :  makeid(6);
+
+        let screenSize = {
         availWidth: window.screen.availWidth,
         availHeight: window.screen.availHeight,
         width: window.screen.width,
@@ -39,11 +42,12 @@
         pixelDepth: window.screen.pixelDepth
       };
 
-      db.collection('participants').doc(workerID).set({
-        screenSize,
-        startTime: new Date().toString()
-      });
-
+        db.collection('participants').doc(workerID).set({
+          screenSize,
+          startTime: new Date().toString()
+        });
+      }
+      
       trackResults();
     }
   

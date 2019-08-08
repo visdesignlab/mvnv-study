@@ -2,24 +2,56 @@
  <div id = '#consent' class="card">
     <header class="card-header">
         <p class="card-header-title">
-            Analyzing a Twitter Network
+            Analyzing a Multivariate Network
         </p>
 
     </header>
     <div class="card-content">
         <div class="content">
             <p>
-                We will ask you to perform a few tasks on a network by interacting with a network visualization. 
-                There is no time limit.
-            </p>
+                    The purpose of this research study is to examine the data analysis practices of Multivariate Networks. 
+                    We are completing this study in order to articulate the strengths and weaknesses of different representations of network visualizations.
+                    </p>
+
+                <p>
+                        If you agree, you will participate in a series of tests to assess how you interact with a particular visualization of social network data. 
+                        The study should take about 30 minutes. Your participation is completely voluntary. 
+                        You may choose not to answer a question or are free to withdraw consent and discontinue participation in the interview at any time for any reason. 
+                        There are no known risks associated with participating in this study.                    
+                </p>
+
+                    <p>
+                        By participating in this study, you will help provide a better understanding of the strengths and weaknesses of specific graph
+                         representations and improve data analysts' ability to understand their own graph data. 
+                         Additionally, this will lay the foundation for further research on the benefits of other graph representations.  
+                        </p>
+
+                     <p>
+                    The answers you submit and data about your performance (such as the time it took to answer and interactions prior to answer submission) will be digitally recorded. 
+                    Only interactions on the experiment page will be tracked. After the completion of the study, no other data will be recorded. 
+                    These records will be coded and a participant ID will be used to connect performance across tasks. 
+                    This data will be stored on a secure research database. You will not be identified in any publications.
+                    </p>
+                     
+
+                    <p>If you have any questions, complaints, or if you feel you have been harmed by this research please contact Carolina Nobre, 
+                        University of Utah at cnobre@sci.utah.edu.
+                         Contact the Institutional Review Board (IRB) if you have questions regarding your rights as a research participant. 
+                         Also, contact the IRB if you have questions, complaints or concerns which you do not feel you can discuss with the investigator. 
+                         The University of Utah IRB may be reached by phone at (801) 581-3655 or by e-mail at irb@hsc.utah.edu.
+                          By participating in the study, you are giving your consent to participate in this research. </p>
+           
 
             <p>
-                Please enter your Worker Id. <strong>You may only complete this survey once.</strong> Subsequent completions cannot be accepted:
-                <br>
+                    Please enter your Worker ID to confirm you have read and agree to this document: </p>
+                <strong>You may only complete this survey once.</strong> Subsequent completions cannot be accepted:
+
     
                 <input class="input" type="text" placeholder="Enter Worker Id" id="workerId" name="workerId" size="30" />
                 <a class="button" id="checkId" >Check ID</a>
-                <br>
+
+
+                <br/>
 
                 <span id="screenErrorMsg">
                     It seems your are on a screen that is smaller than the minimum required 15'' laptop size. Please attempt to take this hit again on a larger screen. 
@@ -35,7 +67,9 @@
             </p>
     
             <p>
-                <strong>Note: </br>1. This survey requires a modern browser. If you are not using Chrome or Firefox, the "I Agree" button may not activate even after entering your Worker ID. </strong></br><strong style="color:red">2. Please do not use mobile devices (touchscreen) for this task.</strong>
+                <strong>Note: </br>1. This survey requires a modern browser such as Chrome, Firefox, or Safari.  
+                
+                </strong></br><strong style="color:red">2. The minimum screen size required for this survey is a 15'' display, or  1980px x 1020px (no touch screen devices!)</strong>
             </p>
     
             
@@ -63,6 +97,13 @@
 </style>
 
 <script>
+
+    //if you're on the consent page, set track to true
+    var track = true; //track user interaction
+    var develop = false; //actual deployed study
+    var shuffleTasks = true;  // shuffle user task order 
+
+
     (function () {
         var data = {}
         , workers = null;
