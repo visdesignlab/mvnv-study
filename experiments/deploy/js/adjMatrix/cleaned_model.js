@@ -103,23 +103,50 @@ var Model = /** @class */ (function () {
         }
     };
     Model.prototype.populateSearchBox = function () {
-        var _this = this;
-        var names = this.nodes.map(function (node) { return node.shortName; });
+        d3.select("#search-input").attr("list", "characters");
+        var inputParent = d3.select("#search-input").node().parentNode;
+        var datalist = d3
+            .select(inputParent).selectAll('#characters').data([0]);
+        var enterSelection = datalist.enter()
+            .append("datalist")
+            .attr("id", "characters");
+        datalist.exit().remove();
+        datalist = enterSelection.merge(datalist);
+        var options = datalist.selectAll("option").data(this.nodes);
+        var optionsEnter = options.enter().append("option");
+        options.exit().remove();
+        options = optionsEnter.merge(options);
+        options.attr("value", function (d) { return d.shortName; });
+        options.attr("id", function (d) { return d.id; });
+        d3.select("#search-input").on("change", function () {
+            var selectedOption = d3.select(this).property("value");
+            //empty search box;
+            if (selectedOption.length === 0) {
+                return;
+            }
+            //find the right nodeObject
+            var name = this.nodes.filter(function (node) { return node.shortName == selectedOption; });
+            name = name[0][this.datumID];
+            var action = this.controller.view.changeInteractionWrapper(name, null, 'search');
+            this.controller.model.provenance.applyAction(action);
+            //let isSelected = node.selected;
+            //Only 'click' node if it isn't already selected;
+        });
+        /*let names = this.nodes.map(node => node.shortName.toLowerCase());
         autocomplete(document.getElementById("myInput"), names);
         d3.selectAll('.autocomplete').style('width', 150);
         d3.select('#searchButton').classed('search', true);
+    
         d3.select('#searchButton')
-            .on('click', function () {
-            var nodeID = document.getElementById("myInput").value;
-            var index = names.indexOf(nodeID);
+          .on('click', () => {
+            let nodeID = document.getElementById("myInput").value.toLowerCase();
+            let index = names.indexOf(nodeID);
             if (index == -1) {
-                return;
+              return;
             }
-            var name = _this.nodes.filter(function (node) { return node.shortName == nodeID; });
-            name = name[0][_this.datumID];
-            var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
-            _this.controller.model.provenance.applyAction(action);
+    
             //pushProvenance(this.controller.model.app.currentState())
+    
             /*
             let cell = d3.selectAll('#' + nodeID + nodeID)
             //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
@@ -127,9 +154,9 @@ var Model = /** @class */ (function () {
     
             var e = document.createEvent('UIEvents');
             e.initUIEvent('click', true, true, /* ... */ /*);
-            cell.select("rect").node().dispatchEvent(e);
-            */
-        });
+        cell.select("rect").node().dispatchEvent(e);
+
+      })*/
     };
     Model.prototype.getApplicationState = function () {
         var _this = this;

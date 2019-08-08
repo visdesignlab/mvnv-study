@@ -3,11 +3,7 @@
 body {
   font: 16px Arial;
 }
-.autocomplete {
-  /*the container must be positioned relative:*/
-  position: relative;
-  display: inline-block;
-}
+
 input {
   border: 1px solid transparent;
   background-color: #f1f1f1;
@@ -18,12 +14,7 @@ input[type=text] {
   background-color: #f1f1f1;
   width: 150px;
 }
-#searchButton {
-  background-color: DodgerBlue;
-  width: 70px;
-  color: #fff;
-  margin-bottom: 20px;
-}
+
 .hoveredCell{
 
   stroke-width:1px;
@@ -91,6 +82,9 @@ input[type=text] {
   width: 140px;
   color: #fff;
   margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+
 }
 
 
@@ -189,6 +183,16 @@ pointer-events: none;
   /*rx:5;*
   width:10;
   height:10;*/
+}
+
+.input {
+    width:45% !important;
+    position: relative;
+    display: inline-block;
+}
+
+.input.searchInput {
+    width:55% !important;
 }
 
 .clicked{

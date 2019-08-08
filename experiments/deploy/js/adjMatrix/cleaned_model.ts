@@ -39,10 +39,54 @@ class Model {
 
   private scalarMatrix: any;
   populateSearchBox() {
-    let names = this.nodes.map(node => node.shortName.toLowerCase());
+
+    d3.select("#search-input").attr("list", "characters");
+    let inputParent = d3.select("#search-input").node().parentNode;
+
+    let datalist = d3
+    .select(inputParent).selectAll('#characters').data([0]);
+
+    let enterSelection = datalist.enter()
+    .append("datalist")
+    .attr("id", "characters");
+
+    datalist.exit().remove();
+
+    datalist= enterSelection.merge(datalist);
+
+    let options = datalist.selectAll("option").data(this.nodes);
+
+    let optionsEnter = options.enter().append("option");
+    options.exit().remove();
+
+    options = optionsEnter.merge(options);
+    options.attr("value", d => d.shortName);
+    options.attr("id", d => d.id);
+
+    d3.select("#search-input").on("change", function() {
+      let selectedOption = d3.select(this).property("value");
+
+      //empty search box;
+      if (selectedOption.length === 0) {
+        return;
+      }
+
+      //find the right nodeObject
+      let name = this.nodes.filter(node => { return node.shortName == selectedOption });
+      name = name[0][this.datumID];
+      let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
+      this.controller.model.provenance.applyAction(action);
+      //let isSelected = node.selected;
+
+      //Only 'click' node if it isn't already selected;
+
+    });
+
+    /*let names = this.nodes.map(node => node.shortName.toLowerCase());
     autocomplete(document.getElementById("myInput"), names);
     d3.selectAll('.autocomplete').style('width', 150);
     d3.select('#searchButton').classed('search', true);
+
     d3.select('#searchButton')
       .on('click', () => {
         let nodeID = document.getElementById("myInput").value.toLowerCase();
@@ -50,10 +94,7 @@ class Model {
         if (index == -1) {
           return;
         }
-        let name = this.nodes.filter(node => { return node.shortName == nodeID });
-        name = name[0][this.datumID];
-        let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
-        this.controller.model.provenance.applyAction(action);
+
         //pushProvenance(this.controller.model.app.currentState())
 
         /*
@@ -64,8 +105,8 @@ class Model {
         var e = document.createEvent('UIEvents');
         e.initUIEvent('click', true, true, /* ... *//*);
         cell.select("rect").node().dispatchEvent(e);
-        */
-      })
+
+      })*/
   }
 
 
