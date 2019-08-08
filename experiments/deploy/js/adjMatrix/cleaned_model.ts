@@ -39,13 +39,13 @@ class Model {
 
   private scalarMatrix: any;
   populateSearchBox() {
-    let names = this.nodes.map(node => node.shortName);
+    let names = this.nodes.map(node => node.shortName.toLowerCase());
     autocomplete(document.getElementById("myInput"), names);
     d3.selectAll('.autocomplete').style('width', 150);
     d3.select('#searchButton').classed('search', true);
     d3.select('#searchButton')
       .on('click', () => {
-        let nodeID = document.getElementById("myInput").value;
+        let nodeID = document.getElementById("myInput").value.toLowerCase();
         let index = names.indexOf(nodeID);
         if (index == -1) {
           return;
@@ -361,7 +361,7 @@ class Model {
 
 
       /* matrix used for edge attributes, otherwise should we hide */
-      this.matrix[i] = this.nodes.map((colNode) => { return { cellName: 'cell' + rowNode[this.datumID] + '_' + colNode[this.datumID], correspondingCell: 'cell' + colNode[this.datumID] + '_' + rowNode[this.datumID], rowid: rowNode[this.datumID], colid: colNode[this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
+      this.matrix[i] = this.nodes.map((colNode) => { return { cellName: 'cell' + rowNode[this.datumID] + '_' + colNode[this.datumID], correspondingCell: 'cell' + colNode[this.datumID] + '_' + rowNode[this.datumID], rowid: rowNode[this.datumID], colid: colNode[this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, interacted: 0, retweet: 0, mentions: 0 }; });
       this.scalarMatrix[i] = this.nodes.map(function(colNode) { return 0; });
 
     });
@@ -785,6 +785,7 @@ class View {
       for (let index = 0; index < dividers; index++) {
 
         let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'interacted';
+        console.log(this.edgeScales,type)
         let scale = this.edgeScales[type];
         let typeColor = scale.range()[1];
         // change encoding to position
@@ -811,7 +812,7 @@ class View {
       cells
         .selectAll('.nestedEdges')
         .filter(d => {
-          return d.mentions == 0 && d.retweet == 0 && d.combined == 0;
+          return d.mentions == 0 && d.retweet == 0 && d.interacted == 0;
         })
         .remove();
 
@@ -836,9 +837,9 @@ class View {
         let matrix = nodes[i].getScreenCTM()
           .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
 
-        let combinedMessage = cell.combined > 0 ? cell.combined.toString() + " interactions" : '';//
-        if (cell.combined == 1) {
-          combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1)
+        let interactedMessage = cell.interacted > 0 ? cell.interacted.toString() + " interactions" : '';//
+        if (cell.interacted == 1) {
+          interactedMessage = interactedMessage.substring(0, interactedMessage.length - 1)
         }
         let retweetMessage = cell.retweet > 0 ? cell.retweet.toString() + " retweets" : '';//
         if (cell.retweet == 1) {
@@ -849,7 +850,7 @@ class View {
           mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1)
         }
 
-        let message = [combinedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
+        let message = [interactedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
         console.log(message);
 
         if (message !== '') {
@@ -910,7 +911,7 @@ class View {
       })
       .on('click', (d, i, nodes) => {
         // only trigger click if edge exists
-        if (d.combined != 0 || d.retweet != 0 || d.mentions != 0) {
+        if (d.interacted != 0 || d.retweet != 0 || d.mentions != 0) {
           this.clickFunction(d, i, nodes);
 
         }
@@ -930,7 +931,7 @@ class View {
             let cellElement = d3.select(nodes[index]).selectAll('rect');
             let cellID = cell.rowid + cell.colid;
 
-            if (cell.combined != 0 || cell.mentions != 0 || cell.retweets != 0) {
+            if (cell.interacted != 0 || cell.mentions != 0 || cell.retweets != 0) {
 
             }
 
@@ -1109,7 +1110,10 @@ class View {
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
 
       })
-      .on('click', this.clickFunction)
+      .on('click', (d,i,nodes)=>{
+        d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
+        this.clickFunction(d,i,nodes);
+      })
 
 
     this.edgeColumns.append("text")
@@ -1134,6 +1138,7 @@ class View {
         } else {
           this.clickFunction(d, i, nodes);
         }
+        d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
       })
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
@@ -1215,7 +1220,7 @@ class View {
           let columnData = d3.select(node).data()[0];
           interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
           columnData.map(node => {
-            if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
+            if (node.mentions != 0 || node.interacted != 0 || node.retweet != 0) {
               let neighbor = node.colid;
               this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
 
@@ -1315,8 +1320,8 @@ class View {
     if (type == 'all') {
       squares
         .style("fill", (d: any) => {
-          if (d.combined !== 0) {
-            return this.edgeScales["combined"](d.combined);
+          if (d.interacted !== 0) {
+            return this.edgeScales["interacted"](d.interacted);
           } else if (d.retweet !== 0) {
             return this.edgeScales["retweet"](d.retweet);
           } else if (d.mentions !== 0) {
@@ -1325,20 +1330,20 @@ class View {
             return "pink";
           }
         })
-        .filter(d => { return d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0)
+        .filter(d => { return d.interacted !== 0 || d.retweet !== 0 || d.mentions !== 0)
         .style("fill-opacity", (d) => {
-          return (d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
+          return (d.interacted !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
         });
-    } else if (type == "combined") {
+    } else if (type == "interacted") {
       squares.style("fill", (d: any) => {
-        if (d.combined !== 0) {
-          return this.edgeScales["combined"](d.combined);
+        if (d.interacted !== 0) {
+          return this.edgeScales["interacted"](d.interacted);
         } else {
           return "white";
         }
       })
         .style("fill-opacity", (d) => {
-          return d.combined !== 0 ? 1 : 0;
+          return d.interacted !== 0 ? 1 : 0;
         });
 
 
@@ -1432,7 +1437,7 @@ class View {
 
     if (pluralType == "retweet") {
       pluralType = "retweets";
-    } else if (pluralType == "combined") {
+    } else if (pluralType == "interacted") {
       pluralType = "interactions";
     }
 
@@ -1478,14 +1483,14 @@ class View {
     let counter = 0;
     for (let type in this.edgeScales) {
       if (this.controller.configuration.isMultiEdge) {
-        if (type == "combined") {
+        if (type == "interacted") {
           continue;
         }
         this.generateScaleLegend(type, counter)
         counter += 1;
 
       } else {
-        if (type != "combined") {
+        if (type != "interacted") {
           continue;
         }
         this.generateScaleLegend(type, counter)

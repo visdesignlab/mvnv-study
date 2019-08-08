@@ -670,6 +670,7 @@ var View = /** @class */ (function () {
             var squareSize = this.verticalScale.bandwidth() - 2 * offset_1;
             var _loop_1 = function (index) {
                 var type = this_1.controller.configuration.isMultiEdge ? this_1.controller.configuration.attributeScales.edge.type.domain[index] : 'interacted';
+                console.log(this_1.edgeScales, type);
                 var scale = this_1.edgeScales[type];
                 var typeColor = scale.range()[1];
                 // change encoding to position
@@ -958,7 +959,10 @@ var View = /** @class */ (function () {
             that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
             that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         })
-            .on('click', this.clickFunction);
+            .on('click', function (d, i, nodes) {
+            d3.select(nodes[i]).classed('clicked', !d3.select(nodes[i]).classed('clicked'));
+            _this.clickFunction(d, i, nodes);
+        });
         this.edgeColumns.append("text")
             .attr("id", function (d, i) {
             return "nodeLabelCol" + d[i].rowid;
@@ -980,6 +984,7 @@ var View = /** @class */ (function () {
             else {
                 _this.clickFunction(d, i, nodes);
             }
+            d3.select(nodes[i]).classed('clicked', !d3.select(nodes[i]).classed('clicked'));
         })
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;

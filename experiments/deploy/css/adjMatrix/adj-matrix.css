@@ -192,7 +192,7 @@ pointer-events: none;
 }
 
 .clicked{
-
+  font-weight:800;
   fill: #F8CF91 !important;
   fill-opacity:1 !important;
 }
