@@ -150,12 +150,16 @@
 
                                     <header class="modal-card-head">
                                         <p class="modal-card-title">
-                                            On a scale of 1 (easy) to 7 (hard),
-                                            <br /> how hard was this task?
+                                            On a scale of 1 (easy) to 7 (hard), how hard was this task?
+                                            <!-- Please rate the task and leave any feedback below: -->
                                         </p>
                                     </header>
                                     <section class="modal-card-body">
                                         <div class="content">
+
+                                                <!-- <p><strong>  On a scale of 1 (easy) to 7 (hard), how hard was this task?</strong></p> -->
+
+
                                             <div class="control">
 
                                                 <!-- <strong>easy</strong> -->
@@ -196,17 +200,71 @@
                                                 hard
 
                                             </div>
-                                            <br />
-
-                                            <textarea class="textarea"
-                                                placeholder="Enter any additional information here"></textarea>
-
-                                            <p class='errorMsg' style=display:none>Please select a score above before
-                                                proceeding!</p>
-
-
                                         </div>
                                     </section>
+
+                                    <header class="modal-card-head">
+                                            <p class="modal-card-title">
+                                                On a scale of 1 (not confident) to 7 (confident),
+                                                how <br />  confident are you with your answer?
+                                            </p>
+                                        </header>
+                                        <section class="modal-card-body">
+                                            <div class="content">
+
+                                                    <!-- <p><strong> On a scale of 1 (not confident) to 7 (confident), how confident are you with your answer?</strong></p> -->
+
+                                                <div class="control">
+    
+                                                    <!-- <strong>easy</strong> -->
+                                                    not confident
+    
+                                                    <span id="easyHardRating">
+                                                        <label class="radio">
+                                                            <input type="radio" name="confidence" value="1">
+                                                            1
+                                                        </label>
+                                                        <label class="radio">
+                                                            <input type="radio" name="confidence" value="2">
+                                                            2
+                                                        </label>
+                                                        <label class="radio">
+                                                            <input type="radio" name="confidence" value="3">
+                                                            3
+                                                        </label>
+                                                        <label class="radio">
+                                                            <input type="radio" name="confidence" value="4">
+                                                            4
+                                                        </label>
+                                                        <label class="radio">
+                                                            <input type="radio" name="confidence" value="5">
+                                                            5
+                                                        </label>
+                                                        <label class="radio">
+                                                            <input type="radio" name="confidence" value="6">
+                                                            6
+                                                        </label>
+                                                        <label class="radio">
+                                                            <input type="radio" name="confidence" value="7">
+                                                            7
+                                                        </label>
+    
+                                                    </span>
+                                                    <!-- <strong>hard</strong> -->
+                                                    confident
+    
+                                                </div>
+                                                <br />
+                                                
+                                                <p><strong>Enter any additional feedback in the text area below.</strong></p>
+                                                <textarea class="textarea"
+                                                    placeholder="Enter any additional information here"></textarea>
+    
+                                                <p class='errorMsg' style=display:none>Please select a rating for both difficulty and confidence before proceeding.</p>
+    
+    
+                                            </div>
+                                        </section>
                                     <footer class="modal-card-foot">
                                         <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
                                     </footer>

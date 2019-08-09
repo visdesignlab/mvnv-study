@@ -668,7 +668,6 @@ function updateVis() {
       .select("path")
       .style("stroke-width", edgeWidth)
       .style("stroke", edgeColor)
-      .style("opacity", 0.4)
       .attr("id", d => d.id)
       .on("mouseover",function(d){
         // console.log (d)
@@ -1814,6 +1813,8 @@ function drawLegend() {
     return "translate(" + i * radius + "," + i * yOffset + ")";
   });
 
+
+
   let findCenter = function(i) {
     return circleScale.range()[1] / 2 - circleScale(i) / 2;
   };
@@ -1836,7 +1837,8 @@ function drawLegend() {
     )
     .attr("rx", (d, i) => (d.type === "node" ? circleScale(i) : 0))
     .attr("ry", (d, i) => (d.type === "node" ? circleScale(i) : 0))
-    .style("fill", d => (d.type === "edgeType" ? edgeStrokeScale(d.data) : ""));
+    .style("fill", d => (d.type === "edgeType" ? edgeStrokeScale(d.data) : ""))
+    .classed("links", (d, i) => d.type === "edgeType");
 
   sizeCircles
     .select(".sizeCircleLabel")

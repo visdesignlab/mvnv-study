@@ -30,6 +30,30 @@ function KeyPress(e) {
 
 document.onkeydown = KeyPress;
 
+var tabFocus = (function(){
+  var stateKey, eventKey, keys = {
+      hidden: "visibilitychange",
+      webkitHidden: "webkitvisibilitychange",
+      mozHidden: "mozvisibilitychange",
+      msHidden: "msvisibilitychange"
+  };
+  for (stateKey in keys) {
+      if (stateKey in document) {
+          eventKey = keys[stateKey];
+          break;
+      }
+  }
+  return function(c) {
+      if (c) document.addEventListener(eventKey, c);
+      return !document[stateKey];
+  }
+})();
+
+tabFocus(function(){
+  //start counting 'unfocus time' and add to current taskObject;
+  document.title = tabFocus() ? 'Visible' : 'Not visible';
+});
+
 //common data validation and submission code
 function screenTest(width, height) {
   let widthTest = window.screen.availWidth >= width;
@@ -167,13 +191,16 @@ d3.selectAll("#closeModal").on("click", () => {
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
 
-  let selected = d3.selectAll("input[name=difficulty]").filter(function() {
+  let selectedDifficulty = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
-
+  
+  let selectedConfidence = d3.selectAll("input[name=confidence]").filter(function() {
+    return d3.select(this).property("checked");
+  });
   //check to see if something has been selected before allowing the user to continue:
 
-  if (selected.size() === 0) {
+  if (selectedDifficulty.size() === 0 || selectedConfidence.size() === 0) {
     //display error msg;
     d3.select(".modalFeedback")
       .select(".errorMsg")
@@ -191,10 +218,13 @@ d3.select("#nextTask").on("click", async () => {
     .select(".textarea")
     .property("value");
 
-  let difficulty = selected.size() > 0 ? selected.property("value") : "";
+  let difficulty = selectedDifficulty.size() > 0 ? selectedDifficulty.property("value") : "";
+  let confidence = selectedConfidence.size() > 0 ? selectedConfidence.property("value") : "";
+
 
   taskObj.feedback = {
     difficulty,
+    confidence,
     explanation
   };
 
@@ -482,7 +512,42 @@ function makeid(length) {
   return result;
 }
 
+function getResults(){
+
+let allResults = [];
+let allParticipants = [];
+  let ids = ['GtVOYl','T391Hp','T7asXK','yXA0Sm'];
+  db.collection("results").get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      if (true){
+        allResults.push({id:doc.id, data:doc.data()});
+        // saveToFile(doc.data(),'results_' + doc.id + '.json')
+      }
+    });
+
+    allResults.map(r=>{
+      // saveToFile(r.data,'result/' + r.id + '.json')
+    })
+});
+
+db.collection("participants").get().then(function(querySnapshot) {
+  querySnapshot.forEach(function(doc) {
+    if (true){
+      allParticipants.push({id:doc.id, data:doc.data()});
+      // saveToFile(doc.data(),'participant_' + doc.id + '.json')
+    }
+  });
+  allParticipants.map(p=>{
+    // saveToFile(p.data,'participants/' + p.id + '.json')
+  })
+});
+
+}
+
 async function loadTasks(visType) {
+
+
+   getResults(); 
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
