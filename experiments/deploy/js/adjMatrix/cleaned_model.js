@@ -49,9 +49,6 @@ var Model = /** @class */ (function () {
         this.controller = controller;
         this.datumID = controller.datumID;
         d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then(function (data) {
-            // d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
-            //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
-            //let data = this.grabTwitterData(network, network.links);
             _this.graph = data;
             _this.edges = data.links;
             //setPanelValuesFromFile(controller.configuration, data);
@@ -122,7 +119,6 @@ var Model = /** @class */ (function () {
         d3.select("#search-input").on("change", function (d, i, nodes) {
             var selectedOption = d3.select(nodes[i]).property("value");
             console.log(selectedOption);
-            //empty search box;
             if (selectedOption.length === 0) {
                 return;
             }
@@ -132,34 +128,7 @@ var Model = /** @class */ (function () {
             name = name[0][_this.datumID];
             var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
             _this.controller.model.provenance.applyAction(action);
-            //let isSelected = node.selected;
-            //Only 'click' node if it isn't already selected;
         });
-        /*let names = this.nodes.map(node => node.shortName.toLowerCase());
-        autocomplete(document.getElementById("myInput"), names);
-        d3.selectAll('.autocomplete').style('width', 150);
-        d3.select('#searchButton').classed('search', true);
-    
-        d3.select('#searchButton')
-          .on('click', () => {
-            let nodeID = document.getElementById("myInput").value.toLowerCase();
-            let index = names.indexOf(nodeID);
-            if (index == -1) {
-              return;
-            }
-    
-            //pushProvenance(this.controller.model.app.currentState())
-    
-            /*
-            let cell = d3.selectAll('#' + nodeID + nodeID)
-            //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
-    
-    
-            var e = document.createEvent('UIEvents');
-            e.initUIEvent('click', true, true, /* ... */ /*);
-        cell.select("rect").node().dispatchEvent(e);
-
-      })*/
     };
     Model.prototype.getApplicationState = function () {
         var _this = this;
@@ -491,28 +460,6 @@ var View = /** @class */ (function () {
         d3.select("#order").on("change", function () {
             that.sort(this.value);
         });
-    };
-    /**
-     * [highlightNodes description]
-     * @param  screen_name         [description]
-     * @param  verticleNode [description]
-     * @return              [description]
-  
-    highlightNodes(screen_name: string, verticleNode: boolean) {
-      let selector: string = verticleNode ? ".highlightRow" : ".highlightRow";
-  
-      d3.selectAll(selector)
-        .filter((d: any) => { return d.screen_name == screen_name })
-        .classed('hovered', true);
-    }*/
-    /**
-     * [clickedNode description]
-     * @return [description]
-     */
-    View.prototype.clickedNode = function () {
-        // Find node and highlight it in orange
-        // Find all of it's neighbors
-        // process links for neighbors?
     };
     /**
      * Initalizes the edges view, renders SVG
@@ -2036,6 +1983,8 @@ var View = /** @class */ (function () {
         });
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('font-weight', 650); //.attr('y', 35).attr('x', 10);
+        var nonAnswerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d !== 'selected'; });
+        nonAnswerColumn.attr('cursor', 'pointer');
         d3.select('.loading').style('display', 'none');
         this.controller.model.setUpProvenance();
         window.focus();

@@ -23,102 +23,13 @@ class Model {
   private idMap;
   private orderType;
   public graph: any;
-
-
-
-  isQuant(attr) {
-    // if not in list
-    if (!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)) {
-      return false;
-    } else if (this.controller.configuration.attributeScales.node[attr].range === undefined) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   private scalarMatrix: any;
-  populateSearchBox() {
-
-    d3.select("#search-input").attr("list", "characters");
-    let inputParent = d3.select("#search-input").node().parentNode;
-
-    let datalist = d3
-    .select(inputParent).selectAll('#characters').data([0]);
-
-    let enterSelection = datalist.enter()
-    .append("datalist")
-    .attr("id", "characters");
-
-    datalist.exit().remove();
-
-    datalist= enterSelection.merge(datalist);
-
-    let options = datalist.selectAll("option").data(this.nodes);
-
-    let optionsEnter = options.enter().append("option");
-    options.exit().remove();
-
-    options = optionsEnter.merge(options);
-    options.attr("value", d => d.shortName);
-    options.attr("id", d => d.id);
-
-    d3.select("#search-input").on("change", (d,i,nodes) => {
-      let selectedOption = d3.select(nodes[i]).property("value");
-      console.log(selectedOption);
-
-      //empty search box;
-      if (selectedOption.length === 0) {
-        return;
-      }
-
-      //find the right nodeObject
-      let name = this.nodes.filter(node => { return node.shortName == selectedOption });
-      console.log(name);
-      name = name[0][this.datumID];
-      let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
-      this.controller.model.provenance.applyAction(action);
-      //let isSelected = node.selected;
-
-      //Only 'click' node if it isn't already selected;
-
-    });
-
-    /*let names = this.nodes.map(node => node.shortName.toLowerCase());
-    autocomplete(document.getElementById("myInput"), names);
-    d3.selectAll('.autocomplete').style('width', 150);
-    d3.select('#searchButton').classed('search', true);
-
-    d3.select('#searchButton')
-      .on('click', () => {
-        let nodeID = document.getElementById("myInput").value.toLowerCase();
-        let index = names.indexOf(nodeID);
-        if (index == -1) {
-          return;
-        }
-
-        //pushProvenance(this.controller.model.app.currentState())
-
-        /*
-        let cell = d3.selectAll('#' + nodeID + nodeID)
-        //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
-
-
-        var e = document.createEvent('UIEvents');
-        e.initUIEvent('click', true, true, /* ... *//*);
-        cell.select("rect").node().dispatchEvent(e);
-
-      })*/
-  }
-
 
   constructor(controller: any) {
     this.controller = controller;
     this.datumID = controller.datumID;
+
     d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then((data: any) => {
-      // d3.json("../../data/network_" + controller.configuration.loadedGraph + ".json").then((data: any) => {
-      //d3.json("scripts/Eurovis2019Tweets.json").then((tweets: any) => {
-      //let data = this.grabTwitterData(network, network.links);
       this.graph = data;
       this.edges = data.links;
 
@@ -170,6 +81,64 @@ class Model {
       //})
     })
   }
+
+  isQuant(attr) {
+    // if not in list
+    if (!Object.keys(this.controller.configuration.attributeScales.node).includes(attr)) {
+      return false;
+    } else if (this.controller.configuration.attributeScales.node[attr].range === undefined) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+  populateSearchBox() {
+
+    d3.select("#search-input").attr("list", "characters");
+    let inputParent = d3.select("#search-input").node().parentNode;
+
+    let datalist = d3
+    .select(inputParent).selectAll('#characters').data([0]);
+
+    let enterSelection = datalist.enter()
+    .append("datalist")
+    .attr("id", "characters");
+
+    datalist.exit().remove();
+
+    datalist= enterSelection.merge(datalist);
+
+    let options = datalist.selectAll("option").data(this.nodes);
+
+    let optionsEnter = options.enter().append("option");
+    options.exit().remove();
+
+    options = optionsEnter.merge(options);
+    options.attr("value", d => d.shortName);
+    options.attr("id", d => d.id);
+
+    d3.select("#search-input").on("change", (d,i,nodes) => {
+      let selectedOption = d3.select(nodes[i]).property("value");
+      console.log(selectedOption);
+
+      if (selectedOption.length === 0) {
+        return;
+      }
+
+      //find the right nodeObject
+      let name = this.nodes.filter(node => { return node.shortName == selectedOption });
+      console.log(name);
+      name = name[0][this.datumID];
+      let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
+      this.controller.model.provenance.applyAction(action);
+
+    });
+  }
+
+
+
 
   getApplicationState() {
     return {
@@ -321,7 +290,6 @@ class Model {
       provenance.addObserver("selections.search", updateHighlights)
       provenance.addObserver("selections.answerBox", updateHighlights)
       provenance.addObserver("selections.answerBox", updateAnswerBox)
-
 
     }
     setUpObservers();
@@ -589,30 +557,6 @@ class View {
 
   }
 
-  /**
-   * [highlightNodes description]
-   * @param  screen_name         [description]
-   * @param  verticleNode [description]
-   * @return              [description]
-
-  highlightNodes(screen_name: string, verticleNode: boolean) {
-    let selector: string = verticleNode ? ".highlightRow" : ".highlightRow";
-
-    d3.selectAll(selector)
-      .filter((d: any) => { return d.screen_name == screen_name })
-      .classed('hovered', true);
-  }*/
-
-  /**
-   * [clickedNode description]
-   * @return [description]
-   */
-  clickedNode() {
-    // Find node and highlight it in orange
-    // Find all of it's neighbors
-    // process links for neighbors?
-
-  }
   private edgeScales: any;
   private visWidth: number;
   private visHeight: number;
@@ -2368,7 +2312,8 @@ class View {
 
     let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
     answerColumn.attr('font-weight', 650)//.attr('y', 35).attr('x', 10);
-
+    let nonAnswerColumn = columnHeaders.selectAll('.header').filter(d => { return d !== 'selected' })
+    nonAnswerColumn.attr('cursor','pointer');
 
     d3.select('.loading').style('display', 'none');
     this.controller.model.setUpProvenance();
