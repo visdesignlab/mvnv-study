@@ -197,13 +197,13 @@ var Model = /** @class */ (function () {
         // creates the document with the name and worker ID
         //pushProvenance(app.currentState());
         var rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel');
-        var columnElements = ['colLabel', 'topoCol'];
-        var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
+        var columnElements = ['topoCol'];
+        var rowElements = ['topoRow', 'attrRow'];
         var elementNamesFromSelection = {
             cellcol: rowElements.concat(columnElements),
-            colLabel: rowElements.concat(columnElements),
-            rowLabel: rowElements.concat(columnElements),
-            attrRow: rowElements,
+            colLabel: rowElements.concat(columnElements).concat(['colLabel']),
+            rowLabel: rowElements.concat(columnElements).concat(['rowLabel']),
+            attrRow: rowElements.concat(['rowLabel']),
             cellrow: rowElements.concat(columnElements),
             neighborSelect: rowElements,
             answerBox: rowElements.concat(columnElements),
@@ -237,6 +237,7 @@ var Model = /** @class */ (function () {
             var clickedSelectorQuery = Array.from(clickedElements).join(',');
             var answerSelectorQuery = Array.from(answerElements).join(',');
             var neighborSelectQuery = Array.from(neighborElements).join(',');
+            console.log(clickedSelectorQuery);
             clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
             answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
             neighborSelectQuery != [] ? d3.selectAll(neighborSelectQuery).classed('neighbor', true) : null;
@@ -672,8 +673,8 @@ var View = /** @class */ (function () {
             console.log(extent);
             var typeIndex = _this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
             //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
-            var otherColors = ['#064B6E', '#4F0664', '#000000'];
-            var scale = d3.scaleSqrt().domain(extent).range(["white", otherColors[typeIndex]]);
+            //let otherColors = ['#064B6E', '#4F0664', '#000000']
+            var scale = d3.scaleSqrt().domain(extent).range(["white", _this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
             scale.clamp(true);
             // store scales
             _this.edgeScales[type] = scale;
@@ -961,7 +962,7 @@ var View = /** @class */ (function () {
         this.edgeRows.append("text")
             .attr('class', 'rowLabel')
             .attr("id", function (d, i) {
-            return "nodeLabelRow" + d[i].rowid;
+            return "rowLabel" + d[i].rowid;
         })
             .attr('z-index', 30)
             .attr("x", 0)
@@ -990,12 +991,12 @@ var View = /** @class */ (function () {
             that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         })
             .on('click', function (d, i, nodes) {
-            d3.select(nodes[i]).classed('clicked', !d3.select(nodes[i]).classed('clicked'));
+            //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
             _this.clickFunction(d, i, nodes);
         });
         this.edgeColumns.append("text")
             .attr("id", function (d, i) {
-            return "nodeLabelCol" + d[i].rowid;
+            return "colLabel" + d[i].rowid;
         })
             .attr('class', 'colLabel')
             .attr('z-index', 30)
@@ -1014,7 +1015,7 @@ var View = /** @class */ (function () {
             else {
                 _this.clickFunction(d, i, nodes);
             }
-            d3.select(nodes[i]).classed('clicked', !d3.select(nodes[i]).classed('clicked'));
+            //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
         })
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
@@ -2350,6 +2351,8 @@ var Controller = /** @class */ (function () {
         panelDimensions.height = height - taskBarHeight;
         d3.select("#visPanel").style("width", panelDimensions.width + "px");
         d3.select('#panelDiv').style('display', 'none');
+        document.getElementById("visContent").style.width = '100vw';
+        document.getElementById("visContent").style.overflowX = "scroll";
         this.visHeight = panelDimensions.height;
         this.visWidth = width * 0.8 - 40;
         this.edgeWidth = this.visWidth - this.attrWidth;

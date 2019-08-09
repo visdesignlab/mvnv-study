@@ -64,9 +64,12 @@ input[type=text] {
 
 .colLabel{
   cursor: pointer;
+  fill: black !important;
 }
 .rowLabel{
   cursor: pointer;
+  fill: black !important;
+
 }
 .answerBox{
   cursor: pointer;
@@ -79,7 +82,7 @@ input[type=text] {
 
 #clearButton{
   background-color: #DC3445;
-  width: 140px;
+  width: 30%;
   color: #fff;
   margin-bottom: 20px;
   position: relative;
@@ -192,7 +195,7 @@ pointer-events: none;
 }
 
 .input.searchInput {
-    width:55% !important;
+    width:70% !important;
 }
 
 .clicked{
@@ -224,7 +227,7 @@ font-weight: 450;
 }
 text.clicked {
 font-weight: 650;
-/*fill: #ea9b0f;*/
+fill: black !important;
 }
 text.answer {
 font-weight: 800;

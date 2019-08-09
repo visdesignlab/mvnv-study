@@ -217,14 +217,14 @@ class Model {
     // creates the document with the name and worker ID
     //pushProvenance(app.currentState());
     const rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel')
-    let columnElements = ['colLabel', 'topoCol'];
-    let rowElements = ['rowLabel', 'topoRow', 'attrRow']
+    let columnElements = ['topoCol'];
+    let rowElements = ['topoRow', 'attrRow']
 
     let elementNamesFromSelection = {
       cellcol: rowElements.concat(columnElements),
-      colLabel: rowElements.concat(columnElements),
-      rowLabel: rowElements.concat(columnElements),
-      attrRow: rowElements,
+      colLabel: rowElements.concat(columnElements).concat(['colLabel']),// splice out rowLabel TODO:
+      rowLabel: rowElements.concat(columnElements).concat(['rowLabel']),// splice out colLabel
+      attrRow: rowElements.concat(['rowLabel']),
       cellrow: rowElements.concat(columnElements),
       neighborSelect: rowElements,
       answerBox: rowElements.concat(columnElements),
@@ -260,7 +260,7 @@ class Model {
       let clickedSelectorQuery = Array.from(clickedElements).join(',')
       let answerSelectorQuery = Array.from(answerElements).join(',')
       let neighborSelectQuery = Array.from(neighborElements).join(',')
-
+      console.log(clickedSelectorQuery);
       clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
       answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
       neighborSelectQuery != [] ? d3.selectAll(neighborSelectQuery).classed('neighbor', true) : null;
@@ -791,10 +791,11 @@ class View {
       // set up scale
       console.log(extent);
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
-      //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
-      let otherColors = ['#064B6E', '#4F0664', '#000000']
-      let scale = d3.scaleSqrt().domain(extent).range(["white", otherColors[typeIndex]);
 
+      //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
+      //let otherColors = ['#064B6E', '#4F0664', '#000000']
+
+      let scale = d3.scaleSqrt().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]);
 
       scale.clamp(true);
       // store scales
@@ -1117,7 +1118,7 @@ class View {
     this.edgeRows.append("text")
       .attr('class', 'rowLabel')
       .attr("id", (d, i) => {
-        return "nodeLabelRow" + d[i].rowid;
+        return "rowLabel" + d[i].rowid;
       })
       .attr('z-index', 30)
       .attr("x", 0)
@@ -1154,14 +1155,14 @@ class View {
 
       })
       .on('click', (d,i,nodes)=>{
-        d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
+        //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
         this.clickFunction(d,i,nodes);
       })
 
 
     this.edgeColumns.append("text")
       .attr("id", (d, i) => {
-        return "nodeLabelCol" + d[i].rowid;
+        return "colLabel" + d[i].rowid;
       })
       .attr('class', 'colLabel')
       .attr('z-index', 30)
@@ -1181,7 +1182,7 @@ class View {
         } else {
           this.clickFunction(d, i, nodes);
         }
-        d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
+        //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
       })
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
@@ -2802,6 +2803,9 @@ class Controller {
     panelDimensions.height = height - taskBarHeight;
     d3.select("#visPanel").style("width", panelDimensions.width + "px");
     d3.select('#panelDiv').style('display', 'none');
+    document.getElementById("visContent").style.width = '100vw';
+    document.getElementById("visContent").style.overflowX = "scroll";
+
     this.visHeight = panelDimensions.height;
     this.visWidth = width * 0.8 - 40;
     this.edgeWidth = this.visWidth - this.attrWidth;
