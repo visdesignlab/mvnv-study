@@ -3,7 +3,7 @@ let taskList;
 let workerID; // to be populated when the user goes through the consent form;
 let currentTask = 0; //start at task 0
 
-let vis;
+// let vis;
 
 //bookkeeping vars
 let studyTracking = {
@@ -576,7 +576,7 @@ async function loadTasks(visType) {
     nodeLink: [
       "js/nodeLink/main_nodeLink.js",
       "js/nodeLink/helperFunctions.js"
-    ], //,"js/createTaskConfig.js"],
+    ], 
     adjMatrix: [
       "js/adjMatrix/libs/reorder/science.v1.js",
       "js/adjMatrix/libs/reorder/tiny-queue.js",
