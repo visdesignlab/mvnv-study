@@ -648,10 +648,10 @@ function setPanelValuesFromFile() {    [["node", "nodes"], ["edge", "links"]].ma
     });
   
     // updateVis();
-  }
+}
 
   function update(){
-      setPanelValuesFromFile();
+      // setPanelValuesFromFile();
       updateVis();
   }
 
@@ -869,12 +869,12 @@ function isQuant(attr) {
   
   async function loadConfigs(taskID) {
 
-    let baseConfig = await d3.json("../../configs/baseConfig.json");
-    let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
+    // let baseConfig = await d3.json("../../configs/baseConfig.json");
+    // let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
 
-    setConfigCallbacks(baseConfig,taskConfig);
+    // setConfigCallbacks(baseConfig,taskConfig);
 
-    await loadNewGraph(config.graphFiles[config.loadedGraph]);     
+    // await loadNewGraph(config.graphFiles[config.loadedGraph]);     
   }
 
   // function getNodeState(nodes){

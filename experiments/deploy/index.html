@@ -40,17 +40,24 @@
                         <div class="card" id="visPanel">
                             <div id="taskArea">
                                 <div class="card taskCard">
-                                    <p class="card-header-title"></p>
+
+                                        <p class="card-header-title">
+                                                <span class="task">Task: </span><span class="taskText"> </span>
+                                            </p>
 
                                 </div>
-                            </div>
+
                             <div class="card">
                                 <div class="card-content">
                                     <div class="content">
                                         <div class="nodeLink">
-                                            <label class="label">Search for Nodes</label>
+                                            <!-- <label class="label">Search for Nodes</label> -->
                                             <input class="input searchInput" type="text" placeholder="Search for node"
                                                 id="search-input"></input>
+                                                <a class="button is-pulled-right search" id="searchButton">Search</a>
+                                                <p class = 'searchMsg errorMsg'></p>
+
+                                                <a class="button" id="clear-selection">Clear Selections</a>
 
                                         </div>
 
@@ -66,7 +73,10 @@
                                         </div>
 
                                     </div>
+
                                 </div>
+
+        
                             </div>
                             <div class="card">
                                 <header class="is-pulled-right card-header">
@@ -85,13 +95,15 @@
                             </div>
 
 
-                            <div class="card answerCard">
-                                <header class="card-header">
+                            <div class="card answerHeader">
                                     <p class="card-header-title">
-                                        Answer Section
+                                            <span class="answer">Answer </span>
                                     </p>
 
-                                </header>
+                            </div>
+
+                            <div class="card answerCard">
+
                                 <div class="card-content">
                                     <div class="content">
 
@@ -119,6 +131,8 @@
                                 </div>
 
                             </div>
+
+                        </div>
 
                             <div class="card taskMenu">
                                 <header class="card-header">
@@ -312,7 +326,6 @@
                     <!-- <a class="button" id="panelControl">Hide/Show Control Panel</a> -->
 
                     <div class="development">
-                        <a class="button is-pulled-right" id="clear-selection">Clear Highlighted Nodes</a>
                         <!-- <a href="#" id="next" class="button is-pulled-right">Next Task</a>
                         <a href="#" id="previous" class="button is-pulled-right">Previous Task</a>
 

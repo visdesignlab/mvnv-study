@@ -41,13 +41,10 @@
         fill:rgb(255, 111, 0);
     } */
 
-    .label, .selectBox{
+    .label, .selectBox, .labelBackground{
         cursor:pointer;
     }
 
-    #legend-svg{
-        /* background-color:rgb(203, 203, 203); */
-    }
 
     .pathLabel>textPath {
         font-size: 14px;
@@ -83,6 +80,10 @@
         stroke:white;
         fill:rgb(167, 197, 158);
 
+    }
+
+    .nodeGroup{
+        cursor:pointer;
     }
 
     #node-link-svg{
@@ -187,10 +188,10 @@
         height:100%;
     } */
 
-    #panelControl, #clear-selection{
+    /* #panelControl, #clear-selection{
         background-color:rgb(78, 78, 78);
         color:white;
-    }
+    } */
 
     /* #vis{ */
         /* width:100%; */
@@ -201,11 +202,7 @@
         display:flex;
     }
 
-    .taskCard{
-        padding:10px 20px;
-        font-size:20px;
-    }
-
+  
 
 
     #panelDiv .button {

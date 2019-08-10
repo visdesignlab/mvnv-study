@@ -285,7 +285,7 @@ d3.selectAll(".taskShortcut").on("click", function() {
   resetPanel();
 });
 
-function resetPanel() {
+async function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
@@ -306,9 +306,14 @@ function resetPanel() {
 
   d3.select(".searchInput").property("value", "");
 
+  d3.select('.searchMsg')
+    .style('display','none')
+
   d3.select("#answerBox").property("value", "");
 
   d3.selectAll(".submit").attr("disabled", flexibleAnswer ? null : true);
+
+
 
   // //Clear Selected Node List
   d3.select("#selectedNodeList")
@@ -338,8 +343,12 @@ function resetPanel() {
   }
 
   d3.select("#taskArea")
-    .select(".card-header-title")
+    // .select(".card-header-title")
+    .select('.taskText')
     .text(task.prompt + " (" + task.taskID + ")");
+
+  config = task.config;
+  await loadNewGraph(config.graphFiles[config.loadedGraph]);
 
   if (vis === "nodeLink") {
     loadTask(task);
@@ -394,6 +403,46 @@ function sanitizeWorkerID(workerID) {
   // Cannot solely consist of a single period (.) or double periods (..)
   // Cannot match the regular expression __.*__
   return workerID;
+}
+
+async function loadNewGraph(fileName) {
+
+  // console.log('loading ', fileName)
+  graph = await d3.json(fileName);
+
+  // console.log(graph.links)
+// 
+  //update the datalist associated to the search box (in case the nodes in the new graph have changed)
+ if (vis === 'nodeLink'){
+  d3.select("#search-input").attr("list", "characters");
+  let inputParent = d3.select("#search-input").node().parentNode;
+
+  let datalist = d3
+  .select(inputParent).selectAll('#characters').data([0]);
+
+  let enterSelection = datalist.enter()
+  .append("datalist")
+  .attr("id", "characters");
+
+  datalist.exit().remove();
+
+  datalist= enterSelection.merge(datalist);
+
+  let options = datalist.selectAll("option").data(graph.nodes);
+
+  let optionsEnter = options.enter().append("option");
+  options.exit().remove();
+
+  options = optionsEnter.merge(options);
+
+
+  options.attr("value", d => d.shortName);
+  options.attr("id", d => d.id);
+  option.attr('onclick',"console.log('clicked')");
+
+  // options.on("click",console.log('clicked an option!'))
+ }
+
 }
 
 //validates answer
@@ -710,6 +759,107 @@ function loadScript(url, callback) {
     document.getElementsByTagName("head")[0].appendChild(script);
   });
 }
+
+d3.select("#clear-selection").on("click", () => {
+  // set app.currentState() selected to empty;
+
+  d3.select('.searchMsg')
+  .style('display','none')
+
+  d3.select('.searchInput')
+  .property('value','')
+
+  let action = {
+    label: "cleared all selected nodes",
+    action: () => {
+      const currentState = app.currentState();
+      //add time stamp to the state graph
+      currentState.time = Date.now();
+      //Add label describing what the event was
+      currentState.event = "cleared all selected nodes";
+      //Update actual node data
+      currentState.selected = [];
+      currentState.userSelectedNeighbors = {};
+      return currentState;
+    },
+    args: []
+  };
+
+  provenance.applyAction(action);
+  pushProvenance(app.currentState());
+});
+
+d3.select("#search-input").on("change", function() {
+
+  // let selectedOption = d3.select(this).property("value");
+
+  let selectedOption = d3.select(this).property("value").trim();
+ 
+  //in case there are just spaces, this will reset it to 'empty' 
+  d3.select(this).property("value",selectedOption); 
+
+
+    //empty search box;
+    if (selectedOption.length === 0) {
+      d3.select('.searchMsg')
+      .style('display','none')
+      return;
+    }
+
+  // let searchSuccess = searchFor(selectedOption);
+
+  //  if (searchSuccess === -1){
+  //    d3.select('.searchMsg')
+  //    .style('display','block')
+  //    .text('Could not find a node with that name!');
+  //  }
+
+  //  if (searchSuccess === 1){
+  //   d3.select('.searchMsg')
+  //   .style('display','none')
+  //  }
+
+  //  if (searchSuccess === 0){
+  //   d3.select('.searchMsg')
+  //   .style('display','block')
+  //   .text(selectedOption + ' is already selected.');
+  //  }
+
+
+});
+
+d3.select('#searchButton').on("click",function(){
+
+  let selectedOption = d3.select('.searchInput').property("value").trim();
+
+  //empty search box;
+  if (selectedOption.length === 0) {
+    d3.select('.searchMsg')
+    .style('display','block')
+    .text('Please enter a node name to search for!');
+    return
+  }
+
+    let searchSuccess = searchFor(selectedOption);
+
+    if (searchSuccess === -1){
+      d3.select('.searchMsg')
+      .style('display','block')
+      .text('Could not find a node with that name!');
+    }
+
+    if (searchSuccess === 1){
+      d3.select('.searchMsg')
+      .style('display','none')
+    }
+
+    if (searchSuccess === 0){
+      d3.select('.searchMsg')
+      .style('display','block')
+      .text(selectedOption + ' is already selected.');
+    }
+
+})
 
 //Push an empty taskList to a new doc under the results collection to start tracking the results
 function trackResults(){

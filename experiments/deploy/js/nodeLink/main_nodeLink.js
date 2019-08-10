@@ -197,6 +197,132 @@ function setGlobalScales() {
   };
 }
 
+//function that checks the state to see if the node is selected
+function isSelected(node){
+  const currentState = app.currentState();
+
+  //find out if this node was selected before;
+  let selected = currentState.selected;
+  return selected.includes(node.id);
+}
+
+
+
+//function that searches for and 'clicks' on node, returns -1 if can't find that node, 0 if nodes is already selected, 1 if node exists and was not selected
+function searchFor(selectedOption){
+
+  //find the right nodeObject
+  node = graph.nodes.find(n => n.shortName.toLowerCase() === selectedOption.toLowerCase());
+
+  if (!node) {
+    return -1;
+  }
+
+  if (isSelected(node)){
+    return 0
+  }else{
+    nodeClick(node, true);
+    return 1
+  }
+}
+
+  //function that updates the state, and includes a flag for when this was done through a search
+  function nodeClick(node, search = false) {
+   
+    const currentState = app.currentState();
+
+    //find out if this node was selected before;
+    let selected = currentState.selected;
+
+
+    let wasSelected = isSelected(node);
+
+    if (wasSelected) {
+      selected = selected.filter(s => s !== node.id);
+    } else {
+      selected.push(node.id);
+    }
+
+    let neighbors = tagNeighbors(
+      node,
+      !wasSelected,
+      currentState.userSelectedNeighbors
+    );
+
+    let label = search
+      ? "Searched for Node"
+      : wasSelected
+      ? "Unselect Node"
+      : "Select Node";
+
+    let action = {
+      label: label,
+      action: () => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        //Add label describing what the event was
+        currentState.event = label;
+        //Update actual node data
+        currentState.selected = selected;
+        currentState.userSelectedNeighbors = neighbors;
+        //If node was searched, push him to the search array
+        if (search) {
+          currentState.search.push(node.id);
+        }
+        return currentState;
+      },
+      args: []
+    };
+
+    provenance.applyAction(action);
+    pushProvenance(app.currentState());
+  }
+
+  function tagNeighbors(clickedNode, wasClicked, userSelectedNeighbors) {
+    if (!config.nodeLink.selectNeighbors) {
+      return {};
+    }
+
+    //iterate through the neighbors of the currently clicked node only and set or remove itself from the relevant lists;
+    clickedNode.neighbors.map(neighbor => {
+      toggleSelection(neighbor);
+    });
+
+    //'tag or untag neighboring links as necessary
+    graph.links.map(link => {
+      if (
+        link.source.id == clickedNode.id ||
+        link.target.id == clickedNode.id
+      ) {
+        toggleSelection(link.id);
+      }
+    });
+
+    //helper function that adds or removes the clicked node id from the userSelectedNeighbors map as necessary
+    function toggleSelection(target) {
+      if (wasClicked) {
+        userSelectedNeighbors[target]
+          ? userSelectedNeighbors[target].push(clickedNode.id)
+          : (userSelectedNeighbors[target] = [clickedNode.id]);
+      } else {
+        if (userSelectedNeighbors[target]) {
+          userSelectedNeighbors[target] = userSelectedNeighbors[target].filter(
+            n => n !== clickedNode.id
+          );
+
+          // if array is empty, remove key from dict;
+          if (userSelectedNeighbors[target].length === 0) {
+            delete userSelectedNeighbors[target];
+          }
+        }
+      }
+    }
+
+    return userSelectedNeighbors;
+  }
+
+
 // Setup function that does initial sizing and setting up of elements for node-link diagram.
 function loadVis(id) {
   let targetDiv = d3.select("#targetSize");
@@ -298,11 +424,8 @@ function loadVis(id) {
   // })();
 }
 
-async function loadTask(task) {
-  config = task.config;
-
-  await loadNewGraph(config.graphFiles[config.loadedGraph]);
-
+function loadTask(task) {
+  
   // update global variables from config;
   // setGlobalScales();
 
@@ -528,7 +651,7 @@ function arcPath(leftHand, d, state = false) {
 
   
 
-  if (config.isMultiEdge){
+  // if (config.isMultiEdge){
     return (
       "M" +
       x1 +
@@ -551,10 +674,10 @@ function arcPath(leftHand, d, state = false) {
     );
 
 
-  } else {
-    return (
-      'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
-  }
+  // } else {
+  //   return (
+  //     'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
+  // }
 
   
 
@@ -1128,77 +1251,7 @@ function updateVis() {
     // console.log(JSON.stringify(newGraph));
   });
 
-  d3.select("#clear-selection").on("click", () => {
-    // set app.currentState() selected to empty;
 
-    let action = {
-      label: "cleared all selected nodes",
-      action: () => {
-        const currentState = app.currentState();
-        //add time stamp to the state graph
-        currentState.time = Date.now();
-        //Add label describing what the event was
-        currentState.event = "cleared all selected nodes";
-        //Update actual node data
-        currentState.selected = [];
-        currentState.selectedNeighbors = {};
-        return currentState;
-      },
-      args: []
-    };
-
-    provenance.applyAction(action);
-    pushProvenance(app.currentState());
-
-    // let clearSelection = function(d) {
-    //   let isNode = d.userSelectedNeighbors !== undefined;
-
-    //   d.selected = false;
-    //   if (isNode) {
-    //     d.userSelectedNeighbors = [];
-    //   }
-    //   return true;
-    // };
-
-    // d3.selectAll(".node").classed("clicked", false);
-
-    // d3.select(".nodes")
-    //   .selectAll(".nodeGroup")
-    //   .filter(clearSelection)
-    //   .classed("muted", false);
-
-    // d3.select(".links")
-    //   .selectAll(".linkGroup")
-    //   .filter(clearSelection)
-    //   .classed("muted", false);
-
-    // node
-    //   .select(".node")
-    //   .style("fill", nodeFill)
-    // .style("stroke", nodeStroke);
-  });
-
-  d3.select("#search-input").on("change", function() {
-    let selectedOption = d3.select(this).property("value");
-
-    //empty search box;
-    if (selectedOption.length === 0) {
-      return;
-    }
-
-    //find the right nodeObject
-    node = graph.nodes.find(n => n.shortName === selectedOption);
-
-    if (!node) {
-      return;
-    }
-    let isSelected = node.selected;
-
-    //Only 'click' node if it isn't already selected;
-    if (!isSelected) {
-      nodeClick(node, true);
-    }
-  });
 
 
   node.on("mouseout",()=>{
@@ -1207,98 +1260,9 @@ function updateVis() {
 
   node.on("click", d => nodeClick(d));
 
-  //function that updates the state, and includes a flag for when this was done through a search
-  function nodeClick(node, search = false) {
-    const currentState = app.currentState();
 
-    //find out if this node was selected before;
-    let selected = currentState.selected;
-    let wasSelected = selected.includes(node.id);
 
-    if (wasSelected) {
-      selected = selected.filter(s => s !== node.id);
-    } else {
-      selected.push(node.id);
-    }
 
-    let neighbors = tagNeighbors(
-      node,
-      !wasSelected,
-      currentState.userSelectedNeighbors
-    );
-
-    let label = search
-      ? "Searched for Node"
-      : wasSelected
-      ? "Unselect Node"
-      : "Select Node";
-
-    let action = {
-      label: label,
-      action: () => {
-        const currentState = app.currentState();
-        //add time stamp to the state graph
-        currentState.time = Date.now();
-        //Add label describing what the event was
-        currentState.event = label;
-        //Update actual node data
-        currentState.selected = selected;
-        currentState.userSelectedNeighbors = neighbors;
-        //If node was searched, push him to the search array
-        if (search) {
-          currentState.search.push(node.id);
-        }
-        return currentState;
-      },
-      args: []
-    };
-
-    provenance.applyAction(action);
-    pushProvenance(app.currentState());
-  }
-
-  function tagNeighbors(clickedNode, wasClicked, userSelectedNeighbors) {
-    if (!config.nodeLink.selectNeighbors) {
-      return {};
-    }
-
-    //iterate through the neighbors of the currently clicked node only and set or remove itself from the relevant lists;
-    clickedNode.neighbors.map(neighbor => {
-      toggleSelection(neighbor);
-    });
-
-    //'tag or untag neighboring links as necessary
-    graph.links.map(link => {
-      if (
-        link.source.id == clickedNode.id ||
-        link.target.id == clickedNode.id
-      ) {
-        toggleSelection(link.id);
-      }
-    });
-
-    //helper function that adds or removes the clicked node id from the userSelectedNeighbors map as necessary
-    function toggleSelection(target) {
-      if (wasClicked) {
-        userSelectedNeighbors[target]
-          ? userSelectedNeighbors[target].push(clickedNode.id)
-          : (userSelectedNeighbors[target] = [clickedNode.id]);
-      } else {
-        if (userSelectedNeighbors[target]) {
-          userSelectedNeighbors[target] = userSelectedNeighbors[target].filter(
-            n => n !== clickedNode.id
-          );
-
-          // if array is empty, remove key from dict;
-          if (userSelectedNeighbors[target].length === 0) {
-            delete userSelectedNeighbors[target];
-          }
-        }
-      }
-    }
-
-    return userSelectedNeighbors;
-  }
 
   //set up simulation
   simulation.nodes(graph.nodes).on("tick", ticked);
