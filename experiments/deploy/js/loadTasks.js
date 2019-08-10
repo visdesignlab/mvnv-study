@@ -14,8 +14,12 @@ let studyTracking = {
 
 let provenance;
 //  SET LISTENER FOR CTRL OR COMMAND Z AND CALL PROVENANCE.GOBACKONESTEP();
+//  SET LISTENER FOR CTRL OR COMMAND F AND focus the search box;
+
 function KeyPress(e) {
   var evtobj = window.event ? event : e;
+
+  
   if (
     (evtobj.keyCode == 90 && evtobj.ctrlKey) ||
     (evtobj.keyCode == 90 && evtobj.metaKey)
@@ -25,8 +29,18 @@ function KeyPress(e) {
     } else {
       window.controller.model.provenance.goBackOneStep();
     }
+  } 
+  
+  if (
+    (evtobj.keyCode == 70 && evtobj.ctrlKey) ||
+    (evtobj.keyCode == 70 && evtobj.metaKey)
+  ){
+    evtobj.preventDefault(); evtobj.stopPropagation();
+    d3.select('.searchInput').node().focus()
   }
 }
+
+
 
 document.onkeydown = KeyPress;
 
