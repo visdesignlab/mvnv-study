@@ -121,20 +121,9 @@ class Model {
 
     d3.select("#search-input").on("change", (d,i,nodes) => {
       let selectedOption = d3.select(nodes[i]).property("value");
-      console.log(selectedOption);
-
-      if (selectedOption.length === 0) {
-        return;
-      }
-
-      //find the right nodeObject
-      let name = this.nodes.filter(node => { return node.shortName == selectedOption });
-      console.log(name);
-      name = name[0][this.datumID];
-      let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
-      this.controller.model.provenance.applyAction(action);
-
+      console.log(this.controller.view.search(selectedOption))
     });
+
   }
 
 
@@ -505,6 +494,30 @@ class View {
         element.scrollTop = scrollHeight;
       }
     }
+  }
+
+  /**
+   * Search node function
+   * @param  searchNode [description]
+   * @return            [description]
+   */
+  search(searchNode){
+    let selectedOption = searchNode//d3.select(nodes[i]).property("value");
+    console.log(selectedOption);
+
+    if (selectedOption.length === 0) {
+      return;
+    }
+
+    //find the right nodeObject
+    let name = this.nodes.filter(node => { return node.shortName == selectedOption });
+
+    if(name[0] == null || name[0][this.datumID] == '') return -1; // node was not found
+    name = name[0][this.datumID];
+
+    let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
+    this.controller.model.provenance.applyAction(action);
+    return 1;
   }
 
 
@@ -2311,7 +2324,8 @@ class View {
       })
 
     let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
-    answerColumn.attr('font-weight', 650)//.attr('y', 35).attr('x', 10);
+    answerColumn.attr('font-weight', 650)
+
     let nonAnswerColumn = columnHeaders.selectAll('.header').filter(d => { return d !== 'selected' })
     nonAnswerColumn.attr('cursor','pointer');
 

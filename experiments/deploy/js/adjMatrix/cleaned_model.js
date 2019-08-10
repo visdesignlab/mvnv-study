@@ -118,16 +118,7 @@ var Model = /** @class */ (function () {
         options.attr("id", function (d) { return d.id; });
         d3.select("#search-input").on("change", function (d, i, nodes) {
             var selectedOption = d3.select(nodes[i]).property("value");
-            console.log(selectedOption);
-            if (selectedOption.length === 0) {
-                return;
-            }
-            //find the right nodeObject
-            var name = _this.nodes.filter(function (node) { return node.shortName == selectedOption; });
-            console.log(name);
-            name = name[0][_this.datumID];
-            var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
-            _this.controller.model.provenance.applyAction(action);
+            console.log(_this.controller.view.search(selectedOption));
         });
     };
     Model.prototype.getApplicationState = function () {
@@ -431,6 +422,26 @@ var View = /** @class */ (function () {
             }
         }
     }
+    /**
+     * Search node function
+     * @param  searchNode [description]
+     * @return            [description]
+     */
+    View.prototype.search = function (searchNode) {
+        var selectedOption = searchNode; //d3.select(nodes[i]).property("value");
+        console.log(selectedOption);
+        if (selectedOption.length === 0) {
+            return;
+        }
+        //find the right nodeObject
+        var name = this.nodes.filter(function (node) { return node.shortName == selectedOption; });
+        if (name[0] == null || name[0][this.datumID] == '')
+            return -1; // node was not found
+        name = name[0][this.datumID];
+        var action = this.controller.view.changeInteractionWrapper(name, null, 'search');
+        this.controller.model.provenance.applyAction(action);
+        return 1;
+    };
     /**
      * Takes in the data, hides the loading screen, and
      * initalizes visualization.
@@ -1982,7 +1993,7 @@ var View = /** @class */ (function () {
             }
         });
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
-        answerColumn.attr('font-weight', 650); //.attr('y', 35).attr('x', 10);
+        answerColumn.attr('font-weight', 650);
         var nonAnswerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d !== 'selected'; });
         nonAnswerColumn.attr('cursor', 'pointer');
         d3.select('.loading').style('display', 'none');
