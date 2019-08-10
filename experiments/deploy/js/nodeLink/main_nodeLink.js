@@ -526,26 +526,37 @@ function arcPath(leftHand, d, state = false) {
   //   dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
   // }
 
-  return (
-    "M" +
-    x1 +
-    "," +
-    y1 +
-    "A" +
-    drx +
-    ", " +
-    dry +
-    " " +
-    xRotation +
-    ", " +
-    largeArc +
-    ", " +
-    sweep +
-    " " +
-    x2 +
-    "," +
-    y2
-  );
+  
+
+  if (config.isMultiEdge){
+    return (
+      "M" +
+      x1 +
+      "," +
+      y1 +
+      "A" +
+      drx +
+      ", " +
+      dry +
+      " " +
+      xRotation +
+      ", " +
+      largeArc +
+      ", " +
+      sweep +
+      " " +
+      x2 +
+      "," +
+      y2
+    );
+
+
+  } else {
+    return (
+      'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
+  }
+
+  
 
   // return ("M" + x1 + "," + y1
   //    + "S" + x2 + "," + y2
