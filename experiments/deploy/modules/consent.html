@@ -136,9 +136,9 @@
                 workerID = sanitizeWorkerID(data.workerId);
                 db.collection('participants').doc(workerID).set({
                     screenSize,
-                    startTime: new Date().toString(),
+                    startTrialsTime: new Date().toString(),
                     completionCode:makeid(6)
-                }); 
+                },{merge:true}); 
 
                 experimentr.next();
             });

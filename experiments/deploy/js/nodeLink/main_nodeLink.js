@@ -465,7 +465,7 @@ function loadTask(task) {
   db.collection("DevelopUser").doc("task3").delete()
   db.collection("DevelopUser").doc("task4").delete()
 
-  
+
   //pass in workerID to setupProvenance
   setUpProvenance(graph.nodes, task.taskID, task.order);
 
@@ -880,9 +880,6 @@ function updateVis() {
     let nodePadding = 2;
     let sizeDiff = 55-nodeMarkerLength; 
     let extraPadding = sizeDiff > 0 ? sizeDiff : 0;
-
-    console.log('no. bars' , barAttrs.length , ' extraPadding ', extraPadding ,  'nodeMarkerLength', nodeMarkerLength)
-
 
       node
       .select(".node")

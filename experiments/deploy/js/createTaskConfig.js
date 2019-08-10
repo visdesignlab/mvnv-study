@@ -19,7 +19,7 @@
         })
     
 } )
-();
+// ();
 
 
 //   Function that will merge a baseConfig with a taskConfig;

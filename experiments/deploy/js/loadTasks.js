@@ -1,7 +1,8 @@
 //global variable that defines the tasks to be shown to the user and the (randomized) order in which to show them
-let taskList;
+var taskList;
 let workerID; // to be populated when the user goes through the consent form;
-let currentTask = 0; //start at task 0
+let currentTask; //start at task 0
+let onTrials = false;
 
 // let vis;
 
@@ -86,6 +87,7 @@ function screenTest(width, height) {
   return widthTest && heightTest ? screenSpecs : false;
 }
 
+//If there is a value, check for validity 
 d3.select("#answerBox").on("input", function() {
   updateAnswer(d3.select(this).property("value"));
 });
@@ -121,15 +123,33 @@ function updateAnswer(answer) {
   validateAnswer(taskObj.answer, answerType == "string" ? "value" : "nodes");
 }
 
+//function that checks answers for the trials. 
+function checkAnswer(answer){
+
+  let task = taskList[currentTask];
+  let replyTypes = task.replyType;
+
+  //infer type of answer
+  let numSelectedNodes = answer.nodes.length;
+
+  let isValid = true;
+  let errorMsg;
+
+  let isFlexibleAnswer =
+    replyTypes.includes("multipleNodeSelection") &&
+    task.replyCount.type == "at least";
+
+  return true ;
+}
+
 // Set submit button callback.
 d3.select("#submitButton").on("click", async function() {
-  // ******  need access to dylan's provenance graph
-  // push final provenance graph here;
 
   //Enforce 'disabled' behavior on this 'button'
   if (d3.select(this).attr("disabled")) {
     return;
   }
+
 
   //TO DO validate answers that were not enforced with validateAnswer (such as a minimum number of selected nodes);
   let task = taskList[currentTask];
@@ -150,47 +170,71 @@ d3.select("#submitButton").on("click", async function() {
     }
   }
 
-  if (vis === "nodeLink") {
-    //   updateState('Finished Task');
-    let action = {
-      label: "Finished Task",
-      action: () => {
-        const currentState = app.currentState();
-        //add time stamp to the state graph
-        currentState.time = Date.now();
-        //Add label describing what the event was
-        currentState.event = "Finished Task";
-        return currentState;
-      },
-      args: []
-    };
+  //if in trial mode, do not let proceed if not correct, do not collect feedback on difficulty and confidence since these are just trials; 
+  if (onTrials){
+    let correct = checkAnswer(task.answer);
 
-    provenance.applyAction(action);
-    pushProvenance(app.currentState());
-  } else {
-    let action = {
-      label: "Finished Task",
-      action: () => {
-        const currentState = window.controller.model.app.currentState();
-        //add time stamp to the state graph
-        currentState.time = Date.now();
-        currentState.event = "Finished Task";
-        return currentState;
-      },
-      args: []
-    };
-
-    window.controller.model.provenance.applyAction(action);
-    pushProvenance(window.controller.model.app.currentState());
+    if (correct){
+      d3.select('#trialFeedback').select('.errorMsg').style('display', 'none');
+      d3.select('#trialFeedback').select('.correctMsg').style('display','block');
+      d3.select('#nextTrialTask').style('display','block');
+    } else{
+      d3.select('#trialFeedback').select('.errorMsg').style('display', 'block');
+      d3.select('#trialFeedback').select('.correctMsg').style('display','none');
+      d3.select('#nextTrialTask').style('display','none');
+    }
+    
   }
 
-  taskList[currentTask].endTime = Date.now();
+  if (track){
+    if (vis === "nodeLink") {
+      //   updateState('Finished Task');
+      let action = {
+        label: "Finished Task",
+        action: () => {
+          const currentState = app.currentState();
+          //add time stamp to the state graph
+          currentState.time = new Date().toString()
+          //Add label describing what the event was
+          currentState.event = "Finished Task";
+          return currentState;
+        },
+        args: []
+      };
+  
+      provenance.applyAction(action);
+      pushProvenance(app.currentState());
+    } else {
+      let action = {
+        label: "Finished Task",
+        action: () => {
+          const currentState = window.controller.model.app.currentState();
+          //add time stamp to the state graph
+          currentState.time = new Date().toString()
+          currentState.event = "Finished Task";
+          return currentState;
+        },
+        args: []
+      };
+  
+      window.controller.model.provenance.applyAction(action);
+      pushProvenance(window.controller.model.app.currentState());
+    }
+
+  }
+ 
+
+  taskList[currentTask].endTime = new Date().toString()
   taskList[currentTask].minutesToComplete =
     Math.round(
-      taskList[currentTask].endTime - taskList[currentTask].startTime
+      Date.parse(taskList[currentTask].endTime) - Date.parse(taskList[currentTask].startTime)
     ) / 60000;
 
-  d3.select(".modalFeedback").classed("is-active", true);
+    //Only bring up modal for feedback if not in trial mode;
+   if (!onTrials){
+     d3.select(".modalFeedback").classed("is-active", true);
+   } 
+
 });
 
 d3.selectAll(".helpIcon").on("click", () => {
@@ -201,6 +245,66 @@ d3.selectAll("#closeModal").on("click", () => {
   d3.select(".quickStart").classed("is-active", false);
 });
 
+
+d3.select('#nextTrialTask').on("click",async ()=>{
+
+  let taskObj = taskList[currentTask];
+
+
+  if (track){
+    //update taskList with the answer for that task.
+    db.collection("trials")
+    .doc(workerID)
+    .update({
+      [taskObj.taskID + ".answer"]: taskObj.answer,
+      [taskObj.taskID + ".startTime"]: taskObj.startTime,
+      [taskObj.taskID + ".endTime"]: taskObj.endTime,
+      [taskObj.taskID + ".minutesToComplete"]: taskObj.minutesToComplete
+    });
+
+    console.log('updating trial tasks')
+
+  }
+
+  //increment current task;
+  if (currentTask < taskList.length - 1) {
+    currentTask = currentTask + 1;
+    //set startTime for next task;
+    taskList[currentTask].startTime = new Date().toString();
+    resetPanel();
+  } else {
+    d3.select(".hit").style("display", "none");
+
+   
+
+    if (track){
+
+      let participant = await db
+      .collection("participants")
+      .doc(workerID)
+      .get();
+
+    let endTrialsTime = new Date().toString()
+    let startTrialsTime = participant.data().startTrialsTime;
+
+    console.log('end of trial tasks')
+
+      //update endTime in database;
+      db.collection("participants")
+      .doc(workerID)
+      .set(
+        {
+          endTrialsTime,
+          minutesToCompleteTrials: Math.round((Date.parse(endTrialsTime) - Date.parse(startTrialsTime)) / 60000) //60000 milliseconds in a minute
+        },
+        { merge: true }
+      );
+    }
+  
+    experimentr.next();
+  }
+
+})
 //set up callback for 'next Task';
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
@@ -260,28 +364,30 @@ d3.select("#nextTask").on("click", async () => {
   if (currentTask < taskList.length - 1) {
     currentTask = currentTask + 1;
     //set startTime for next task;
-    taskList[currentTask].startTime = Date.now();
+    taskList[currentTask].startTime = new Date().toString()
     resetPanel();
     d3.select(".modalFeedback").classed("is-active", false);
   } else {
     d3.select(".hit").style("display", "none");
 
-    let participant = await db
+    
+    if (track){
+
+      let participant = await db
       .collection("participants")
       .doc(workerID)
       .get();
 
-    let endTime = Date.now();
+    let endTime = new Date().toString()
     let startTime = participant.data().startTime;
 
-    if (track){
       //update endTime in database;
       db.collection("participants")
       .doc(workerID)
       .set(
         {
           endTime,
-          minutesToComplete: Math.round((endTime - startTime) / 60000) //60000 milliseconds in a minute
+          minutesToComplete: Math.round((Date.parse(endTime) - Date.parse(startTime)) / 60000) //60000 milliseconds in a minute
         },
         { merge: true }
       );
@@ -300,8 +406,9 @@ d3.selectAll(".taskShortcut").on("click", function() {
 });
 
 async function resetPanel() {
+
   let task = taskList[currentTask];
-  task.startTime = Date.now();
+  task.startTime = new Date().toString();
 
   d3.selectAll(".taskShortcut").classed("currentTask", function() {
     return d3.select(this).attr("id") === taskList[currentTask].taskID;
@@ -327,6 +434,9 @@ async function resetPanel() {
 
   d3.selectAll(".submit").attr("disabled", flexibleAnswer ? null : true);
 
+  d3.select('#nextTrialTask').style('display','none');
+  d3.select('#trialFeedback').select('.errorMsg').style('display','none');
+  d3.select('#trialFeedback').select('.correctMsg').style('display','none');
 
 
   // //Clear Selected Node List
@@ -362,6 +472,7 @@ async function resetPanel() {
     .text(task.prompt + " (" + task.taskID + ")");
 
   config = task.config;
+
   await loadNewGraph(config.graphFiles[config.loadedGraph]);
 
   if (vis === "nodeLink") {
@@ -390,7 +501,7 @@ async function pushProvenance(provGraph) {
     calcFirestoreDocSize("provenanceGraph", workerID, doc) / 1000000;
 
   console.log("Provenance graph size for ", workerID, " is ", docSize, " MB");
-  console.log("Provenance graph has ", doc, "elements");
+  // console.log("Provenance graph has ", doc, "elements");
 
   if (docSize > 0.75) {
     console.log(
@@ -563,6 +674,7 @@ function validateAnswer(answer, errorCheckField, force = false) {
   return isValid;
 }
 
+
 //function that generates random 'completion code' for worker to input back into Mechanical Turk;
 function makeid(length) {
   var result = "";
@@ -607,10 +719,12 @@ db.collection("participants").get().then(function(querySnapshot) {
 
 }
 
-async function loadTasks(visType) {
+async function loadTasks(visType,tasksType) {
 
+  //reset currentTask to 0
+   currentTask = 0; 
 
-   getResults(); 
+  //  getResults(); 
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -626,6 +740,8 @@ async function loadTasks(visType) {
     console.log("Error getting document:", error);
   });
 
+  
+  let taskListFiles = conditionsObj.data().tasks;
   let conditions = conditionsObj.data().conditionList;
   studyTracking.numConditions = conditions.length;
 
@@ -633,20 +749,16 @@ async function loadTasks(visType) {
 
   // dynamically assign a vistype according to firebase tracking
   if (visType === undefined) {
-    var assignedGroupDoc = db.collection("studyTracking").doc("currentGroup");
-    let assignedGroup = await assignedGroupDoc.get().catch(function(error) {
-      console.log("Error getting document:", error);
-    });
 
-    group = assignedGroup.data().currentGroup;
+    group = conditionsObj.data().currentGroup;
 
     //update currentGroup
     db.collection("studyTracking")
-    .doc("currentGroup")
-    .update({
+    .doc("conditions")
+    .set({
       currentGroup: (group + 1) % studyTracking.numConditions
 
-  });
+  },{merge:true});
   } else {
     group = visType === "nodeLink" ? 0 : 1;
   }
@@ -673,7 +785,7 @@ async function loadTasks(visType) {
     .style("width", "calc(100vh - 100px)");
 
   //do an async load of the designated task list;
-  taskListObj = await d3.json(selectedCondition.taskList);
+  let taskListObj = await d3.json(taskListFiles[tasksType]);
   studyTracking.taskListObj = taskListObj;
 
   let taskListEntries = Object.entries(taskListObj);
@@ -696,52 +808,57 @@ async function loadTasks(visType) {
     d3.selectAll(".adjMatrix").remove();
   } else {
     d3.selectAll(".nodeLink").remove();
-    d3.selectAll(".development").remove();
   }
 
-  //load script tags for the appropriate vis technique;
-  let scriptTags = {
-    nodeLink: [
-      "js/nodeLink/main_nodeLink.js",
-      "js/nodeLink/helperFunctions.js"
-    ], 
-    adjMatrix: [
-      "js/adjMatrix/libs/reorder/science.v1.js",
-      "js/adjMatrix/libs/reorder/tiny-queue.js",
-      "js/adjMatrix/libs/reorder/reorder.v1.js",
-      "js/adjMatrix/fill_config_settings.js",
-      "js/adjMatrix/helper_functions.js",
-      "js/adjMatrix/autocomplete.js",
-      "js/adjMatrix/cleaned_model.js"
-    ]
-  };
-  let cssTags = {
-    nodeLink: [
-      "css/nodeLink/node-link.css",
-      "css/nodeLink/bulma-checkradio.min.css"
-    ],
-    adjMatrix: ["css/adjMatrix/adj-matrix.css"]
-  };
+  //load script tags if this is the trials page or if there were no trials for this setup)
 
-  // //   dynamically load only js/css relevant to the vis approach being used;
-  const loadAllScripts = async () => {
-    return await Promise.all(
-      scriptTags[selectedVis].map(async src => {
-        return await loadScript(src, () => "");
-      })
-    );
-  };
+  if (tasksType === 'trials' || !trials){
+    let scriptTags = {
+      nodeLink: [
+        "js/nodeLink/main_nodeLink.js",
+        "js/nodeLink/helperFunctions.js"
+      ], 
+      adjMatrix: [
+        "js/adjMatrix/libs/reorder/science.v1.js",
+        "js/adjMatrix/libs/reorder/tiny-queue.js",
+        "js/adjMatrix/libs/reorder/reorder.v1.js",
+        "js/adjMatrix/fill_config_settings.js",
+        "js/adjMatrix/helper_functions.js",
+        "js/adjMatrix/autocomplete.js",
+        "js/adjMatrix/cleaned_model.js"
+      ]
+    };
+    let cssTags = {
+      nodeLink: [
+        "css/nodeLink/node-link.css",
+        "css/nodeLink/bulma-checkradio.min.css"
+      ],
+      adjMatrix: ["css/adjMatrix/adj-matrix.css"]
+    };
+  
+    // //   dynamically load only js/css relevant to the vis approach being used;
+    const loadAllScripts = async () => {
+      return await Promise.all(
+        scriptTags[selectedVis].map(async src => {
+          return await loadScript(src, () => "");
+        })
+      );
+    };
+  
+    await loadAllScripts();
+  
+    cssTags[selectedVis].map(href => {
+      var newStyleSheet = document.createElement("link");
+      newStyleSheet.href = href;
+      newStyleSheet.rel = "stylesheet";
+      d3.select("head")
+        .node()
+        .appendChild(newStyleSheet);
+    });
 
-  await loadAllScripts();
+  }
+  
 
-  cssTags[selectedVis].map(href => {
-    var newStyleSheet = document.createElement("link");
-    newStyleSheet.href = href;
-    newStyleSheet.rel = "stylesheet";
-    d3.select("head")
-      .node()
-      .appendChild(newStyleSheet);
-  });
 }
 
 //function that loads in a .js script tag and only resolves the promise once the script is fully loaded
@@ -788,7 +905,7 @@ d3.select("#clear-selection").on("click", () => {
     action: () => {
       const currentState = app.currentState();
       //add time stamp to the state graph
-      currentState.time = Date.now();
+      currentState.time = new Date().toString()
       //Add label describing what the event was
       currentState.event = "cleared all selected nodes";
       //Update actual node data
@@ -882,8 +999,9 @@ d3.select('#searchButton').on("click",function(){
 
 })
 
-//Push an empty taskList to a new doc under the results collection to start tracking the results
-function trackResults(){
+//Push an empty taskList to a new doc under the results or trials collection to start tracking the results
+//collection is either 'trials' or 'results' 
+function trackResults(collection){
     //create a pared down copy of this taskList to store in firebase (no need to store configs);
     let configLessTaskList = JSON.parse(
       JSON.stringify(studyTracking.taskListObj)
@@ -894,7 +1012,7 @@ function trackResults(){
       configLessTaskList[key].visType = vis;
     });
   
-    var taskListRef = db.collection("results").doc(workerID);
+    var taskListRef = db.collection(collection).doc(workerID);
     taskListRef.set(configLessTaskList);
 }
 

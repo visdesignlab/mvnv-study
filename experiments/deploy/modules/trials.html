@@ -1,0 +1,64 @@
+<div>
+</div>
+
+<script>
+  (async function () {
+
+    onTrials = true;
+    experimentr.hideNext();
+    await loadTasks(vis,'trials');
+
+    //set up  user on firestore to track answers and usage;
+    if (track){
+
+      switch(mode) {
+        case 'heuristics':
+            debugger; 
+            //shouldn't be here in heuristics mode
+            break;
+        case 'develop':
+            workerID = 'DevelopUser';
+            break;
+        }
+
+        if (mode!== 'study'){
+            let screenSize = {
+              availWidth: window.screen.availWidth,
+              availHeight: window.screen.availHeight,
+              width: window.screen.width,
+              height: window.screen.height,
+              colorDepth: window.screen.colorDepth,
+              pixelDepth: window.screen.pixelDepth
+            };
+
+              db.collection('participants').doc(workerID).set({
+                screenSize,
+                completionCode:makeid(6),
+                startTrialsTime: new Date().toString()
+              },{merge:true});
+        }
+      trackResults('trials');
+    }
+  
+    //remove ui components that are not relevant
+    if (!configPanel){
+        d3.selectAll('.development').remove();
+    }
+
+    if (!taskMenu){
+        d3.select('.taskMenu').remove();
+    }
+
+    d3.select('.hit').style('display', 'inline');
+
+    if (vis === 'nodeLink') {
+      loadVis("vis");
+    } else {
+      // included script already auto loads the vis. 
+    }
+
+    resetPanel();
+    // experimentr.startTimer('exploration');
+
+  })()
+</script>

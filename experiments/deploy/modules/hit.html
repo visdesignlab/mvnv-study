@@ -2,60 +2,78 @@
 </div>
 
 <script>
-  (async function () {
+  (function () {
 
     experimentr.hideNext();
-    await loadTasks(vis);
 
-    //set up  user on firestore to track answers and usage;
-    if (track){
+    onTrials = false;
 
-      switch(mode) {
-        case 'heuristics':
+     //remove ui components that are not relevant
+     if (!configPanel) {
+        d3.selectAll('.development').remove();
+      }
+
+      if (!taskMenu) {
+        d3.select('.taskMenu').remove();
+      }
+    
+      d3.selectAll('.trialSection').remove();
+
+
+    //turn on 'welcome modal' 
+    d3.select('.modalStartStudy').classed('is-active', true);
+
+    d3.select('#startSurvey').on('click', async function () {
+
+      d3.select('.modalStartStudy').classed('is-active', false);
+
+      await loadTasks(vis, 'study');
+
+    console.log('here')
+      //set up  user on firestore to track answers and usage;
+      if (track) {
+
+        //no workerID neede for test mode since those interactions are not tracked. Study mode has the workerID set up in the consentForm
+        switch (mode) {
+          case 'heuristics':
             workerID = makeid(6);
             break;
-        case 'develop':
+          case 'develop':
             workerID = 'DevelopUser';
             break;
         }
-
-        if (mode!== 'study'){
-            let screenSize = {
-              availWidth: window.screen.availWidth,
-              availHeight: window.screen.availHeight,
-              width: window.screen.width,
-              height: window.screen.height,
-              colorDepth: window.screen.colorDepth,
-              pixelDepth: window.screen.pixelDepth
-            };
-
-              db.collection('participants').doc(workerID).set({
-                screenSize,
-                startTime: new Date().toString()
-              });
+        //test mode is not tracked and study mode has this set up in the consentForm
+        if (mode == 'develop' || 'heuristics') {
+          let screenSize = {
+            availWidth: window.screen.availWidth,
+            availHeight: window.screen.availHeight,
+            width: window.screen.width,
+            height: window.screen.height,
+            colorDepth: window.screen.colorDepth,
+            pixelDepth: window.screen.pixelDepth
+          };
+          
+          db.collection('participants').doc(workerID).set({
+            screenSize,
+            completionCode:makeid(6),
+            startTime: new Date().toString()
+          },{merge:true});
         }
-      trackResults();
-    }
-  
-    //remove ui components that are not relevant
-    if (!configPanel){
-        d3.selectAll('.development').remove();
-    }
 
-    if (!taskMenu){
-        d3.select('.taskMenu').remove();
-    }
+        trackResults('results');
+      }
 
-    d3.select('.hit').style('display', 'inline');
+      d3.select('.hit').style('display', 'inline');
 
-    if (vis === 'nodeLink') {
-      loadVis("vis");
-    } else {
-      // included script already auto loads the vis. 
-    }
+      if (vis === 'nodeLink') {
+        loadVis("vis");
+      } else {
+        // included script already auto loads the vis. 
+      }
 
-    resetPanel();
-    // experimentr.startTimer('exploration');
+      resetPanel();
+    })
+
 
   })()
 </script>

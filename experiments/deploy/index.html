@@ -32,7 +32,14 @@
 
 
 <body>
-    <div id="nodeLink" class="hit" style=display:none>
+    <div class="hit" style=display:none>
+            <nav class="navbar trialSection" role="navigation" id="trialBar" aria-label="main navigation">
+                          <p class="card-header-title">
+                                Get familiar with the visualization with the practice questions below. Your answers for these question are not part of the survey!
+                              </p>
+                  </nav>
+
+                  
         <div class="columns" id="visContent">
             <div id="targetSize">
                 <div class="column ">
@@ -130,6 +137,24 @@
 
                         </div>
 
+                        <div class="card trialSection" id="feedbackCard">
+
+
+                                        <div class="card-content">
+                                            <div class="content">
+        
+                                                <a id="nextTrialTask" class="button is-pulled-right">Next Practice Task</a>
+        
+                                                <span id="trialFeedback">
+                                                    <span class='errorMsg'>Try again.</span>
+                                                    <span class='correctMsg'>You got it!</span>
+                                                </span>
+                                            </div>
+                                        </div>
+        
+
+                        </div>
+
                             <div class="card taskMenu">
                                 <header class="card-header">
                                     <p class="card-header-title">
@@ -149,8 +174,6 @@
                                 </div>
 
                             </div>
-
-
 
 
                             <div class="modal modalFeedback">
@@ -581,6 +604,42 @@
         </div>
     </div>
 
+    <div class="modal modalStartStudy">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+
+
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                   Ok, let's get started! <span style="font-size:14px"> (just a few quick notes before we jump in) <span>
+                </p>
+            </header>
+            <section class="modal-card-body">
+                <div class="content">
+                    
+                    <p>You will be presented with <strong>15 tasks</strong> in <em>random order of difficulty</em>. The survey should take approximately 45 minutes to complete</p>
+
+                    <p>After each task you will be asked to rate how hard the task was and how confident you are in your answer. This information will help us 
+                    interpret the results more accurately. 
+
+                    <p>Any comments in the feedback box will also be helpful for us to understand what you found particularly challenging or easy. </p>
+
+                    <p> Remember you can always consult the <span class="icon has-text-info">
+                        <i class="fas fa-lg fa-question-circle"></i> &nbsp
+                    </span> <strong>Help</strong> button on the left panel to revisit the available interactions and main encodings.</p>
+
+                    <p> Let's get started! </p>
+
+
+                </div>
+            </section>
+
+            <footer class="modal-card-foot">
+                <a href="#" id="startSurvey" class="button is-pulled-right">Start Survey</a>
+            </footer>
+        </div>
+    </div>
+
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -612,7 +671,8 @@
         mode,
         shuffleTasks,
         taskMenu,
-        configPanel
+        configPanel,
+        trials
     } = getUrlVars();
 
     mode = mode || 'heuristics'; //can be 'develop', 'heuristics', or 'study'
@@ -624,24 +684,28 @@
             shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = false;
+            trials=false;
             break;
         case 'develop':
             track = track || true;
-            shuffleTasks = shuffleTasks || true;
+            shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = configPanel || false;
+            trials= trials || false;
             break;
         case 'study':
             track = true;
             shuffleTasks = true;
             taskMenu = false;
             configPanel = false;
+            trials=true;
             break;
         case 'test':
             track = track || false;
             shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = configPanel || false;
+            trials= trials || true;
             break;
     }
 
@@ -649,6 +713,7 @@
     shuffleTasks = eval(shuffleTasks);
     taskMenu = eval(taskMenu);
     configPanel = eval(configPanel);
+    trials = eval(trials);
 
     //Only assign a vis if it has been passed in as a parameter
     if (vis !== undefined) {
@@ -672,25 +737,27 @@
                     sequence = [
                         'modules/consent.html',
                         'modules/training.html',
-                        'modules/practice.html',
+                        'modules/trials.html',
                         'modules/hit.html',
                         'modules/submit.html'
                     ]
                     break;
                 case 'test':
-                    sequence = [
+                    sequence = trials ? ['modules/trials.html'] : [];
+                    
+                    sequence = sequence.concat([
                         'modules/hit.html',
                         'modules/submit.html'
-                    ]
+                    ])
                     break;
                 case 'develop':
-                    sequence = [
-                        // 'modules/consent.html',
-                        // 'modules/training.html',
-                        // 'modules/practice.html',
+
+                sequence = trials ? ['modules/trials.html'] : [];
+                    
+                    sequence = sequence.concat( [
                         'modules/hit.html',
                         'modules/submit.html'
-                    ]
+                    ])
             }
 
             experimentr.sequence(sequence).start();

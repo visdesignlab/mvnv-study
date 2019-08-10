@@ -8,6 +8,10 @@ body {
     /* width: 90%; */
 }
 
+#trialBar{
+    background-color:orange;
+}
+
 .helpIcon{
     cursor:pointer;
 }
@@ -103,13 +107,32 @@ div.tooltip {
     background-color:#4285f4;
 }
 
-#clear-selection{
+#nextTrialTask{
+
+    display:none;
     color:white;
-    background-color:#898989
+    background-color: #787878;
+    border-width:0px;
+
+
 }
 
+.correctMsg{
+    color:white;
+    font-style:italic;
+    display:none;
+}
 
+#feedbackCard{
+    background-color:orange;
+    font-size: 20px;
+    font-weight: 900;
 
+}
+#clear-selection{
+    color:white;
+    background-color:#898989;
+}
 
 .taskCard .errorMsg{
     margin-bottom:0px;
@@ -126,6 +149,12 @@ div.tooltip {
     display:none;
 }
 
+/* .correctMsg{
+    color:#4285f4;
+    font-style:italic;
+    display:none;
+} */
+
 #submitSuccessful{
     color:#4285f4;
     font-weight:bold;
@@ -133,13 +162,13 @@ div.tooltip {
 
 #nextTask{
     margin:10px 0px;
-
     padding:10px;
     color:white;
     background-color:#4285f4;
     font-size:18px;
     font-weight:bold;
 }
+
 
 
 
