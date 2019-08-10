@@ -1473,6 +1473,7 @@ function drawLegend() {
     drawBars || !colorAttribute
       ? []
       : config.attributeScales.node[config.nodeLink.nodeFillAttr].legendLabels;
+      
   let sizeAttributeValues = drawBars || !config.nodeLink.nodeSizeAttr
     ? []
     : config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain;
@@ -1630,6 +1631,15 @@ function drawLegend() {
 
   catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
+  catGlyphs.on("mouseover",function(d){
+    showTooltip(d.value)
+  })
+
+  catGlyphs.on("mouseout",function(d){
+    hideTooltip();
+  })
+
+
   catGlyphs
     .select("rect")
     .attr("width", squareSize)
@@ -1684,8 +1694,9 @@ function drawLegend() {
     .data(
       colorAttributeValues.map((c, i) => {
         return {
-          value: c,
-          fill: config.attributeScales.node[colorAttribute].range[i]
+          label: c,
+          fill: config.attributeScales.node[colorAttribute].range[i],
+          value: config.attributeScales.node[colorAttribute].domain[i],
         };
       })
     );
@@ -1718,7 +1729,7 @@ function drawLegend() {
 
   circles
     .select(".legendLabel")
-    .text(d => d.value)
+    .text(d => d.label)
     .attr(
       "transform",
       "translate(" + circleRadius / 2 + "," + (circleRadius / 2 + 5) + ")"
@@ -1726,6 +1737,16 @@ function drawLegend() {
     .style("text-anchor", "middle")
     .style("font-weight", "bold")
     .style("fill", "white");
+
+    circles.on("mouseover",function(d){
+      showTooltip(d.value)
+    })
+  
+    circles.on("mouseout",function(d){
+      hideTooltip();
+    })
+
+
   //render lower group in legend.
 
   let lowerLegendGroups = [];
