@@ -787,6 +787,8 @@ d3.select("#clear-selection").on("click", () => {
 
   provenance.applyAction(action);
   pushProvenance(app.currentState());
+
+  // d3.select('#clear-selection').attr('disabled', true) 
 });
 
 d3.select("#search-input").on("change", function() {
@@ -806,7 +808,7 @@ d3.select("#search-input").on("change", function() {
       return;
     }
 
-  // let searchSuccess = searchFor(selectedOption);
+  let searchSuccess = searchFor(selectedOption);
 
   //  if (searchSuccess === -1){
   //    d3.select('.searchMsg')
@@ -814,10 +816,12 @@ d3.select("#search-input").on("change", function() {
   //    .text('Could not find a node with that name!');
   //  }
 
-  //  if (searchSuccess === 1){
-  //   d3.select('.searchMsg')
-  //   .style('display','none')
-  //  }
+   if (searchSuccess === 1){
+    d3.select('.searchMsg')
+    .style('display','none')
+
+    // d3.select('#clear-selection').attr('disabled', null) 
+   }
 
   //  if (searchSuccess === 0){
   //   d3.select('.searchMsg')
@@ -851,6 +855,9 @@ d3.select('#searchButton').on("click",function(){
     if (searchSuccess === 1){
       d3.select('.searchMsg')
       .style('display','none')
+
+      // d3.select('#clear-selection').attr('disabled', null) 
+
     }
 
     if (searchSuccess === 0){

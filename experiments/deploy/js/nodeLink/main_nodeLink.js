@@ -459,6 +459,13 @@ function loadTask(task) {
     });
   }
 
+  //clear db provenance from previous iterations
+  db.collection("DevelopUser").doc("task1").delete()
+  db.collection("DevelopUser").doc("task2").delete()
+  db.collection("DevelopUser").doc("task3").delete()
+  db.collection("DevelopUser").doc("task4").delete()
+
+  
   //pass in workerID to setupProvenance
   setUpProvenance(graph.nodes, task.taskID, task.order);
 

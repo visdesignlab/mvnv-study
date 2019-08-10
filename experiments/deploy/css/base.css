@@ -98,17 +98,25 @@ div.tooltip {
 }
 
 
-#submitButton, #searchButton,#clear-selection{
+#submitButton, #searchButton{
     color:white;
     background-color:#4285f4;
 }
+
+#clear-selection{
+    color:white;
+    background-color:#898989
+}
+
+
+
 
 .taskCard .errorMsg{
     margin-bottom:0px;
 }
 
-#submitButton[disabled]{
-    color:darkgrey;
+#submitButton[disabled], #clear-selection[disabled]{
+    color:#505050;
     background-color:lightgrey;
 }
 
