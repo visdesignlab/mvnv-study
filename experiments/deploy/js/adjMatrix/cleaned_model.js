@@ -104,22 +104,52 @@ var Model = /** @class */ (function () {
     };
     Model.prototype.populateSearchBox = function () {
         var _this = this;
-        var names = this.nodes.map(function (node) { return node.shortName; });
-        autocomplete(document.getElementById("myInput"), names);
-        d3.selectAll('.autocomplete').style('width', 150);
-        d3.select('#searchButton').classed('search', true);
-        d3.select('#searchButton')
-            .on('click', function () {
-            var nodeID = document.getElementById("myInput").value;
-            var index = names.indexOf(nodeID);
-            if (index == -1) {
+        d3.select("#search-input").attr("list", "characters");
+        var inputParent = d3.select("#search-input").node().parentNode;
+        var datalist = d3
+            .select(inputParent).selectAll('#characters').data([0]);
+        var enterSelection = datalist.enter()
+            .append("datalist")
+            .attr("id", "characters");
+        datalist.exit().remove();
+        datalist = enterSelection.merge(datalist);
+        var options = datalist.selectAll("option").data(this.nodes);
+        var optionsEnter = options.enter().append("option");
+        options.exit().remove();
+        options = optionsEnter.merge(options);
+        options.attr("value", function (d) { return d.shortName; });
+        options.attr("id", function (d) { return d.id; });
+        d3.select("#search-input").on("change", function (d, i, nodes) {
+            var selectedOption = d3.select(nodes[i]).property("value");
+            console.log(selectedOption);
+            //empty search box;
+            if (selectedOption.length === 0) {
                 return;
             }
-            var name = _this.nodes.filter(function (node) { return node.shortName == nodeID; });
+            //find the right nodeObject
+            var name = _this.nodes.filter(function (node) { return node.shortName == selectedOption; });
+            console.log(name);
             name = name[0][_this.datumID];
             var action = _this.controller.view.changeInteractionWrapper(name, null, 'search');
             _this.controller.model.provenance.applyAction(action);
+            //let isSelected = node.selected;
+            //Only 'click' node if it isn't already selected;
+        });
+        /*let names = this.nodes.map(node => node.shortName.toLowerCase());
+        autocomplete(document.getElementById("myInput"), names);
+        d3.selectAll('.autocomplete').style('width', 150);
+        d3.select('#searchButton').classed('search', true);
+    
+        d3.select('#searchButton')
+          .on('click', () => {
+            let nodeID = document.getElementById("myInput").value.toLowerCase();
+            let index = names.indexOf(nodeID);
+            if (index == -1) {
+              return;
+            }
+    
             //pushProvenance(this.controller.model.app.currentState())
+    
             /*
             let cell = d3.selectAll('#' + nodeID + nodeID)
             //.filter(d => (d.rowid == nodeID && d.colid == nodeID))
@@ -127,9 +157,9 @@ var Model = /** @class */ (function () {
     
             var e = document.createEvent('UIEvents');
             e.initUIEvent('click', true, true, /* ... */ /*);
-            cell.select("rect").node().dispatchEvent(e);
-            */
-        });
+        cell.select("rect").node().dispatchEvent(e);
+
+      })*/
     };
     Model.prototype.getApplicationState = function () {
         var _this = this;
@@ -167,13 +197,13 @@ var Model = /** @class */ (function () {
         // creates the document with the name and worker ID
         //pushProvenance(app.currentState());
         var rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel');
-        var columnElements = ['colLabel', 'topoCol'];
-        var rowElements = ['rowLabel', 'topoRow', 'attrRow'];
+        var columnElements = ['topoCol'];
+        var rowElements = ['topoRow', 'attrRow'];
         var elementNamesFromSelection = {
             cellcol: rowElements.concat(columnElements),
-            colLabel: rowElements.concat(columnElements),
-            rowLabel: rowElements.concat(columnElements),
-            attrRow: rowElements,
+            colLabel: rowElements.concat(columnElements).concat(['colLabel']),
+            rowLabel: rowElements.concat(columnElements).concat(['rowLabel']),
+            attrRow: rowElements.concat(['rowLabel']),
             cellrow: rowElements.concat(columnElements),
             neighborSelect: rowElements,
             answerBox: rowElements.concat(columnElements),
@@ -207,6 +237,7 @@ var Model = /** @class */ (function () {
             var clickedSelectorQuery = Array.from(clickedElements).join(',');
             var answerSelectorQuery = Array.from(answerElements).join(',');
             var neighborSelectQuery = Array.from(neighborElements).join(',');
+            console.log(clickedSelectorQuery);
             clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
             answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
             neighborSelectQuery != [] ? d3.selectAll(neighborSelectQuery).classed('neighbor', true) : null;
@@ -642,8 +673,8 @@ var View = /** @class */ (function () {
             console.log(extent);
             var typeIndex = _this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
             //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
-            var otherColors = ['#064B6E', '#4F0664', '#000000'];
-            var scale = d3.scaleSqrt().domain(extent).range(["white", otherColors[typeIndex]]);
+            //let otherColors = ['#064B6E', '#4F0664', '#000000']
+            var scale = d3.scaleSqrt().domain(extent).range(["white", _this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
             scale.clamp(true);
             // store scales
             _this.edgeScales[type] = scale;
@@ -670,6 +701,7 @@ var View = /** @class */ (function () {
             var squareSize = this.verticalScale.bandwidth() - 2 * offset_1;
             var _loop_1 = function (index) {
                 var type = this_1.controller.configuration.isMultiEdge ? this_1.controller.configuration.attributeScales.edge.type.domain[index] : 'interacted';
+                console.log(this_1.edgeScales, type);
                 var scale = this_1.edgeScales[type];
                 var typeColor = scale.range()[1];
                 // change encoding to position
@@ -930,7 +962,7 @@ var View = /** @class */ (function () {
         this.edgeRows.append("text")
             .attr('class', 'rowLabel')
             .attr("id", function (d, i) {
-            return "nodeLabelRow" + d[i].rowid;
+            return "rowLabel" + d[i].rowid;
         })
             .attr('z-index', 30)
             .attr("x", 0)
@@ -958,10 +990,13 @@ var View = /** @class */ (function () {
             that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
             that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         })
-            .on('click', this.clickFunction);
+            .on('click', function (d, i, nodes) {
+            //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
+            _this.clickFunction(d, i, nodes);
+        });
         this.edgeColumns.append("text")
             .attr("id", function (d, i) {
-            return "nodeLabelCol" + d[i].rowid;
+            return "colLabel" + d[i].rowid;
         })
             .attr('class', 'colLabel')
             .attr('z-index', 30)
@@ -980,6 +1015,7 @@ var View = /** @class */ (function () {
             else {
                 _this.clickFunction(d, i, nodes);
             }
+            //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
         })
             .on("mouseout", function (d, i, nodes) {
             //let func = this.removeHighlightNodesToDict;
@@ -1022,6 +1058,7 @@ var View = /** @class */ (function () {
             label: interactionType,
             action: function (nodeID) {
                 var currentState = _this.controller.model.app.currentState();
+                console.log(currentState);
                 //add time stamp to the state graph
                 currentState.time = Date.now();
                 currentState.event = interactionType;
@@ -2279,6 +2316,7 @@ var Controller = /** @class */ (function () {
                     //add time stamp to the state graph
                     currentState.time = Date.now();
                     currentState.event = 'clear';
+                    console.log("before Clear:", currentState);
                     currentState.selections = {
                         answerBox: {},
                         attrRow: {},
@@ -2289,6 +2327,7 @@ var Controller = /** @class */ (function () {
                         search: {},
                         neighborSelect: {}
                     };
+                    console.log("after Clear:", currentState);
                     return currentState;
                 },
                 args: []
@@ -2312,6 +2351,8 @@ var Controller = /** @class */ (function () {
         panelDimensions.height = height - taskBarHeight;
         d3.select("#visPanel").style("width", panelDimensions.width + "px");
         d3.select('#panelDiv').style('display', 'none');
+        document.getElementById("visContent").style.width = '100vw';
+        document.getElementById("visContent").style.overflowX = "scroll";
         this.visHeight = panelDimensions.height;
         this.visWidth = width * 0.8 - 40;
         this.edgeWidth = this.visWidth - this.attrWidth;

@@ -3,11 +3,7 @@
 body {
   font: 16px Arial;
 }
-.autocomplete {
-  /*the container must be positioned relative:*/
-  position: relative;
-  display: inline-block;
-}
+
 input {
   border: 1px solid transparent;
   background-color: #f1f1f1;
@@ -18,12 +14,7 @@ input[type=text] {
   background-color: #f1f1f1;
   width: 150px;
 }
-#searchButton {
-  background-color: DodgerBlue;
-  width: 70px;
-  color: #fff;
-  margin-bottom: 20px;
-}
+
 .hoveredCell{
 
   stroke-width:1px;
@@ -73,9 +64,12 @@ input[type=text] {
 
 .colLabel{
   cursor: pointer;
+  fill: black !important;
 }
 .rowLabel{
   cursor: pointer;
+  fill: black !important;
+
 }
 .answerBox{
   cursor: pointer;
@@ -88,9 +82,12 @@ input[type=text] {
 
 #clearButton{
   background-color: #DC3445;
-  width: 140px;
+  width: 30%;
   color: #fff;
   margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+
 }
 
 
@@ -191,8 +188,18 @@ pointer-events: none;
   height:10;*/
 }
 
-.clicked{
+.input {
+    width:45% !important;
+    position: relative;
+    display: inline-block;
+}
 
+.input.searchInput {
+    width:70% !important;
+}
+
+.clicked{
+  font-weight:800;
   fill: #F8CF91 !important;
   fill-opacity:1 !important;
 }
@@ -220,7 +227,7 @@ font-weight: 450;
 }
 text.clicked {
 font-weight: 650;
-/*fill: #ea9b0f;*/
+fill: black !important;
 }
 text.answer {
 font-weight: 800;

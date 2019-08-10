@@ -39,21 +39,64 @@ class Model {
 
   private scalarMatrix: any;
   populateSearchBox() {
-    let names = this.nodes.map(node => node.shortName);
+
+    d3.select("#search-input").attr("list", "characters");
+    let inputParent = d3.select("#search-input").node().parentNode;
+
+    let datalist = d3
+    .select(inputParent).selectAll('#characters').data([0]);
+
+    let enterSelection = datalist.enter()
+    .append("datalist")
+    .attr("id", "characters");
+
+    datalist.exit().remove();
+
+    datalist= enterSelection.merge(datalist);
+
+    let options = datalist.selectAll("option").data(this.nodes);
+
+    let optionsEnter = options.enter().append("option");
+    options.exit().remove();
+
+    options = optionsEnter.merge(options);
+    options.attr("value", d => d.shortName);
+    options.attr("id", d => d.id);
+
+    d3.select("#search-input").on("change", (d,i,nodes) => {
+      let selectedOption = d3.select(nodes[i]).property("value");
+      console.log(selectedOption);
+
+      //empty search box;
+      if (selectedOption.length === 0) {
+        return;
+      }
+
+      //find the right nodeObject
+      let name = this.nodes.filter(node => { return node.shortName == selectedOption });
+      console.log(name);
+      name = name[0][this.datumID];
+      let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
+      this.controller.model.provenance.applyAction(action);
+      //let isSelected = node.selected;
+
+      //Only 'click' node if it isn't already selected;
+
+    });
+
+    /*let names = this.nodes.map(node => node.shortName.toLowerCase());
     autocomplete(document.getElementById("myInput"), names);
     d3.selectAll('.autocomplete').style('width', 150);
     d3.select('#searchButton').classed('search', true);
+
     d3.select('#searchButton')
       .on('click', () => {
-        let nodeID = document.getElementById("myInput").value;
+        let nodeID = document.getElementById("myInput").value.toLowerCase();
         let index = names.indexOf(nodeID);
         if (index == -1) {
           return;
         }
-        let name = this.nodes.filter(node => { return node.shortName == nodeID });
-        name = name[0][this.datumID];
-        let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
-        this.controller.model.provenance.applyAction(action);
+
         //pushProvenance(this.controller.model.app.currentState())
 
         /*
@@ -64,8 +107,8 @@ class Model {
         var e = document.createEvent('UIEvents');
         e.initUIEvent('click', true, true, /* ... *//*);
         cell.select("rect").node().dispatchEvent(e);
-        */
-      })
+
+      })*/
   }
 
 
@@ -174,14 +217,14 @@ class Model {
     // creates the document with the name and worker ID
     //pushProvenance(app.currentState());
     const rowHighlightElements = d3.selectAll('.topoRow,.attrRow,.colLabel,.rowLabel')
-    let columnElements = ['colLabel', 'topoCol'];
-    let rowElements = ['rowLabel', 'topoRow', 'attrRow']
+    let columnElements = ['topoCol'];
+    let rowElements = ['topoRow', 'attrRow']
 
     let elementNamesFromSelection = {
       cellcol: rowElements.concat(columnElements),
-      colLabel: rowElements.concat(columnElements),
-      rowLabel: rowElements.concat(columnElements),
-      attrRow: rowElements,
+      colLabel: rowElements.concat(columnElements).concat(['colLabel']),// splice out rowLabel TODO:
+      rowLabel: rowElements.concat(columnElements).concat(['rowLabel']),// splice out colLabel
+      attrRow: rowElements.concat(['rowLabel']),
       cellrow: rowElements.concat(columnElements),
       neighborSelect: rowElements,
       answerBox: rowElements.concat(columnElements),
@@ -217,7 +260,7 @@ class Model {
       let clickedSelectorQuery = Array.from(clickedElements).join(',')
       let answerSelectorQuery = Array.from(answerElements).join(',')
       let neighborSelectQuery = Array.from(neighborElements).join(',')
-
+      console.log(clickedSelectorQuery);
       clickedSelectorQuery != [] ? d3.selectAll(clickedSelectorQuery).classed('clicked', true) : null;
       answerSelectorQuery != [] ? d3.selectAll(answerSelectorQuery).classed('answer', true) : null;
       neighborSelectQuery != [] ? d3.selectAll(neighborSelectQuery).classed('neighbor', true) : null;
@@ -361,7 +404,7 @@ class Model {
 
 
       /* matrix used for edge attributes, otherwise should we hide */
-      this.matrix[i] = this.nodes.map((colNode) => { return { cellName: 'cell' + rowNode[this.datumID] + '_' + colNode[this.datumID], correspondingCell: 'cell' + colNode[this.datumID] + '_' + rowNode[this.datumID], rowid: rowNode[this.datumID], colid: colNode[this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, combined: 0, retweet: 0, mentions: 0 }; });
+      this.matrix[i] = this.nodes.map((colNode) => { return { cellName: 'cell' + rowNode[this.datumID] + '_' + colNode[this.datumID], correspondingCell: 'cell' + colNode[this.datumID] + '_' + rowNode[this.datumID], rowid: rowNode[this.datumID], colid: colNode[this.datumID], x: colNode.index, y: rowNode.index, count: 0, z: 0, interacted: 0, retweet: 0, mentions: 0 }; });
       this.scalarMatrix[i] = this.nodes.map(function(colNode) { return 0; });
 
     });
@@ -748,10 +791,11 @@ class View {
       // set up scale
       console.log(extent);
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
-      //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
-      let otherColors = ['#064B6E', '#4F0664', '#000000']
-      let scale = d3.scaleSqrt().domain(extent).range(["white", otherColors[typeIndex]);
 
+      //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
+      //let otherColors = ['#064B6E', '#4F0664', '#000000']
+
+      let scale = d3.scaleSqrt().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]);
 
       scale.clamp(true);
       // store scales
@@ -785,6 +829,7 @@ class View {
       for (let index = 0; index < dividers; index++) {
 
         let type = this.controller.configuration.isMultiEdge ? this.controller.configuration.attributeScales.edge.type.domain[index] : 'interacted';
+        console.log(this.edgeScales,type)
         let scale = this.edgeScales[type];
         let typeColor = scale.range()[1];
         // change encoding to position
@@ -811,7 +856,7 @@ class View {
       cells
         .selectAll('.nestedEdges')
         .filter(d => {
-          return d.mentions == 0 && d.retweet == 0 && d.combined == 0;
+          return d.mentions == 0 && d.retweet == 0 && d.interacted == 0;
         })
         .remove();
 
@@ -836,9 +881,9 @@ class View {
         let matrix = nodes[i].getScreenCTM()
           .translate(+nodes[i].getAttribute("x"), +nodes[i].getAttribute("y"));
 
-        let combinedMessage = cell.combined > 0 ? cell.combined.toString() + " interactions" : '';//
-        if (cell.combined == 1) {
-          combinedMessage = combinedMessage.substring(0, combinedMessage.length - 1)
+        let interactedMessage = cell.interacted > 0 ? cell.interacted.toString() + " interactions" : '';//
+        if (cell.interacted == 1) {
+          interactedMessage = interactedMessage.substring(0, interactedMessage.length - 1)
         }
         let retweetMessage = cell.retweet > 0 ? cell.retweet.toString() + " retweets" : '';//
         if (cell.retweet == 1) {
@@ -849,7 +894,7 @@ class View {
           mentionsMessage = mentionsMessage.substring(0, mentionsMessage.length - 1)
         }
 
-        let message = [combinedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
+        let message = [interactedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
         console.log(message);
 
         if (message !== '') {
@@ -910,7 +955,7 @@ class View {
       })
       .on('click', (d, i, nodes) => {
         // only trigger click if edge exists
-        if (d.combined != 0 || d.retweet != 0 || d.mentions != 0) {
+        if (d.interacted != 0 || d.retweet != 0 || d.mentions != 0) {
           this.clickFunction(d, i, nodes);
 
         }
@@ -930,7 +975,7 @@ class View {
             let cellElement = d3.select(nodes[index]).selectAll('rect');
             let cellID = cell.rowid + cell.colid;
 
-            if (cell.combined != 0 || cell.mentions != 0 || cell.retweets != 0) {
+            if (cell.interacted != 0 || cell.mentions != 0 || cell.retweets != 0) {
 
             }
 
@@ -1073,7 +1118,7 @@ class View {
     this.edgeRows.append("text")
       .attr('class', 'rowLabel')
       .attr("id", (d, i) => {
-        return "nodeLabelRow" + d[i].rowid;
+        return "rowLabel" + d[i].rowid;
       })
       .attr('z-index', 30)
       .attr("x", 0)
@@ -1109,12 +1154,15 @@ class View {
         that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
 
       })
-      .on('click', this.clickFunction)
+      .on('click', (d,i,nodes)=>{
+        //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
+        this.clickFunction(d,i,nodes);
+      })
 
 
     this.edgeColumns.append("text")
       .attr("id", (d, i) => {
-        return "nodeLabelCol" + d[i].rowid;
+        return "colLabel" + d[i].rowid;
       })
       .attr('class', 'colLabel')
       .attr('z-index', 30)
@@ -1134,6 +1182,7 @@ class View {
         } else {
           this.clickFunction(d, i, nodes);
         }
+        //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
       })
       .on("mouseout", (d, i, nodes) => {
         //let func = this.removeHighlightNodesToDict;
@@ -1186,6 +1235,7 @@ class View {
       label: interactionType,
       action: (nodeID) => {
         const currentState = this.controller.model.app.currentState();
+        console.log(currentState);
         //add time stamp to the state graph
         currentState.time = Date.now();
         currentState.event = interactionType;
@@ -1215,7 +1265,7 @@ class View {
           let columnData = d3.select(node).data()[0];
           interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
           columnData.map(node => {
-            if (node.mentions != 0 || node.combined != 0 || node.retweet != 0) {
+            if (node.mentions != 0 || node.interacted != 0 || node.retweet != 0) {
               let neighbor = node.colid;
               this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
 
@@ -1315,8 +1365,8 @@ class View {
     if (type == 'all') {
       squares
         .style("fill", (d: any) => {
-          if (d.combined !== 0) {
-            return this.edgeScales["combined"](d.combined);
+          if (d.interacted !== 0) {
+            return this.edgeScales["interacted"](d.interacted);
           } else if (d.retweet !== 0) {
             return this.edgeScales["retweet"](d.retweet);
           } else if (d.mentions !== 0) {
@@ -1325,20 +1375,20 @@ class View {
             return "pink";
           }
         })
-        .filter(d => { return d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0)
+        .filter(d => { return d.interacted !== 0 || d.retweet !== 0 || d.mentions !== 0)
         .style("fill-opacity", (d) => {
-          return (d.combined !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
+          return (d.interacted !== 0 || d.retweet !== 0 || d.mentions !== 0) ? 1 : 0;
         });
-    } else if (type == "combined") {
+    } else if (type == "interacted") {
       squares.style("fill", (d: any) => {
-        if (d.combined !== 0) {
-          return this.edgeScales["combined"](d.combined);
+        if (d.interacted !== 0) {
+          return this.edgeScales["interacted"](d.interacted);
         } else {
           return "white";
         }
       })
         .style("fill-opacity", (d) => {
-          return d.combined !== 0 ? 1 : 0;
+          return d.interacted !== 0 ? 1 : 0;
         });
 
 
@@ -1432,7 +1482,7 @@ class View {
 
     if (pluralType == "retweet") {
       pluralType = "retweets";
-    } else if (pluralType == "combined") {
+    } else if (pluralType == "interacted") {
       pluralType = "interactions";
     }
 
@@ -1478,14 +1528,14 @@ class View {
     let counter = 0;
     for (let type in this.edgeScales) {
       if (this.controller.configuration.isMultiEdge) {
-        if (type == "combined") {
+        if (type == "interacted") {
           continue;
         }
         this.generateScaleLegend(type, counter)
         counter += 1;
 
       } else {
-        if (type != "combined") {
+        if (type != "interacted") {
           continue;
         }
         this.generateScaleLegend(type, counter)
@@ -2704,6 +2754,7 @@ class Controller {
           //add time stamp to the state graph
           currentState.time = Date.now();
           currentState.event = 'clear';
+          console.log("before Clear:",currentState)
           currentState.selections = {
             answerBox: {},
             attrRow: {},
@@ -2714,6 +2765,7 @@ class Controller {
             search: {},
             neighborSelect: {}
           }
+          console.log("after Clear:",currentState)
           return currentState;
         },
         args: []
@@ -2751,6 +2803,9 @@ class Controller {
     panelDimensions.height = height - taskBarHeight;
     d3.select("#visPanel").style("width", panelDimensions.width + "px");
     d3.select('#panelDiv').style('display', 'none');
+    document.getElementById("visContent").style.width = '100vw';
+    document.getElementById("visContent").style.overflowX = "scroll";
+
     this.visHeight = panelDimensions.height;
     this.visWidth = width * 0.8 - 40;
     this.edgeWidth = this.visWidth - this.attrWidth;

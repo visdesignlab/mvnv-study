@@ -62,14 +62,10 @@
                                         </div>
 
                                         <div class="adjMatrix">
-                                            <form autocomplete="off" onsubmit="return searchForNode(this);">
-                                                <div class="autocomplete" style="width:150px;">
-                                                    <input id="myInput" type="text" name="twitterNames"
-                                                        placeholder="Search for Name">
-                                                </div>
-                                                <input type="button" id="searchButton" value="Search">
-                                            </form>
-                                            <input type="button" id="clearButton" value="Clear Selections">
+                                          <input class="input searchInput" type="text" placeholder="Search for node"
+                                              id="search-input"></input>
+
+                                            <input type="button" id="clearButton" value="Clear">
                                         </div>
 
                                     </div>
@@ -600,6 +596,7 @@
 
 
 <script>
+
     function getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -620,7 +617,7 @@
 
     mode = mode || 'heuristics'; //can be 'develop', 'heuristics', or 'study'
 
-    //set default values for any variables not passed in: 
+    //set default values for any variables not passed in:
     switch (mode) {
         case 'heuristics':
             track = track || true;
