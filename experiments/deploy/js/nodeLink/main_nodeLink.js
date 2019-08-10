@@ -191,6 +191,8 @@ function setGlobalScales() {
     let value = config.nodeLink.edgeWidthAttr
       ? edgeWidthScale(edge[config.nodeLink.edgeWidthAttr])
       : (edgeWidthScale.range()[1] - edgeWidthScale.range()[0])/2
+
+    
     return value;
   };
 }
@@ -1838,7 +1840,7 @@ function drawLegend() {
     .attr("rx", (d, i) => (d.type === "node" ? circleScale(i) : 0))
     .attr("ry", (d, i) => (d.type === "node" ? circleScale(i) : 0))
     .style("fill", d => (d.type === "edgeType" ? edgeStrokeScale(d.data) : ""))
-    .classed("links", (d, i) => d.type === "edgeType");
+    .classed("edgeLegend", (d, i) => d.type === "edgeType");
 
   sizeCircles
     .select(".sizeCircleLabel")

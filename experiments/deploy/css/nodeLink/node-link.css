@@ -1,7 +1,8 @@
 
      
     .links,
-    .textpath {
+    .textpath,
+    .edgeLegend {
         fill: none;
         opacity:.8;
         /* stroke: rgb(71, 71, 71); */
