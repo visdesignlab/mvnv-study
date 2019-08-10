@@ -6,8 +6,12 @@
             "nodes": [],
             "value": ""
         },
+        "answerKey": {
+          "nodes": [],
+          "value": ""
+      },
         "feedback": "",
-        "prompt": "Select the European account which has liked the most tweets.",
+        "prompt": "Approximately many followers does Alex have?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -200,6 +204,10 @@
             "nodes": [],
             "value": ""
         },
+        "answerKey": {
+          "nodes": [],
+          "value": ""
+      },
         "feedback": "",
         "prompt": "Select all of Lane's neighbors that are *people* and have more friends than followers.",
         "replyType": [
@@ -399,6 +407,10 @@
             "nodes": [],
             "value": ""
         },
+        "answerKey": {
+          "nodes": [],
+          "value": ""
+      },
         "feedback": "",
         "prompt": "Select the *institution* from North America that has retweeted Jeffrey and mentioned Robert. ",
         "replyType": [
@@ -600,6 +612,10 @@
             "nodes": [],
             "value": ""
         },
+        "answerKey": {
+          "nodes": [],
+          "value": ""
+      },
         "feedback": "",
         "prompt": "Which person is frequently retweeted in this network despite being relatively inactive on twitter?",
         "replyType": [

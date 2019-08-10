@@ -176,8 +176,6 @@
                             </div>
 
 
-
-
                             <div class="modal modalFeedback">
                                 <div class="modal-background"></div>
                                 <div class="modal-card">
@@ -606,6 +604,42 @@
         </div>
     </div>
 
+    <div class="modal modalStartStudy">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+
+
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                   Ok, let's get started! <span style="font-size:14px"> (just a few quick notes before we jump in) <span>
+                </p>
+            </header>
+            <section class="modal-card-body">
+                <div class="content">
+                    
+                    <p>You will be presented with <strong>15 tasks</strong> in <em>random order of difficulty</em>. The survey should take approximately 45 minutes to complete</p>
+
+                    <p>After each task you will be asked to rate how hard the task was and how confident you are in your answer. This information will help us 
+                    interpret the results more accurately. 
+
+                    <p>Any comments in the feedback box will also be helpful for us to understand what you found particularly challenging or easy. </p>
+
+                    <p> Remember you can always consult the <span class="icon has-text-info">
+                        <i class="fas fa-lg fa-question-circle"></i> &nbsp
+                    </span> <strong>Help</strong> button on the left panel to revisit the available interactions and main encodings.</p>
+
+                    <p> Let's get started! </p>
+
+
+                </div>
+            </section>
+
+            <footer class="modal-card-foot">
+                <a href="#" id="startSurvey" class="button is-pulled-right">Start Survey</a>
+            </footer>
+        </div>
+    </div>
+
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -654,10 +688,10 @@
             break;
         case 'develop':
             track = track || true;
-            shuffleTasks = shuffleTasks || true;
+            shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = configPanel || false;
-            trials= trials || true;
+            trials= trials || false;
             break;
         case 'study':
             track = true;
@@ -721,7 +755,7 @@
                 sequence = trials ? ['modules/trials.html'] : [];
                     
                     sequence = sequence.concat( [
-                        // 'modules/hit.html',
+                        'modules/hit.html',
                         'modules/submit.html'
                     ])
             }
