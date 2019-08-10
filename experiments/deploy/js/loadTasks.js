@@ -1,5 +1,5 @@
 //global variable that defines the tasks to be shown to the user and the (randomized) order in which to show them
-let taskList;
+var taskList;
 let workerID; // to be populated when the user goes through the consent form;
 let currentTask = 0; //start at task 0
 
@@ -86,6 +86,7 @@ function screenTest(width, height) {
   return widthTest && heightTest ? screenSpecs : false;
 }
 
+//If there is a value, check for validity 
 d3.select("#answerBox").on("input", function() {
   updateAnswer(d3.select(this).property("value"));
 });
@@ -121,10 +122,27 @@ function updateAnswer(answer) {
   validateAnswer(taskObj.answer, answerType == "string" ? "value" : "nodes");
 }
 
+//function that checks answers for the trials. 
+function checkAnswer(answer){
+
+  let task = taskList[currentTask];
+  let replyTypes = task.replyType;
+
+  //infer type of answer
+  let numSelectedNodes = answer.nodes.length;
+
+  let isValid = true;
+  let errorMsg;
+
+  let isFlexibleAnswer =
+    replyTypes.includes("multipleNodeSelection") &&
+    task.replyCount.type == "at least";
+
+  return Math.random()>.5 ;
+}
+
 // Set submit button callback.
 d3.select("#submitButton").on("click", async function() {
-  // ******  need access to dylan's provenance graph
-  // push final provenance graph here;
 
   //Enforce 'disabled' behavior on this 'button'
   if (d3.select(this).attr("disabled")) {
@@ -148,6 +166,22 @@ d3.select("#submitButton").on("click", async function() {
     if (!isValid) {
       return;
     }
+  }
+
+  //if in trial mode, do not let proceed if not correct, do not collect feedback on difficulty and confidence since these are just trials; 
+  if (trials){
+    let correct = checkAnswer(task.answer);
+
+    if (correct){
+      d3.select('#trialFeedback').select('.errorMsg').style('display', 'none');
+      d3.select('#trialFeedback').select('.correctMsg').style('display','block');
+      d3.select('#nextTrialTask').style('display','block');
+    } else{
+      d3.select('#trialFeedback').select('.errorMsg').style('display', 'block');
+      d3.select('#trialFeedback').select('.correctMsg').style('display','none');
+      d3.select('#nextTrialTask').style('display','none');
+    }
+    
   }
 
   if (vis === "nodeLink") {
@@ -190,7 +224,10 @@ d3.select("#submitButton").on("click", async function() {
       taskList[currentTask].endTime - taskList[currentTask].startTime
     ) / 60000;
 
-  d3.select(".modalFeedback").classed("is-active", true);
+    //Only bring up modal for feedback if not in trial mode;
+   if (!trials){
+     d3.select(".modalFeedback").classed("is-active", true);
+   }
 });
 
 d3.selectAll(".helpIcon").on("click", () => {
@@ -300,6 +337,9 @@ d3.selectAll(".taskShortcut").on("click", function() {
 });
 
 async function resetPanel() {
+
+  console.log('taskList is ', taskList)
+  console.log('currentTask is ', currentTask)
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
@@ -362,6 +402,7 @@ async function resetPanel() {
     .text(task.prompt + " (" + task.taskID + ")");
 
   config = task.config;
+
   await loadNewGraph(config.graphFiles[config.loadedGraph]);
 
   if (vis === "nodeLink") {
@@ -390,7 +431,7 @@ async function pushProvenance(provGraph) {
     calcFirestoreDocSize("provenanceGraph", workerID, doc) / 1000000;
 
   console.log("Provenance graph size for ", workerID, " is ", docSize, " MB");
-  console.log("Provenance graph has ", doc, "elements");
+  // console.log("Provenance graph has ", doc, "elements");
 
   if (docSize > 0.75) {
     console.log(
@@ -563,6 +604,7 @@ function validateAnswer(answer, errorCheckField, force = false) {
   return isValid;
 }
 
+
 //function that generates random 'completion code' for worker to input back into Mechanical Turk;
 function makeid(length) {
   var result = "";
@@ -607,7 +649,7 @@ db.collection("participants").get().then(function(querySnapshot) {
 
 }
 
-async function loadTasks(visType) {
+async function loadTasks(visType,tasksType) {
 
 
    getResults(); 
@@ -626,6 +668,8 @@ async function loadTasks(visType) {
     console.log("Error getting document:", error);
   });
 
+  
+  let taskListFiles = conditionsObj.data().tasks;
   let conditions = conditionsObj.data().conditionList;
   studyTracking.numConditions = conditions.length;
 
@@ -633,20 +677,16 @@ async function loadTasks(visType) {
 
   // dynamically assign a vistype according to firebase tracking
   if (visType === undefined) {
-    var assignedGroupDoc = db.collection("studyTracking").doc("currentGroup");
-    let assignedGroup = await assignedGroupDoc.get().catch(function(error) {
-      console.log("Error getting document:", error);
-    });
 
-    group = assignedGroup.data().currentGroup;
+    group = conditionsObj.data().currentGroup;
 
     //update currentGroup
     db.collection("studyTracking")
-    .doc("currentGroup")
-    .update({
+    .doc("conditions")
+    .set({
       currentGroup: (group + 1) % studyTracking.numConditions
 
-  });
+  },{merge:true});
   } else {
     group = visType === "nodeLink" ? 0 : 1;
   }
@@ -673,7 +713,7 @@ async function loadTasks(visType) {
     .style("width", "calc(100vh - 100px)");
 
   //do an async load of the designated task list;
-  taskListObj = await d3.json(selectedCondition.taskList);
+  let taskListObj = await d3.json(taskListFiles[tasksType]);
   studyTracking.taskListObj = taskListObj;
 
   let taskListEntries = Object.entries(taskListObj);
@@ -690,6 +730,8 @@ async function loadTasks(visType) {
     task.workerID = workerID;
     return task;
   });
+
+  console.log('setting taskList as ', taskList)
 
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (selectedVis === "nodeLink") {
@@ -742,6 +784,7 @@ async function loadTasks(visType) {
       .node()
       .appendChild(newStyleSheet);
   });
+
 }
 
 //function that loads in a .js script tag and only resolves the promise once the script is fully loaded
@@ -882,8 +925,9 @@ d3.select('#searchButton').on("click",function(){
 
 })
 
-//Push an empty taskList to a new doc under the results collection to start tracking the results
-function trackResults(){
+//Push an empty taskList to a new doc under the results or trials collection to start tracking the results
+//collection is either 'trials' or 'results' 
+function trackResults(collection){
     //create a pared down copy of this taskList to store in firebase (no need to store configs);
     let configLessTaskList = JSON.parse(
       JSON.stringify(studyTracking.taskListObj)
@@ -894,7 +938,7 @@ function trackResults(){
       configLessTaskList[key].visType = vis;
     });
   
-    var taskListRef = db.collection("results").doc(workerID);
+    var taskListRef = db.collection(collection).doc(workerID);
     taskListRef.set(configLessTaskList);
 }
 

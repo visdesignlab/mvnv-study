@@ -5,12 +5,11 @@
   (async function () {
 
     experimentr.hideNext();
-    await loadTasks(vis,'study');
+    await loadTasks(vis,'trials');
 
     //set up  user on firestore to track answers and usage;
     if (track){
 
-      //no workerID neede for test mode since those interactions are not tracked. Study mode has the workerID set up in the consentForm
       switch(mode) {
         case 'heuristics':
             workerID = makeid(6);
@@ -19,8 +18,8 @@
             workerID = 'DevelopUser';
             break;
         }
-        //test mode is not tracked and study mode has this set up in the consentForm
-        if (mode == 'develop' || 'heuristics'){
+
+        if (mode!== 'study'){
             let screenSize = {
               availWidth: window.screen.availWidth,
               availHeight: window.screen.availHeight,
@@ -35,8 +34,7 @@
                 startTime: new Date().toString()
               });
         }
-      
-        trackResults('results');
+      trackResults('trials');
     }
   
     //remove ui components that are not relevant
