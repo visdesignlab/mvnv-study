@@ -648,10 +648,10 @@ function setPanelValuesFromFile() {    [["node", "nodes"], ["edge", "links"]].ma
     });
   
     // updateVis();
-  }
+}
 
   function update(){
-      setPanelValuesFromFile();
+      // setPanelValuesFromFile();
       updateVis();
   }
 
@@ -869,12 +869,12 @@ function isQuant(attr) {
   
   async function loadConfigs(taskID) {
 
-    let baseConfig = await d3.json("../../configs/baseConfig.json");
-    let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
+    // let baseConfig = await d3.json("../../configs/baseConfig.json");
+    // let taskConfig = await d3.json("../../configs/" + taskID + "Config.json");
 
-    setConfigCallbacks(baseConfig,taskConfig);
+    // setConfigCallbacks(baseConfig,taskConfig);
 
-    await loadNewGraph(config.graphFiles[config.loadedGraph]);     
+    // await loadNewGraph(config.graphFiles[config.loadedGraph]);     
   }
 
   // function getNodeState(nodes){
@@ -1015,11 +1015,11 @@ function isQuant(attr) {
 
   async function loadNewGraph(fileName) {
 
-    console.log('loading ', fileName)
+    // console.log('loading ', fileName)
     graph = await d3.json(fileName);
 
-    console.log(graph.links)
-
+    // console.log(graph.links)
+// 
     //update the datalist associated to the search box (in case the nodes in the new graph have changed)
 
     {

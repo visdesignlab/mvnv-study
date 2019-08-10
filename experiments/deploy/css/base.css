@@ -66,28 +66,64 @@ div.tooltip {
     padding:0px 5px;
 }
 
+#taskArea .card-header-title{
+    display:block
+}
 
-#taskArea .taskCard{
+.task{
+    font-size:30px;
+}
+
+.answer{
+    font-size:25px;
+}
+
+
+#taskArea .taskCard, #taskArea .answerHeader{
     background-color:#4285f4;
 }
 
-#taskArea .taskCard .card-header-title{
+#taskArea .taskCard .card-header-title, .answerHeader .card-header-title{
     color:white;
 }
 
-#submitButton{
+.taskCard, .answerHeader{
+    padding:10px 10px;
+    font-size:20px;
+}
+
+#clear-selection{
+    width:80%;
+    margin-top:10px;
+}
+
+
+#submitButton, #searchButton{
     color:white;
     background-color:#4285f4;
 }
 
-#submitButton[disabled]{
-    color:darkgrey;
+#clear-selection{
+    color:white;
+    background-color:#898989
+}
+
+
+
+
+.taskCard .errorMsg{
+    margin-bottom:0px;
+}
+
+#submitButton[disabled], #clear-selection[disabled]{
+    color:#505050;
     background-color:lightgrey;
 }
 
 .errorMsg{
-    color:red;
+    color:rgb(211, 5, 5);
     font-style:italic;
+    display:none;
 }
 
 #submitSuccessful{

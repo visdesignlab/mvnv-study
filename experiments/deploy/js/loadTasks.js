@@ -14,8 +14,12 @@ let studyTracking = {
 
 let provenance;
 //  SET LISTENER FOR CTRL OR COMMAND Z AND CALL PROVENANCE.GOBACKONESTEP();
+//  SET LISTENER FOR CTRL OR COMMAND F AND focus the search box;
+
 function KeyPress(e) {
   var evtobj = window.event ? event : e;
+
+  
   if (
     (evtobj.keyCode == 90 && evtobj.ctrlKey) ||
     (evtobj.keyCode == 90 && evtobj.metaKey)
@@ -25,10 +29,44 @@ function KeyPress(e) {
     } else {
       window.controller.model.provenance.goBackOneStep();
     }
+  } 
+  
+  if (
+    (evtobj.keyCode == 70 && evtobj.ctrlKey) ||
+    (evtobj.keyCode == 70 && evtobj.metaKey)
+  ){
+    evtobj.preventDefault(); evtobj.stopPropagation();
+    d3.select('.searchInput').node().focus()
   }
 }
 
+
+
 document.onkeydown = KeyPress;
+
+var tabFocus = (function(){
+  var stateKey, eventKey, keys = {
+      hidden: "visibilitychange",
+      webkitHidden: "webkitvisibilitychange",
+      mozHidden: "mozvisibilitychange",
+      msHidden: "msvisibilitychange"
+  };
+  for (stateKey in keys) {
+      if (stateKey in document) {
+          eventKey = keys[stateKey];
+          break;
+      }
+  }
+  return function(c) {
+      if (c) document.addEventListener(eventKey, c);
+      return !document[stateKey];
+  }
+})();
+
+tabFocus(function(){
+  //start counting 'unfocus time' and add to current taskObject;
+  document.title = tabFocus() ? 'Visible' : 'Not visible';
+});
 
 //common data validation and submission code
 function screenTest(width, height) {
@@ -167,13 +205,16 @@ d3.selectAll("#closeModal").on("click", () => {
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
 
-  let selected = d3.selectAll("input[name=difficulty]").filter(function() {
+  let selectedDifficulty = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
-
+  
+  let selectedConfidence = d3.selectAll("input[name=confidence]").filter(function() {
+    return d3.select(this).property("checked");
+  });
   //check to see if something has been selected before allowing the user to continue:
 
-  if (selected.size() === 0) {
+  if (selectedDifficulty.size() === 0 || selectedConfidence.size() === 0) {
     //display error msg;
     d3.select(".modalFeedback")
       .select(".errorMsg")
@@ -191,10 +232,13 @@ d3.select("#nextTask").on("click", async () => {
     .select(".textarea")
     .property("value");
 
-  let difficulty = selected.size() > 0 ? selected.property("value") : "";
+  let difficulty = selectedDifficulty.size() > 0 ? selectedDifficulty.property("value") : "";
+  let confidence = selectedConfidence.size() > 0 ? selectedConfidence.property("value") : "";
+
 
   taskObj.feedback = {
     difficulty,
+    confidence,
     explanation
   };
 
@@ -255,7 +299,7 @@ d3.selectAll(".taskShortcut").on("click", function() {
   resetPanel();
 });
 
-function resetPanel() {
+async function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = Date.now();
 
@@ -276,9 +320,14 @@ function resetPanel() {
 
   d3.select(".searchInput").property("value", "");
 
+  d3.select('.searchMsg')
+    .style('display','none')
+
   d3.select("#answerBox").property("value", "");
 
   d3.selectAll(".submit").attr("disabled", flexibleAnswer ? null : true);
+
+
 
   // //Clear Selected Node List
   d3.select("#selectedNodeList")
@@ -308,8 +357,12 @@ function resetPanel() {
   }
 
   d3.select("#taskArea")
-    .select(".card-header-title")
+    // .select(".card-header-title")
+    .select('.taskText')
     .text(task.prompt + " (" + task.taskID + ")");
+
+  config = task.config;
+  await loadNewGraph(config.graphFiles[config.loadedGraph]);
 
   if (vis === "nodeLink") {
     loadTask(task);
@@ -364,6 +417,46 @@ function sanitizeWorkerID(workerID) {
   // Cannot solely consist of a single period (.) or double periods (..)
   // Cannot match the regular expression __.*__
   return workerID;
+}
+
+async function loadNewGraph(fileName) {
+
+  // console.log('loading ', fileName)
+  graph = await d3.json(fileName);
+
+  // console.log(graph.links)
+// 
+  //update the datalist associated to the search box (in case the nodes in the new graph have changed)
+ if (vis === 'nodeLink'){
+  d3.select("#search-input").attr("list", "characters");
+  let inputParent = d3.select("#search-input").node().parentNode;
+
+  let datalist = d3
+  .select(inputParent).selectAll('#characters').data([0]);
+
+  let enterSelection = datalist.enter()
+  .append("datalist")
+  .attr("id", "characters");
+
+  datalist.exit().remove();
+
+  datalist= enterSelection.merge(datalist);
+
+  let options = datalist.selectAll("option").data(graph.nodes);
+
+  let optionsEnter = options.enter().append("option");
+  options.exit().remove();
+
+  options = optionsEnter.merge(options);
+
+
+  options.attr("value", d => d.shortName);
+  options.attr("id", d => d.id);
+  option.attr('onclick',"console.log('clicked')");
+
+  // options.on("click",console.log('clicked an option!'))
+ }
+
 }
 
 //validates answer
@@ -482,7 +575,42 @@ function makeid(length) {
   return result;
 }
 
+function getResults(){
+
+let allResults = [];
+let allParticipants = [];
+  let ids = ['GtVOYl','T391Hp','T7asXK','yXA0Sm'];
+  db.collection("results").get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      if (true){
+        allResults.push({id:doc.id, data:doc.data()});
+        // saveToFile(doc.data(),'results_' + doc.id + '.json')
+      }
+    });
+
+    allResults.map(r=>{
+      // saveToFile(r.data,'result/' + r.id + '.json')
+    })
+});
+
+db.collection("participants").get().then(function(querySnapshot) {
+  querySnapshot.forEach(function(doc) {
+    if (true){
+      allParticipants.push({id:doc.id, data:doc.data()});
+      // saveToFile(doc.data(),'participant_' + doc.id + '.json')
+    }
+  });
+  allParticipants.map(p=>{
+    // saveToFile(p.data,'participants/' + p.id + '.json')
+  })
+});
+
+}
+
 async function loadTasks(visType) {
+
+
+   getResults(); 
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -645,6 +773,114 @@ function loadScript(url, callback) {
     document.getElementsByTagName("head")[0].appendChild(script);
   });
 }
+
+d3.select("#clear-selection").on("click", () => {
+  // set app.currentState() selected to empty;
+
+  d3.select('.searchMsg')
+  .style('display','none')
+
+  d3.select('.searchInput')
+  .property('value','')
+
+  let action = {
+    label: "cleared all selected nodes",
+    action: () => {
+      const currentState = app.currentState();
+      //add time stamp to the state graph
+      currentState.time = Date.now();
+      //Add label describing what the event was
+      currentState.event = "cleared all selected nodes";
+      //Update actual node data
+      currentState.selected = [];
+      currentState.userSelectedNeighbors = {};
+      return currentState;
+    },
+    args: []
+  };
+
+  provenance.applyAction(action);
+  pushProvenance(app.currentState());
+
+  // d3.select('#clear-selection').attr('disabled', true) 
+});
+
+d3.select("#search-input").on("change", function() {
+
+  // let selectedOption = d3.select(this).property("value");
+
+  let selectedOption = d3.select(this).property("value").trim();
+ 
+  //in case there are just spaces, this will reset it to 'empty' 
+  d3.select(this).property("value",selectedOption); 
+
+
+    //empty search box;
+    if (selectedOption.length === 0) {
+      d3.select('.searchMsg')
+      .style('display','none')
+      return;
+    }
+
+  let searchSuccess = searchFor(selectedOption);
+
+  //  if (searchSuccess === -1){
+  //    d3.select('.searchMsg')
+  //    .style('display','block')
+  //    .text('Could not find a node with that name!');
+  //  }
+
+   if (searchSuccess === 1){
+    d3.select('.searchMsg')
+    .style('display','none')
+
+    // d3.select('#clear-selection').attr('disabled', null) 
+   }
+
+  //  if (searchSuccess === 0){
+  //   d3.select('.searchMsg')
+  //   .style('display','block')
+  //   .text(selectedOption + ' is already selected.');
+  //  }
+
+
+});
+
+d3.select('#searchButton').on("click",function(){
+
+  let selectedOption = d3.select('.searchInput').property("value").trim();
+
+  //empty search box;
+  if (selectedOption.length === 0) {
+    d3.select('.searchMsg')
+    .style('display','block')
+    .text('Please enter a node name to search for!');
+    return
+  }
+
+    let searchSuccess = searchFor(selectedOption);
+
+    if (searchSuccess === -1){
+      d3.select('.searchMsg')
+      .style('display','block')
+      .text('Could not find a node with that name!');
+    }
+
+    if (searchSuccess === 1){
+      d3.select('.searchMsg')
+      .style('display','none')
+
+      // d3.select('#clear-selection').attr('disabled', null) 
+
+    }
+
+    if (searchSuccess === 0){
+      d3.select('.searchMsg')
+      .style('display','block')
+      .text(selectedOption + ' is already selected.');
+    }
+
+})
 
 //Push an empty taskList to a new doc under the results collection to start tracking the results
 function trackResults(){

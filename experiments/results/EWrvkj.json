@@ -1,0 +1,68 @@
+{
+    "task1": {
+        "answer": {
+            "nodes": [],
+            "value": ""
+        },
+        "feedback": "",
+        "order": 0,
+        "prompt": "Select the European account which has liked the most tweets.",
+        "replyCount": 1,
+        "replyType": [
+            "singleNodeSelection"
+        ],
+        "taskID": "task1",
+        "visType": "nodeLink"
+    },
+    "task2": {
+        "answer": {
+            "nodes": [],
+            "value": ""
+        },
+        "feedback": "",
+        "order": 1,
+        "prompt": "Select all of Lane's neighbors that are *people* and have more friends than followers.",
+        "replyCount": {
+            "type": "at least",
+            "value": 1
+        },
+        "replyType": [
+            "multipleNodeSelection"
+        ],
+        "taskID": "task2",
+        "visType": "nodeLink"
+    },
+    "task3": {
+        "answer": {
+            "nodes": [],
+            "value": ""
+        },
+        "feedback": "",
+        "order": 2,
+        "prompt": "Select the *institution* from North America that has retweeted Jeffrey and mentioned Robert. ",
+        "replyCount": 1,
+        "replyType": [
+            "singleNodeSelection"
+        ],
+        "taskID": "task3",
+        "visType": "nodeLink"
+    },
+    "task4": {
+        "answer": {
+            "nodes": [],
+            "value": ""
+        },
+        "feedback": "",
+        "order": 3,
+        "prompt": "Which person is frequently retweeted in this network despite being relatively inactive on twitter?",
+        "replyCount": {
+            "type": "at least",
+            "value": 1
+        },
+        "replyType": [
+            "multipleNodeSelection"
+        ],
+        "taskID": "task4",
+        "visType": "nodeLink"
+    }
+}

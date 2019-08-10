@@ -1,9 +1,11 @@
 
      
     .links,
-    .textpath {
+    .textpath,
+    .edgeLegend {
         fill: none;
-        stroke: rgb(71, 71, 71);
+        opacity:.8;
+        /* stroke: rgb(71, 71, 71); */
         /* filter: url("data:image/svg+xml;utf8,<svg version='1.1' xmlns='http://www.w3.org/2000/svg' height='0'><filter id='greyscale'><feColorMatrix in='SourceGraphic' type='matrix' values='0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0 1 0' /></filter></filter></svg>#greyscale"); */
 
     }
@@ -39,13 +41,10 @@
         fill:rgb(255, 111, 0);
     } */
 
-    .label, .selectBox{
+    .label, .selectBox, .labelBackground{
         cursor:pointer;
     }
 
-    #legend-svg{
-        /* background-color:rgb(203, 203, 203); */
-    }
 
     .pathLabel>textPath {
         font-size: 14px;
@@ -81,6 +80,10 @@
         stroke:white;
         fill:rgb(167, 197, 158);
 
+    }
+
+    .nodeGroup{
+        cursor:pointer;
     }
 
     #node-link-svg{
@@ -185,10 +188,10 @@
         height:100%;
     } */
 
-    #panelControl, #clear-selection{
+    /* #panelControl, #clear-selection{
         background-color:rgb(78, 78, 78);
         color:white;
-    }
+    } */
 
     /* #vis{ */
         /* width:100%; */
@@ -199,11 +202,7 @@
         display:flex;
     }
 
-    .taskCard{
-        padding:10px 20px;
-        font-size:20px;
-    }
-
+  
 
 
     #panelDiv .button {
