@@ -111,22 +111,15 @@ position: relative;
 vertical-align: top;
 overflow: hidden;
 }
+
 .attrcontainer {
-/*
-overflow: scroll;
-display:inline-block;
-height:600px;
-width:600px;
-*/
 float: left;
 display: inline-block;
 position: relative;
-/*width:822.72px;*/
-/*width: 42.85%;*/
-/*padding-bottom: 100%;*/
 vertical-align: top;
 overflow: hidden;
 }
+
 /* Hiding topology's scrollbar */
 #topology {
   float:left;
@@ -136,13 +129,12 @@ overflow: hidden;
 #topology::-webkit-scrollbar {
   display: none;  // Safari and Chrome
 }
+
 .highlightedCell{
 fill: #FFF4D3;
 fill-opacity:1 !important;
 }
-.column {
 
-}
 .highlightCol{
 pointer-events: auto;
 

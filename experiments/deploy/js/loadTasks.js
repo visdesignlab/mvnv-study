@@ -827,10 +827,7 @@ async function loadTasks(visType,tasksType) {
         "js/adjMatrix/view.js",
         "js/adjMatrix/controller.js",
         "js/adjMatrix/model.js",
-        "js/adjMatrix/helper_functions.js",
-
-
-
+        "js/adjMatrix/helper_functions.js"
       ]
     };
     let cssTags = {

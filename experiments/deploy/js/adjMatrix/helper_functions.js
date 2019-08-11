@@ -1,7 +1,6 @@
 window.controller = new Controller();
 
-
-function splitCellNames(name: string) {
+function splitCellNames(name) {
   //remove cell
   let cleanedCellName = name.replace('cell', '');
   let ids = cleanedCellName.split('_');
