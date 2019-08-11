@@ -52,8 +52,8 @@
             colorDepth: window.screen.colorDepth,
             pixelDepth: window.screen.pixelDepth
           };
-          
-          db.collection('participants').doc(workerID).set({
+
+          db.collection(participantCollection).doc(workerID).set({
             screenSize,
             completionCode:makeid(6),
             startTime: new Date().toString()

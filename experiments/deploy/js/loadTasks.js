@@ -4,6 +4,8 @@ let workerID; // to be populated when the user goes through the consent form;
 let currentTask; //start at task 0
 let onTrials = false;
 
+let participantCollection;
+
 // let vis;
 
 //bookkeeping vars
@@ -250,10 +252,9 @@ d3.select('#nextTrialTask').on("click",async ()=>{
 
   let taskObj = taskList[currentTask];
 
-
   if (track){
     //update taskList with the answer for that task.
-    db.collection("trials")
+    db.collection(onTrials ? 'trial_results'  : 'results')
     .doc(workerID)
     .update({
       [taskObj.taskID + ".answer"]: taskObj.answer,
@@ -261,9 +262,6 @@ d3.select('#nextTrialTask').on("click",async ()=>{
       [taskObj.taskID + ".endTime"]: taskObj.endTime,
       [taskObj.taskID + ".minutesToComplete"]: taskObj.minutesToComplete
     });
-
-    console.log('updating trial tasks')
-
   }
 
   //increment current task;
@@ -280,17 +278,17 @@ d3.select('#nextTrialTask').on("click",async ()=>{
     if (track){
 
       let participant = await db
-      .collection("participants")
+      .collection(participantCollection)
       .doc(workerID)
       .get();
+
 
     let endTrialsTime = new Date().toString()
     let startTrialsTime = participant.data().startTrialsTime;
 
-    console.log('end of trial tasks')
 
       //update endTime in database;
-      db.collection("participants")
+      db.collection(participantCollection)
       .doc(workerID)
       .set(
         {
@@ -374,7 +372,7 @@ d3.select("#nextTask").on("click", async () => {
     if (track){
 
       let participant = await db
-      .collection("participants")
+      .collection(participantCollection)
       .doc(workerID)
       .get();
 
@@ -382,7 +380,7 @@ d3.select("#nextTask").on("click", async () => {
     let startTime = participant.data().startTime;
 
       //update endTime in database;
-      db.collection("participants")
+      db.collection(participantCollection)
       .doc(workerID)
       .set(
         {
@@ -482,38 +480,45 @@ async function resetPanel() {
   }
 }
 
-async function pushProvenance(provGraph) {
+async function pushProvenance(provGraph,initialState = false) {
 
   //Only push provenance is tracking is set to true;
   if (!track){
     return;
   }
 
+  let collectionName = onTrials ? 'trial_provenance' :  'provenance'
+  let docID = workerID + '_'+ taskList[currentTask].taskID
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
-    .collection(workerID)
-    .doc(taskList[currentTask].taskID)
+    .collection(collectionName)
+    .doc(docID)
     .get();
 
   let doc = provGraphDoc.data();
 
   let docSize =
-    calcFirestoreDocSize("provenanceGraph", workerID, doc) / 1000000;
+    calcFirestoreDocSize(collectionName, docID, doc) / 1000000;
 
-  console.log("Provenance graph size for ", workerID, " is ", docSize, " MB");
-  // console.log("Provenance graph has ", doc, "elements");
+  console.log("Provenance graph size for ", docID, " is ", docSize, " MB");
+  console.log("Provenance graph has ", doc, "elements", initialState);
 
   if (docSize > 0.75) {
     console.log(
       "Provenance Graph for this user is too large! Considering storing each state in its own document"
     );
   } else {
-    let docRef = db.collection(workerID).doc(taskList[currentTask].taskID);
-    if (doc) {
+    let docRef = db.collection(collectionName).doc(docID);
+    // only update if document exists and this is not the initial push
+    if (doc && !initialState) {
+      console.log('trying to update', provGraph)
       docRef.update({
         provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
       });
+      
     } else {
+      console.log('trying to set', provGraph)
+
       docRef.set({
         provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
       });
@@ -563,7 +568,7 @@ async function loadNewGraph(fileName) {
 
   options.attr("value", d => d.shortName);
   options.attr("id", d => d.id);
-  option.attr('onclick',"console.log('clicked')");
+  // options.attr('onclick',"console.log('clicked')");
 
   // options.on("click",console.log('clicked an option!'))
  }
@@ -654,8 +659,6 @@ function validateAnswer(answer, errorCheckField, force = false) {
     }
   }
 
-  console.log("answer is valid ", isValid);
-  console.log("errorMsg is ", errorMsg);
   d3.select("#submitButton").attr(
     "disabled",
     isValid || isFlexibleAnswer ? null : true
@@ -687,35 +690,47 @@ function makeid(length) {
   return result;
 }
 
-function getResults(){
+async function getResults(){
 
 let allResults = [];
 let allParticipants = [];
-  let ids = ['GtVOYl','T391Hp','T7asXK','yXA0Sm'];
-  db.collection("results").get().then(function(querySnapshot) {
-    querySnapshot.forEach(function(doc) {
-      if (true){
-        allResults.push({id:doc.id, data:doc.data()});
-        // saveToFile(doc.data(),'results_' + doc.id + '.json')
-      }
-    });
+let allProvenance = [];
 
-    allResults.map(r=>{
-      // saveToFile(r.data,'result/' + r.id + '.json')
-    })
-});
 
-db.collection("participants").get().then(function(querySnapshot) {
-  querySnapshot.forEach(function(doc) {
-    if (true){
-      allParticipants.push({id:doc.id, data:doc.data()});
-      // saveToFile(doc.data(),'participant_' + doc.id + '.json')
-    }
-  });
-  allParticipants.map(p=>{
-    // saveToFile(p.data,'participants/' + p.id + '.json')
+  // let ids = ['7eKPji','FaP5YL','MqknUo','GtVOYl','T391Hp','T7asXK','yXA0Sm'];
+  let ids = [];
+
+  let dbDump = ids.map(async id=>{
+     db.collection(id).get()
+      .catch(function(error) {
+        console.log("Error getting document:", error);
+      })
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            allProvenance.push({worker:id, id:doc.id, data:doc.data()});
+        })
+      });
+
+      let result = await db
+      .collection("results")
+      .doc(id)
+      .get();
+      
+      allResults.push({worker:id, data:result.data()})
+      
+      let participant = await db
+      .collection("participants")
+      .doc(id)
+      .get();
+
+      allParticipants.push({worker:id, data:participant.data()})
   })
-});
+
+  // Promise.all(dbDump).then(() => {
+  //   saveToFile(JSON.stringify(allResults),'allResults.json');
+  //   saveToFile(JSON.stringify(allParticipants),'allParticipants.json');
+  //   saveToFile(JSON.stringify(allProvenance),'allProvenance.json');
+  // });
 
 }
 
@@ -724,7 +739,7 @@ async function loadTasks(visType,tasksType) {
   //reset currentTask to 0
    currentTask = 0; 
 
-  //  getResults(); 
+   getResults(); 
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
