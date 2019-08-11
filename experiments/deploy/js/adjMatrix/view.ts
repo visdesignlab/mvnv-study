@@ -424,8 +424,8 @@ class View {
       .attr("text-anchor", "end")
       .style("font-size", labelSize)
       .text((d, i) => this.nodes[i].shortName)
-      .on("mouseout", this.mouseOverLabel)
-      .on('mouseover', this.mouseOverLabel)
+      .on("mouseout", (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)})
+      .on('mouseover', (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)})
       .on('click', (d, i, nodes) => {
         //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
         this.clickFunction(d, i, nodes);
@@ -454,8 +454,8 @@ class View {
           this.clickFunction(d, i, nodes);
         }
       })
-      .on("mouseout", this.mouseOverLabel)
-      .on('mouseover', this.mouseOverLabel);
+      .on("mouseout", (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)})
+      .on('mouseover', (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)});
   }
   /**
    * renders the relevent highlights for mousing over a label. Logs the interaction

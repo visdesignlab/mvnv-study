@@ -341,8 +341,8 @@ var View = /** @class */ (function () {
             .attr("text-anchor", "end")
             .style("font-size", labelSize)
             .text(function (d, i) { return _this.nodes[i].shortName; })
-            .on("mouseout", this.mouseOverLabel)
-            .on('mouseover', this.mouseOverLabel)
+            .on("mouseout", function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); })
+            .on('mouseover', function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); })
             .on('click', function (d, i, nodes) {
             //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
             _this.clickFunction(d, i, nodes);
@@ -369,8 +369,8 @@ var View = /** @class */ (function () {
                 _this.clickFunction(d, i, nodes);
             }
         })
-            .on("mouseout", this.mouseOverLabel)
-            .on('mouseover', this.mouseOverLabel);
+            .on("mouseout", function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); })
+            .on('mouseover', function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); });
     };
     /**
      * renders the relevent highlights for mousing over a label. Logs the interaction
