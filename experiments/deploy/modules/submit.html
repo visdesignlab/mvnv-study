@@ -153,17 +153,21 @@
 
   <script>
     (async function () {
-      let participant = await db.collection("participants").doc(workerID).get();
+
+      if (track){
+        let participant = await db.collection(participantCollection).doc(workerID).get();
       let participantCode = participant.data().completionCode;
 
       let startTime = participant.data().startTime;
 
       let endTime = new Date().toString()
       //set end time 
-       db.collection("participants").doc(workerID).update({
+       db.collection(participantCollection).doc(workerID).update({
                     endTime,
                     minutesToComplete:(Date.parse(endTime)-Date.parse(startTime))/60000 //60000 milliseconds in a minute 
         });
+      }
+      
 
 
 
@@ -206,10 +210,8 @@
           
          //if everything checks out, 
           if (isValid){
-            console.log(demographics,feedback)
-
           //push their responses to firebase;
-            db.collection("participants").doc(workerID).update({
+            db.collection(participantCollection).doc(workerID).update({
                           demographics,
                           feedback
               });

@@ -2,55 +2,64 @@
 </div>
 
 <script>
-  (async function () {
+  //turn on 'welcome modal' 
+  d3.select('.modalStartTrials').classed('is-active', true);
+  experimentr.hideNext()
+
+
+  d3.select('#startTrials').on('click', async function () {
+
+    d3.select('.modalStartTrials').classed('is-active', false);
+
 
     onTrials = true;
     experimentr.hideNext();
-    await loadTasks(vis,'trials');
+    await loadTasks(vis, 'trials');
 
     //set up  user on firestore to track answers and usage;
-    if (track){
+    if (track) {
 
-      switch(mode) {
+      switch (mode) {
         case 'heuristics':
-            debugger; 
-            //shouldn't be here in heuristics mode
-            break;
+          debugger;
+          //shouldn't be here in heuristics mode
+          break;
         case 'develop':
-            workerID = 'DevelopUser';
-            break;
-        }
+          workerID = 'DevelopUser';
+          break;
+      }
 
-        if (mode!== 'study'){
-            let screenSize = {
-              availWidth: window.screen.availWidth,
-              availHeight: window.screen.availHeight,
-              width: window.screen.width,
-              height: window.screen.height,
-              colorDepth: window.screen.colorDepth,
-              pixelDepth: window.screen.pixelDepth
-            };
+      if (mode !== 'study') {
+        let screenSize = {
+          availWidth: window.screen.availWidth,
+          availHeight: window.screen.availHeight,
+          width: window.screen.width,
+          height: window.screen.height,
+          colorDepth: window.screen.colorDepth,
+          pixelDepth: window.screen.pixelDepth
+        };
 
-              db.collection(participantCollection).doc(workerID).set({
-                screenSize,
-                completionCode:makeid(6),
-                startTrialsTime: new Date().toString()
-              },{merge:true});
-        }
+        db.collection(participantCollection).doc(workerID).set({
+          screenSize,
+          completionCode: makeid(6),
+          startTrialsTime: new Date().toString()
+        }, {
+          merge: true
+        });
+      }
       trackResults('trial_results');
     }
-  
+
     //remove ui components that are not relevant
-    if (!configPanel){
-        d3.selectAll('.development').remove();
+    if (!configPanel) {
+      d3.selectAll('.development').remove();
     }
 
-    if (!taskMenu){
-        d3.select('.taskMenu').remove();
+    if (!taskMenu) {
+      d3.select('.taskMenu').remove();
     } else {
       d3.select('.taskMenu').style('display', 'none');
-
-    } 
+    }
 
     d3.select('.hit').style('display', 'inline');
 
@@ -63,5 +72,5 @@
     resetPanel();
     // experimentr.startTimer('exploration');
 
-  })()
+  });
 </script>
