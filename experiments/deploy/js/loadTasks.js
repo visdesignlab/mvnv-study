@@ -20,7 +20,7 @@ let provenance;
 function KeyPress(e) {
   var evtobj = window.event ? event : e;
 
-  
+
   if (
     (evtobj.keyCode == 90 && evtobj.ctrlKey) ||
     (evtobj.keyCode == 90 && evtobj.metaKey)
@@ -30,8 +30,8 @@ function KeyPress(e) {
     } else {
       window.controller.model.provenance.goBackOneStep();
     }
-  } 
-  
+  }
+
   if (
     (evtobj.keyCode == 70 && evtobj.ctrlKey) ||
     (evtobj.keyCode == 70 && evtobj.metaKey)
@@ -87,7 +87,7 @@ function screenTest(width, height) {
   return widthTest && heightTest ? screenSpecs : false;
 }
 
-//If there is a value, check for validity 
+//If there is a value, check for validity
 d3.select("#answerBox").on("input", function() {
   updateAnswer(d3.select(this).property("value"));
 });
@@ -123,7 +123,7 @@ function updateAnswer(answer) {
   validateAnswer(taskObj.answer, answerType == "string" ? "value" : "nodes");
 }
 
-//function that checks answers for the trials. 
+//function that checks answers for the trials.
 function checkAnswer(answer){
 
   let task = taskList[currentTask];
@@ -170,7 +170,7 @@ d3.select("#submitButton").on("click", async function() {
     }
   }
 
-  //if in trial mode, do not let proceed if not correct, do not collect feedback on difficulty and confidence since these are just trials; 
+  //if in trial mode, do not let proceed if not correct, do not collect feedback on difficulty and confidence since these are just trials;
   if (onTrials){
     let correct = checkAnswer(task.answer);
 
@@ -183,7 +183,7 @@ d3.select("#submitButton").on("click", async function() {
       d3.select('#trialFeedback').select('.correctMsg').style('display','none');
       d3.select('#nextTrialTask').style('display','none');
     }
-    
+
   }
 
   if (track){
@@ -201,7 +201,7 @@ d3.select("#submitButton").on("click", async function() {
         },
         args: []
       };
-  
+
       provenance.applyAction(action);
       pushProvenance(app.currentState());
     } else {
@@ -216,13 +216,13 @@ d3.select("#submitButton").on("click", async function() {
         },
         args: []
       };
-  
+
       window.controller.model.provenance.applyAction(action);
       pushProvenance(window.controller.model.app.currentState());
     }
 
   }
- 
+
 
   taskList[currentTask].endTime = new Date().toString()
   taskList[currentTask].minutesToComplete =
@@ -233,7 +233,7 @@ d3.select("#submitButton").on("click", async function() {
     //Only bring up modal for feedback if not in trial mode;
    if (!onTrials){
      d3.select(".modalFeedback").classed("is-active", true);
-   } 
+   }
 
 });
 
@@ -275,7 +275,7 @@ d3.select('#nextTrialTask').on("click",async ()=>{
   } else {
     d3.select(".hit").style("display", "none");
 
-   
+
 
     if (track){
 
@@ -300,7 +300,7 @@ d3.select('#nextTrialTask').on("click",async ()=>{
         { merge: true }
       );
     }
-  
+
     experimentr.next();
   }
 
@@ -312,7 +312,7 @@ d3.select("#nextTask").on("click", async () => {
   let selectedDifficulty = d3.selectAll("input[name=difficulty]").filter(function() {
     return d3.select(this).property("checked");
   });
-  
+
   let selectedConfidence = d3.selectAll("input[name=confidence]").filter(function() {
     return d3.select(this).property("checked");
   });
@@ -359,7 +359,7 @@ d3.select("#nextTask").on("click", async () => {
     });
 
   }
-  
+
   //increment current task;
   if (currentTask < taskList.length - 1) {
     currentTask = currentTask + 1;
@@ -370,7 +370,7 @@ d3.select("#nextTask").on("click", async () => {
   } else {
     d3.select(".hit").style("display", "none");
 
-    
+
     if (track){
 
       let participant = await db
@@ -392,7 +392,7 @@ d3.select("#nextTask").on("click", async () => {
         { merge: true }
       );
     }
-  
+
     experimentr.next();
   }
 });
@@ -536,7 +536,7 @@ async function loadNewGraph(fileName) {
   graph = await d3.json(fileName);
 
   // console.log(graph.links)
-// 
+//
   //update the datalist associated to the search box (in case the nodes in the new graph have changed)
  if (vis === 'nodeLink'){
   d3.select("#search-input").attr("list", "characters");
@@ -722,9 +722,9 @@ db.collection("participants").get().then(function(querySnapshot) {
 async function loadTasks(visType,tasksType) {
 
   //reset currentTask to 0
-   currentTask = 0; 
+   currentTask = 0;
 
-  //  getResults(); 
+  //  getResults();
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -740,7 +740,7 @@ async function loadTasks(visType,tasksType) {
     console.log("Error getting document:", error);
   });
 
-  
+
   let taskListFiles = conditionsObj.data().tasks;
   let conditions = conditionsObj.data().conditionList;
   studyTracking.numConditions = conditions.length;
@@ -768,7 +768,7 @@ async function loadTasks(visType,tasksType) {
   let selectedCondition = conditions[group];
   let selectedVis = selectedCondition.type;
 
-  vis = selectedVis; 
+  vis = selectedVis;
 
   //set the source for the quickStart guide image in the modal;
   d3.select(".quickStart")
@@ -817,7 +817,7 @@ async function loadTasks(visType,tasksType) {
       nodeLink: [
         "js/nodeLink/main_nodeLink.js",
         "js/nodeLink/helperFunctions.js"
-      ], 
+      ],
       adjMatrix: [
         "js/adjMatrix/libs/reorder/science.v1.js",
         "js/adjMatrix/libs/reorder/tiny-queue.js",
@@ -835,7 +835,7 @@ async function loadTasks(visType,tasksType) {
       ],
       adjMatrix: ["css/adjMatrix/adj-matrix.css"]
     };
-  
+
     // //   dynamically load only js/css relevant to the vis approach being used;
     const loadAllScripts = async () => {
       return await Promise.all(
@@ -844,9 +844,9 @@ async function loadTasks(visType,tasksType) {
         })
       );
     };
-  
+
     await loadAllScripts();
-  
+
     cssTags[selectedVis].map(href => {
       var newStyleSheet = document.createElement("link");
       newStyleSheet.href = href;
@@ -857,7 +857,7 @@ async function loadTasks(visType,tasksType) {
     });
 
   }
-  
+
 
 }
 
@@ -919,7 +919,7 @@ d3.select("#clear-selection").on("click", () => {
   provenance.applyAction(action);
   pushProvenance(app.currentState());
 
-  // d3.select('#clear-selection').attr('disabled', true) 
+  // d3.select('#clear-selection').attr('disabled', true)
 });
 
 d3.select("#search-input").on("change", function() {
@@ -927,9 +927,9 @@ d3.select("#search-input").on("change", function() {
   // let selectedOption = d3.select(this).property("value");
 
   let selectedOption = d3.select(this).property("value").trim();
- 
-  //in case there are just spaces, this will reset it to 'empty' 
-  d3.select(this).property("value",selectedOption); 
+
+  //in case there are just spaces, this will reset it to 'empty'
+  d3.select(this).property("value",selectedOption);
 
 
     //empty search box;
@@ -939,7 +939,7 @@ d3.select("#search-input").on("change", function() {
       return;
     }
 
-  let searchSuccess = searchFor(selectedOption);
+  let searchSuccess = vis == 'nodeLink' ?  searchFor(selectedOption): console.log('hi'); window.controller.view.search(selectionOption);
 
   //  if (searchSuccess === -1){
   //    d3.select('.searchMsg')
@@ -951,7 +951,7 @@ d3.select("#search-input").on("change", function() {
     d3.select('.searchMsg')
     .style('display','none')
 
-    // d3.select('#clear-selection').attr('disabled', null) 
+    // d3.select('#clear-selection').attr('disabled', null)
    }
 
   //  if (searchSuccess === 0){
@@ -987,7 +987,7 @@ d3.select('#searchButton').on("click",function(){
       d3.select('.searchMsg')
       .style('display','none')
 
-      // d3.select('#clear-selection').attr('disabled', null) 
+      // d3.select('#clear-selection').attr('disabled', null)
 
     }
 
@@ -1000,18 +1000,18 @@ d3.select('#searchButton').on("click",function(){
 })
 
 //Push an empty taskList to a new doc under the results or trials collection to start tracking the results
-//collection is either 'trials' or 'results' 
+//collection is either 'trials' or 'results'
 function trackResults(collection){
     //create a pared down copy of this taskList to store in firebase (no need to store configs);
     let configLessTaskList = JSON.parse(
       JSON.stringify(studyTracking.taskListObj)
     );
-  
+
     Object.keys(configLessTaskList).map(key => {
       delete configLessTaskList[key].config;
       configLessTaskList[key].visType = vis;
     });
-  
+
     var taskListRef = db.collection(collection).doc(workerID);
     taskListRef.set(configLessTaskList);
 }

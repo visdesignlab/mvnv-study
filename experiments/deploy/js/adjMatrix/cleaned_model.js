@@ -100,26 +100,35 @@ var Model = /** @class */ (function () {
         }
     };
     Model.prototype.populateSearchBox = function () {
-        var _this = this;
+        /*
         d3.select("#search-input").attr("list", "characters");
-        var inputParent = d3.select("#search-input").node().parentNode;
-        var datalist = d3
-            .select(inputParent).selectAll('#characters').data([0]);
-        var enterSelection = datalist.enter()
-            .append("datalist")
-            .attr("id", "characters");
+        let inputParent = d3.select("#search-input").node().parentNode;
+    
+        let datalist = d3
+        .select(inputParent).selectAll('#characters').data([0]);
+    
+        let enterSelection = datalist.enter()
+        .append("datalist")
+        .attr("id", "characters");
+    
         datalist.exit().remove();
-        datalist = enterSelection.merge(datalist);
-        var options = datalist.selectAll("option").data(this.nodes);
-        var optionsEnter = options.enter().append("option");
+    
+        datalist= enterSelection.merge(datalist);
+    
+        let options = datalist.selectAll("option").data(this.nodes);
+    
+        let optionsEnter = options.enter().append("option");
         options.exit().remove();
+    
         options = optionsEnter.merge(options);
-        options.attr("value", function (d) { return d.shortName; });
-        options.attr("id", function (d) { return d.id; });
-        d3.select("#search-input").on("change", function (d, i, nodes) {
-            var selectedOption = d3.select(nodes[i]).property("value");
-            console.log(_this.controller.view.search(selectedOption));
+        options.attr("value", d => d.shortName);
+        options.attr("id", d => d.id);
+    
+        d3.select("#search-input").on("change", (d,i,nodes) => {
+          let selectedOption = d3.select(nodes[i]).property("value");
+          console.log(this.controller.view.search(selectedOption))
         });
+    */
     };
     Model.prototype.getApplicationState = function () {
         var _this = this;
@@ -454,7 +463,6 @@ var View = /** @class */ (function () {
         this.matrix = matrix;
         this.hideLoading();
         this.renderView();
-        //this.renderEdges();
     };
     /**
      * Initializes the adjacency matrix and row views with placeholder visualizations
@@ -467,23 +475,22 @@ var View = /** @class */ (function () {
         this.initalizeEdges();
         this.initalizeAttributes();
         d3.select('.loading').style('display', 'none');
-        var that = this;
-        d3.select("#order").on("change", function () {
-            that.sort(this.value);
-        });
     };
     /**
-     * Initalizes the edges view, renders SVG
+     * Initalizes the edges view, renders all SVG elements and attaches listeners
+     * to elements.
      * @return None
      */
     View.prototype.initalizeEdges = function () {
         var _this = this;
-        // Float edges so put edges and attr on same place
+        // Float edges so put edges and attr on same row
         d3.select('#topology').style('float', 'left');
-        var width = this.controller.visWidth * this.controller.edgePorportion; //this.edgeWidth + this.margins.left + this.margins.right;
-        var height = this.controller.visHeight; //this.edgeHeight + this.margins.top + this.margins.bottom;
+        // Set width and height based upon the calculated layout size
+        var width = this.controller.visWidth * this.controller.edgePorportion;
+        var height = this.controller.visHeight;
         this.edgeWidth = width - (this.margins.left + this.margins.right); //*this.controller.edgePorportion;
         this.edgeHeight = height - (this.margins.top + this.margins.bottom); //*this.controller.edgePorportion;
+        // Creates scalable SVG
         this.edges = d3.select('#topology').append("svg")
             .attr("viewBox", "0 0 " + (width) + " " + height + "")
             .attr("preserveAspectRatio", "xMinYMin meet")
@@ -491,137 +498,26 @@ var View = /** @class */ (function () {
             .classed("svg-content", true)
             .attr('id', 'edgeMargin')
             .attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
-        this.verticalScale = d3.scaleBand().range([0, this.edgeWidth]).domain(d3.range(this.nodes.length));
-        /* Draw Highlight Rows
-        this.edges//.select('#highlightLayer')
-          .append('g')
-          .attr('id','highlightLayer')
-          .selectAll('.highlightRow')
-          .data(this.nodes)
-          .enter()
-          .append('rect')
-          .classed('highlightRow', true)
-          .attr('x', 0)
-          .attr('y', (d, i) => this.verticalScale(i))
-          .attr('width', this.edgeWidth + this.margins.right)
-          .attr('height', this.verticalScale.bandwidth())
-          .attr('fill', "#fff")
-          .on('mouseover', function(d, index) {
-            d3.select(this)
-              .classed('hovered', true);
-            d3.selectAll('.highlightRow')
-              .filter((d: any, i) => { return d.index === index })
-              .classed('hovered', true)
-          })
-          .on('mouseout', function(d, index) {
-            d3.select(this)
-              .classed('hovered', false);
-            d3.selectAll('.highlightRow')
-              .filter((d: any, i) => { return d.index === index })
-              .classed('hovered', false)
-          })
-          .on('click', (d) => {
-            this.clickedNode(d.index);
-            // click node
-            // select node and turn orange ish
-            // highlight other nodes (add jumps?)
-          })
-          // Draw Highlight Columns
-          this.edges.select('#highlightLayer') //highlightLayer alreadyt exists from rows
-            .selectAll('.highlightCol')
-            .data(this.nodes)
-            .enter()
-            .append('rect')
-            .classed('highlightCol', true)
-            .attr('x', (d, i) => this.verticalScale(i))
-            .attr('y', 0 )
-            .attr('width', this.verticalScale.bandwidth())
-            .attr('height', this.edgeHeight + this.margins.bottom)
-            .attr('fill', (d, i) => { return i % 2 == 0 ? "#fff" : "#eee" })
-            .on('mouseover', function (d, index) {
-              /* Option for getting x and y
-              let mouse = d3.mouse(d3.event.target);
-              let column = document.elementsFromPoint(mouse[0],mouse[1])[0];
-              let row = document.elementsFromPoint(mouse[0],mouse[1])[1];
-              d3.select(column).classed('hovered',true);
-              d3.select(row).classed('hovered',true);
-               */ //start removal
-        /*
-        that.highlightNode(d,index,"column");
-      })
-      .on('mouseout', (d, index)=> {
-        this.unhighlightNode(d,index,"column");
-      })
-      .on('click', (d) => {
-        this.clickedNode(d.index);
-        // click node
-        // select node and turn orange ish
-        // highlight other nodes (add jumps?)
-      })
-    
-    
-    */
+        // sets the vertical scale
+        this.orderingScale = d3.scaleBand().range([0, this.edgeWidth]).domain(d3.range(this.nodes.length));
+        // creates column groupings
         this.edgeColumns = this.edges.selectAll(".column")
             .data(this.matrix)
             .enter().append("g")
             .attr("class", "column")
             .attr("transform", function (d, i) {
-            return "translate(" + _this.verticalScale(i) + ")rotate(-90)";
+            return "translate(" + _this.orderingScale(i) + ")rotate(-90)";
         });
-        this.edgeColumns.append("line")
-            .attr("x1", -this.edgeWidth)
-            .attr("z-index", 10);
-        //append final line
-        var extraLine = this.edges
-            .append("line")
-            .attr("x1", this.edgeWidth)
-            .attr("x2", this.edgeWidth)
-            .attr("y1", 0)
-            .attr("y2", this.edgeHeight);
-        this.edgeColumns
-            .append('rect')
-            .classed('topoCol', true)
-            .attr('id', function (d, i) {
-            return "topoCol" + d[i].colid;
-        })
-            .attr('x', -this.edgeHeight - this.margins.bottom)
-            .attr('y', 0)
-            .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top) // these are swapped as the columns have a rotation
-            .attr('height', this.verticalScale.bandwidth())
-            .attr('fill-opacity', 0)
-            .on('mouseover', function () {
-            /*
-            let mouse = d3.mouse(d3.event.target);
-            let column = document.elementsFromPoint(mouse[0],mouse[1])[0];
-            let row = document.elementsFromPoint(mouse[0],mouse[1])[1];
-            d3.select('.hovered').classed('hovered',false);
-            d3.select(column).classed('hovered',true);
-            d3.select(row).classed('hovered',true);
-            */
-        });
-        // Draw each row (translating the y coordinate)
+        // Draw each row
         this.edgeRows = this.edges.selectAll(".row")
             .data(this.matrix)
             .enter().append("g")
             .attr("class", "row")
             .attr("transform", function (d, i) {
-            return "translate(0," + _this.verticalScale(i) + ")";
+            return "translate(0," + _this.orderingScale(i) + ")";
         });
-        // append grid lines
-        this.edgeRows.append("line")
-            .attr("x2", this.edgeWidth + this.margins.right);
-        // added highligh row code
-        this.edgeRows //.select('#highlightLayer')
-            .append('rect')
-            .classed('topoRow', true)
-            .attr('id', function (d, i) {
-            return "topoRow" + d[i].rowid;
-        })
-            .attr('x', -this.margins.left)
-            .attr('y', 0)
-            .attr('width', this.edgeWidth + this.margins.right + this.margins.left)
-            .attr('height', this.verticalScale.bandwidth())
-            .attr('fill-opacity', 0);
+        this.drawGridLines();
+        this.drawHighlightElements();
         this.edgeScales = {};
         this.controller.configuration.attributeScales.edge.type.domain.forEach(function (type) {
             // calculate the max
@@ -643,27 +539,27 @@ var View = /** @class */ (function () {
             .enter().append('g')
             .attr("class", "cell")
             .attr('id', function (d) { return d.cellName; })
-            .attr('transform', function (d) { return 'translate(' + _this.verticalScale(d.x) + ',0)'; });
+            .attr('transform', function (d) { return 'translate(' + _this.orderingScale(d.x) + ',0)'; });
         var squares = cells
             .append("rect")
             .classed('baseCell', true)
             .attr("x", function (d) { return 0; })
-            .attr('height', this.verticalScale.bandwidth())
-            .attr('width', this.verticalScale.bandwidth())
+            .attr('height', this.orderingScale.bandwidth())
+            .attr('width', this.orderingScale.bandwidth())
             .attr('fill-opacity', 0);
         if (this.controller.configuration.adjMatrix.edgeBars) {
             // bind squares to cells for the mouse over effect
             var dividers = this.controller.configuration.isMultiEdge ? 2 : 1;
             //let squares = cells
             var offset_1 = 0;
-            var squareSize = this.verticalScale.bandwidth() - 2 * offset_1;
+            var squareSize = this.orderingScale.bandwidth() - 2 * offset_1;
             var _loop_1 = function (index) {
                 var type = this_1.controller.configuration.isMultiEdge ? this_1.controller.configuration.attributeScales.edge.type.domain[index] : 'interacted';
                 console.log(this_1.edgeScales, type);
                 var scale = this_1.edgeScales[type];
                 var typeColor = scale.range()[1];
                 // change encoding to position
-                //scale.range([0, this.verticalScale.bandwidth()])
+                //scale.range([0, this.orderingScale.bandwidth()])
                 //scale.clamp(true);
                 cells
                     //.filter(d => {
@@ -671,9 +567,9 @@ var View = /** @class */ (function () {
                     //})
                     .append("rect")
                     .classed('nestedEdges nestedEdges' + type, true)
-                    .attr('x', offset_1) // index * this.verticalScale.bandwidth() / dividers })
+                    .attr('x', offset_1) // index * this.orderingScale.bandwidth() / dividers })
                     .attr('y', function (d) {
-                    return offset_1; //this.verticalScale.bandwidth() - scale(d[type]);
+                    return offset_1; //this.orderingScale.bandwidth() - scale(d[type]);
                 })
                     .attr('height', squareSize) //)
                     .attr('width', squareSize)
@@ -695,10 +591,10 @@ var View = /** @class */ (function () {
         else {
             var squares_1 = cells
                 .append("rect")
-                .attr("x", 0) //d => this.verticalScale(d.x))
+                .attr("x", 0) //d => this.orderingScale(d.x))
                 //.filter(d=>{return d.item >0})
-                .attr("width", this.verticalScale.bandwidth())
-                .attr("height", this.verticalScale.bandwidth())
+                .attr("width", this.orderingScale.bandwidth())
+                .attr("height", this.orderingScale.bandwidth())
                 .style("fill", 'white');
             squares_1
                 .filter(function (d) { return d.z == 0; })
@@ -924,7 +820,7 @@ var View = /** @class */ (function () {
         })
             .attr('z-index', 30)
             .attr("x", 0)
-            .attr("y", this.verticalScale.bandwidth() / 2)
+            .attr("y", this.orderingScale.bandwidth() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
             .style("font-size", labelSize)
@@ -1002,6 +898,56 @@ var View = /** @class */ (function () {
             .append("div")
             .attr("class", "tooltip")
             .style("opacity", 0);
+    };
+    /**
+     * Draws the grid lines for the adjacency matrix.
+     * @return none
+     */
+    View.prototype.drawGridLines = function () {
+        // adds column lines
+        this.edgeColumns.append("line")
+            .attr("x1", -this.edgeWidth)
+            .attr("z-index", 10);
+        // append final line to end of topology matrix
+        this.edges
+            .append("line")
+            .attr("x1", this.edgeWidth)
+            .attr("x2", this.edgeWidth)
+            .attr("y1", 0)
+            .attr("y2", this.edgeHeight);
+        // append horizontal grid lines
+        this.edgeRows.append("line")
+            .attr("x2", this.edgeWidth + this.margins.right);
+    };
+    /**
+     * Renders the highlight rows and columns for the adjacency matrix.
+     * @return [description]
+     */
+    View.prototype.drawHighlightElements = function () {
+        // add the highlight rows
+        this.edgeColumns
+            .append('rect')
+            .classed('topoCol', true)
+            .attr('id', function (d, i) {
+            return "topoCol" + d[i].colid;
+        })
+            .attr('x', -this.edgeHeight - this.margins.bottom)
+            .attr('y', 0)
+            .attr('width', this.edgeHeight + this.margins.bottom + this.margins.top) // these are swapped as the columns have a rotation
+            .attr('height', this.orderingScale.bandwidth())
+            .attr('fill-opacity', 0);
+        // added highlight rows
+        this.edgeRows
+            .append('rect')
+            .classed('topoRow', true)
+            .attr('id', function (d, i) {
+            return "topoRow" + d[i].rowid;
+        })
+            .attr('x', -this.margins.left)
+            .attr('y', 0)
+            .attr('width', this.edgeWidth + this.margins.right + this.margins.left)
+            .attr('height', this.orderingScale.bandwidth())
+            .attr('fill-opacity', 0);
     };
     /**
      * [changeInteractionWrapper description]
@@ -1541,46 +1487,46 @@ var View = /** @class */ (function () {
     View.prototype.sort = function (order) {
         var _this = this;
         this.order = this.controller.changeOrder(order);
-        this.verticalScale.domain(this.order);
+        this.orderingScale.domain(this.order);
         var transitionTime = 500;
         d3.selectAll(".row")
             //.transition()
             //.duration(transitionTime)
-            //.delay((d, i) => { return this.verticalScale(i) * 4; })
+            //.delay((d, i) => { return this.orderingScale(i) * 4; })
             .attr("transform", function (d, i) {
             if (i > _this.order.length - 1)
                 return;
-            return "translate(0," + _this.verticalScale(i) + ")";
+            return "translate(0," + _this.orderingScale(i) + ")";
         });
         var cells = d3.selectAll(".cell") //.selectAll('rect')
             //.transition()
             //.duration(transitionTime)
-            //.delay((d, i) => { return this.verticalScale(i) * 4; })
-            //.delay((d) => { return this.verticalScale(d.x) * 4; })
+            //.delay((d, i) => { return this.orderingScale(i) * 4; })
+            //.delay((d) => { return this.orderingScale(d.x) * 4; })
             .attr("transform", function (d, i) {
-            return 'translate(' + _this.verticalScale(d.x) + ',0)';
+            return 'translate(' + _this.orderingScale(d.x) + ',0)';
         });
         this.attributeRows
             //.transition()
             //.duration(transitionTime)
-            //.delay((d, i) => { return this.verticalScale(i) * 4; })
-            .attr("transform", function (d, i) { return "translate(0," + _this.verticalScale(i) + ")"; });
+            //.delay((d, i) => { return this.orderingScale(i) * 4; })
+            .attr("transform", function (d, i) { return "translate(0," + _this.orderingScale(i) + ")"; });
         // update each highlightRowsIndex
         var t = this.edges; //.transition().duration(transitionTime);
         t.selectAll(".column")
-            //.delay((d, i) => { return this.verticalScale(i) * 4; })
-            .attr("transform", function (d, i) { return "translate(" + _this.verticalScale(i) + ",0)rotate(-90)"; });
+            //.delay((d, i) => { return this.orderingScale(i) * 4; })
+            .attr("transform", function (d, i) { return "translate(" + _this.orderingScale(i) + ",0)rotate(-90)"; });
         /*d3.selectAll('.highlightRow') // taken care of as they're apart of row and column groupings already
           .transition()
           .duration(transitionTime)
-          .delay((d, i) => { return this.verticalScale(i) * 4; })
-          .attr("transform", (d, i) => { return "translate(0," + this.verticalScale(i) + ")"; })
+          .delay((d, i) => { return this.orderingScale(i) * 4; })
+          .attr("transform", (d, i) => { return "translate(0," + this.orderingScale(i) + ")"; })
     
         d3.selectAll('.highlightCol')
           .transition()
           .duration(transitionTime)
-          .delay((d, i) => { return this.verticalScale(i) * 4; })
-          .attr("transform", (d, i) => { return "translate(" + this.verticalScale(i) + ")rotate(-90)"; });*/
+          .delay((d, i) => { return this.orderingScale(i) * 4; })
+          .attr("transform", (d, i) => { return "translate(" + this.orderingScale(i) + ")rotate(-90)"; });*/
     };
     View.prototype.updateCheckBox = function (state) {
         var _this = this;
@@ -1641,20 +1587,20 @@ var View = /** @class */ (function () {
           .append('rect')
           .classed('highlightRow', true)
           .attr('x', 0)
-          .attr('y', (d, i) => this.verticalScale(i))
+          .attr('y', (d, i) => this.orderingScale(i))
           .attr('width', this.attributeWidth)
-          .attr('height', this.verticalScale.bandwidth())
+          .attr('height', this.orderingScale.bandwidth())
           .attr('fill', (d, i) => { return i % 2 == 0 ? "#fff" : "#eee" })
           */
         var barMargin = { top: 1, bottom: 1, left: 5, right: 5 };
-        var barHeight = this.verticalScale.bandwidth() - barMargin.top - barMargin.bottom;
+        var barHeight = this.orderingScale.bandwidth() - barMargin.top - barMargin.bottom;
         // Draw each row (translating the y coordinate)
         this.attributeRows = this.attributes.selectAll(".row")
             .data(this.nodes)
             .enter().append("g")
             .attr("class", "row")
             .attr("transform", function (d, i) {
-            return "translate(0," + _this.verticalScale(i) + ")";
+            return "translate(0," + _this.orderingScale(i) + ")";
         });
         this.attributeRows.append("line")
             .attr("x1", 0)
@@ -1685,7 +1631,7 @@ var View = /** @class */ (function () {
             return "attrRow" + d[_this.datumID];
         })
             .attr('width', width)
-            .attr('height', this.verticalScale.bandwidth()) // end addition
+            .attr('height', this.orderingScale.bandwidth()) // end addition
             .attr("fill-opacity", 0)
             .on('mouseover', attributeMouseOver)
             .on('mouseout', attributeMouseOut).on('click', this.clickFunction);
@@ -2018,7 +1964,7 @@ var View = /** @class */ (function () {
         var widthOffset = this.controller.attrWidth / columns.length;
         var totalCategoricalWidth = 0;
         var bandwidthScale = 2;
-        var bandwidth = this.verticalScale.bandwidth();
+        var bandwidth = this.orderingScale.bandwidth();
         // fill in categorical column sizes
         for (var i = 0; i < columns.length; i++) {
             var column = columns[i];
@@ -2047,8 +1993,8 @@ var View = /** @class */ (function () {
         var _this = this;
         var columnPosition = this.columnScale(column);
         var topMargin = 1;
-        var height = this.verticalScale.bandwidth() - 2 * topMargin;
-        var width = this.verticalScale.bandwidth() * 2;
+        var height = this.orderingScale.bandwidth() - 2 * topMargin;
+        var width = this.orderingScale.bandwidth() * 2;
         var _loop_2 = function (index) {
             this_2.attributeRows
                 .append('rect')
@@ -2091,7 +2037,7 @@ var View = /** @class */ (function () {
         var dividers = attributeInfo.domain.length;
         var legendHeight = 25;
         var bandwidthScale = 2;
-        var bandwidth = this.verticalScale.bandwidth();
+        var bandwidth = this.orderingScale.bandwidth();
         var legendItemSize = bandwidth * bandwidthScale;
         //(legendWidth) / (dividers + 3/bandwidthScale);
         var margin = bandwidth * bandwidthScale / dividers;
@@ -2109,11 +2055,11 @@ var View = /** @class */ (function () {
             });
             rect1
                 .append('rect')
-                .attr('x', 0) //(legendItemSize + margin)/2 -this.verticalScale.bandwidth()
+                .attr('x', 0) //(legendItemSize + margin)/2 -this.orderingScale.bandwidth()
                 .attr('y', 0)
                 .attr('fill', attributeInfo.range[i])
                 .attr('width', legendItemSize)
-                .attr('height', this.verticalScale.bandwidth());
+                .attr('height', this.orderingScale.bandwidth());
             rect1
                 .append('text')
                 .text(attributeInfo.legendLabels[i])
