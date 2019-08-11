@@ -823,9 +823,14 @@ async function loadTasks(visType,tasksType) {
         "js/adjMatrix/libs/reorder/tiny-queue.js",
         "js/adjMatrix/libs/reorder/reorder.v1.js",
         "js/adjMatrix/fill_config_settings.js",
-        "js/adjMatrix/helper_functions.js",
         "js/adjMatrix/autocomplete.js",
-        "js/adjMatrix/cleaned_model.js"
+        "js/adjMatrix/view.js",
+        "js/adjMatrix/controller.js",
+        "js/adjMatrix/model.js",
+        "js/adjMatrix/helper_functions.js",
+
+
+
       ]
     };
     let cssTags = {
