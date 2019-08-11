@@ -1720,6 +1720,7 @@ var View = /** @class */ (function () {
                     .style("text-anchor", function (d, i) { return i % 2 ? "end" : "start"; });
             }
         }
+        this.columnGlyphs = {};
         /* Create data columns data */
         columns.forEach(function (column, index) {
             var columnPosition = _this.columnScale(column);
@@ -1728,14 +1729,17 @@ var View = /** @class */ (function () {
                 return;
             }
             else if (quantitativeAttributes.indexOf(column) > -1) { // if quantitative
-                _this.attributeRows
+                _this.columnGlyphs[column] = _this.attributeRows
                     .append("rect")
-                    .attr("class", "glyph")
+                    .attr("class", "glyph " + column)
                     .attr('height', barHeight)
                     .attr('width', 10) // width changed later on transition
                     .attr('x', columnPosition + barMargin.left)
                     .attr('y', barMargin.top) // as y is set by translate
-                    .attr('fill', '#8B8B8B')
+                    .attr('fill', function (d) {
+                    console.log(_this.controller.model.orderType, column);
+                    return _this.controller.model.orderType == column ? '#EBB769' : '#8B8B8B';
+                })
                     .on('mouseover', function (d) {
                     //if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
                     //that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
@@ -1753,7 +1757,8 @@ var View = /** @class */ (function () {
                     .on('mouseout', function (d) {
                     that.tooltip.transition().duration(25).style("opacity", 0);
                     attributeMouseOut(d);
-                })
+                });
+                _this.columnGlyphs[column]
                     .transition()
                     .duration(2000)
                     .attr('width', function (d, i) { return attributeScales[column](d[column]); });
@@ -1761,7 +1766,7 @@ var View = /** @class */ (function () {
                     .append("div")
                     .attr("class", "glyphLabel")
                     .text(function (d, i) {
-                    return (i ? formatNumber : formatCurrency)(d);
+                    return (d);
                 });
             }
             else {
@@ -1936,6 +1941,11 @@ var View = /** @class */ (function () {
             .on('click', function (d) {
             if (d !== 'selected') {
                 _this.sort(d);
+                d3.selectAll('.glyph').attr('fill', '#8B8B8B');
+                // for quantitative values, change their color
+                if (_this.controller.view.columnGlyphs[d]) {
+                    _this.controller.view.columnGlyphs[d].attr('fill', '#EBB769');
+                }
             }
         });
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });

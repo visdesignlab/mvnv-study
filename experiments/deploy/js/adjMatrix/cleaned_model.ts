@@ -1067,7 +1067,7 @@ class View {
    * Draws the grid lines for the adjacency matrix.
    * @return none
    */
-  drawGridLines(){
+  drawGridLines() {
     // adds column lines
     this.edgeColumns.append("line")
       .attr("x1", -this.edgeWidth)
@@ -1089,7 +1089,7 @@ class View {
    * Renders the highlight rows and columns for the adjacency matrix.
    * @return [description]
    */
-  drawHighlightElements(){
+  drawHighlightElements() {
     // add the highlight rows
     this.edgeColumns
       .append('rect')
@@ -1719,6 +1719,7 @@ class View {
   sort(order) {
     this.order = this.controller.changeOrder(order);
     this.orderingScale.domain(this.order);
+
     let transitionTime = 500;
     d3.selectAll(".row")
       //.transition()
@@ -1765,6 +1766,7 @@ class View {
       .duration(transitionTime)
       .delay((d, i) => { return this.orderingScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(" + this.orderingScale(i) + ")rotate(-90)"; });*/
+
   }
 
   updateCheckBox(state) {
@@ -2010,7 +2012,7 @@ class View {
 
     }
 
-
+    this.columnGlyphs = {};
 
     /* Create data columns data */
     columns.forEach((column, index) => {
@@ -2020,14 +2022,17 @@ class View {
         this.createUpsetPlot(column, columnWidths[index], placementScale[column]);
         return;
       } else if (quantitativeAttributes.indexOf(column) > -1) { // if quantitative
-        this.attributeRows
+        this.columnGlyphs[column] = this.attributeRows
           .append("rect")
-          .attr("class", "glyph")
+          .attr("class", "glyph "+column)
           .attr('height', barHeight)
           .attr('width', 10) // width changed later on transition
           .attr('x', columnPosition + barMargin.left)
           .attr('y', barMargin.top) // as y is set by translate
-          .attr('fill', '#8B8B8B')
+          .attr('fill', d=>{
+            console.log(this.controller.model.orderType,column);
+            return this.controller.model.orderType == column ? '#EBB769':'#8B8B8B'
+          })
           .on('mouseover', function(d) {
             //if (that.columnNames[d] && that.columnNames[d].length > maxcharacters) {
             //that.tooltip.transition().delay(1000).duration(200).style("opacity", .9);
@@ -2050,6 +2055,7 @@ class View {
             that.tooltip.transition().duration(25).style("opacity", 0);
             attributeMouseOut(d);
           })
+        this.columnGlyphs[column]
           .transition()
           .duration(2000)
           .attr('width', (d, i) => { return attributeScales[column](d[column]); })
@@ -2059,7 +2065,7 @@ class View {
           .append("div")
           .attr("class", "glyphLabel")
           .text(function(d, i) {
-            return (i ? formatNumber : formatCurrency)(d);
+            return (d);
           });
       } else {
         barMargin.left = 1;
@@ -2256,6 +2262,12 @@ class View {
       .on('click', (d) => {
         if (d !== 'selected') {
           this.sort(d);
+
+          d3.selectAll('.glyph').attr('fill','#8B8B8B');
+          // for quantitative values, change their color
+          if(this.controller.view.columnGlyphs[d]){
+            this.controller.view.columnGlyphs[d].attr('fill','#EBB769');
+          }
         }
 
       })
