@@ -299,6 +299,9 @@ var Model = /** @class */ (function () {
             //
             //order = reorder.optimal_leaf_order()(this.scalarMatrix);
         }
+        else if (this.orderType == 'edges') {
+            order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a][type].length - _this.nodes[b][type].length; });
+        }
         else if (!this.isQuant(this.orderType)) { // == "screen_name" || this.orderType == "name") {
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a][type].localeCompare(_this.nodes[b][type]); });
         }
@@ -1527,6 +1530,12 @@ var View = /** @class */ (function () {
           .duration(transitionTime)
           .delay((d, i) => { return this.orderingScale(i) * 4; })
           .attr("transform", (d, i) => { return "translate(" + this.orderingScale(i) + ")rotate(-90)"; });*/
+        // change glyph coloring for sort
+        d3.selectAll('.glyph').attr('fill', '#8B8B8B');
+        // for quantitative values, change their color
+        if (this.controller.view.columnGlyphs[order]) {
+            this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
+        }
     };
     View.prototype.updateCheckBox = function (state) {
         var _this = this;
@@ -1941,11 +1950,6 @@ var View = /** @class */ (function () {
             .on('click', function (d) {
             if (d !== 'selected') {
                 _this.sort(d);
-                d3.selectAll('.glyph').attr('fill', '#8B8B8B');
-                // for quantitative values, change their color
-                if (_this.controller.view.columnGlyphs[d]) {
-                    _this.controller.view.columnGlyphs[d].attr('fill', '#EBB769');
-                }
             }
         });
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
@@ -1955,6 +1959,26 @@ var View = /** @class */ (function () {
         d3.select('.loading').style('display', 'none');
         this.controller.model.setUpProvenance();
         window.focus();
+        // Draw buttons for alternative sorts
+        var initalY = -this.margins.left + 10;
+        var buttonHeight = 15;
+        var text = ['name', 'cluster', 'interactions'];
+        var sortNames = ['shortName', 'clusterLeaf', 'edges'];
+        var _loop_2 = function (i) {
+            var button = this_2.edges.append('g')
+                .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
+            button.attr('cursor', 'pointer');
+            button.append('rect').attr('width', this_2.margins.left - 10).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1);
+            button.append('text').attr('x', 3).attr('y', 10).attr('font-size', 11).text('Sort:' + text[i]);
+            button.on('click', function () {
+                _this.sort(sortNames[i]);
+            });
+            initalY += buttonHeight + 5;
+        };
+        var this_2 = this;
+        for (var i = 0; i < 3; i++) {
+            _loop_2(i);
+        }
         // Append g's for table headers
         // For any data row, add
         /*.on("click", clicked)
@@ -2005,8 +2029,8 @@ var View = /** @class */ (function () {
         var topMargin = 1;
         var height = this.orderingScale.bandwidth() - 2 * topMargin;
         var width = this.orderingScale.bandwidth() * 2;
-        var _loop_2 = function (index) {
-            this_2.attributeRows
+        var _loop_3 = function (index) {
+            this_3.attributeRows
                 .append('rect')
                 .attr('x', placementScaleForAttr[index].position)
                 .attr('y', 1)
@@ -2036,9 +2060,9 @@ var View = /** @class */ (function () {
                 _this.attributeMouseOut(d);
             });
         };
-        var this_2 = this;
+        var this_3 = this;
         for (var index = 0; index < placementScaleForAttr.length; index++) {
-            _loop_2(index);
+            _loop_3(index);
         }
         return;
     };

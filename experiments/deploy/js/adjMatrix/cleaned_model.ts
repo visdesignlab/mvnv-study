@@ -329,9 +329,12 @@ class Model {
 
       //order = reorder.optimal_leaf_order()(this.scalarMatrix);
     }
+    else if(this.orderType =='edges'){
+      order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a][type].length -this.nodes[b][type].length);
+    }
     else if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
       order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a][type].localeCompare(this.nodes[b][type]));
-    } else {
+    }  else {
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
     }
 
@@ -1767,6 +1770,13 @@ class View {
       .delay((d, i) => { return this.orderingScale(i) * 4; })
       .attr("transform", (d, i) => { return "translate(" + this.orderingScale(i) + ")rotate(-90)"; });*/
 
+    // change glyph coloring for sort
+    d3.selectAll('.glyph').attr('fill','#8B8B8B');
+    // for quantitative values, change their color
+    if(this.controller.view.columnGlyphs[order]){
+      this.controller.view.columnGlyphs[order].attr('fill','#EBB769');
+    }
+
   }
 
   updateCheckBox(state) {
@@ -1949,7 +1959,6 @@ class View {
 
     let categoricalAttributes = ["type", "continent"]
     let quantitativeAttributes = ["followers_count", "friends_count", "statuses_count", "count_followers_in_query", "favourites_count", "listed_count", "memberFor_days", "query_tweet_count"]
-
 
     columns.forEach((col, index) => {
       // calculate range
@@ -2263,11 +2272,7 @@ class View {
         if (d !== 'selected') {
           this.sort(d);
 
-          d3.selectAll('.glyph').attr('fill','#8B8B8B');
-          // for quantitative values, change their color
-          if(this.controller.view.columnGlyphs[d]){
-            this.controller.view.columnGlyphs[d].attr('fill','#EBB769');
-          }
+
         }
 
       })
@@ -2281,6 +2286,23 @@ class View {
     d3.select('.loading').style('display', 'none');
     this.controller.model.setUpProvenance();
     window.focus();
+
+    // Draw buttons for alternative sorts
+    let initalY = -this.margins.left+10;
+    let buttonHeight = 15;
+    let text = ['name','cluster','interactions'];
+    let sortNames = ['shortName','clusterLeaf','edges']
+    for(let i = 0; i < 3; i++){
+      let button = this.edges.append('g')
+        .attr('transform','translate('+(-this.margins.left)+','+(initalY)+')')
+      button.attr('cursor','pointer')
+      button.append('rect').attr('width',this.margins.left-10).attr('height',buttonHeight).attr('fill','none').attr('stroke','gray').attr('stroke-width',1)
+      button.append('text').attr('x',3).attr('y',10).attr('font-size',11).text('Sort:' + text[i]);
+      button.on('click',()=>{
+        this.sort(sortNames[i]);
+      })
+      initalY += buttonHeight+5;
+    }
 
 
 
