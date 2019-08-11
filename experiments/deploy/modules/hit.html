@@ -65,6 +65,9 @@
 
       d3.select('.hit').style('display', 'inline');
 
+      if (taskMenu){
+        d3.select('.taskMenu').style('display', 'block');
+      }
       if (vis === 'nodeLink') {
         loadVis("vis");
       } else {
