@@ -987,10 +987,10 @@ function isQuant(attr) {
        selected:[], //set of nodes that have been 'soft selected'
        hardSelected:[], //set of nodes that have been 'hard selected'
        search:[], //field to store the id of a searched node;
-       startTime:Date.now(), //time this provenance graph was created and the task initialized;
+       startTime:new Date(), //time this provenance graph was created and the task initialized;
        event:'startedProvenance',//string describing what event triggered this state update; same as the label in provenance.applyAction
       //  endTime:'', // time the submit button was pressed and the task ended;
-       time:Date.now() //timestamp for the current state of the graph;
+       time:new Date() //timestamp for the current state of the graph;
       };
       
       function nodeLink(provenance) {

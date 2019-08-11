@@ -37,13 +37,14 @@
 
 <body>
     <div class="hit" style=display:none>
-            <nav class="navbar trialSection" role="navigation" id="trialBar" aria-label="main navigation">
-                          <p class="card-header-title">
-                                Get familiar with the visualization with the practice questions below. Your answers for these question are not part of the survey!
-                              </p>
-                  </nav>
+        <nav class="navbar trialSection" role="navigation" id="trialBar" aria-label="main navigation">
+            <p class="card-header-title">
+                Get familiar with the visualization with the practice questions below. Your answers for these question
+                are not part of the survey!
+            </p>
+        </nav>
 
-                  
+
         <div class="columns" id="visContent">
             <div id="targetSize">
                 <div class="column ">
@@ -52,112 +53,114 @@
                             <div id="taskArea">
                                 <div class="card taskCard">
 
-                                        <p class="card-header-title">
-                                                <span class="task">Task: </span><span class="taskText"> </span>
-                                            </p>
+                                    <p class="card-header-title">
+                                        <span class="task">Task: </span><span class="taskText"> </span>
+                                    </p>
 
                                 </div>
 
-                            <div class="card">
-                                <div class="card-content">
-                                    <div class="content">
-                                        <div class="nodeLink">
-                                            <!-- <label class="label">Search for Nodes</label> -->
-                                            <input class="input searchInput" type="text" placeholder="Search for node"
-                                                id="search-input"></input>
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="content">
+                                            <div class="nodeLink">
+                                                <!-- <label class="label">Search for Nodes</label> -->
+                                                <input class="input searchInput" type="text"
+                                                    placeholder="Search for node" id="search-input"></input>
                                                 <a class="button is-pulled-right search" id="searchButton">Search</a>
-                                                <p class = 'searchMsg errorMsg'></p>
+                                                <p class='searchMsg errorMsg'></p>
 
                                                 <a class="button" id="clear-selection">Clear Selections</a>
 
-                                        </div>
-
-                                        <div class="adjMatrix">
-                                          <input class="input searchInput" type="text" placeholder="Search for node"
-                                              id="search-input"></input>
-
-                                            <input type="button" id="clearButton" value="Clear">
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-        
-                            </div>
-                            <div class="card">
-                                <header class="is-pulled-right card-header">
-                                    <p class="card-header-title">
-                                        <span class="helpIcon icon has-text-info">
-                                            <i class="fas fa-lg fa-question-circle"></i> &nbsp
-                                        </span> <strong>Help</strong>
-                                    </p>
-                                </header>
-                                <div class="card-content">
-                                    <div class="content">
-
-                                        <svg id="legend-svg"></svg>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="card answerHeader">
-                                    <p class="card-header-title">
-                                            <span class="answer">Answer </span>
-                                    </p>
-
-                            </div>
-
-                            <div class="card answerCard">
-
-                                <div class="card-content">
-                                    <div class="content">
-
-                                        <a class="button is-pulled-right submit" id="submitButton" disabled>Submit</a>
-
-                                        <span id="nodeAnswer">
-                                            <label><strong>Selected Nodes</strong></label>
-                                            <br />
-                                            <ul id="selectedNodeList">
-                                                <li> test value</li>
-                                            </ul>
-                                            <p class='errorMsg' style=display:none></p>
-                                            <br />
-
-                                        </span>
-
-                                        <span id="valueAnswer">
-                                            <label><strong>Enter Answer Below</strong></label>
-                                            <br />
-                                            <input class="input" type="text" placeholder="answer text" id="answerBox">
-                                            <br />
-                                            <p class='errorMsg' style=display:none></p>
-                                        </span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="card trialSection" id="feedbackCard">
-
-
-                                        <div class="card-content">
-                                            <div class="content">
-        
-                                                <a id="nextTrialTask" class="button is-pulled-right">Next Practice Task</a>
-        
-                                                <span id="trialFeedback">
-                                                    <span class='errorMsg'>Try again.</span>
-                                                    <span class='correctMsg'>You got it!</span>
-                                                </span>
                                             </div>
-                                        </div>
-        
 
-                        </div>
+                                            <div class="adjMatrix">
+                                                <input class="input searchInput" type="text"
+                                                    placeholder="Search for node" id="search-input"></input>
+
+                                                <input type="button" id="clearButton" value="Clear">
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <div class="card">
+                                    <header class="is-pulled-right card-header">
+                                        <p class="card-header-title">
+                                            <span class="helpIcon icon has-text-info">
+                                                <i class="fas fa-lg fa-question-circle"></i> &nbsp
+                                            </span> <strong>Help</strong>
+                                        </p>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <svg id="legend-svg"></svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="card answerHeader">
+                                    <p class="card-header-title">
+                                        <span class="answer">Answer </span>
+                                    </p>
+
+                                </div>
+
+                                <div class="card answerCard">
+
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <a class="button is-pulled-right submit" id="submitButton"
+                                                disabled>Submit</a>
+
+                                            <span id="nodeAnswer">
+                                                <label><strong>Selected Nodes</strong></label>
+                                                <br />
+                                                <ul id="selectedNodeList">
+                                                    <li> test value</li>
+                                                </ul>
+                                                <p class='errorMsg' style=display:none></p>
+                                                <br />
+
+                                            </span>
+
+                                            <span id="valueAnswer">
+                                                <label><strong>Enter Answer Below</strong></label>
+                                                <br />
+                                                <input class="input" type="text" placeholder="answer text"
+                                                    id="answerBox">
+                                                <br />
+                                                <p class='errorMsg' style=display:none></p>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="card trialSection" id="feedbackCard">
+
+
+                                <div class="card-content">
+                                    <div class="content">
+
+                                        <a id="nextTrialTask" class="button is-pulled-right">Next Practice Task</a>
+
+                                        <span id="trialFeedback">
+                                            <span class='errorMsg'>Try again.</span>
+                                            <span class='correctMsg'>You got it!</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+
+                            </div>
 
                             <div class="card taskMenu">
                                 <header class="card-header">
@@ -194,7 +197,7 @@
                                     <section class="modal-card-body">
                                         <div class="content">
 
-                                                <!-- <p><strong>  On a scale of 1 (easy) to 7 (hard), how hard was this task?</strong></p> -->
+                                            <!-- <p><strong>  On a scale of 1 (easy) to 7 (hard), how hard was this task?</strong></p> -->
 
 
                                             <div class="control">
@@ -241,67 +244,69 @@
                                     </section>
 
                                     <header class="modal-card-head">
-                                            <p class="modal-card-title">
-                                                On a scale of 1 (not confident) to 7 (confident),
-                                                how <br />  confident are you with your answer?
-                                            </p>
-                                        </header>
-                                        <section class="modal-card-body">
-                                            <div class="content">
+                                        <p class="modal-card-title">
+                                            On a scale of 1 (not confident) to 7 (confident),
+                                            how <br /> confident are you with your answer?
+                                        </p>
+                                    </header>
+                                    <section class="modal-card-body">
+                                        <div class="content">
 
-                                                    <!-- <p><strong> On a scale of 1 (not confident) to 7 (confident), how confident are you with your answer?</strong></p> -->
+                                            <!-- <p><strong> On a scale of 1 (not confident) to 7 (confident), how confident are you with your answer?</strong></p> -->
 
-                                                <div class="control">
-    
-                                                    <!-- <strong>easy</strong> -->
-                                                    not confident
-    
-                                                    <span id="easyHardRating">
-                                                        <label class="radio">
-                                                            <input type="radio" name="confidence" value="1">
-                                                            1
-                                                        </label>
-                                                        <label class="radio">
-                                                            <input type="radio" name="confidence" value="2">
-                                                            2
-                                                        </label>
-                                                        <label class="radio">
-                                                            <input type="radio" name="confidence" value="3">
-                                                            3
-                                                        </label>
-                                                        <label class="radio">
-                                                            <input type="radio" name="confidence" value="4">
-                                                            4
-                                                        </label>
-                                                        <label class="radio">
-                                                            <input type="radio" name="confidence" value="5">
-                                                            5
-                                                        </label>
-                                                        <label class="radio">
-                                                            <input type="radio" name="confidence" value="6">
-                                                            6
-                                                        </label>
-                                                        <label class="radio">
-                                                            <input type="radio" name="confidence" value="7">
-                                                            7
-                                                        </label>
-    
-                                                    </span>
-                                                    <!-- <strong>hard</strong> -->
-                                                    confident
-    
-                                                </div>
-                                                <br />
-                                                
-                                                <p><strong>Enter any additional feedback in the text area below.</strong></p>
-                                                <textarea class="textarea"
-                                                    placeholder="Enter any additional information here"></textarea>
-    
-                                                <p class='errorMsg' style=display:none>Please select a rating for both difficulty and confidence before proceeding.</p>
-    
-    
+                                            <div class="control">
+
+                                                <!-- <strong>easy</strong> -->
+                                                not confident
+
+                                                <span id="easyHardRating">
+                                                    <label class="radio">
+                                                        <input type="radio" name="confidence" value="1">
+                                                        1
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="confidence" value="2">
+                                                        2
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="confidence" value="3">
+                                                        3
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="confidence" value="4">
+                                                        4
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="confidence" value="5">
+                                                        5
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="confidence" value="6">
+                                                        6
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input type="radio" name="confidence" value="7">
+                                                        7
+                                                    </label>
+
+                                                </span>
+                                                <!-- <strong>hard</strong> -->
+                                                confident
+
                                             </div>
-                                        </section>
+                                            <br />
+
+                                            <p><strong>Enter any additional feedback in the text area below.</strong>
+                                            </p>
+                                            <textarea class="textarea"
+                                                placeholder="Enter any additional information here"></textarea>
+
+                                            <p class='errorMsg' style=display:none>Please select a rating for both
+                                                difficulty and confidence before proceeding.</p>
+
+
+                                        </div>
+                                    </section>
                                     <footer class="modal-card-foot">
                                         <a href="#" id="nextTask" class="button is-pulled-right">Next Task</a>
                                     </footer>
@@ -616,19 +621,18 @@
 
             <header class="modal-card-head">
                 <p class="modal-card-title">
-                   Let's start of with some Practice Tasks! <span>
+                    Let's start of with some Practice Tasks <span>
                 </p>
             </header>
             <section class="modal-card-body">
                 <div class="content">
-                    
-                    <p>In this section, you will get familiar with the visualization by answering three practice tasks. You will only be allowed to proceed once you have 
-                        answered those questions correctly to make sure that you understand the encodings and how to interact with the visualization. </p>
+
+                    <p>In this section, you will get familiar with the visualization by answering three practice tasks.
+                        You will only be allowed to proceed once you have
+                        answered those questions correctly to make sure that you understand the encodings and how to
+                        interact with the visualization. </p>
 
                     <p>You are not being timed for this portion of the study so take your time!</p>
-
-                    <p> Let's jump in! </p>
-
 
                 </div>
             </section>
@@ -647,24 +651,29 @@
 
             <header class="modal-card-head">
                 <p class="modal-card-title">
-                   Ok, let's get started! <span style="font-size:14px"> (just a few quick notes before we jump in) <span>
+                    Ok, let's get started! <span style="font-size:14px"> (just a few quick notes before we jump in)
+                        <span>
                 </p>
             </header>
             <section class="modal-card-body">
                 <div class="content">
-                    
-                    <p>You will be presented with <strong>15 tasks</strong> in <em>random order of difficulty</em>. The survey should take approximately 45 minutes to complete</p>
 
-                    <p>After each task you will be asked to rate how hard the task was and how confident you are in your answer. This information will help us 
-                    interpret the results more accurately. 
+                    <p>You will be presented with <strong>15 tasks</strong> in <em>random order of difficulty</em>. The
+                        survey should take approximately 45 minutes to complete</p>
 
-                    <p>Any comments in the feedback box will also be helpful for us to understand what you found particularly challenging or easy. </p>
+                    <p>After each task you will be asked to rate how hard the task was and how confident you are in your
+                        answer. This information will help us
+                        interpret the results more accurately.
 
-                    <p> Remember you can always consult the <span class="icon has-text-info">
-                        <i class="fas fa-lg fa-question-circle"></i> &nbsp
-                    </span> <strong>Help</strong> button on the left panel to revisit the available interactions and main encodings.</p>
+                        <p>Any comments in the feedback box will also be helpful for us to understand what you found
+                            particularly challenging or easy. </p>
 
-                    <p> Let's get started! </p>
+                        <p> Remember you can always consult the <span class="icon has-text-info">
+                                <i class="fas fa-lg fa-question-circle"></i> &nbsp
+                            </span> <strong>Help</strong> button on the left panel to revisit the available interactions
+                            and main encodings.</p>
+
+                        <p> Let's get started! </p>
 
 
                 </div>
@@ -675,7 +684,7 @@
             </footer>
         </div>
     </div>
-
+    
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -691,11 +700,10 @@
 
 
 <script>
-
     function getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&*#]*)/gi, function (m, key, value) {
-            console.log(key,value)
+            console.log(key, value)
             vars[key] = value;
         });
         return vars;
@@ -722,28 +730,28 @@
             shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = false;
-            trials=false;
+            trials = false;
             break;
         case 'develop':
             track = track || true;
             shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = configPanel || false;
-            trials= trials || true;
+            trials = trials || true;
             break;
         case 'study':
             track = true;
             shuffleTasks = true;
             taskMenu = false;
             configPanel = false;
-            trials=true;
+            trials = true;
             break;
         case 'test':
-            track = track || false;
+            track = track || true;
             shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = configPanel || false;
-            trials= trials || true;
+            trials = trials || true;
             break;
     }
 
@@ -753,59 +761,101 @@
     configPanel = eval(configPanel);
     trials = eval(trials);
 
-    participantCollection = mode + '_participants'
+    participantCollection = mode + '_participants';
 
-    //Only assign a vis if it has been passed in as a parameter
-    if (vis !== undefined) {
-        vis = vis.includes('nodeLink') ? "nodeLink" : vis.includes('adjMatrix') ? 'adjMatrix' : undefined;
+    //remove ui components that are not relevant
+    if (!configPanel) {
+        d3.selectAll('.development').remove();
     }
 
-    (async function () {
-            //connect to firestore;
-            fireStore.connect();
+    if (!taskMenu) {
+        d3.select('.taskMenu').remove();
+    }
 
-            let sequence;
 
-            switch (mode) {
-                case 'heuristics':
-                    sequence = [
-                        'modules/hit.html',
-                        'modules/submit.html'
-                    ];
-                    break;
-                case 'study':
-                    sequence = [
-                        'modules/consent.html',
-                        'modules/training.html',
-                        'modules/trials.html',
-                        'modules/hit.html',
-                        'modules/submit.html'
-                    ]
-                    break;
-                case 'test':
+    //connect to firestore;
+    fireStore.connect();
 
-                sequence = ['modules/training.html'];
+    let sequence;
 
-                    sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
-                    
-                    sequence = sequence.concat([
-                        'modules/hit.html',
-                        'modules/submit.html'
-                    ])
-                    break;
-                case 'develop':
+    switch (mode) {
+        case 'heuristics':
+            workerID = makeid(6);
+            break;
+        case 'develop':
+            workerID = 'DevelopUser';
+            break;
+        case 'test':
+            workerID = 'TestUser';
+            break;
+    }
 
-                sequence = trials ? ['modules/trials.html'] : [];
-                    
-                    sequence = sequence.concat( [
-                        'modules/hit.html',
-                        'modules/submit.html'
-                    ])
-            }
+ 
 
-            experimentr.sequence(sequence).start();
+    //set up  user on firestore to track answers and usage;
+    if (track) {
+
+        if (mode !== 'study') {
+
+               //start tracking user interaction with study_provenance
+                setUpStudyProvenance(mode + '  landing page');
+
+            let screenSize = {
+                availWidth: window.screen.availWidth,
+                availHeight: window.screen.availHeight,
+                width: window.screen.width,
+                height: window.screen.height,
+                colorDepth: window.screen.colorDepth,
+                pixelDepth: window.screen.pixelDepth
+            };
+
+            db.collection(participantCollection).doc(workerID).set({
+                screenSize,
+                completionCode: makeid(6),
+                startTime:new Date().toString()
+            }, {
+                merge: true
+            });
         }
+    }
 
 
-    )();
+    switch (mode) {
+        case 'heuristics':
+            sequence = [
+                'modules/hit.html',
+                'modules/submit.html'
+            ];
+            break;
+        case 'study':
+            sequence = [
+                'modules/consent.html',
+                'modules/training.html',
+                'modules/trials.html',
+                'modules/hit.html',
+                'modules/submit.html'
+            ]
+            break;
+        case 'test':
+
+            sequence = ['modules/training.html'];
+
+            sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
+
+            sequence = sequence.concat([
+                'modules/hit.html',
+                'modules/submit.html'
+            ])
+            break;
+        case 'develop':
+
+            sequence = trials ? ['modules/trials.html'] : [];
+
+            sequence = sequence.concat([
+                'modules/hit.html',
+                'modules/submit.html'
+            ])
+    }
+
+    experimentr.sequence(sequence).start();
 </script>

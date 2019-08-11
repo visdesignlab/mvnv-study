@@ -16,6 +16,36 @@ let studyTracking = {
 };
 
 let provenance;
+let app;
+
+//new provenance graph to keep track of all non-vis related interactions. answer attempts during trial questions, time on each section, accessing the help button, etc.
+let studyProvenance; 
+let studyApp;
+
+function setUpStudyProvenance(label){
+
+  const initialState = {
+     workerID, //gets value from global workerID variable
+     event:label,//string describing what event triggered this state update; same as the label in provenance.applyAction
+     time:new Date().toString(),//timestamp for the current state of the graph;
+     startTime:new Date().toString()//timestamp for the current state of the graph;
+
+    };
+    
+    function study(provenance) {
+      return {
+        currentState: () => provenance.graph().current.state
+      };
+    }
+    
+    //set global variables
+    studyProvenance = ProvenanceLibrary.initProvenance(initialState);
+    studyApp = study(studyProvenance);
+
+
+    //push initial state to firestore
+    pushProvenance(studyApp.currentState(),true,'participant_actions')
+}
 //  SET LISTENER FOR CTRL OR COMMAND Z AND CALL PROVENANCE.GOBACKONESTEP();
 //  SET LISTENER FOR CTRL OR COMMAND F AND focus the search box;
 
@@ -68,7 +98,12 @@ var tabFocus = (function(){
 
 tabFocus(function(){
   //start counting 'unfocus time' and add to current taskObject;
-  document.title = tabFocus() ? 'Visible' : 'Not visible';
+  if (tabFocus()){
+    updateStudyProvenance('Focused Tab')
+  } else {
+    updateStudyProvenance('Unfocused Tab')
+  }
+  // document.title = tabFocus() ? 'Visible' : 'Not visible';
 });
 
 //common data validation and submission code
@@ -144,6 +179,34 @@ function checkAnswer(answer){
   return true ;
 }
 
+//function to push non-vis related actions (like clicking on the help button or starting or finishing the trials) to the studyProvenance graph;
+function updateStudyProvenance(label){
+
+  if (track){
+      let action = {
+        label,
+        action: () => {
+          const currentState = studyApp.currentState();
+
+          currentState.elapsedSecondsSinceLastAction = (Date.parse(new Date()) - Date.parse(currentState.time))/1000;
+          currentState.totalElapsedMinutes = Math.round((Date.parse(new Date()) - Date.parse(currentState.startTime))/600)/100;
+
+                    //add time stamp to the state graph
+          currentState.time = new Date().toString()
+          //Add label describing what the event was
+          currentState.event = label;
+          //Add flag for what task user is on
+          currentState.task = taskList ? taskList[currentTask].taskID : undefined;
+
+          return currentState;
+        },
+        args: []
+      };
+  
+      studyProvenance.applyAction(action);
+      pushProvenance(studyApp.currentState(),false,'participant_actions');
+  }
+}
 // Set submit button callback.
 d3.select("#submitButton").on("click", async function() {
 
@@ -161,13 +224,18 @@ d3.select("#submitButton").on("click", async function() {
 
   //force validate answer;
 
+  let isValid, errorMsg;
   if (flexibleAnswer) {
-    let isValid = validateAnswer(task.answer, "nodes", true);
+      let [isValid2,errorMSg2] = validateAnswer(task.answer, "nodes", true);
+      isValid = isValid2; errorMsg = errorMSg2;
     if (task.replyType.includes("value")) {
-      let validateValue = validateAnswer(task.answer, "value", true);
+      let [validateValue,a] = validateAnswer(task.answer, "value", true);
       isValid = isValid && validateValue;
     }
     if (!isValid) {
+
+      updateStudyProvenance('submitted incorrect answer :  ' + errorMsg)
+
       return;
     }
   }
@@ -190,7 +258,6 @@ d3.select("#submitButton").on("click", async function() {
 
   if (track){
     if (vis === "nodeLink") {
-      //   updateState('Finished Task');
       let action = {
         label: "Finished Task",
         action: () => {
@@ -222,7 +289,6 @@ d3.select("#submitButton").on("click", async function() {
       window.controller.model.provenance.applyAction(action);
       pushProvenance(window.controller.model.app.currentState());
     }
-
   }
  
 
@@ -237,14 +303,19 @@ d3.select("#submitButton").on("click", async function() {
      d3.select(".modalFeedback").classed("is-active", true);
    } 
 
+   updateStudyProvenance('submitted correct answer')
+
 });
 
 d3.selectAll(".helpIcon").on("click", () => {
   d3.select(".quickStart").classed("is-active", true);
+  updateStudyProvenance('opened Help')
+
 });
 
 d3.selectAll("#closeModal").on("click", () => {
   d3.select(".quickStart").classed("is-active", false);
+  updateStudyProvenance('closed Help')
 });
 
 
@@ -269,36 +340,35 @@ d3.select('#nextTrialTask').on("click",async ()=>{
     currentTask = currentTask + 1;
     //set startTime for next task;
     taskList[currentTask].startTime = new Date().toString();
+    updateStudyProvenance('ended Task')
+
     resetPanel();
+
   } else {
     d3.select(".hit").style("display", "none");
+    // if (track){
 
-   
+    //   let participant = await db
+    //   .collection(participantCollection)
+    //   .doc(workerID)
+    //   .get();
 
-    if (track){
+    // let endTrialsTime = new Date().toString()
+    // let startTrialsTime = participant.data().startTrialsTime;
 
-      let participant = await db
-      .collection(participantCollection)
-      .doc(workerID)
-      .get();
-
-
-    let endTrialsTime = new Date().toString()
-    let startTrialsTime = participant.data().startTrialsTime;
-
-
-      //update endTime in database;
-      db.collection(participantCollection)
-      .doc(workerID)
-      .set(
-        {
-          endTrialsTime,
-          minutesToCompleteTrials: Math.round((Date.parse(endTrialsTime) - Date.parse(startTrialsTime)) / 60000) //60000 milliseconds in a minute
-        },
-        { merge: true }
-      );
-    }
-  
+    //   //update endTime in database;
+    //   db.collection(participantCollection)
+    //   .doc(workerID)
+    //   .set(
+    //     {
+    //       endTrialsTime,
+    //       minutesToCompleteTrials: Math.round((Date.parse(endTrialsTime) - Date.parse(startTrialsTime)) / 60000) //60000 milliseconds in a minute
+    //     },
+    //     { merge: true }
+    //   );
+    // }
+    
+    updateStudyProvenance('ended trials')
     experimentr.next();
   }
 
@@ -358,11 +428,17 @@ d3.select("#nextTask").on("click", async () => {
 
   }
   
+  updateStudyProvenance('ended task - submitted feedback')
+
   //increment current task;
   if (currentTask < taskList.length - 1) {
+
+
+
     currentTask = currentTask + 1;
     //set startTime for next task;
     taskList[currentTask].startTime = new Date().toString()
+
     resetPanel();
     d3.select(".modalFeedback").classed("is-active", false);
   } else {
@@ -390,7 +466,7 @@ d3.select("#nextTask").on("click", async () => {
         { merge: true }
       );
     }
-  
+    updateStudyProvenance('ended Study')
     experimentr.next();
   }
 });
@@ -404,6 +480,8 @@ d3.selectAll(".taskShortcut").on("click", function() {
 });
 
 async function resetPanel() {
+
+  updateStudyProvenance('started Task')
 
   let task = taskList[currentTask];
   task.startTime = new Date().toString();
@@ -480,15 +558,18 @@ async function resetPanel() {
   }
 }
 
-async function pushProvenance(provGraph,initialState = false) {
+async function pushProvenance(provGraph,initialState = false, collectionName) {
 
   //Only push provenance is tracking is set to true;
   if (!track){
     return;
   }
 
-  let collectionName = onTrials ? 'trial_provenance' :  'provenance'
-  let docID = workerID + '_'+ taskList[currentTask].taskID
+  let overallStudyProvenance = collectionName ? true : false ;
+  collectionName = overallStudyProvenance ? collectionName : (onTrials ? 'trial_provenance' :  'provenance')
+
+  //create a single provenanceDoc for each user when capturing overall study timing, create a task specific one for capturing vis specific interactions;
+  let docID = overallStudyProvenance ? workerID : workerID + '_'+ taskList[currentTask].taskID
   // Push the latest provenance graph to the firestore.
   let provGraphDoc = await db
     .collection(collectionName)
@@ -509,16 +590,14 @@ async function pushProvenance(provGraph,initialState = false) {
     );
   } else {
     let docRef = db.collection(collectionName).doc(docID);
+
     // only update if document exists and this is not the initial push
     if (doc && !initialState) {
-      console.log('trying to update', provGraph)
       docRef.update({
         provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
       });
       
     } else {
-      console.log('trying to set', provGraph)
-
       docRef.set({
         provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
       });
@@ -674,7 +753,7 @@ function validateAnswer(answer, errorCheckField, force = false) {
     .style("display", !isValid ? "inline" : "none")
     .text(errorMsg);
 
-  return isValid;
+  return [isValid,errorMsg];
 }
 
 
@@ -805,7 +884,7 @@ async function loadTasks(visType,tasksType) {
 
   let taskListEntries = Object.entries(taskListObj);
 
-  if (shuffleTasks) {
+  if (shuffleTasks && !onTrials) {
     //Randomly order the tasks.
     shuffle(taskListEntries);
   }

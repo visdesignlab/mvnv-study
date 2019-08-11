@@ -154,7 +154,9 @@
   <script>
     (async function () {
 
-      if (track){
+      updateStudyProvenance('started Feedback')
+
+     
         let participant = await db.collection(participantCollection).doc(workerID).get();
       let participantCode = participant.data().completionCode;
 
@@ -166,11 +168,8 @@
                     endTime,
                     minutesToComplete:(Date.parse(endTime)-Date.parse(startTime))/60000 //60000 milliseconds in a minute 
         });
-      }
       
-
-
-
+      
       //set callback for submit button (check that all radiobuttons are checked. Text box responses are optional? )
 
       d3.select('#submitFeedback').on("click", function(){
@@ -227,10 +226,12 @@
             d3.select('#codeBox').style('display','inline')
             d3.select('#postId').text(participantCode)
 
+            updateStudyProvenance('submitted feedback')
+
+
           } else {
             //display error msg;
             d3.select('#invalidAnswer').style('display', 'inline');
-
           }
           
       })

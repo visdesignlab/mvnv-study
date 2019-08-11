@@ -14,46 +14,14 @@
 
     onTrials = true;
     experimentr.hideNext();
+
+    
     await loadTasks(vis, 'trials');
 
-    //set up  user on firestore to track answers and usage;
-    if (track) {
-
-      switch (mode) {
-        case 'heuristics':
-          debugger;
-          //shouldn't be here in heuristics mode
-          break;
-        case 'develop':
-          workerID = 'DevelopUser';
-          break;
-      }
-
-      if (mode !== 'study') {
-        let screenSize = {
-          availWidth: window.screen.availWidth,
-          availHeight: window.screen.availHeight,
-          width: window.screen.width,
-          height: window.screen.height,
-          colorDepth: window.screen.colorDepth,
-          pixelDepth: window.screen.pixelDepth
-        };
-
-        db.collection(participantCollection).doc(workerID).set({
-          screenSize,
-          completionCode: makeid(6),
-          startTrialsTime: new Date().toString()
-        }, {
-          merge: true
-        });
-      }
+    if (track){
       trackResults('trial_results');
     }
 
-    //remove ui components that are not relevant
-    if (!configPanel) {
-      d3.selectAll('.development').remove();
-    }
 
     if (!taskMenu) {
       d3.select('.taskMenu').remove();
@@ -69,8 +37,10 @@
       // included script already auto loads the vis. 
     }
 
+    updateStudyProvenance('started trials')
+
     resetPanel();
-    // experimentr.startTimer('exploration');
+
 
   });
 </script>

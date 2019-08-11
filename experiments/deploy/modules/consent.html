@@ -125,13 +125,17 @@
                     return;              
                 }
 
-            
                 //set global variable to be the santizied version of the input workerID; 
                 workerID = sanitizeWorkerID(data.workerId);
+
+                //start tracking user interaction with study_provenance
+                setUpStudyProvenance('signed consent form');
+
                 db.collection(participantCollection).doc(workerID).set({
                     screenSize,
-                    startTrialsTime: new Date().toString(),
-                    completionCode:makeid(6)
+                    completionCode:makeid(6),
+                    startTime:new Date().toString()
+
                 },{merge:true}); 
 
                 experimentr.next();

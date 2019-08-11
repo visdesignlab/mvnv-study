@@ -3,69 +3,34 @@
 
 <script>
   (function () {
-
     experimentr.hideNext();
 
     onTrials = false;
 
-     //remove ui components that are not relevant
-     if (!configPanel) {
-        d3.selectAll('.development').remove();
-      }
+    d3.selectAll('.trialSection').remove();
 
-      if (!taskMenu) {
-        d3.select('.taskMenu').remove();
-      }
-    
-      d3.selectAll('.trialSection').remove();
+    if (mode !== 'heuristics') {
+      d3.select('.modalStartStudy').classed('is-active', true);
+    } else {
+      startStudy();
+    }
 
+    d3.select('#startSurvey').on('click',startStudy)
 
-    //turn on 'welcome modal' 
-    d3.select('.modalStartStudy').classed('is-active', true);
-
-    d3.select('#startSurvey').on('click', async function () {
+    async function startStudy() {
 
       d3.select('.modalStartStudy').classed('is-active', false);
 
       await loadTasks(vis, 'study');
 
-    console.log('here')
       //set up  user on firestore to track answers and usage;
       if (track) {
-
-        //no workerID neede for test mode since those interactions are not tracked. Study mode has the workerID set up in the consentForm
-        switch (mode) {
-          case 'heuristics':
-            workerID = makeid(6);
-            break;
-          case 'develop':
-            workerID = 'DevelopUser';
-            break;
-        }
-        //test mode is not tracked and study mode has this set up in the consentForm
-        if (mode == 'develop' || 'heuristics') {
-          let screenSize = {
-            availWidth: window.screen.availWidth,
-            availHeight: window.screen.availHeight,
-            width: window.screen.width,
-            height: window.screen.height,
-            colorDepth: window.screen.colorDepth,
-            pixelDepth: window.screen.pixelDepth
-          };
-
-          db.collection(participantCollection).doc(workerID).set({
-            screenSize,
-            completionCode:makeid(6),
-            startTime: new Date().toString()
-          },{merge:true});
-        }
-
         trackResults('results');
       }
 
       d3.select('.hit').style('display', 'inline');
 
-      if (taskMenu){
+      if (taskMenu) {
         d3.select('.taskMenu').style('display', 'block');
       }
       if (vis === 'nodeLink') {
@@ -74,8 +39,9 @@
         // included script already auto loads the vis. 
       }
 
+      updateStudyProvenance('started study')
       resetPanel();
-    })
+    }
 
 
   })()

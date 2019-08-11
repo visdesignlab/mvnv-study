@@ -17,8 +17,6 @@
 
     </section>
     <section class ="section">
-
-
         <div class='carousel carousel-animated carousel-animate-slide' data-size="1">
                 <div class='carousel-container'>
 
@@ -72,8 +70,10 @@
 <script src="js/carousel-js.js"></script>
 
 <script>
-  
-    d3.select('#training').on('click', function(){experimentr.next()});
+    updateStudyProvenance('started training')
+    d3.select('#training').on('click', function(){
+      updateStudyProvenance('finished training')
+      experimentr.next()});
     experimentr.hideNext()
 </script>
 
