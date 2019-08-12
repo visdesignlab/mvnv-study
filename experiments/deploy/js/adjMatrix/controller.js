@@ -40,7 +40,7 @@ var Controller = /** @class */ (function () {
         this.hoverCol = {};
         this.datumID = 'id';
         this.clickedCells = new Set();
-        this.loadClearButton();
+        //this.loadClearButton();
         this.loadTasks();
         this.sizeLayout();
     }
@@ -118,35 +118,33 @@ var Controller = /** @class */ (function () {
             });
         });
     };
-    Controller.prototype.loadClearButton = function () {
+    Controller.prototype.clear = function () {
         var _this = this;
-        d3.select('#clearButton').on('click', function () {
-            var action = {
-                label: 'clear',
-                action: function () {
-                    var currentState = _this.model.app.currentState();
-                    //add time stamp to the state graph
-                    currentState.time = Date.now();
-                    currentState.event = 'clear';
-                    console.log("before Clear:", currentState);
-                    currentState.selections = {
-                        answerBox: {},
-                        attrRow: {},
-                        rowLabel: {},
-                        colLabel: {},
-                        cellcol: {},
-                        cellrow: {},
-                        search: {},
-                        neighborSelect: {}
-                    };
-                    console.log("after Clear:", currentState);
-                    return currentState;
-                },
-                args: []
-            };
-            _this.model.provenance.applyAction(action);
-            //pushProvenance(this.model.app.currentState())
-        });
+        var action = {
+            label: 'clear',
+            action: function () {
+                var currentState = _this.model.app.currentState();
+                //add time stamp to the state graph
+                currentState.time = Date.now();
+                currentState.event = 'clear';
+                console.log("before Clear:", currentState);
+                currentState.selections = {
+                    answerBox: {},
+                    attrRow: {},
+                    rowLabel: {},
+                    colLabel: {},
+                    cellcol: {},
+                    cellrow: {},
+                    search: {},
+                    neighborSelect: {}
+                };
+                console.log("after Clear:", currentState);
+                return currentState;
+            },
+            args: []
+        };
+        this.model.provenance.applyAction(action);
+        //pushProvenance(this.model.app.currentState())
     };
     Controller.prototype.sizeLayout = function () {
         var targetDiv = d3.select("#targetSize");

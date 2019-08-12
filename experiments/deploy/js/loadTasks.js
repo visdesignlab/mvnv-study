@@ -91,7 +91,7 @@ function screenTest(width, height) {
 
 //If there is a value, check for validity
 d3.select("#answerBox").on("input", function() {
-  updateAnswer(d3.select(this).property("value"));
+  updateAnswer(d3.select("#answerBox").property("value"));
 });
 
 //function that updates the answer in the side panel as well as in the results field in tasks
@@ -148,7 +148,7 @@ function checkAnswer(answer){
 d3.select("#submitButton").on("click", async function() {
 
   //Enforce 'disabled' behavior on this 'button'
-  if (d3.select(this).attr("disabled")) {
+  if (d3.select("#submitButton").attr("disabled")) {
     return;
   }
 
@@ -304,6 +304,8 @@ d3.select('#nextTrialTask').on("click",async ()=>{
 
 })
 //set up callback for 'next Task';
+console.log('nextTask!')
+
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
 
@@ -396,10 +398,10 @@ d3.select("#nextTask").on("click", async () => {
 });
 
 //set up callback for taskShortcuts
-
+console.log('taskShortcut!')
 d3.selectAll(".taskShortcut").on("click", function() {
   //set new currentTask then call resetPanel;
-  currentTask = taskList.findIndex(t => t.taskID == d3.select(this).attr("id"));
+  currentTask = taskList.findIndex(t => t.taskID == d3.select(".taskShortcut").attr("id"));
   resetPanel();
 });
 
@@ -543,7 +545,7 @@ async function loadNewGraph(fileName) {
   // console.log(graph.links)
 //
   //update the datalist associated to the search box (in case the nodes in the new graph have changed)
- if (vis === 'nodeLink'){
+ //if (vis === 'nodeLink'){
   d3.select("#search-input").attr("list", "characters");
   let inputParent = d3.select("#search-input").node().parentNode;
 
@@ -571,7 +573,7 @@ async function loadNewGraph(fileName) {
   // options.attr('onclick',"console.log('clicked')");
 
   // options.on("click",console.log('clicked an option!'))
- }
+ //}
 
 }
 
@@ -916,37 +918,42 @@ d3.select("#clear-selection").on("click", () => {
 
   d3.select('.searchInput')
   .property('value','')
+  if(vis == 'nodeLink'){
+    let action = {
+      label: "cleared all selected nodes",
+      action: () => {
+        const currentState = app.currentState();
+        //add time stamp to the state graph
+        currentState.time = new Date().toString()
+        //Add label describing what the event was
+        currentState.event = "cleared all selected nodes";
+        //Update actual node data
+        currentState.selected = [];
+        currentState.userSelectedNeighbors = {};
+        return currentState;
+      },
+      args: []
+    };
 
-  let action = {
-    label: "cleared all selected nodes",
-    action: () => {
-      const currentState = app.currentState();
-      //add time stamp to the state graph
-      currentState.time = new Date().toString()
-      //Add label describing what the event was
-      currentState.event = "cleared all selected nodes";
-      //Update actual node data
-      currentState.selected = [];
-      currentState.userSelectedNeighbors = {};
-      return currentState;
-    },
-    args: []
-  };
+    provenance.applyAction(action);
+    pushProvenance(app.currentState());
+  } else {
+    window.controller.clear();
+  }
 
-  provenance.applyAction(action);
-  pushProvenance(app.currentState());
 
   // d3.select('#clear-selection').attr('disabled', true)
 });
+console.log(d3.select("#search-input"), "search loading");
 
-d3.select("#search-input").on("change", function() {
+let val = d3.select("#search-input").on("change", function() {
 
   // let selectedOption = d3.select(this).property("value");
-
-  let selectedOption = d3.select(this).property("value").trim();
-
+  //this = d3.select("#search-input"); // resets context
+  let selectedOption = d3.select("#search-input").property("value").trim();
+  console.log(selectedOption);
   //in case there are just spaces, this will reset it to 'empty'
-  d3.select(this).property("value",selectedOption);
+  d3.select("#search-input").property("value",selectedOption);
 
 
     //empty search box;
@@ -956,7 +963,7 @@ d3.select("#search-input").on("change", function() {
       return;
     }
 
-  let searchSuccess = vis == 'nodeLink' ?  searchFor(selectedOption): console.log('hi'); window.controller.view.search(selectionOption);
+  let searchSuccess = (vis === 'nodeLink') ?  searchFor(selectedOption): console.log('hi'); window.controller.view.search(selectedOption);
 
   //  if (searchSuccess === -1){
   //    d3.select('.searchMsg')
@@ -980,6 +987,7 @@ d3.select("#search-input").on("change", function() {
 
 });
 
+console.log(val);
 d3.select('#searchButton').on("click",function(){
 
   let selectedOption = d3.select('.searchInput').property("value").trim();
@@ -992,7 +1000,7 @@ d3.select('#searchButton').on("click",function(){
     return
   }
 
-    let searchSuccess = searchFor(selectedOption);
+    let searchSuccess = vis == 'nodeLink' ?  searchFor(selectedOption): console.log('hi'); window.controller.view.search(selectedOption);
 
     if (searchSuccess === -1){
       d3.select('.searchMsg')

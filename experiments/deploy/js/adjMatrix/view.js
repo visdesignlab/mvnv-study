@@ -64,13 +64,13 @@ var View = /** @class */ (function () {
      * @return            1 if short name was found, 0 if already selected, -1 if not found
      */
     View.prototype.search = function (searchNode) {
-        var selectedOption = searchNode; //d3.select(nodes[i]).property("value");
+        var selectedOption = searchNode.toLowerCase(); //d3.select(nodes[i]).property("value");
         console.log(selectedOption);
         if (selectedOption.length === 0) {
             return;
         }
         //find the right nodeObject
-        var name = this.nodes.filter(function (node) { return node.shortName == selectedOption; });
+        var name = this.nodes.filter(function (node) { return node.shortName.toLowerCase() == selectedOption; });
         if (name[0] == null || name[0][this.datumID] == '')
             return -1; // node was not found
         name = name[0][this.datumID];

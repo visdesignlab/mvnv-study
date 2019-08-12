@@ -98,8 +98,8 @@ class View {
    * @param  searchNode string corresponding to the short name to search for.
    * @return            1 if short name was found, 0 if already selected, -1 if not found
    */
-  search(searchNode) {
-    let selectedOption = searchNode//d3.select(nodes[i]).property("value");
+  search(searchNode : string) {
+    let selectedOption = searchNode.toLowerCase()//d3.select(nodes[i]).property("value");
     console.log(selectedOption);
 
     if (selectedOption.length === 0) {
@@ -107,7 +107,7 @@ class View {
     }
 
     //find the right nodeObject
-    let name = this.nodes.filter(node => { return node.shortName == selectedOption });
+    let name = this.nodes.filter(node => { return node.shortName.toLowerCase() == selectedOption});
 
     if (name[0] == null || name[0][this.datumID] == '') return -1; // node was not found
     name = name[0][this.datumID];

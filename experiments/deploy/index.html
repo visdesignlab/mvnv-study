@@ -39,7 +39,7 @@
                               </p>
                   </nav>
 
-                  
+
         <div class="columns" id="visContent">
             <div id="targetSize">
                 <div class="column ">
@@ -57,8 +57,7 @@
                             <div class="card">
                                 <div class="card-content">
                                     <div class="content">
-                                        <div class="nodeLink">
-                                            <!-- <label class="label">Search for Nodes</label> -->
+
                                             <input class="input searchInput" type="text" placeholder="Search for node"
                                                 id="search-input"></input>
                                                 <a class="button is-pulled-right search" id="searchButton">Search</a>
@@ -66,20 +65,13 @@
 
                                                 <a class="button" id="clear-selection">Clear Selections</a>
 
-                                        </div>
 
-                                        <div class="adjMatrix">
-                                          <input class="input searchInput" type="text" placeholder="Search for node"
-                                              id="search-input"></input>
-
-                                            <input type="button" id="clearButton" value="Clear">
-                                        </div>
 
                                     </div>
 
                                 </div>
 
-        
+
                             </div>
                             <div class="card">
                                 <header class="is-pulled-right card-header">
@@ -142,16 +134,16 @@
 
                                         <div class="card-content">
                                             <div class="content">
-        
+
                                                 <a id="nextTrialTask" class="button is-pulled-right">Next Practice Task</a>
-        
+
                                                 <span id="trialFeedback">
                                                     <span class='errorMsg'>Try again.</span>
                                                     <span class='correctMsg'>You got it!</span>
                                                 </span>
                                             </div>
                                         </div>
-        
+
 
                         </div>
 
@@ -248,10 +240,10 @@
                                                     <!-- <p><strong> On a scale of 1 (not confident) to 7 (confident), how confident are you with your answer?</strong></p> -->
 
                                                 <div class="control">
-    
+
                                                     <!-- <strong>easy</strong> -->
                                                     not confident
-    
+
                                                     <span id="easyHardRating">
                                                         <label class="radio">
                                                             <input type="radio" name="confidence" value="1">
@@ -281,21 +273,21 @@
                                                             <input type="radio" name="confidence" value="7">
                                                             7
                                                         </label>
-    
+
                                                     </span>
                                                     <!-- <strong>hard</strong> -->
                                                     confident
-    
+
                                                 </div>
                                                 <br />
-                                                
+
                                                 <p><strong>Enter any additional feedback in the text area below.</strong></p>
                                                 <textarea class="textarea"
                                                     placeholder="Enter any additional information here"></textarea>
-    
+
                                                 <p class='errorMsg' style=display:none>Please select a rating for both difficulty and confidence before proceeding.</p>
-    
-    
+
+
                                             </div>
                                         </section>
                                     <footer class="modal-card-foot">
@@ -616,11 +608,11 @@
             </header>
             <section class="modal-card-body">
                 <div class="content">
-                    
+
                     <p>You will be presented with <strong>15 tasks</strong> in <em>random order of difficulty</em>. The survey should take approximately 45 minutes to complete</p>
 
-                    <p>After each task you will be asked to rate how hard the task was and how confident you are in your answer. This information will help us 
-                    interpret the results more accurately. 
+                    <p>After each task you will be asked to rate how hard the task was and how confident you are in your answer. This information will help us
+                    interpret the results more accurately.
 
                     <p>Any comments in the feedback box will also be helpful for us to understand what you found particularly challenging or easy. </p>
 
@@ -677,7 +669,7 @@
 
     mode = mode || 'heuristics'; //can be 'develop', 'heuristics', or 'study'
 
-    //set default values for any variables not passed in and assign the appropriate database collections; 
+    //set default values for any variables not passed in and assign the appropriate database collections;
 
     switch (mode) {
         case 'heuristics':
@@ -747,7 +739,7 @@
                     break;
                 case 'test':
                     sequence = trials ? ['modules/trials.html'] : [];
-                    
+
                     sequence = sequence.concat([
                         'modules/hit.html',
                         'modules/submit.html'
@@ -756,7 +748,7 @@
                 case 'develop':
 
                 sequence = trials ? ['modules/trials.html'] : [];
-                    
+
                     sequence = sequence.concat( [
                         'modules/hit.html',
                         'modules/submit.html'
