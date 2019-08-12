@@ -51,6 +51,9 @@ class Model {
         },
         'categorical':{
           'd':"M401,330.7H212c-3.7,0-6.6,3-6.6,6.6v116.4c0,3.7,3,6.6,6.6,6.6h189c3.7,0,6.6-3,6.6-6.6V337.4C407.7,333.7,404.7,330.7,401,330.7z M272.9,374.3h-52.4v-17.1h52.4V374.3z M272.9,354h-52.4v-17h52.4V354z M332.1,414.9h-52.4v-17h52.4V414.9z M332.1,394.6h-52.4v-17h52.4V394.6z M394.8,456.5h-52.4v-17h52.4V456.5z M394.8,434.9h-52.4v-17h52.4V434.9z"
+        },
+        'cellSort':{
+          'd':"M115.3,0H6.6C3,0,0,3,0,6.6V123c0,3.7,3,6.6,6.6,6.6h108.7c3.7,0,6.6-3,6.6-6.6V6.6C122,3,119,0,115.3,0zM37.8,128.5H15.1V1.2h22.7V128.5z"
         }
 
       }
@@ -324,7 +327,7 @@ class Model {
    * @param  type A string corresponding to the attribute screen_name to sort by.
    * @return      A numerical range in corrected order.
    */
-  changeOrder(type: string) {
+  changeOrder(type: string, node: boolean = false) {
     let order;
     this.orderType = type;
     this.controller.configuration.adjMatrix.sortKey = type;
@@ -351,9 +354,11 @@ class Model {
     }
     else if (this.orderType == 'edges') {
       order = d3.range(this.nodes.length).sort((a, b) => this.nodes[b][type].length - this.nodes[a][type].length);
+    } else if(node == true){
+      order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a]['shortName'].localeCompare(this.nodes[b]['shortName']));
+      order = d3.range(this.nodes.length).sort((a, b) => {console.log(this.nodes[a],this.nodes[a]['neighbors'],parseInt(type)); return this.nodes[b]['neighbors'].includes(parseInt(type)) - this.nodes[a]['neighbors'].includes(parseInt(type)); });
     }
     else if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
-      order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a][type].localeCompare(this.nodes[b][type]));
     } else {
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
     }

@@ -284,9 +284,9 @@ class Controller {
    * Obtains the order from the model and returns it to the view.
    * @return [description]
    */
-  changeOrder(order: string) {
+  changeOrder(order: string, node : boolean = false) {
     this.configuration.adjMatrix.sortKey = order;
-    return this.model.changeOrder(order);
+    return this.model.changeOrder(order,node);
   }
 }
 
