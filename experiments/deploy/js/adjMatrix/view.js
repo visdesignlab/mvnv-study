@@ -334,13 +334,14 @@ var View = /** @class */ (function () {
     View.prototype.appendEdgeLabels = function () {
         var _this = this;
         var labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5 : 11;
+        this.nodes.length < 50 ? labelSize = labelSize + 2 : null;
         this.edgeRows.append("text")
             .attr('class', 'rowLabel')
             .attr("id", function (d, i) {
             return "rowLabel" + d[i].rowid;
         })
             .attr('z-index', 30)
-            .attr("x", 0)
+            .attr("x", -3)
             .attr("y", this.orderingScale.bandwidth() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
@@ -423,30 +424,61 @@ var View = /** @class */ (function () {
      * @return none
      */
     View.prototype.drawGridLines = function () {
-        /*let gridLines = this.edges
-          .append('g')
-          .attr('class', 'gridLines')
-          .selectAll('line')
-          .data(this.matrix)
-          .enter()
-    
-        gridLines.append('line')
-          .attr("x1", -this.edgeWidth)
-    */
-        // adds column lines
-        this.edgeColumns.append("line")
-            .attr("x1", -this.edgeWidth)
-            .attr("z-index", 10);
-        // append final line to end of topology matrix
-        this.edges
+        var _this = this;
+        var gridLines = this.edges
+            .append('g')
+            .attr('class', 'gridLines');
+        var lines = gridLines
+            .selectAll('line')
+            .data(this.matrix)
+            .enter();
+        lines.append('line')
+            .attr("transform", function (d, i) {
+            return "translate(" + _this.orderingScale(i) + "," + '0' + ")rotate(-90)";
+        })
+            .attr("x1", -this.edgeWidth);
+        /*.attr("stroke-width", 5)
+        .attr('stroke','red')*/
+        lines.append('line')
+            .attr("transform", function (d, i) {
+            return "translate(0," + _this.orderingScale(i) + ")";
+        })
+            .attr("x2", this.edgeWidth + this.margins.right);
+        //.attr("stroke-width", 2)
+        //.attr('stroke','blue')
+        var one = gridLines
             .append("line")
             .attr("x1", this.edgeWidth)
             .attr("x2", this.edgeWidth)
             .attr("y1", 0)
-            .attr("y2", this.edgeHeight);
+            .attr("y2", this.edgeHeight + this.margins.bottom)
+            .style('stroke', '#aaa')
+            .style('opacity', 0.3);
+        var two = gridLines
+            .append("line")
+            .attr("x1", 0)
+            .attr("x2", this.edgeWidth)
+            .attr("y1", this.edgeHeight + this.margins.bottom)
+            .attr("y2", this.edgeHeight + this.margins.bottom)
+            .style('stroke', '#aaa')
+            .style('opacity', 0.3);
+        console.log(one, two);
+        // adds column lines
+        /*this.edgeColumns.append("line")
+          .attr("x1", -this.edgeWidth)
+          .attr("z-index", 10);
+        // append final line to end of topology matrix
+    
+        this.edges
+          .append("line")
+          .attr("x1", this.edgeWidth)
+          .attr("x2", this.edgeWidth)
+          .attr("y1", 0)
+          .attr("y2", this.edgeHeight)
+    
         // append horizontal grid lines
         this.edgeRows.append("line")
-            .attr("x2", this.edgeWidth + this.margins.right);
+        .attr("x2", this.edgeWidth + this.margins.right);*/
     };
     /**
      * Renders the highlight rows and columns for the adjacency matrix.
@@ -524,6 +556,9 @@ var View = /** @class */ (function () {
                         }
                     });
                     return currentState;
+                }
+                else if (interactionName == 'attrRow') {
+                    interactionName;
                 }
                 _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
                 return currentState;
@@ -1408,22 +1443,22 @@ var View = /** @class */ (function () {
         // Draw buttons for alternative sorts
         var initalY = -this.margins.left + 10;
         var buttonHeight = 15;
-        var text = ['name', 'cluster', 'tweets'];
+        var text = ['name', 'cluster', 'interacts'];
         var sortNames = ['shortName', 'clusterLeaf', 'edges'];
         var iconNames = ['alphabetical', 'categorical', 'quant'];
         var _loop_2 = function (i) {
             var button = this_2.edges.append('g')
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
             button.attr('cursor', 'pointer');
-            button.append('rect').attr('width', this_2.margins.left - 10).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1);
+            button.append('rect').attr('width', this_2.margins.left - 5).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1);
             button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
             var path = button.datum([sortNames[i]]);
             var realPath = path
                 .append('path').attr('class', 'sortIcon').attr('d', function (d) {
                 return _this.controller.model.icons[iconNames[i]].d;
             }).style('fill', function () { return sortNames[i] == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-195) + "," + (-320) + ")") /*.on('click', (d,i,nodes) => {
-              this.sort(d);
-            })*/
+            this.sort(d);
+          })*/
                 .attr('cursor', 'pointer');
             console.log(path, realPath);
             button.on('click', function () {

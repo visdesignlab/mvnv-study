@@ -218,3 +218,4 @@ var Controller = /** @class */ (function () {
     };
     return Controller;
 }());
+window.controller = new Controller();

@@ -248,6 +248,7 @@ class Model {
 
     function setUpObservers() {
       let updateHighlights = (state) => {
+        console.log(state);
         d3.selectAll('.clicked').classed('clicked', false);
         d3.selectAll('.answer').classed('answer', false);
         d3.selectAll('.neighbor').classed('neighbor', false);
