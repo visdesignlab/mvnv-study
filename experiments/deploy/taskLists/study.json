@@ -178,7 +178,7 @@
                 "sortKey": "favourites_count"
             },
             "taskID": "task1",
-            "loadedGraph": "small_undirected_singleEdge",
+            "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
             "graphSize": "large",
@@ -375,7 +375,7 @@
                 "sortKey": "followers_count"
             },
             "taskID": "task2",
-            "loadedGraph": "small_undirected_singleEdge",
+            "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
             "graphSize": "large",
@@ -571,7 +571,7 @@
                 "sortKey": "type"
             },
             "taskID": "task3",
-            "loadedGraph": "small_undirected_multiEdge",
+            "loadedGraph": "large_undirected_multiEdge",
             "isDirected": false,
             "isMultiEdge": true,
             "graphSize": "large",
@@ -775,7 +775,7 @@
                 "sortKey": "favourites_count"
             },
             "taskID": "task4",
-            "loadedGraph": "small_undirected_multiEdge",
+            "loadedGraph": "large_undirected_multiEdge",
             "isDirected": false,
             "isMultiEdge": true,
             "graphSize": "large",

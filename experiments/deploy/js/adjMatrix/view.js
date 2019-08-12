@@ -353,7 +353,7 @@ var View = /** @class */ (function () {
         })
             .attr('class', 'colLabel')
             .attr('z-index', 30)
-            .attr("y", 3)
+            .attr("y", this.orderingScale.bandwidth() / 2)
             .attr('x', 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
@@ -1488,7 +1488,7 @@ var View = /** @class */ (function () {
         var bandwidthScale = this.nodes.length < 50 ? (1 / 3) : 2;
         var width = this.orderingScale.bandwidth() * bandwidthScale;
         var numberCategories = this.controller.configuration.attributeScales.node[column].domain.length;
-        var legendItemSize = (this.columnWidths[column] - 5) / (numberCategories + 1.5); ///bandwidth * bandwidthScale;
+        var legendItemSize = (this.columnWidths[column]) / (numberCategories + 1.5); ///bandwidth * bandwidthScale;
         var _loop_3 = function (index) {
             this_3.attributeRows
                 .append('rect')
@@ -1527,6 +1527,7 @@ var View = /** @class */ (function () {
         return;
     };
     View.prototype.generateCategoricalLegend = function (attribute, legendWidth) {
+        var _this = this;
         var numberCategories = this.controller.configuration.attributeScales.node[attribute].domain.length;
         var attributeInfo = this.controller.configuration.attributeScales.node[attribute];
         var dividers = attributeInfo.domain.length;
@@ -1543,15 +1544,15 @@ var View = /** @class */ (function () {
         var margin = marginEquivalents * legendItemSize / dividers;
         var xRange = [];
         var rects = this.attributes.append("g")
-            .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * margin) + "," + (-legendHeight) + ")"); //
-        for (var i = 0; i < dividers; i++) {
+            .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * margin) + "," + (-legendHeight - 5) + ")"); //
+        var _loop_4 = function (i) {
             var rect1 = rects
                 .append('g')
                 .attr('transform', 'translate(' + (i * (legendItemSize + margin)) + ',0)');
             xRange.push({
                 "attr": attribute,
                 "value": attributeInfo.domain[i],
-                "position": (this.columnScale(attribute) + 1 * margin) + (i * (legendItemSize + margin))
+                "position": (this_4.columnScale(attribute) + 1 * margin) + (i * (legendItemSize + margin))
             });
             rect1
                 .append('rect')
@@ -1568,6 +1569,25 @@ var View = /** @class */ (function () {
                 .attr('text-anchor', 'middle')
                 .style('font-size', 11);
             //.attr('transform', 'rotate(-90)')
+            rect1.on('mouseover', function (d, index, nodes) {
+                console.log(attributeInfo.domain[i]);
+                var matrix = nodes[index].getScreenCTM()
+                    .translate(+nodes[index].getAttribute("x"), +nodes[index].getAttribute("y"));
+                _this.tooltip.html(attributeInfo.domain[i])
+                    .style("left", (window.pageXOffset + matrix.e - 45) + "px")
+                    .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+                _this.tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+            })
+                .on('mouseout', function () {
+                _this.tooltip.transition(25)
+                    .style("opacity", 0);
+            });
+        };
+        var this_4 = this;
+        for (var i = 0; i < dividers; i++) {
+            _loop_4(i);
         }
         return xRange;
     };

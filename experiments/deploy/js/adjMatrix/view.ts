@@ -440,7 +440,7 @@ class View {
       })
       .attr('class', 'colLabel')
       .attr('z-index', 30)
-      .attr("y", 3)
+      .attr("y", this.orderingScale.bandwidth() / 2)
       .attr('x', 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
@@ -1777,7 +1777,7 @@ class View {
     let width = this.orderingScale.bandwidth() * bandwidthScale
     let numberCategories = this.controller.configuration.attributeScales.node[column].domain.length
 
-    let legendItemSize = (this.columnWidths[column]-5)/(numberCategories+1.5)///bandwidth * bandwidthScale;
+    let legendItemSize = (this.columnWidths[column])/(numberCategories+1.5)///bandwidth * bandwidthScale;
 
     for (let index = 0; index < placementScaleForAttr.length; index++) {
       this.attributeRows
@@ -1846,7 +1846,7 @@ class View {
     let xRange = [];
 
     let rects = this.attributes.append("g")
-      .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * margin) + "," + (-legendHeight) + ")"); //
+      .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * margin) + "," + (-legendHeight-5) + ")"); //
 
     for (let i = 0; i < dividers; i++) {
       let rect1 = rects
@@ -1875,6 +1875,22 @@ class View {
         .attr('text-anchor', 'middle')
         .style('font-size', 11)
       //.attr('transform', 'rotate(-90)')
+      rect1.on('mouseover',(d,index,nodes)=>{
+        console.log(attributeInfo.domain[i]);
+        let matrix = nodes[index].getScreenCTM()
+          .translate(+nodes[index].getAttribute("x"), +nodes[index].getAttribute("y"));
+
+          this.tooltip.html(attributeInfo.domain[i])
+            .style("left", (window.pageXOffset + matrix.e - 45) + "px")
+            .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+          this.tooltip.transition()
+              .duration(200)
+              .style("opacity", .9);
+      })
+      .on('mouseout',()=>{
+        this.tooltip.transition(25)
+          .style("opacity", 0);
+      })
     }
 
     return xRange;
