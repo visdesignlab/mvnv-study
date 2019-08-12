@@ -1099,7 +1099,7 @@ let val = d3.select("#search-input").on("change", function() {
     return;
   }
 
-  let searchSuccess = (vis === 'nodeLink') ?  searchFor(selectedOption):  window.controller.view.search(selectedOption);
+  let searchSuccess = (vis === 'nodeLink') ?  searchFor(selectedOption): window.controller.view.search(selectedOption);
 
   //  if (searchSuccess === -1){
   //    d3.select('.searchMsg')
