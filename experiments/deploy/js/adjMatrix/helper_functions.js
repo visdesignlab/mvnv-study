@@ -1,4 +1,3 @@
-window.controller = new Controller();
 
 function splitCellNames(name) {
   //remove cell

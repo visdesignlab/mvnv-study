@@ -98,7 +98,7 @@ class View {
    * @param  searchNode string corresponding to the short name to search for.
    * @return            1 if short name was found, 0 if already selected, -1 if not found
    */
-  search(searchNode : string) {
+  search(searchNode: string) {
     let selectedOption = searchNode.toLowerCase()//d3.select(nodes[i]).property("value");
     console.log(selectedOption);
 
@@ -108,14 +108,14 @@ class View {
 
 
     //find the right nodeObject
-    let name = this.nodes.filter(node => { return node.shortName.toLowerCase() == selectedOption});
+    let name = this.nodes.filter(node => { return node.shortName.toLowerCase() == selectedOption });
 
     if (name[0] == null || name[0][this.datumID] == '') return -1; // node was not found
     name = name[0][this.datumID];
 
     let state = this.controller.model.app.currentState();
-    console.log(state.selections.search,state,name);
-    if(name in state.selections.search){
+    console.log(state.selections.search, state, name);
+    if (name in state.selections.search) {
       return 0;
     }
 
@@ -239,13 +239,13 @@ class View {
 
         this.unhoverEdge(cell);
       })
-      .filter(d=>d.interacted != 0 || d.retweet != 0 || d.mentions != 0)
+      .filter(d => d.interacted != 0 || d.retweet != 0 || d.mentions != 0)
       .on('click', (d, i, nodes) => {
         // only trigger click if edge exists
         this.clickFunction(d, i, nodes);
 
       })
-      .attr('cursor','pointer')
+      .attr('cursor', 'pointer')
 
     this.controller.answerRow = {}
     this.controller.hoverRow = {}
@@ -419,21 +419,21 @@ class View {
    */
   appendEdgeLabels() {
     let labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5 : 11;
-
+    this.nodes.length < 50 ? labelSize = labelSize + 2 : null;
     this.edgeRows.append("text")
       .attr('class', 'rowLabel')
       .attr("id", (d, i) => {
         return "rowLabel" + d[i].rowid;
       })
       .attr('z-index', 30)
-      .attr("x", 0)
+      .attr("x", -3)
       .attr("y", this.orderingScale.bandwidth() / 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "end")
       .style("font-size", labelSize)
       .text((d, i) => this.nodes[i].shortName)
-      .on("mouseout", (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)})
-      .on('mouseover', (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)})
+      .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
+      .on('mouseover', (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
       .on('click', (d, i, nodes) => {
         //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
         this.clickFunction(d, i, nodes);
@@ -462,8 +462,8 @@ class View {
           this.clickFunction(d, i, nodes);
         }
       })
-      .on("mouseout", (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)})
-      .on('mouseover', (d,i,nodes)=>{this.mouseOverLabel(d,i,nodes)});
+      .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
+      .on('mouseover', (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) });
   }
   /**
    * renders the relevent highlights for mousing over a label. Logs the interaction
@@ -519,18 +519,50 @@ class View {
    * @return none
    */
   drawGridLines() {
-    /*let gridLines = this.edges
+    let gridLines = this.edges
       .append('g')
       .attr('class', 'gridLines')
+    let lines = gridLines
       .selectAll('line')
       .data(this.matrix)
       .enter()
 
-    gridLines.append('line')
+    lines.append('line')
+      .attr("transform", (d, i) => {
+        return "translate(" + this.orderingScale(i) + "," + '0' + ")rotate(-90)";
+      })
       .attr("x1", -this.edgeWidth)
-*/
+    /*.attr("stroke-width", 5)
+    .attr('stroke','red')*/
+
+    lines.append('line')
+      .attr("transform", (d, i) => {
+        return "translate(0," + this.orderingScale(i) + ")";
+      })
+      .attr("x2", this.edgeWidth + this.margins.right)
+    //.attr("stroke-width", 2)
+    //.attr('stroke','blue')
+
+    let one = gridLines
+      .append("line")
+      .attr("x1", this.edgeWidth)
+      .attr("x2", this.edgeWidth)
+      .attr("y1", 0)
+      .attr("y2", this.edgeHeight + this.margins.bottom)
+      .style('stroke', '#aaa')
+      .style('opacity', 0.3)
+
+    let two = gridLines
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", this.edgeWidth)
+      .attr("y1", this.edgeHeight + this.margins.bottom)
+      .attr("y2", this.edgeHeight + this.margins.bottom)
+      .style('stroke', '#aaa')
+      .style('opacity', 0.3)
+      console.log(one,two)
     // adds column lines
-    this.edgeColumns.append("line")
+    /*this.edgeColumns.append("line")
       .attr("x1", -this.edgeWidth)
       .attr("z-index", 10);
     // append final line to end of topology matrix
@@ -541,9 +573,11 @@ class View {
       .attr("x2", this.edgeWidth)
       .attr("y1", 0)
       .attr("y2", this.edgeHeight)
+
     // append horizontal grid lines
     this.edgeRows.append("line")
-      .attr("x2", this.edgeWidth + this.margins.right);
+    .attr("x2", this.edgeWidth + this.margins.right);*/
+
   }
 
   /**
@@ -1178,7 +1212,7 @@ class View {
       this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
     }
 
-    d3.selectAll('.sortIcon').style('fill','#8B8B8B').filter(d=>d==order).style('fill','#EBB769')
+    d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(d => d == order).style('fill', '#EBB769')
   }
 
   updateCheckBox(state) {
@@ -1649,13 +1683,13 @@ class View {
 
     columnHeaderGroups
     //console.log(this.controller.model.categoricalSortSvg)
-    if(columns.length < 6){
-      let path = columnHeaderGroups.filter(d => { return d !== 'selected' }).append('path').attr('class','sortIcon').attr('d',(d)=>{
-        let variable = this.isCategorical(d) ? 'categorical':'quant'
+    if (columns.length < 6) {
+      let path = columnHeaderGroups.filter(d => { return d !== 'selected' }).append('path').attr('class', 'sortIcon').attr('d', (d) => {
+        let variable = this.isCategorical(d) ? 'categorical' : 'quant'
         return this.controller.model.icons[variable].d;
-      }).style('fill',d=>{console.log(d==this.controller.model.orderType,d,this.controller.model.orderType);return d==this.controller.model.orderType?'#EBB769':'#8B8B8B'}).attr("transform", "scale(0.1)translate("+(-50)+","+(-300)+")").on('click', (d,i,nodes) => {
+      }).style('fill', d => { console.log(d == this.controller.model.orderType, d, this.controller.model.orderType); return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', (d, i, nodes) => {
         this.sort(d);
-      }).attr('cursor','pointer');
+      }).attr('cursor', 'pointer');
       console.log(path);
     }
 
@@ -1677,7 +1711,7 @@ class View {
     let buttonHeight = 15;
     let text = ['name', 'cluster', 'tweets'];
     let sortNames = ['shortName', 'clusterLeaf', 'edges']
-    let iconNames = ['alphabetical','categorical','quant']
+    let iconNames = ['alphabetical', 'categorical', 'quant']
     for (let i = 0; i < 3; i++) {
       let button = this.edges.append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
@@ -1686,12 +1720,12 @@ class View {
       button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
       let path = button.datum([sortNames[i])
       let realPath = path
-      .append('path').attr('class','sortIcon').attr('d',(d)=>{
-        return this.controller.model.icons[iconNames[i]].d;
-      }).style('fill',()=>{return sortNames[i]==this.controller.model.orderType?'#EBB769':'#8B8B8B'}).attr("transform", "scale(0.1)translate("+(-195)+","+(-320)+")")/*.on('click', (d,i,nodes) => {
+        .append('path').attr('class', 'sortIcon').attr('d', (d) => {
+          return this.controller.model.icons[iconNames[i]].d;
+        }).style('fill', () => { return sortNames[i] == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-195) + "," + (-320) + ")")/*.on('click', (d,i,nodes) => {
         this.sort(d);
-      })*/.attr('cursor','pointer');
-      console.log(path,realPath)
+      })*/.attr('cursor', 'pointer');
+      console.log(path, realPath)
       button.on('click', () => {
         this.sort(sortNames[i]);
       })
@@ -1733,10 +1767,10 @@ class View {
     let totalCategoricalWidth = 0;
     let bandwidthScale = 2
 
-    if(this.nodes.length < 50){
-      bandwidthScale = (1/3);
+    if (this.nodes.length < 50) {
+      bandwidthScale = (1 / 3);
     }
-    let itemSize = d3.min([(bandwidthScale * bandwidth),30]);
+    let itemSize = d3.min([(bandwidthScale * bandwidth), 30]);
     let bandwidth = this.orderingScale.bandwidth();
 
     // fill in categorical column sizes
@@ -1744,14 +1778,14 @@ class View {
       let column = columns[i];
       // if column is categorical
       if (this.isCategorical(column)) {
-        let width =  itemSize* (this.controller.configuration.attributeScales.node[column].domain.length + 1.5) + 20
+        let width = itemSize * (this.controller.configuration.attributeScales.node[column].domain.length + 1.5) + 20
 
         if (column == "selected") {
           width = 60;
         }
 
         // place max size of width
-        width = d3.min([160,width]);
+        width = d3.min([160, width]);
         widths[column] = width;
         totalCategoricalWidth += width; // add width
       }
@@ -1780,11 +1814,11 @@ class View {
     let columnPosition = this.columnScale(column);
     let topMargin = 1;
     let height = this.orderingScale.bandwidth() - 2 * topMargin;
-    let bandwidthScale = this.nodes.length < 50? (1/3):2;
+    let bandwidthScale = this.nodes.length < 50 ? (1 / 3) : 2;
     let width = this.orderingScale.bandwidth() * bandwidthScale
     let numberCategories = this.controller.configuration.attributeScales.node[column].domain.length
 
-    let legendItemSize = (this.columnWidths[column])/(numberCategories+1.5)///bandwidth * bandwidthScale;
+    let legendItemSize = (this.columnWidths[column]) / (numberCategories + 1.5)///bandwidth * bandwidthScale;
 
     for (let index = 0; index < placementScaleForAttr.length; index++) {
       this.attributeRows
@@ -1833,27 +1867,27 @@ class View {
     let attributeInfo = this.controller.configuration.attributeScales.node[attribute];
     let dividers = attributeInfo.domain.length;
 
-    let legendHeight = d3.min([25,this.orderingScale.bandwidth()]);
+    let legendHeight = d3.min([25, this.orderingScale.bandwidth()]);
 
     let bandwidthScale = 2
-    if(this.nodes.length < 50){
-      bandwidthScale = (1/3);
+    if (this.nodes.length < 50) {
+      bandwidthScale = (1 / 3);
     }
 
     let bandwidth = this.orderingScale.bandwidth();
 
     let marginEquivalents = 1.5;
 
-    let legendItemSize = (this.columnWidths[attribute]-5)/(dividers+marginEquivalents)///bandwidth * bandwidthScale;
-    let height =  d3.min([bandwidth * bandwidthScale,legendHeight]);
+    let legendItemSize = (this.columnWidths[attribute] - 5) / (dividers + marginEquivalents)///bandwidth * bandwidthScale;
+    let height = d3.min([bandwidth * bandwidthScale, legendHeight]);
 
     //(legendWidth) / (dividers + 3/bandwidthScale);
-    let margin = marginEquivalents*legendItemSize / dividers;
+    let margin = marginEquivalents * legendItemSize / dividers;
 
     let xRange = [];
 
     let rects = this.attributes.append("g")
-      .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * margin) + "," + (-legendHeight-5) + ")"); //
+      .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * margin) + "," + (-legendHeight - 5) + ")"); //
 
     for (let i = 0; i < dividers; i++) {
       let rect1 = rects
@@ -1882,22 +1916,22 @@ class View {
         .attr('text-anchor', 'middle')
         .style('font-size', 11)
       //.attr('transform', 'rotate(-90)')
-      rect1.on('mouseover',(d,index,nodes)=>{
+      rect1.on('mouseover', (d, index, nodes) => {
         console.log(attributeInfo.domain[i]);
         let matrix = nodes[index].getScreenCTM()
           .translate(+nodes[index].getAttribute("x"), +nodes[index].getAttribute("y"));
 
-          this.tooltip.html(attributeInfo.domain[i])
-            .style("left", (window.pageXOffset + matrix.e - 45) + "px")
-            .style("top", (window.pageYOffset + matrix.f - 20) + "px");
-          this.tooltip.transition()
-              .duration(200)
-              .style("opacity", .9);
+        this.tooltip.html(attributeInfo.domain[i])
+          .style("left", (window.pageXOffset + matrix.e - 45) + "px")
+          .style("top", (window.pageYOffset + matrix.f - 20) + "px");
+        this.tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
       })
-      .on('mouseout',()=>{
-        this.tooltip.transition(25)
-          .style("opacity", 0);
-      })
+        .on('mouseout', () => {
+          this.tooltip.transition(25)
+            .style("opacity", 0);
+        })
     }
 
     return xRange;

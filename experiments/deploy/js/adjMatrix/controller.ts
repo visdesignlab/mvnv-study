@@ -285,3 +285,5 @@ class Controller {
     return this.model.changeOrder(order);
   }
 }
+
+window.controller = new Controller();
