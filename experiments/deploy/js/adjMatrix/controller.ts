@@ -148,8 +148,7 @@ class Controller {
 
   }
   private clickedCells: any;
-  loadClearButton() {
-    d3.select('#clearButton').on('click', () => {
+  clear() {
 
       let action = {
         label: 'clear',
@@ -178,7 +177,6 @@ class Controller {
       //pushProvenance(this.model.app.currentState())
 
 
-    })
   }
 
 
@@ -235,7 +233,7 @@ class Controller {
     this.clickedCells = new Set();
 
 
-    this.loadClearButton();
+    //this.loadClearButton();
     this.loadTasks();
 
     this.sizeLayout();
