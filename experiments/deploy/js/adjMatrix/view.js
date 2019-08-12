@@ -355,11 +355,11 @@ var View = /** @class */ (function () {
         });
         var verticalOffset = 3;
         if (this.controller.configuration.adjMatrix.neighborSelect) {
-            verticalOffset = 150;
-            var horizontalOffset = this.nodes.length < 50 ? 115 : 0;
-            this.edgeColumns.append('path').attr('class', 'sortIcon').attr('d', function (d) {
+            verticalOffset = 187.5;
+            var horizontalOffset = this.nodes.length < 50 ? 143.75 : 0;
+            this.edgeColumns.append('path').attr('id', function (d) { return 'sortIcon' + d[0].rowid; }).attr('class', 'sortIcon').attr('d', function (d) {
                 return _this.controller.model.icons['cellSort'].d;
-            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
+            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
                 .on('click', function (d, i, nodes) {
                 _this.sort(d[0].rowid);
                 //this.clickFunction(d, i, nodes);
@@ -373,7 +373,7 @@ var View = /** @class */ (function () {
                 .on("mouseout", function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); })
                 .on('mouseover', function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); });
             ;
-            verticalOffset = verticalOffset / 10 + 3;
+            verticalOffset = verticalOffset / 12.5 + 3;
         }
         this.edgeColumns.append("text")
             .attr("id", function (d, i) {
@@ -1028,16 +1028,6 @@ var View = /** @class */ (function () {
                 return;
             return "translate(0," + _this.orderingScale(i) + ")";
         });
-        if (!nodeIDs.includes(parseInt(order))) {
-            var cells = d3.selectAll(".cell") //.selectAll('rect')
-                //.transition()
-                //.duration(transitionTime)
-                //.delay((d, i) => { return this.orderingScale(i) * 4; })
-                //.delay((d) => { return this.orderingScale(d.x) * 4; })
-                .attr("transform", function (d, i) {
-                return 'translate(' + _this.orderingScale(d.x) + ',0)';
-            });
-        }
         this.attributeRows
             //.transition()
             //.duration(transitionTime)
@@ -1069,6 +1059,19 @@ var View = /** @class */ (function () {
             this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
         }
         d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(function (d) { return d == order; }).style('fill', '#EBB769');
+        if (!nodeIDs.includes(parseInt(order))) {
+            var cells = d3.selectAll(".cell") //.selectAll('rect')
+                //.transition()
+                //.duration(transitionTime)
+                //.delay((d, i) => { return this.orderingScale(i) * 4; })
+                //.delay((d) => { return this.orderingScale(d.x) * 4; })
+                .attr("transform", function (d, i) {
+                return 'translate(' + _this.orderingScale(d.x) + ',0)';
+            });
+        }
+        else {
+            d3.select('#sortIcon' + order).style('fill', '#EBB769');
+        }
     };
     View.prototype.updateCheckBox = function (state) {
         var _this = this;
@@ -1149,19 +1152,19 @@ var View = /** @class */ (function () {
             .attr('stroke', '2px')
             .attr('stroke-opacity', 0.3);
         var attributeMouseOver = function (d) {
-            that.addHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
-            that.addHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.addHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.addHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
             _this.mouseoverEvents.push({ time: new Date().getTime(), event: 'attrRow' + d[_this.datumID] });
             d3.selectAll('.hovered').classed('hovered', false);
-            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
-            that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
+            _this.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
+            _this.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         };
         this.attributeMouseOver = attributeMouseOver;
         var attributeMouseOut = function (d) {
-            that.removeHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
-            that.removeHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.removeHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.removeHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
             d3.selectAll('.hovered').classed('hovered', false);
-            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
+            _this.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
         };
         this.attributeMouseOut = attributeMouseOut;
         this.attributeRows.append('rect')
