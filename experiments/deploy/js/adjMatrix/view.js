@@ -418,14 +418,16 @@ var View = /** @class */ (function () {
      * @return none
      */
     View.prototype.drawGridLines = function () {
-        var gridLines = this.edges
-            .append('g')
-            .attr('class', 'gridLines')
-            .selectAll('line')
-            .data(this.matrix)
-            .enter();
+        /*let gridLines = this.edges
+          .append('g')
+          .attr('class', 'gridLines')
+          .selectAll('line')
+          .data(this.matrix)
+          .enter()
+    
         gridLines.append('line')
-            .attr("x1", -this.edgeWidth);
+          .attr("x1", -this.edgeWidth)
+    */
         // adds column lines
         this.edgeColumns.append("line")
             .attr("x1", -this.edgeWidth)
@@ -991,6 +993,7 @@ var View = /** @class */ (function () {
         if (this.controller.view.columnGlyphs[order]) {
             this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
         }
+        d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(function (d) { return d == order; }).style('fill', '#EBB769');
     };
     View.prototype.updateCheckBox = function (state) {
         var _this = this;
@@ -1379,6 +1382,17 @@ var View = /** @class */ (function () {
                 _this.sort(d);
             }
         });
+        columnHeaderGroups;
+        //console.log(this.controller.model.categoricalSortSvg)
+        if (columns.length < 6) {
+            var path = columnHeaderGroups.filter(function (d) { return d !== 'selected'; }).append('path').attr('class', 'sortIcon').attr('d', function (d) {
+                var variable = _this.isCategorical(d) ? 'categorical' : 'quant';
+                return _this.controller.model.icons[variable].d;
+            }).style('fill', function (d) { console.log(d == _this.controller.model.orderType, d, _this.controller.model.orderType); return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', function (d, i, nodes) {
+                _this.sort(d);
+            }).attr('cursor', 'pointer');
+            console.log(path);
+        }
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('font-weight', 650);
         var nonAnswerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d !== 'selected'; });
@@ -1389,14 +1403,24 @@ var View = /** @class */ (function () {
         // Draw buttons for alternative sorts
         var initalY = -this.margins.left + 10;
         var buttonHeight = 15;
-        var text = ['name', 'cluster', 'interactions'];
+        var text = ['name', 'cluster', 'tweets'];
         var sortNames = ['shortName', 'clusterLeaf', 'edges'];
+        var iconNames = ['alphabetical', 'categorical', 'quant'];
         var _loop_2 = function (i) {
             var button = this_2.edges.append('g')
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
             button.attr('cursor', 'pointer');
             button.append('rect').attr('width', this_2.margins.left - 10).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1);
-            button.append('text').attr('x', 3).attr('y', 10).attr('font-size', 11).text('Sort:' + text[i]);
+            button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
+            var path = button.datum([sortNames[i]]);
+            var realPath = path
+                .append('path').attr('class', 'sortIcon').attr('d', function (d) {
+                return _this.controller.model.icons[iconNames[i]].d;
+            }).style('fill', function () { return sortNames[i] == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-195) + "," + (-320) + ")") /*.on('click', (d,i,nodes) => {
+              this.sort(d);
+            })*/
+                .attr('cursor', 'pointer');
+            console.log(path, realPath);
             button.on('click', function () {
                 _this.sort(sortNames[i]);
             });
@@ -1431,7 +1455,7 @@ var View = /** @class */ (function () {
             var column = columns[i];
             // if column is categorical
             if (this.isCategorical(column)) {
-                var width = (bandwidthScale * bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3 / bandwidthScale);
+                var width = (bandwidthScale * bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3 / bandwidthScale) + 20;
                 if (column == "selected") {
                     width = 60;
                 }

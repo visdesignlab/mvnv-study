@@ -511,7 +511,7 @@ class View {
    * @return none
    */
   drawGridLines() {
-    let gridLines = this.edges
+    /*let gridLines = this.edges
       .append('g')
       .attr('class', 'gridLines')
       .selectAll('line')
@@ -520,7 +520,7 @@ class View {
 
     gridLines.append('line')
       .attr("x1", -this.edgeWidth)
-
+*/
     // adds column lines
     this.edgeColumns.append("line")
       .attr("x1", -this.edgeWidth)
@@ -1170,6 +1170,7 @@ class View {
       this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
     }
 
+    d3.selectAll('.sortIcon').style('fill','#8B8B8B').filter(d=>d==order).style('fill','#EBB769')
   }
 
   updateCheckBox(state) {
@@ -1635,11 +1636,23 @@ class View {
       .on('click', (d) => {
         if (d !== 'selected') {
           this.sort(d);
-
-
         }
-
       })
+
+    columnHeaderGroups
+    //console.log(this.controller.model.categoricalSortSvg)
+    if(columns.length < 6){
+      let path = columnHeaderGroups.filter(d => { return d !== 'selected' }).append('path').attr('class','sortIcon').attr('d',(d)=>{
+        let variable = this.isCategorical(d) ? 'categorical':'quant'
+        return this.controller.model.icons[variable].d;
+      }).style('fill',d=>{console.log(d==this.controller.model.orderType,d,this.controller.model.orderType);return d==this.controller.model.orderType?'#EBB769':'#8B8B8B'}).attr("transform", "scale(0.1)translate("+(-50)+","+(-300)+")").on('click', (d,i,nodes) => {
+        this.sort(d);
+      }).attr('cursor','pointer');
+      console.log(path);
+    }
+
+
+
 
     let answerColumn = columnHeaders.selectAll('.header').filter(d => { return d == 'selected' })
     answerColumn.attr('font-weight', 650)
@@ -1654,14 +1667,23 @@ class View {
     // Draw buttons for alternative sorts
     let initalY = -this.margins.left + 10;
     let buttonHeight = 15;
-    let text = ['name', 'cluster', 'interactions'];
+    let text = ['name', 'cluster', 'tweets'];
     let sortNames = ['shortName', 'clusterLeaf', 'edges']
+    let iconNames = ['alphabetical','categorical','quant']
     for (let i = 0; i < 3; i++) {
       let button = this.edges.append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
       button.attr('cursor', 'pointer')
       button.append('rect').attr('width', this.margins.left - 10).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1)
-      button.append('text').attr('x', 3).attr('y', 10).attr('font-size', 11).text('Sort:' + text[i]);
+      button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
+      let path = button.datum([sortNames[i])
+      let realPath = path
+      .append('path').attr('class','sortIcon').attr('d',(d)=>{
+        return this.controller.model.icons[iconNames[i]].d;
+      }).style('fill',()=>{return sortNames[i]==this.controller.model.orderType?'#EBB769':'#8B8B8B'}).attr("transform", "scale(0.1)translate("+(-195)+","+(-320)+")")/*.on('click', (d,i,nodes) => {
+        this.sort(d);
+      })*/.attr('cursor','pointer');
+      console.log(path,realPath)
       button.on('click', () => {
         this.sort(sortNames[i]);
       })
@@ -1709,7 +1731,7 @@ class View {
       let column = columns[i];
       // if column is categorical
       if (this.isCategorical(column)) {
-        let width = (bandwidthScale * bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3 / bandwidthScale)
+        let width = (bandwidthScale * bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3 / bandwidthScale) + 20
 
         if (column == "selected") {
           width = 60;
