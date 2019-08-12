@@ -106,11 +106,18 @@ class View {
       return;
     }
 
+
     //find the right nodeObject
     let name = this.nodes.filter(node => { return node.shortName.toLowerCase() == selectedOption});
 
     if (name[0] == null || name[0][this.datumID] == '') return -1; // node was not found
     name = name[0][this.datumID];
+
+    let state = this.controller.model.app.currentState();
+    console.log(state.selections.search,state,name);
+    if(name in state.selections.search){
+      return 0;
+    }
 
     let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
     this.controller.model.provenance.applyAction(action);
