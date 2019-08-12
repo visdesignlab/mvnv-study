@@ -20,7 +20,9 @@ class Model {
   constructor(controller: any) {
     this.controller = controller;
     this.datumID = controller.datumID;
+    console.log(controller,controller.configuration,controller.configuration.graphFiles,controller.configuration.loadedGraph)
 
+    //console.log(controller,controller.configuration,controller.configuration.graphFiles[controller.configuration.loadedGraph])
     d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then((data: any) => {
       this.graph = data;
       this.edges = data.links;

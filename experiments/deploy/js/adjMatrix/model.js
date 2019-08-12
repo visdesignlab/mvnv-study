@@ -3,6 +3,8 @@ var Model = /** @class */ (function () {
         var _this = this;
         this.controller = controller;
         this.datumID = controller.datumID;
+        console.log(controller, controller.configuration, controller.configuration.graphFiles, controller.configuration.loadedGraph);
+        //console.log(controller,controller.configuration,controller.configuration.graphFiles[controller.configuration.loadedGraph])
         d3.json(controller.configuration.graphFiles[controller.configuration.loadedGraph]).then(function (data) {
             _this.graph = data;
             _this.edges = data.links;
