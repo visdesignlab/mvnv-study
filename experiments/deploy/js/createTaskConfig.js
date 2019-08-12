@@ -14,10 +14,10 @@
             taskList[key].config=mergedConfig;
         })
 
-        //export taskList now with configs for each task. 
+        //export taskList now with configs for each task.
         // Promise.all(allConfigs).then((completed) => saveToFile(taskList, taskListName + ".json"));
         })
-    
+
 } )
 // ();
 
@@ -28,13 +28,13 @@ function mergeConfigs(baseConfig, taskConfig) {
     Object.keys(baseConfig.nodeLink).map(nodeAttr => {
       taskConfig.nodeLink[nodeAttr] = baseConfig.nodeLink[nodeAttr];
     });
-  
+
     //rehape both config values into a single dictionary.
     let config = {
       ...baseConfig,
       ...taskConfig
     };
-  
+
     return config;
   }
 
@@ -44,18 +44,18 @@ function saveToFile(data, filename) {
       console.error("Console.save: No data");
       return;
     }
-  
+
 
     if (!filename) filename = "output.json";
-  
+
     if (typeof data === "object") {
       data = JSON.stringify(data, undefined, 4);
     }
-  
+
     var blob = new Blob([data], { type: "text/json" }),
       e = document.createEvent("MouseEvents"),
       a = document.createElement("a");
-  
+
     a.download = filename;
     a.href = window.URL.createObjectURL(blob);
     a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
@@ -78,7 +78,3 @@ function saveToFile(data, filename) {
     );
     a.dispatchEvent(e);
   }
-
- 
-
-

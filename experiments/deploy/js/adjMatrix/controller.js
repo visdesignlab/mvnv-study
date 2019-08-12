@@ -95,7 +95,7 @@ var Controller = /** @class */ (function () {
         }
         this.configuration.adjMatrix['toggle'] = false;
         //this.configuration.adjMatrix.neighborSelect = true;
-        this.attrWidth = d3.min([125 * this.configuration.nodeAttributes.length, 650]);
+        this.attrWidth = d3.min([150 * this.configuration.nodeAttributes.length, 650]);
         this.configuration.state = {};
         this.configuration.state.adjMatrix = {};
         if (this.configuration.adjMatrix.sortKey == null || this.configuration.adjMatrix.sortKey == '') {

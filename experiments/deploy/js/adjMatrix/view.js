@@ -1302,17 +1302,17 @@ var View = /** @class */ (function () {
         function calculateMaxChars(numColumns) {
             switch (numColumns) {
                 case 1:
-                    return { "characters": 20, "font": 17 };
+                    return { "characters": 20, "font": 13 };
                 case 2:
-                    return { "characters": 20, "font": 15 };
+                    return { "characters": 20, "font": 13 };
                 case 3:
-                    return { "characters": 20, "font": 14 };
+                    return { "characters": 20, "font": 12 };
                 case 4:
-                    return { "characters": 19, "font": 13 };
+                    return { "characters": 19, "font": 12 };
                 case 5:
                     return { "characters": 18, "font": 12 };
                 case 6:
-                    return { "characters": 16, "font": 12 };
+                    return { "characters": 16, "font": 11 };
                 case 7:
                     return { "characters": 14, "font": 10 };
                 case 8:
@@ -1449,16 +1449,22 @@ var View = /** @class */ (function () {
         var widthOffset = this.controller.attrWidth / columns.length;
         var totalCategoricalWidth = 0;
         var bandwidthScale = 2;
+        if (this.nodes.length < 50) {
+            bandwidthScale = (1 / 3);
+        }
+        var itemSize = d3.min([(bandwidthScale * bandwidth), 30]);
         var bandwidth = this.orderingScale.bandwidth();
         // fill in categorical column sizes
         for (var i = 0; i < columns.length; i++) {
             var column = columns[i];
             // if column is categorical
             if (this.isCategorical(column)) {
-                var width = (bandwidthScale * bandwidth) * (this.controller.configuration.attributeScales.node[column].domain.length + 3 / bandwidthScale) + 20;
+                var width = itemSize * (this.controller.configuration.attributeScales.node[column].domain.length + 1.5) + 20;
                 if (column == "selected") {
                     width = 60;
                 }
+                // place max size of width
+                width = d3.min([160, width]);
                 widths[column] = width;
                 totalCategoricalWidth += width; // add width
             }
@@ -1479,7 +1485,10 @@ var View = /** @class */ (function () {
         var columnPosition = this.columnScale(column);
         var topMargin = 1;
         var height = this.orderingScale.bandwidth() - 2 * topMargin;
-        var width = this.orderingScale.bandwidth() * 2;
+        var bandwidthScale = this.nodes.length < 50 ? (1 / 3) : 2;
+        var width = this.orderingScale.bandwidth() * bandwidthScale;
+        var numberCategories = this.controller.configuration.attributeScales.node[column].domain.length;
+        var legendItemSize = (this.columnWidths[column] - 5) / (numberCategories + 1.5); ///bandwidth * bandwidthScale;
         var _loop_3 = function (index) {
             this_3.attributeRows
                 .append('rect')
@@ -1488,7 +1497,7 @@ var View = /** @class */ (function () {
                 .attr('fill', function (d) {
                 return d[column] == placementScaleForAttr[index].value ? _this.attributeScales[column](d[column]) : '#dddddd'; // gray version: '#333333'
             })
-                .attr('width', width)
+                .attr('width', legendItemSize)
                 .attr('height', height)
                 .on('mouseover', function (d, i, nodes) {
                 if (d[column] == placementScaleForAttr[index].value) {
@@ -1518,17 +1527,23 @@ var View = /** @class */ (function () {
         return;
     };
     View.prototype.generateCategoricalLegend = function (attribute, legendWidth) {
+        var numberCategories = this.controller.configuration.attributeScales.node[attribute].domain.length;
         var attributeInfo = this.controller.configuration.attributeScales.node[attribute];
         var dividers = attributeInfo.domain.length;
-        var legendHeight = 25;
+        var legendHeight = d3.min([25, this.orderingScale.bandwidth()]);
         var bandwidthScale = 2;
+        if (this.nodes.length < 50) {
+            bandwidthScale = (1 / 3);
+        }
         var bandwidth = this.orderingScale.bandwidth();
-        var legendItemSize = bandwidth * bandwidthScale;
+        var marginEquivalents = 1.5;
+        var legendItemSize = (this.columnWidths[attribute] - 5) / (dividers + marginEquivalents); ///bandwidth * bandwidthScale;
+        var height = d3.min([bandwidth * bandwidthScale, legendHeight]);
         //(legendWidth) / (dividers + 3/bandwidthScale);
-        var margin = bandwidth * bandwidthScale / dividers;
+        var margin = marginEquivalents * legendItemSize / dividers;
         var xRange = [];
         var rects = this.attributes.append("g")
-            .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * bandwidth) + "," + (-legendHeight) + ")"); //
+            .attr("transform", "translate(" + (this.columnScale(attribute) + 1 * margin) + "," + (-legendHeight) + ")"); //
         for (var i = 0; i < dividers; i++) {
             var rect1 = rects
                 .append('g')
@@ -1536,7 +1551,7 @@ var View = /** @class */ (function () {
             xRange.push({
                 "attr": attribute,
                 "value": attributeInfo.domain[i],
-                "position": (this.columnScale(attribute) + 1 * bandwidth) + (i * (legendItemSize + margin))
+                "position": (this.columnScale(attribute) + 1 * margin) + (i * (legendItemSize + margin))
             });
             rect1
                 .append('rect')
@@ -1544,7 +1559,7 @@ var View = /** @class */ (function () {
                 .attr('y', 0)
                 .attr('fill', attributeInfo.range[i])
                 .attr('width', legendItemSize)
-                .attr('height', this.orderingScale.bandwidth());
+                .attr('height', height);
             rect1
                 .append('text')
                 .text(attributeInfo.legendLabels[i])
