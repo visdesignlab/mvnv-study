@@ -232,12 +232,13 @@ class View {
 
         this.unhoverEdge(cell);
       })
+      .filter(d=>d.interacted != 0 || d.retweet != 0 || d.mentions != 0)
       .on('click', (d, i, nodes) => {
         // only trigger click if edge exists
-        if (d.interacted != 0 || d.retweet != 0 || d.mentions != 0) {
-          this.clickFunction(d, i, nodes);
-        }
+        this.clickFunction(d, i, nodes);
+
       })
+      .attr('cursor','pointer')
 
     this.controller.answerRow = {}
     this.controller.hoverRow = {}

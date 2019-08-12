@@ -169,12 +169,12 @@ var View = /** @class */ (function () {
                 .style("opacity", 0);
             _this.unhoverEdge(cell);
         })
+            .filter(function (d) { return d.interacted != 0 || d.retweet != 0 || d.mentions != 0; })
             .on('click', function (d, i, nodes) {
             // only trigger click if edge exists
-            if (d.interacted != 0 || d.retweet != 0 || d.mentions != 0) {
-                _this.clickFunction(d, i, nodes);
-            }
-        });
+            _this.clickFunction(d, i, nodes);
+        })
+            .attr('cursor', 'pointer');
         this.controller.answerRow = {};
         this.controller.hoverRow = {};
         this.controller.hoverCol = {};
