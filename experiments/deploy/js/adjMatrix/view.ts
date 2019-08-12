@@ -1202,11 +1202,10 @@ class View {
       })
 
     if(!nodeIDs.includes(parseInt(order))){
-
       let cells = d3.selectAll(".cell")//.selectAll('rect')
         //.transition()
         //.duration(transitionTime)
-        .delay((d, i) => { return this.orderingScale(i) * 4; })
+        //.delay((d, i) => { return this.orderingScale(i) * 4; })
         //.delay((d) => { return this.orderingScale(d.x) * 4; })
         .attr("transform", (d, i) => {
           return 'translate(' + this.orderingScale(d.x) + ',0)'

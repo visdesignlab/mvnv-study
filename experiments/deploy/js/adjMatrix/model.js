@@ -299,6 +299,7 @@ var Model = /** @class */ (function () {
             order = d3.range(this.nodes.length).sort(function (a, b) { console.log(_this.nodes[a], _this.nodes[a]['neighbors'], parseInt(type)); return _this.nodes[b]['neighbors'].includes(parseInt(type)) - _this.nodes[a]['neighbors'].includes(parseInt(type)); });
         }
         else if (!this.isQuant(this.orderType)) { // == "screen_name" || this.orderType == "name") {
+            order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a][_this.orderType].localeCompare(_this.nodes[b][_this.orderType]); });
         }
         else {
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[b][type] - _this.nodes[a][type]; });

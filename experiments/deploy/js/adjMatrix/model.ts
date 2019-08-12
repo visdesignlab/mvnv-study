@@ -359,6 +359,8 @@ class Model {
       order = d3.range(this.nodes.length).sort((a, b) => {console.log(this.nodes[a],this.nodes[a]['neighbors'],parseInt(type)); return this.nodes[b]['neighbors'].includes(parseInt(type)) - this.nodes[a]['neighbors'].includes(parseInt(type)); });
     }
     else if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
+      order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a][this.orderType].localeCompare(this.nodes[b][this.orderType]));
+
     } else {
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
     }

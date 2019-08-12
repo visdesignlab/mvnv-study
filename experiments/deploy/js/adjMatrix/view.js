@@ -1032,7 +1032,7 @@ var View = /** @class */ (function () {
             var cells = d3.selectAll(".cell") //.selectAll('rect')
                 //.transition()
                 //.duration(transitionTime)
-                .delay(function (d, i) { return _this.orderingScale(i) * 4; })
+                //.delay((d, i) => { return this.orderingScale(i) * 4; })
                 //.delay((d) => { return this.orderingScale(d.x) * 4; })
                 .attr("transform", function (d, i) {
                 return 'translate(' + _this.orderingScale(d.x) + ',0)';
