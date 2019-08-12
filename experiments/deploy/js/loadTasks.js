@@ -1099,7 +1099,7 @@ let val = d3.select("#search-input").on("change", function() {
     return;
   }
 
-  let searchSuccess = (vis === 'nodeLink') ?  searchFor(selectedOption): console.log('hi'); window.controller.view.search(selectedOption);
+  let searchSuccess = (vis === 'nodeLink') ?  searchFor(selectedOption):  window.controller.view.search(selectedOption);
 
   //  if (searchSuccess === -1){
   //    d3.select('.searchMsg')
@@ -1133,7 +1133,7 @@ d3.select('#searchButton').on("click",function(){
     return;
   }
 
-    let searchSuccess = vis == 'nodeLink' ?  searchFor(selectedOption): console.log('hi'); window.controller.view.search(selectedOption);
+    let searchSuccess = vis == 'nodeLink' ?  searchFor(selectedOption):  window.controller.view.search(selectedOption);
 
   if (searchSuccess === -1) {
     d3.select(".searchMsg")
