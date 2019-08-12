@@ -1278,9 +1278,11 @@ var View = /** @class */ (function () {
                         .style('stroke', 'lightgray');
                 }
                 else {
+                    var initalHeight = barHeight;
+                    barHeight = d3.min([barHeight, 15]);
                     var rect = answerBox.append("rect")
                         .attr("x", (columnWidths[column] / 2) - barHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
-                        .attr("y", barMargin.top)
+                        .attr("y", barMargin.top + (initalHeight - barHeight) / 2)
                         //.attr("rx", barHeight / 2)
                         //.attr("ry", barHeight / 2)
                         .style("fill", "white")
