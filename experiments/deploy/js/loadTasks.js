@@ -58,6 +58,9 @@ function KeyPress(e) {
     } else {
       window.controller.model.provenance.goBackOneStep();
     }
+    //send update to studyProvenance
+    updateStudyProvenance('control Z used')
+
   }
 
   if (
@@ -69,7 +72,12 @@ function KeyPress(e) {
     d3.select(".searchInput")
       .node()
       .focus();
+
+      updateStudyProvenance('control F used')
+
   }
+
+
 }
 
 document.onkeydown = KeyPress;
