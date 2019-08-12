@@ -695,10 +695,10 @@
     switch (mode) {
         case 'heuristics':
             track = true;
-            shuffleTasks = false;
-            taskMenu = false;
+            shuffleTasks = shuffleTasks || false;
+            taskMenu = taskMenu || false;;
             configPanel = false;
-            trials = false;
+            trials = trials || false;
             break;
         case 'develop':
             track = track || true;

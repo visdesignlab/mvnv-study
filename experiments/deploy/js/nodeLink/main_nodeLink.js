@@ -126,7 +126,7 @@ function setGlobalScales() {
     let value =
       config.nodeLink.nodeFillAttr && !config.nodeLink.drawBars
         ? nodeFillScale(node[config.nodeLink.nodeFillAttr])
-        : config.nodeLink.noNodeFill;
+        : (config.nodeLink.drawBars? "white" : config.nodeLink.noNodeFill);
 
     return value;
   };
