@@ -124,7 +124,7 @@
                                         </span>
 
                                         <span id="valueAnswer">
-                                            <label><strong>Enter Value/String Answer Below</strong></label>
+                                            <label><strong>Enter Answer Below</strong></label>
                                             <br />
                                             <input class="input" type="text" placeholder="answer text" id="answerBox">
                                             <br />
@@ -677,7 +677,8 @@
 
     mode = mode || 'heuristics'; //can be 'develop', 'heuristics', or 'study'
 
-    //set default values for any variables not passed in:
+    //set default values for any variables not passed in and assign the appropriate database collections; 
+
     switch (mode) {
         case 'heuristics':
             track = track || true;
@@ -691,7 +692,7 @@
             shuffleTasks = shuffleTasks || false;
             taskMenu = taskMenu || true;
             configPanel = configPanel || false;
-            trials= trials || false;
+            trials= trials || true;
             break;
         case 'study':
             track = true;
@@ -714,6 +715,8 @@
     taskMenu = eval(taskMenu);
     configPanel = eval(configPanel);
     trials = eval(trials);
+
+    participantCollection = mode + '_participants'
 
     //Only assign a vis if it has been passed in as a parameter
     if (vis !== undefined) {

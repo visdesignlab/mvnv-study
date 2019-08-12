@@ -45,6 +45,7 @@ function saveToFile(data, filename) {
       return;
     }
   
+
     if (!filename) filename = "output.json";
   
     if (typeof data === "object") {

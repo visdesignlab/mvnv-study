@@ -367,7 +367,7 @@ function loadVis(id) {
   legend = d3
     .select("#legend-svg")
     .attr("width", parentWidth) //size + margin.left + margin.right)
-    .attr("height", 250);
+    .attr("height", 270);
 
     //add tooltip
     d3.select("body")
@@ -433,6 +433,9 @@ function loadTask(task) {
   if (graph.nodes[0].fx === undefined) {
     //scale node positions to this screen;
 
+
+    //only scale if positions fall outside of domain; 
+
     let xPos = d3
       .scaleLinear()
       .domain(d3.extent(graph.nodes, n => n.x))
@@ -442,9 +445,10 @@ function loadTask(task) {
       .domain(d3.extent(graph.nodes, n => n.y))
       .range([50, visDimensions.height - 50]);
 
+      let needsScaling = xPos.domain()[1] > xPos.range()[1] || yPos.domain()[1] >  yPos.range()[1]
     graph.nodes.map(n => {
-      n.x = xPos(n.x);
-      n.y = yPos(n.y);
+      n.x = needsScaling? xPos(n.x) : n.x;
+      n.y = needsScaling? yPos(n.y) : n.y;
       n.fx = n.x;
       n.fy = n.y;
       n.savedX = n.fx;
@@ -458,12 +462,6 @@ function loadTask(task) {
       n.y = n.savedY;
     });
   }
-
-  //clear db provenance from previous iterations
-  db.collection("DevelopUser").doc("task1").delete()
-  db.collection("DevelopUser").doc("task2").delete()
-  db.collection("DevelopUser").doc("task3").delete()
-  db.collection("DevelopUser").doc("task4").delete()
 
 
   //pass in workerID to setupProvenance
@@ -559,7 +557,6 @@ function highlightHardSelectedNodes(state) {
   let hasUserSelection = state.selected.length > 0;
 
 
-  console.log("triggered highlightHardSelectedNodes");
   d3.selectAll(".selectBox").classed("selected", d =>
     state.hardSelected.includes(d.id)
   );
@@ -976,8 +973,7 @@ function updateVis() {
       //if there is no selection to be made for this task, don't draw the checkbox
       .attr(
         "height",
-        taskList[currentTask].replyType !== "value" ? checkboxSize : 0
-      )
+        (taskList[currentTask].replyType.length === 1 && taskList[currentTask].replyType.includes("value")) ? 0 : checkboxSize)
       .attr("x", function(d) {
         let nodeLabel = d3
           .select(d3.select(this).node().parentNode)

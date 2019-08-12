@@ -3,7 +3,7 @@
 (async function() {
   let smallGraphPosName = 'smallGraphPos.json';
 
-  let largeGraphs = ['network_large_undirected_singleEdge.json','network_large_undirected_multiEdge.json','network_large_directed_multiEdge.json']
+  let largeGraphs = ['s_network_large_undirected_singleEdge.json','s_network_large_undirected_multiEdge.json','s_network_large_directed_multiEdge.json']
   
   largeGraphs.map(async graphName=>{
     let largeGraph = await d3.json("data/" + graphName);
@@ -23,7 +23,7 @@
 
     // debugger
 
-    // saveToFile(smallGraph, graphName.replace('large','small'));
+    saveToFile(smallGraph, graphName.replace('large','small'));
 
   })
 })();
@@ -265,7 +265,7 @@
   // saveToFile(bareBonesGraph,'layoutGraph.json')
   
 })
-();
+// ();
 
 function saveToFile(data, filename) {
   if (!data) {

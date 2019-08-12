@@ -31,13 +31,13 @@
               pixelDepth: window.screen.pixelDepth
             };
 
-              db.collection('participants').doc(workerID).set({
+              db.collection(participantCollection).doc(workerID).set({
                 screenSize,
                 completionCode:makeid(6),
                 startTrialsTime: new Date().toString()
               },{merge:true});
         }
-      trackResults('trials');
+      trackResults('trial_results');
     }
   
     //remove ui components that are not relevant
@@ -47,7 +47,10 @@
 
     if (!taskMenu){
         d3.select('.taskMenu').remove();
-    }
+    } else {
+      d3.select('.taskMenu').style('display', 'none');
+
+    } 
 
     d3.select('.hit').style('display', 'inline');
 

@@ -98,12 +98,6 @@
 
 <script>
 
-    //if you're on the consent page, set track to true
-    var track = true; //track user interaction
-    var develop = false; //actual deployed study
-    var shuffleTasks = true;  // shuffle user task order 
-
-
     (function () {
         var data = {}
         , workers = null;
@@ -134,7 +128,7 @@
             
                 //set global variable to be the santizied version of the input workerID; 
                 workerID = sanitizeWorkerID(data.workerId);
-                db.collection('participants').doc(workerID).set({
+                db.collection(participantCollection).doc(workerID).set({
                     screenSize,
                     startTrialsTime: new Date().toString(),
                     completionCode:makeid(6)
@@ -153,7 +147,7 @@
                 console.log('workerId is ', data.workerId)
 
                 //Check firebase to see if this participant has already participated: 
-                let pastParticipants = await db.collection("participants").get();
+                let pastParticipants = await db.collection(participantCollection).get();
 
                 let firstTimer = true;
                 pastParticipants.forEach(function(doc) {

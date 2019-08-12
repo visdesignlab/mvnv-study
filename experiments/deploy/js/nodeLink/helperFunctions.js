@@ -651,7 +651,7 @@ function setPanelValuesFromFile() {    [["node", "nodes"], ["edge", "links"]].ma
 }
 
   function update(){
-      // setPanelValuesFromFile();
+      setPanelValuesFromFile();
       updateVis();
   }
 
@@ -1005,7 +1005,7 @@ function isQuant(attr) {
 
 
       //push initial state to firestore
-      pushProvenance(app.currentState())
+      pushProvenance(app.currentState(),true)
   }
 
   function setUpObserver(stateField,callback){
@@ -1013,43 +1013,7 @@ function isQuant(attr) {
     );
   }
 
-  async function loadNewGraph(fileName) {
 
-    // console.log('loading ', fileName)
-    graph = await d3.json(fileName);
-
-    // console.log(graph.links)
-// 
-    //update the datalist associated to the search box (in case the nodes in the new graph have changed)
-
-    {
-      d3.select("#search-input").attr("list", "characters");
-      let inputParent = d3.select("#search-input").node().parentNode;
-
-      let datalist = d3
-      .select(inputParent).selectAll('#characters').data([0]);
-
-      let enterSelection = datalist.enter()
-      .append("datalist")
-      .attr("id", "characters");
-
-      datalist.exit().remove();
-
-      datalist= enterSelection.merge(datalist);
-
-      let options = datalist.selectAll("option").data(graph.nodes);
-
-      let optionsEnter = options.enter().append("option");
-      options.exit().remove();
-
-      options = optionsEnter.merge(options);
-      options.attr("value", d => d.shortName);
-      options.attr("id", d => d.id);
-
-  }
-
-
-  }
 
 
 
