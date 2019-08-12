@@ -7,7 +7,7 @@
         "replyCount": 1
     },
     "H-task2": {
-        "prompt": "Select all of Lane's neighbors that are *people* and have more friends than followers.",
+        "prompt": "Select all of Lane's neighbors that are people and have more friends than followers.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -24,7 +24,7 @@
         "replyCount": 1
     },
     "H-task4": {
-        "prompt": "Which person is frequently retweeted in this network despite being relatively inactive on twitter?",
+        "prompt": "Which person is frequently retweeted in this network despite having few tweets and likes?",
         "replyType": [
             "multipleNodeSelection"
         ],

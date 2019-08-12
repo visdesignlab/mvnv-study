@@ -951,14 +951,14 @@ async function loadTasks(visType, tasksType) {
   taskButtons = taskButtonsEnter.merge(taskButtons)
 
   taskButtons.select('p')
-  .text(d=>d.taskID)
+  .text(d=>d.prompt)
 
   taskButtons.select('.message-body')
   .text(d=>d.hypothesis)
 
   taskButtons.select('a')
   .attr('id',d=>d.taskID)
-  .text('config')
+  .text(d=>d.taskID)
   .on("click", function() {
     //set new currentTask then call resetPanel;
     currentTask = taskList.findIndex(t => t.taskID == d3.select(this).attr("id"));
@@ -980,9 +980,11 @@ async function loadTasks(visType, tasksType) {
         "js/adjMatrix/libs/reorder/tiny-queue.js",
         "js/adjMatrix/libs/reorder/reorder.v1.js",
         "js/adjMatrix/fill_config_settings.js",
-        "js/adjMatrix/helper_functions.js",
         "js/adjMatrix/autocomplete.js",
-        "js/adjMatrix/cleaned_model.js"
+        "js/adjMatrix/view.js",
+        "js/adjMatrix/controller.js",
+        "js/adjMatrix/model.js",
+        "js/adjMatrix/helper_functions.js"
       ]
     };
     let cssTags = {
@@ -1091,7 +1093,7 @@ d3.select("#search-input").on("change", function() {
     return;
   }
 
-  let searchSuccess = searchFor(selectedOption);
+  let searchSuccess = vis == 'nodeLink' ?  searchFor(selectedOption): console.log('hi'); window.controller.view.search(selectionOption);
 
   //  if (searchSuccess === -1){
   //    d3.select('.searchMsg')

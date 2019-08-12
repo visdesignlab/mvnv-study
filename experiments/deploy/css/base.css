@@ -49,6 +49,12 @@ div.tooltip {
 
 .selectBox.selected{
     fill:rgb(255, 111, 0);
+    
+}
+
+.taskMenu{
+    height:300px;
+    overflow-y:scroll;
 }
 
 .taskMenu .button{
