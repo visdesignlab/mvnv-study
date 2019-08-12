@@ -223,7 +223,7 @@ function checkAnswer(answer) {
             numAnswers +
             " of the answers.</span>";
         }
-      
+
     }
   }
 
@@ -567,6 +567,7 @@ async function resetPanel() {
   if (vis === "nodeLink") {
     loadTask(task);
   } else {
+    console.log()
     window.controller.loadTask(currentTask);
   }
 }
@@ -892,6 +893,7 @@ async function loadTasks(visType, tasksType) {
     .style("width", "calc(100vh - 100px)");
 
   //do an async load of the designated task list;
+  console.log(taskListFiles,tasksType)
   let taskListObj = await d3.json(taskListFiles[tasksType]);
   studyTracking.taskListObj = taskListObj;
 
@@ -943,7 +945,7 @@ async function loadTasks(visType, tasksType) {
   header.append('a')
   .attr('class','button taskShortcut')
 
-  
+
   taskButtonsEnter.append('div').attr('class','message-body');
 
 

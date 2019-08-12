@@ -353,6 +353,28 @@ var View = /** @class */ (function () {
             //d3.select(nodes[i]).classed('clicked',!d3.select(nodes[i]).classed('clicked'))
             _this.clickFunction(d, i, nodes);
         });
+        var verticalOffset = 3;
+        if (this.controller.configuration.adjMatrix.neighborSelect) {
+            verticalOffset = 187.5;
+            var horizontalOffset = this.nodes.length < 50 ? 143.75 : 0;
+            this.edgeColumns.append('path').attr('id', function (d) { return 'sortIcon' + d[0].rowid; }).attr('class', 'sortIcon').attr('d', function (d) {
+                return _this.controller.model.icons['cellSort'].d;
+            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
+                .on('click', function (d, i, nodes) {
+                _this.sort(d[0].rowid);
+                //this.clickFunction(d, i, nodes);
+                console.log(d3.select('#colLabel' + d[0].rowid));
+                /*var e = document.createEvent('UIEvents');
+                e.initUIEvent('click', true, true, /* ... */ //);
+                /*d3.select('#colLabel'+d[0].rowid).node().dispatchEvent(e);*/
+                //let action = this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
+                //this.controller.model.provenance.applyAction(action);
+            }).attr('cursor', 'pointer')
+                .on("mouseout", function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); })
+                .on('mouseover', function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); });
+            ;
+            verticalOffset = verticalOffset / 12.5 + 3;
+        }
         this.edgeColumns.append("text")
             .attr("id", function (d, i) {
             return "colLabel" + d[i].rowid;
@@ -360,13 +382,14 @@ var View = /** @class */ (function () {
             .attr('class', 'colLabel')
             .attr('z-index', 30)
             .attr("y", this.orderingScale.bandwidth() / 2)
-            .attr('x', 2)
+            .attr('x', verticalOffset)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
             .style("font-size", labelSize)
             .text(function (d, i) { return _this.nodes[i].shortName; })
             .on('click', function (d, i, nodes) {
             if (_this.controller.configuration.adjMatrix.neighborSelect) {
+                //this.sort(d[0].rowid)
                 _this.clickFunction(d, i, nodes);
                 var action = _this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
                 _this.controller.model.provenance.applyAction(action);
@@ -986,7 +1009,14 @@ var View = /** @class */ (function () {
      */
     View.prototype.sort = function (order) {
         var _this = this;
-        this.order = this.controller.changeOrder(order);
+        var nodeIDs = this.nodes.map(function (node) { return node.id; });
+        if (nodeIDs.includes(parseInt(order))) {
+            this.order = this.controller.changeOrder(order, true);
+            console.log(order);
+        }
+        else {
+            this.order = this.controller.changeOrder(order);
+        }
         this.orderingScale.domain(this.order);
         var transitionTime = 500;
         d3.selectAll(".row")
@@ -998,24 +1028,19 @@ var View = /** @class */ (function () {
                 return;
             return "translate(0," + _this.orderingScale(i) + ")";
         });
-        var cells = d3.selectAll(".cell") //.selectAll('rect')
-            //.transition()
-            //.duration(transitionTime)
-            //.delay((d, i) => { return this.orderingScale(i) * 4; })
-            //.delay((d) => { return this.orderingScale(d.x) * 4; })
-            .attr("transform", function (d, i) {
-            return 'translate(' + _this.orderingScale(d.x) + ',0)';
-        });
         this.attributeRows
             //.transition()
             //.duration(transitionTime)
             //.delay((d, i) => { return this.orderingScale(i) * 4; })
             .attr("transform", function (d, i) { return "translate(0," + _this.orderingScale(i) + ")"; });
         // update each highlightRowsIndex
-        var t = this.edges; //.transition().duration(transitionTime);
-        t.selectAll(".column")
-            //.delay((d, i) => { return this.orderingScale(i) * 4; })
-            .attr("transform", function (d, i) { return "translate(" + _this.orderingScale(i) + ",0)rotate(-90)"; });
+        // if any other method other than neighbors sort
+        if (!nodeIDs.includes(parseInt(order))) {
+            var t = this.edges; //.transition().duration(transitionTime);
+            t.selectAll(".column")
+                //.delay((d, i) => { return this.orderingScale(i) * 4; })
+                .attr("transform", function (d, i) { return "translate(" + _this.orderingScale(i) + ",0)rotate(-90)"; });
+        }
         /*d3.selectAll('.highlightRow') // taken care of as they're apart of row and column groupings already
           .transition()
           .duration(transitionTime)
@@ -1034,6 +1059,19 @@ var View = /** @class */ (function () {
             this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
         }
         d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(function (d) { return d == order; }).style('fill', '#EBB769');
+        if (!nodeIDs.includes(parseInt(order))) {
+            var cells = d3.selectAll(".cell") //.selectAll('rect')
+                //.transition()
+                //.duration(transitionTime)
+                //.delay((d, i) => { return this.orderingScale(i) * 4; })
+                //.delay((d) => { return this.orderingScale(d.x) * 4; })
+                .attr("transform", function (d, i) {
+                return 'translate(' + _this.orderingScale(d.x) + ',0)';
+            });
+        }
+        else {
+            d3.select('#sortIcon' + order).style('fill', '#EBB769');
+        }
     };
     View.prototype.updateCheckBox = function (state) {
         var _this = this;
@@ -1114,19 +1152,19 @@ var View = /** @class */ (function () {
             .attr('stroke', '2px')
             .attr('stroke-opacity', 0.3);
         var attributeMouseOver = function (d) {
-            that.addHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
-            that.addHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.addHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.addHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
             _this.mouseoverEvents.push({ time: new Date().getTime(), event: 'attrRow' + d[_this.datumID] });
             d3.selectAll('.hovered').classed('hovered', false);
-            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
-            that.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
+            _this.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
+            _this.renderHighlightNodesFromDict(_this.controller.hoverCol, 'hovered', 'Col');
         };
         this.attributeMouseOver = attributeMouseOver;
         var attributeMouseOut = function (d) {
-            that.removeHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
-            that.removeHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.removeHighlightNodesToDict(_this.controller.hoverRow, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
+            _this.removeHighlightNodesToDict(_this.controller.hoverCol, d[_this.datumID], d[_this.datumID]); // Add row (rowid)
             d3.selectAll('.hovered').classed('hovered', false);
-            that.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
+            _this.renderHighlightNodesFromDict(_this.controller.hoverRow, 'hovered', 'Row');
         };
         this.attributeMouseOut = attributeMouseOut;
         this.attributeRows.append('rect')
@@ -1278,14 +1316,16 @@ var View = /** @class */ (function () {
                         .style('stroke', 'lightgray');
                 }
                 else {
+                    var initalHeight = barHeight;
+                    var newBarHeight = d3.min([barHeight, 15]);
                     var rect = answerBox.append("rect")
-                        .attr("x", (columnWidths[column] / 2) - barHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
-                        .attr("y", barMargin.top)
+                        .attr("x", (columnWidths[column] / 2) - newBarHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
+                        .attr("y", barMargin.top + (initalHeight - newBarHeight) / 2)
                         //.attr("rx", barHeight / 2)
                         //.attr("ry", barHeight / 2)
                         .style("fill", "white")
-                        .attr("width", barHeight)
-                        .attr("height", barHeight)
+                        .attr("width", newBarHeight)
+                        .attr("height", newBarHeight)
                         .attr('stroke', 'lightgray')
                         .on('mouseover', attributeMouseOver)
                         .on('mouseout', attributeMouseOut);

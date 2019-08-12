@@ -49,8 +49,12 @@ class Controller {
   private taskNum: number;
 
   loadTask(taskNum) {
+    console.log(this.tasks)
+    this.tasks = taskList
+    console.log(this.tasks);
     this.taskNum = taskNum;
     this.task = this.tasks[this.taskNum];
+    console.log(this.task,this.tasks,this.tasks[this.taskNum],this.taskNum)
     this.configuration = this.task.config;
     //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
 
@@ -280,9 +284,9 @@ class Controller {
    * Obtains the order from the model and returns it to the view.
    * @return [description]
    */
-  changeOrder(order: string) {
+  changeOrder(order: string, node : boolean = false) {
     this.configuration.adjMatrix.sortKey = order;
-    return this.model.changeOrder(order);
+    return this.model.changeOrder(order,node);
   }
 }
 

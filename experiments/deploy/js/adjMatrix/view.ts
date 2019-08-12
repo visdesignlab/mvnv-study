@@ -439,7 +439,29 @@ class View {
         this.clickFunction(d, i, nodes);
       })
 
+    let verticalOffset = 3;
+    if(this.controller.configuration.adjMatrix.neighborSelect){
+      verticalOffset = 187.5;
+      let horizontalOffset = this.nodes.length < 50 ? 143.75 : 0;
+      this.edgeColumns.append('path').attr('id',d=>'sortIcon'+d[0].rowid).attr('class', 'sortIcon').attr('d', (d) => {
+          return this.controller.model.icons['cellSort'].d;
+        }).style('fill', d => {return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
+        .on('click', (d, i, nodes) => {
+          this.sort(d[0].rowid);
+          //this.clickFunction(d, i, nodes);
+          console.log(d3.select('#colLabel'+d[0].rowid));
+          /*var e = document.createEvent('UIEvents');
+          e.initUIEvent('click', true, true, /* ... *///);
+          /*d3.select('#colLabel'+d[0].rowid).node().dispatchEvent(e);*/
 
+          //let action = this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
+          //this.controller.model.provenance.applyAction(action);
+        }).attr('cursor', 'pointer')
+        .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
+        .on('mouseover', (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) });
+        ;
+      verticalOffset = verticalOffset/12.5 + 3;
+    }
 
     this.edgeColumns.append("text")
       .attr("id", (d, i) => {
@@ -448,13 +470,14 @@ class View {
       .attr('class', 'colLabel')
       .attr('z-index', 30)
       .attr("y", this.orderingScale.bandwidth() / 2)
-      .attr('x', 2)
+      .attr('x', verticalOffset)
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
       .style("font-size", labelSize)
       .text((d, i) => this.nodes[i].shortName)
       .on('click', (d, i, nodes) => {
         if (this.controller.configuration.adjMatrix.neighborSelect) {
+          //this.sort(d[0].rowid)
           this.clickFunction(d, i, nodes);
           let action = this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
           this.controller.model.provenance.applyAction(action);
@@ -1158,7 +1181,14 @@ class View {
    * @return [description]
    */
   sort(order) {
-    this.order = this.controller.changeOrder(order);
+    let nodeIDs = this.nodes.map(node=>node.id);
+    if(nodeIDs.includes(parseInt(order))){
+      this.order = this.controller.changeOrder(order,true);
+      console.log(order);
+    } else {
+      this.order = this.controller.changeOrder(order);
+
+    }
     this.orderingScale.domain(this.order);
 
     let transitionTime = 500;
@@ -1171,14 +1201,8 @@ class View {
         return "translate(0," + this.orderingScale(i) + ")";
       })
 
-    let cells = d3.selectAll(".cell")//.selectAll('rect')
-      //.transition()
-      //.duration(transitionTime)
-      //.delay((d, i) => { return this.orderingScale(i) * 4; })
-      //.delay((d) => { return this.orderingScale(d.x) * 4; })
-      .attr("transform", (d, i) => {
-        return 'translate(' + this.orderingScale(d.x) + ',0)'
-      });
+
+
 
     this.attributeRows
       //.transition()
@@ -1189,12 +1213,14 @@ class View {
     // update each highlightRowsIndex
 
 
+    // if any other method other than neighbors sort
+    if(!nodeIDs.includes(parseInt(order))){
+      var t = this.edges//.transition().duration(transitionTime);
+      t.selectAll(".column")
+        //.delay((d, i) => { return this.orderingScale(i) * 4; })
+        .attr("transform", (d, i) => { return "translate(" + this.orderingScale(i) + ",0)rotate(-90)"; });
+    }
 
-
-    var t = this.edges//.transition().duration(transitionTime);
-    t.selectAll(".column")
-      //.delay((d, i) => { return this.orderingScale(i) * 4; })
-      .attr("transform", (d, i) => { return "translate(" + this.orderingScale(i) + ",0)rotate(-90)"; });
 
     /*d3.selectAll('.highlightRow') // taken care of as they're apart of row and column groupings already
       .transition()
@@ -1216,6 +1242,20 @@ class View {
     }
 
     d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(d => d == order).style('fill', '#EBB769')
+    if(!nodeIDs.includes(parseInt(order))){
+      let cells = d3.selectAll(".cell")//.selectAll('rect')
+        //.transition()
+        //.duration(transitionTime)
+        //.delay((d, i) => { return this.orderingScale(i) * 4; })
+        //.delay((d) => { return this.orderingScale(d.x) * 4; })
+        .attr("transform", (d, i) => {
+          return 'translate(' + this.orderingScale(d.x) + ',0)'
+        });
+    } else {
+      d3.select('#sortIcon'+order).style('fill','#EBB769')
+
+    }
+
   }
 
   updateCheckBox(state) {
@@ -1313,24 +1353,25 @@ class View {
       .attr('stroke-opacity', 0.3);
 
     let attributeMouseOver = (d) => {
-      that.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-      that.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      this.addHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      this.addHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
 
       this.mouseoverEvents.push({ time: new Date().getTime(), event: 'attrRow' + d[this.datumID] })
 
       d3.selectAll('.hovered').classed('hovered', false);
-      that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
-      that.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
+      this.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+      this.renderHighlightNodesFromDict(this.controller.hoverCol, 'hovered', 'Col');
     };
+
     this.attributeMouseOver = attributeMouseOver;
     let attributeMouseOut = (d) => {
 
-      that.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
-      that.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      this.removeHighlightNodesToDict(this.controller.hoverRow, d[this.datumID], d[this.datumID]);  // Add row (rowid)
+      this.removeHighlightNodesToDict(this.controller.hoverCol, d[this.datumID], d[this.datumID]);  // Add row (rowid)
 
       d3.selectAll('.hovered').classed('hovered', false);
 
-      that.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
+      this.renderHighlightNodesFromDict(this.controller.hoverRow, 'hovered', 'Row');
 
     };
     this.attributeMouseOut = attributeMouseOut;
@@ -1518,14 +1559,16 @@ class View {
             .style("fill", "white")
             .style('stroke', 'lightgray');
         } else {
+          let initalHeight = barHeight;
+          let newBarHeight = d3.min([barHeight,15])
           let rect = answerBox.append("rect")
-            .attr("x", (columnWidths[column] / 2) - barHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
-            .attr("y", barMargin.top)
+            .attr("x", (columnWidths[column] / 2) - newBarHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
+            .attr("y", barMargin.top + (initalHeight-newBarHeight)/2)
             //.attr("rx", barHeight / 2)
             //.attr("ry", barHeight / 2)
             .style("fill", "white")
-            .attr("width", barHeight)
-            .attr("height", barHeight)
+            .attr("width", newBarHeight)
+            .attr("height", newBarHeight)
             .attr('stroke', 'lightgray')
             .on('mouseover', attributeMouseOver)
             .on('mouseout', attributeMouseOut);
