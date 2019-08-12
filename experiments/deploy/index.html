@@ -144,17 +144,11 @@
 
                             </div>
 
-                            <div class="card trialSection" id="feedbackCard">
-
-
+                            <div class="card" id="feedbackCard">
                                 <div class="card-content">
                                     <div class="content">
-
-                                        <a id="nextTrialTask" class="button is-pulled-right">Next Practice Task</a>
-
                                         <span id="trialFeedback">
                                             <span class='errorMsg'>Try again.</span>
-                                            <span class='correctMsg'>You got it!</span>
                                         </span>
                                     </div>
                                 </div>
@@ -171,11 +165,15 @@
                                 </header>
                                 <div class="card-content">
                                     <div class="content">
-
-                                        <a class="button taskShortcut" id="task1">Task1</a>
-                                        <a class="button taskShortcut" id="task2">Task2</a>
-                                        <a class="button taskShortcut" id="task3">Task3</a>
-                                        <a class="button taskShortcut" id="task4">Task4</a>
+                                            <!-- <article class="message is-link">
+                                                    <div class="message-header">
+                                                      <p>Link</p>
+                                                      <button class="delete" aria-label="delete"></button>
+                                                    </div>
+                                                    <div class="message-body">
+                                                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac <em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor, tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
+                                                    </div>
+                                                  </article> -->
 
                                     </div>
                                 </div>
@@ -614,36 +612,6 @@
     </div>
 
 
-    <div class="modal modalStartTrials">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-
-
-            <header class="modal-card-head">
-                <p class="modal-card-title">
-                    Let's start of with some Practice Tasks <span>
-                </p>
-            </header>
-            <section class="modal-card-body">
-                <div class="content">
-
-                    <p>In this section, you will get familiar with the visualization by answering three practice tasks.
-                        You will only be allowed to proceed once you have
-                        answered those questions correctly to make sure that you understand the encodings and how to
-                        interact with the visualization. </p>
-
-                    <p>You are not being timed for this portion of the study so take your time!</p>
-
-                </div>
-            </section>
-
-            <footer class="modal-card-foot">
-                <a href="#" id="startTrials" class="button is-pulled-right">Start Practice Session</a>
-            </footer>
-        </div>
-    </div>
-
-
     <div class="modal modalStartStudy">
         <div class="modal-background"></div>
         <div class="modal-card">
@@ -720,15 +688,15 @@
         trials
     } = getUrlVars();
 
-    mode = mode || 'heuristics'; //can be 'develop', 'heuristics', or 'study'
+    mode = mode || 'heuristics'; //can be 'develop', 'test', 'heuristics', or 'study'
 
     //set default values for any variables not passed in and assign the appropriate database collections; 
 
     switch (mode) {
         case 'heuristics':
-            track = track || true;
-            shuffleTasks = shuffleTasks || false;
-            taskMenu = taskMenu || true;
+            track = true;
+            shuffleTasks = false;
+            taskMenu = false;
             configPanel = false;
             trials = false;
             break;
@@ -748,7 +716,7 @@
             break;
         case 'test':
             track = track || true;
-            shuffleTasks = shuffleTasks || false;
+            shuffleTasks = shuffleTasks || true;
             taskMenu = taskMenu || true;
             configPanel = configPanel || false;
             trials = trials || true;
@@ -798,7 +766,7 @@
         if (mode !== 'study') {
 
                //start tracking user interaction with study_provenance
-                setUpStudyProvenance(mode + '  landing page');
+                setUpStudyProvenance(mode + ' - started');
 
             let screenSize = {
                 availWidth: window.screen.availWidth,

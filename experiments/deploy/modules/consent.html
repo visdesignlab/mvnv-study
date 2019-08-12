@@ -113,7 +113,7 @@
                     .on('blur', function () {
                         data.workerId = this.value;
                     });
-            d3.select('#consentYes').on('click',function(){
+            d3.select('#consentYes').on('click', async function(){
                 //if the user consents to particpate in the study, create a random completion code, add him to the list of particpants, and set the global
                 // memberID variable
 
@@ -129,8 +129,8 @@
                 workerID = sanitizeWorkerID(data.workerId);
 
                 //start tracking user interaction with study_provenance
-                setUpStudyProvenance('signed consent form');
-
+                await setUpStudyProvenance('signed consent form');
+                
                 db.collection(participantCollection).doc(workerID).set({
                     screenSize,
                     completionCode:makeid(6),
@@ -138,6 +138,7 @@
 
                 },{merge:true}); 
 
+                
                 experimentr.next();
             });
 

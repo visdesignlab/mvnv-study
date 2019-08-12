@@ -1,13 +1,13 @@
 {
     "nodeLink": {
-        "drawBars": false,
-        "selectNeighbors": false,
+        "drawBars": true,
+        "selectNeighbors": true,
         "nodeHeight": 40,
-        "nodeWidth":40,
+        "nodeWidth": 40,
         "labelSize": 12,
         "labelAttr": "shortName",
         "nodeFillAttr": "continent",
-        "nodeSizeAttr": "favourites_count",
+        "nodeSizeAttr": null,
         "edgeWidthAttr": null,
         "edgeStrokeAttr": "type",
         "noEdgeColor": "black",
@@ -26,9 +26,9 @@
     },
     "adjMatrix": {
         "neighborHighlightColor": "",
-        "neighborSelect":true,
-        "edgeBars":true,
-        "sortKey":"favourites_count"
+        "neighborSelect": true,
+        "edgeBars": true,
+        "sortKey": "favourites_count"
     },
     "taskID": "task1",
     "loadedGraph": "large_undirected_singleEdge",
@@ -36,12 +36,16 @@
     "isMultiEdge": false,
     "graphSize": "large",
     "nodeAttributes": [
-        "continent",
-        "favourites_count"
+        "friends_count",
+        "followers_count",
+        "statuses_count",
+        "favourites_count",
+        "type",
+        "continent"
     ],
     "edgeAttributes": [
         "type"
     ],
     "adjMatrixValues": {},
-    "nodeIsRect": false
+    "nodeIsRect": true
 }

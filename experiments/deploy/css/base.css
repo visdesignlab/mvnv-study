@@ -9,7 +9,7 @@ body {
 }
 
 #trialBar{
-    background-color:orange;
+    background-color:#fac667;
 }
 
 .helpIcon{
@@ -40,6 +40,7 @@ div.tooltip {
 
 #visPanel{
     height:1060px;
+    overflow-y:scroll;
 }
 
 #easyLabel{
@@ -109,7 +110,7 @@ div.tooltip {
 
 #nextTrialTask{
 
-    display:none;
+    /* display:none; */
     color:white;
     background-color: #787878;
     border-width:0px;
@@ -121,21 +122,36 @@ div.tooltip {
     width: calc(100vh - 100px);
 }
 
+.hint{
+    color:rgb(50, 50, 50);
+    font-size:14px;
+    display:block;
+}
+
 .correctMsg{
     color:white;
-    font-style:italic;
-    display:none;
+    /* font-style:italic; */
+    font-size:23px;
+    /* display:none; */
 }
 
 #feedbackCard{
-    background-color:orange;
+    background-color:#fac667;
     font-size: 20px;
     font-weight: 900;
+    display:none;
 
 }
 #clear-selection{
     color:white;
     background-color:#898989;
+}
+
+
+#start-training{
+    color:white;
+    background-color:#898989;
+    width:100%;
 }
 
 .taskCard .errorMsg{

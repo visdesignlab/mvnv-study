@@ -4,11 +4,12 @@
   function exportConfig(baseKeys, nodeLinkKeys, isTaskConfig) {
     let configCopy = JSON.parse(JSON.stringify(config));
 
-  
+    console.log(baseKeys,nodeLinkKeys,isTaskConfig)
     //only keep keys for this particular config file;
   
+    let removeKeys = ['graphFiles', 'attributeScales', 'style'];
     Object.keys(configCopy).map(key => {
-      if (!baseKeys.includes(key)) {
+      if (removeKeys.includes(key)) {
         delete configCopy[key];
       }
     });

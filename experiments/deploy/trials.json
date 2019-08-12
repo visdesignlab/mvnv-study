@@ -1,5 +1,5 @@
 {
-    "T-task1": {
+    "trialTask1": {
         "answerKey": {
             "nodes": [],
             "value": "866"
@@ -154,7 +154,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "white",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -193,7 +193,7 @@
             "value": ""
         }
     },
-    "T-task2": {
+    "trialTask2": {
         "answerKey": {
             "nodes": [
                 "2873695769",
@@ -356,7 +356,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "white",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",

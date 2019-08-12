@@ -1,22 +1,21 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Node-Link Diagram</h1>
+    <h2 class="subtitle trainingIntro">
+      Watch the video below to learn what a node-link diagram is and how you can interact with it.
+    </h2>
+  </div>
 
-    <section class="section">
-      <div class="container">
-        <h1 class="title">Node-Link Diagram</h1>
-        <h2 class="subtitle">
-          Watch the series of short tutorials below to learn what a node-link diagram is and how you can interact with it.
-        </h2>
-      </div>
-<!-- 
-      <div class="card">
-          <div class="card-image">
-              <video width="1152px" height="648px" controls preload="none">
-                  <source src="training/nodeLinkTraining_small.mp4" type="video/mp4" />
-          </div>
-        </div> -->
+  <div class="card">
+    <div class="card-image">
+      <video width="1152px" height="648px" controls preload="none">
+        <source src="training/nodeLink-training-small.mp4" type="video/mp4" />
+    </div>
+  </div>
 
 
-    </section>
-    <section class ="section">
+</section>
+<!-- <section class ="section">
         <div class='carousel carousel-animated carousel-animate-slide' data-size="1">
                 <div class='carousel-container'>
 
@@ -62,21 +61,18 @@
               </div>
 
 
-</section>
+</section> -->
 
-<a class="button is-pulled-right" id="training">Start Practice Tasks</a>
+<a class="button is-pulled-right" id="start-training">Start Practice Tasks</a>
 
 
 <script src="js/carousel-js.js"></script>
 
 <script>
-    updateStudyProvenance('started training')
-    d3.select('#training').on('click', function(){
-      updateStudyProvenance('finished training')
-      experimentr.next()});
-    experimentr.hideNext()
+  updateStudyProvenance(' started training')
+  d3.select('#start-training').on('click', function () {
+    updateStudyProvenance('finished training')
+    experimentr.next()
+  });
+  experimentr.hideNext()
 </script>
-
-
-
-        

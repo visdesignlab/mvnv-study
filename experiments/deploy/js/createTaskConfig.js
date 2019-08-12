@@ -2,22 +2,33 @@
 
 (async ()=>{
 
-    let taskListNames = ['large'];
-    let baseConfig = await d3.json("configs/baseConfig.json");
-    taskListNames.map(async taskListName=>{
-        let taskList =  await d3.json("taskLists/studyTasks.json");
+    let taskLists = {
+      'trials':[],
+      'study':[],
+      'heuristics':[]
+    };
 
-        //iterate through each taskKey and add config object;
+    let baseConfig = await d3.json("configs/baseConfig.json");
+    //for each set create a different .json file
+    Object.keys(taskLists).map(async (mode) =>{
+      let taskFiles = taskLists[mode];
+
+        let taskList =  await d3.json("bareTaskLists/" + mode + ".json");
+
+        //iterate through each taskKey and add config and answer objects;
         let allConfigs = Object.keys(taskList).map(async (key)=>{
-            let taskConfig = await d3.json("configs/"+ key + "Config.json");
+            let taskConfig = await d3.json("configs/"+ key + ".json");
             let mergedConfig = mergeConfigs(baseConfig,taskConfig)
             taskList[key].config=mergedConfig;
+            taskList[key].answer =  {
+              "nodes": [],
+              "value": ""
+          }
         })
 
-        //export taskList now with configs for each task. 
-        // Promise.all(allConfigs).then((completed) => saveToFile(taskList, taskListName + ".json"));
+        // export taskList now with configs for each task. 
+        Promise.all(allConfigs).then((completed) => saveToFile(taskList, mode + ".json"));
         })
-    
 } )
 // ();
 
