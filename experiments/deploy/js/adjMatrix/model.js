@@ -14,7 +14,7 @@ var Model = /** @class */ (function () {
               console.log(svg,error)
               this.alphabeticalSortSvg = svg;
             })
-
+      
             d3.request('../../assets/adj-matrix/categoricalSort.svg').mimeType("image/svg+xml").get(function(error, svg) {
               this.categoricalSortSvg = svg;
             })*/
@@ -81,7 +81,35 @@ var Model = /** @class */ (function () {
         }
     };
     Model.prototype.populateSearchBox = function () {
+        /*
+        d3.select("#search-input").attr("list", "characters");
+        let inputParent = d3.select("#search-input").node().parentNode;
     
+        let datalist = d3
+        .select(inputParent).selectAll('#characters').data([0]);
+    
+        let enterSelection = datalist.enter()
+        .append("datalist")
+        .attr("id", "characters");
+    
+        datalist.exit().remove();
+    
+        datalist= enterSelection.merge(datalist);
+    
+        let options = datalist.selectAll("option").data(this.nodes);
+    
+        let optionsEnter = options.enter().append("option");
+        options.exit().remove();
+    
+        options = optionsEnter.merge(options);
+        options.attr("value", d => d.shortName);
+        options.attr("id", d => d.id);
+    
+        d3.select("#search-input").on("change", (d,i,nodes) => {
+          let selectedOption = d3.select(nodes[i]).property("value");
+          console.log(this.controller.view.search(selectedOption))
+        });
+    */
     };
     /**
      * returns an object containing the current provenance state.
@@ -176,6 +204,7 @@ var Model = /** @class */ (function () {
         function setUpObservers() {
             var _this = this;
             var updateHighlights = function (state) {
+                console.log(state);
                 d3.selectAll('.clicked').classed('clicked', false);
                 d3.selectAll('.answer').classed('answer', false);
                 d3.selectAll('.neighbor').classed('neighbor', false);

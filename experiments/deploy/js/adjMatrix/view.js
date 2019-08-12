@@ -557,6 +557,9 @@ var View = /** @class */ (function () {
                     });
                     return currentState;
                 }
+                else if (interactionName == 'attrRow') {
+                    interactionName;
+                }
                 _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
                 return currentState;
             },
@@ -1440,14 +1443,14 @@ var View = /** @class */ (function () {
         // Draw buttons for alternative sorts
         var initalY = -this.margins.left + 10;
         var buttonHeight = 15;
-        var text = ['name', 'cluster', 'tweets'];
+        var text = ['name', 'cluster', 'interacts'];
         var sortNames = ['shortName', 'clusterLeaf', 'edges'];
         var iconNames = ['alphabetical', 'categorical', 'quant'];
         var _loop_2 = function (i) {
             var button = this_2.edges.append('g')
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
             button.attr('cursor', 'pointer');
-            button.append('rect').attr('width', this_2.margins.left - 10).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1);
+            button.append('rect').attr('width', this_2.margins.left - 5).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1);
             button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
             var path = button.datum([sortNames[i]]);
             var realPath = path

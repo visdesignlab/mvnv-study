@@ -662,6 +662,9 @@ class View {
           })
           return currentState;
 
+        } else if (interactionName == 'attrRow'){
+          interactionName
+
         }
         this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
         return currentState;
@@ -1709,14 +1712,14 @@ class View {
     // Draw buttons for alternative sorts
     let initalY = -this.margins.left + 10;
     let buttonHeight = 15;
-    let text = ['name', 'cluster', 'tweets'];
+    let text = ['name', 'cluster', 'interacts'];
     let sortNames = ['shortName', 'clusterLeaf', 'edges']
     let iconNames = ['alphabetical', 'categorical', 'quant']
     for (let i = 0; i < 3; i++) {
       let button = this.edges.append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
       button.attr('cursor', 'pointer')
-      button.append('rect').attr('width', this.margins.left - 10).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1)
+      button.append('rect').attr('width', this.margins.left - 5).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1)
       button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
       let path = button.datum([sortNames[i])
       let realPath = path
