@@ -47,9 +47,17 @@ div.tooltip {
     padding-left:0px;
 }
 
+.message-header p, .message-body{
+    white-space: normal;
+}
+
 .selectBox.selected{
     fill:rgb(255, 111, 0);
     
+}
+
+.input.searchInput {
+    width:80% !important;
 }
 
 .taskMenu{

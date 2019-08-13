@@ -187,9 +187,9 @@ pointer-events: none;
     display: inline-block;
 }
 
-.input.searchInput {
+/* .input.searchInput {
     width:70% !important;
-}
+} */
 
 .clicked{
   font-weight:800;
@@ -266,7 +266,7 @@ opacity: 0.3;
   left: 0;
 }
 /* Panel Info */
-#panelControl, #clear-selection{
+#panelControl{
       background-color:rgb(78, 78, 78);
       color:white;
   }
