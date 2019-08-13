@@ -1,6 +1,6 @@
 {
     "nodeLink": {
-        "drawBars": false,
+        "drawBars": true,
         "selectNeighbors": false,
         "nodeHeight": 40,
         "nodeWidth": 40,
@@ -11,7 +11,7 @@
         "edgeWidthAttr": null,
         "edgeStrokeAttr": "type",
         "noEdgeColor": "black",
-        "noNodeFill": "white",
+        "noNodeFill": "lightgrey",
         "noNodeStroke": "#c8c8c8",
         "quantColors": [
             "#7b7cb1",
@@ -43,5 +43,5 @@
         "type"
     ],
     "adjMatrixValues": {},
-    "nodeIsRect": false
+    "nodeIsRect": true
 }

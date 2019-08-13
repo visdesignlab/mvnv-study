@@ -151,7 +151,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -191,7 +191,7 @@
         }
     },
     "H-task2": {
-        "prompt": "Select all of Lane's neighbors that are *people* and have more friends than followers.",
+        "prompt": "Select all of Lane's neighbors that are people and have more friends than followers.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -345,7 +345,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -538,7 +538,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -585,7 +585,7 @@
         }
     },
     "H-task4": {
-        "prompt": "Which person is frequently retweeted in this network despite being relatively inactive on twitter?",
+        "prompt": "Which person is frequently retweeted in this network despite having few tweets and likes?",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -739,7 +739,7 @@
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",

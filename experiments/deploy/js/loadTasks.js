@@ -22,6 +22,36 @@ let app;
 let studyProvenance;
 let studyApp;
 
+var height;
+var width;
+
+//Dimensions of the actual Vis
+var visDimensions = { width: 0, height: 0 };
+
+//Dimensions of the panel with the task, legend, and user response
+var panelDimensions = { width: 0, height: 0 };
+
+let taskBarHeight;
+
+
+let targetDiv = d3.select("#targetSize");
+width = targetDiv.style("width").replace("px", "");
+height = targetDiv.style("height").replace("px", "");
+
+// height = height*0.75;
+taskBarHeight = 74;
+//  console.log(width2,height2)
+
+visDimensions.width = width * 0.75 - 24;
+visDimensions.height = height - taskBarHeight;
+
+panelDimensions.width = width * 0.25;
+panelDimensions.height = height - taskBarHeight;
+
+d3.select("#visPanel").style("width", panelDimensions.width + "px");
+
+
+
 async function setUpStudyProvenance(label) {
   const initialState = {
     workerID, //gets value from global workerID variable
