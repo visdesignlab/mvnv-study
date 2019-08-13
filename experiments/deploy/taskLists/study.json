@@ -1412,7 +1412,7 @@
     },
     "S-task6": {
         "hypothesis": "Topology plus Simple Attributes Hypothesis",
-        "prompt": "Does Alex have retweet interactions with American or European accounts more?",
+        "prompt": "Does Alex have retweet interactions with North American or European accounts more?",
         "replyType": [
             "value"
         ],
