@@ -13,7 +13,7 @@ var View = /** @class */ (function () {
             var interaction = _this.sanitizeInteraction(d3.select(nodes[i]).attr('class'));
             var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
             _this.controller.model.provenance.applyAction(action);
-            //pushProvenance(this.controller.model.app.currentState())
+            pushProvenance(_this.controller.model.app.currentState());
         };
         // set up loading screen
         // Add scroll handler to containers
@@ -81,6 +81,7 @@ var View = /** @class */ (function () {
         }
         var action = this.controller.view.changeInteractionWrapper(name, null, 'search');
         this.controller.model.provenance.applyAction(action);
+        pushProvenance(this.controller.model.app.currentState());
         return 1;
     };
     /**
@@ -546,6 +547,10 @@ var View = /** @class */ (function () {
             label: interactionType,
             action: function (nodeID) {
                 var currentState = _this.controller.model.app.currentState();
+                console.log(_this.mouseoverEvents, currentState.selections.previousMouseovers);
+                currentState.selections.previousMouseovers = _this.mouseoverEvents;
+                _this.mouseoverEvents.length = 0;
+                console.log(_this.mouseoverEvents);
                 console.log(currentState);
                 //add time stamp to the state graph
                 currentState.time = Date.now();
@@ -626,12 +631,10 @@ var View = /** @class */ (function () {
      * @return                 [description]
      */
     View.prototype.changeInteraction = function (state, nodeID, interaction, interactionName) {
-        if (interactionName === void 0) { interactionName = interaction; }
         // if there have been any mouseover events since the last submitted action, log them in provenance
-        if (this.mouseoverEvents.length > 1) {
-            state.selections.previousMouseovers = this.mouseoverEvents;
-            this.mouseoverEvents = [];
-        }
+        //if (this.mouseoverEvents.length > 1) {
+        if (interactionName === void 0) { interactionName = interaction; }
+        //}
         if (nodeID in state.selections[interaction]) {
             // Remove element if in list, if list is empty, delete key
             var currentIndex = state.selections[interaction][nodeID].indexOf(interactionName);

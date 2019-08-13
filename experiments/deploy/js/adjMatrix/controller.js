@@ -140,7 +140,8 @@ var Controller = /** @class */ (function () {
                     cellcol: {},
                     cellrow: {},
                     search: {},
-                    neighborSelect: {}
+                    neighborSelect: {},
+                    previousMouseovers: []
                 };
                 console.log("after Clear:", currentState);
                 return currentState;
@@ -148,7 +149,7 @@ var Controller = /** @class */ (function () {
             args: []
         };
         this.model.provenance.applyAction(action);
-        //pushProvenance(this.model.app.currentState())
+        pushProvenance(this.model.app.currentState());
     };
     Controller.prototype.sizeLayout = function () {
         var targetDiv = d3.select("#targetSize");

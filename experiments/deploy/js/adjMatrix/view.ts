@@ -69,7 +69,7 @@ class View {
 
       let action = this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
       this.controller.model.provenance.applyAction(action);
-      //pushProvenance(this.controller.model.app.currentState())
+      pushProvenance(this.controller.model.app.currentState())
 
     };
 
@@ -121,6 +121,7 @@ class View {
 
     let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
     this.controller.model.provenance.applyAction(action);
+    pushProvenance(this.controller.model.app.currentState())
     return 1;
   }
 
@@ -647,6 +648,10 @@ class View {
       label: interactionType,
       action: (nodeID) => {
         const currentState = this.controller.model.app.currentState();
+        console.log(this.mouseoverEvents,currentState.selections.previousMouseovers);
+          currentState.selections.previousMouseovers = this.mouseoverEvents;
+          this.mouseoverEvents.length = 0;
+          console.log(this.mouseoverEvents);
         console.log(currentState);
         //add time stamp to the state graph
         currentState.time = Date.now();
@@ -733,10 +738,9 @@ class View {
   changeInteraction(state, nodeID: string, interaction: string, interactionName: string = interaction) {
 
     // if there have been any mouseover events since the last submitted action, log them in provenance
-    if (this.mouseoverEvents.length > 1) {
-      state.selections.previousMouseovers = this.mouseoverEvents;
-      this.mouseoverEvents = [];
-    }
+    //if (this.mouseoverEvents.length > 1) {
+
+    //}
 
 
     if (nodeID in state.selections[interaction]) {

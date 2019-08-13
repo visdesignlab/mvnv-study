@@ -170,7 +170,8 @@ class Controller {
             cellcol: {},
             cellrow: {},
             search: {},
-            neighborSelect: {}
+            neighborSelect: {},
+            previousMouseovers: []
           }
           console.log("after Clear:", currentState)
           return currentState;
@@ -178,7 +179,7 @@ class Controller {
         args: []
       }
       this.model.provenance.applyAction(action);
-      //pushProvenance(this.model.app.currentState())
+      pushProvenance(this.model.app.currentState())
 
 
   }
