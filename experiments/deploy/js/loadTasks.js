@@ -394,9 +394,6 @@ d3.selectAll("#closeModal").on("click", () => {
   updateStudyProvenance("closed Help");
 });
 
-//set up callback for 'next Task';
-console.log('nextTask!')
-
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
 
@@ -788,24 +785,29 @@ function makeid(length) {
 }
 
 async function getResults() {
+
+  return; 
   let allResults = [];
   let allParticipants = [];
   let allProvenance = [];
 
-  // let ids = ['7eKPji','FaP5YL','MqknUo','GtVOYl','T391Hp','T7asXK','yXA0Sm'];
-  let ids = [];
+  let allVisProvenance = [];
 
-  let dbDump = ids.map(async id => {
-    db.collection(id)
-      .get()
-      .catch(function(error) {
-        console.log("Error getting document:", error);
-      })
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          allProvenance.push({ worker: id, id: doc.id, data: doc.data() });
-        });
-      });
+  // let ids = ['7eKPji','FaP5YL','MqknUo','GtVOYl','T391Hp','T7asXK','yXA0Sm'];
+
+  let id= 'TestUser'
+
+  // let dbDump = ids.map(async id => {
+  //   db.collection(id)
+  //     .get()
+  //     .catch(function(error) {
+  //       console.log("Error getting document:", error);
+  //     })
+  //     .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //         allProvenance.push({ worker: id, id: doc.id, data: doc.data() });
+  //       });
+  //     });
 
     let result = await db
       .collection("results")
@@ -815,18 +817,44 @@ async function getResults() {
     allResults.push({ worker: id, data: result.data() });
 
     let participant = await db
-      .collection("participants")
+      .collection("test_participants")
       .doc(id)
       .get();
 
     allParticipants.push({ worker: id, data: participant.data() });
-  });
 
-  // Promise.all(dbDump).then(() => {
-  //   saveToFile(JSON.stringify(allResults),'allResults.json');
-  //   saveToFile(JSON.stringify(allParticipants),'allParticipants.json');
-  //   saveToFile(JSON.stringify(allProvenance),'allProvenance.json');
+    let provenance = await db
+      .collection("participant_actions")
+      .doc(id)
+      .get();
+
+    allProvenance.push({ worker: id, data: provenance.data() });
+
+
+     
+    db.collection('provenance')
+      .get()
+      .catch(function(error) {
+        console.log("Error getting document:", error);
+      })
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          allVisProvenance.push({ id: doc.id, data: doc.data() });
+        });
+
+        saveToFile(JSON.stringify(allVisProvenance),'allVisProvenance.json');
+      });
+
+
+
+    saveToFile(JSON.stringify(allResults),'allResults.json');
+    saveToFile(JSON.stringify(allParticipants),'allParticipants.json');
+    saveToFile(JSON.stringify(allProvenance),'allProvenance.json');
+
+
+
   // });
+
 }
 
 async function loadTasks(visType, tasksType) {
