@@ -22,35 +22,6 @@ let app;
 let studyProvenance;
 let studyApp;
 
-var height;
-var width;
-
-//Dimensions of the actual Vis
-var visDimensions = { width: 0, height: 0 };
-
-//Dimensions of the panel with the task, legend, and user response
-var panelDimensions = { width: 0, height: 0 };
-
-let taskBarHeight;
-
-
-let targetDiv = d3.select("#targetSize");
-width = targetDiv.style("width").replace("px", "");
-height = targetDiv.style("height").replace("px", "");
-
-// height = height*0.75;
-taskBarHeight = 74;
-//  console.log(width2,height2)
-
-visDimensions.width = width * 0.75 - 24;
-visDimensions.height = height - taskBarHeight;
-
-panelDimensions.width = width * 0.25;
-panelDimensions.height = height - taskBarHeight;
-
-d3.select("#visPanel").style("width", panelDimensions.width + "px");
-
-
 
 async function setUpStudyProvenance(label) {
   const initialState = {
@@ -1118,17 +1089,15 @@ d3.select("#clear-selection").on("click", () => {
     window.controller.clear();
   }
 
+  updateStudyProvenance('cleared all selections')
 
-  // d3.select('#clear-selection').attr('disabled', true)
 });
-console.log(d3.select("#search-input"), "search loading");
-
 let val = d3.select("#search-input").on("change", function() {
 
   // let selectedOption = d3.select(this).property("value");
   //this = d3.select("#search-input"); // resets context
   let selectedOption = d3.select("#search-input").property("value").trim();
-  console.log(selectedOption);
+
   //in case there are just spaces, this will reset it to 'empty'
   d3.select("#search-input").property("value",selectedOption);
 
@@ -1149,8 +1118,6 @@ let val = d3.select("#search-input").on("change", function() {
 
   if (searchSuccess === 1) {
     d3.select(".searchMsg").style("display", "none");
-
-    // d3.select('#clear-selection').attr('disabled', null)
   }
 
   //  if (searchSuccess === 0){
@@ -1158,9 +1125,11 @@ let val = d3.select("#search-input").on("change", function() {
   //   .style('display','block')
   //   .text(selectedOption + ' is already selected.');
   //  }
+
+  updateStudyProvenance('searched for node',{'searchedNode':selectedOption,'success':searchSuccess})
+
 });
 
-console.log(val);
 d3.select('#searchButton').on("click",function(){
 
   let selectedOption = d3.select('.searchInput').property("value").trim();
@@ -1192,6 +1161,9 @@ d3.select('#searchButton').on("click",function(){
       .style("display", "block")
       .text(selectedOption + " is already selected.");
   }
+
+  updateStudyProvenance('searched for node',{'searchedNode':selectedOption,'success':searchSuccess})
+
 });
 
 //Push an empty taskList to a new doc under the results or trials collection to start tracking the results

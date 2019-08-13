@@ -37,12 +37,14 @@ var visDimensions = { width: 0, height: 0 };
 //Dimensions of the panel with the task, legend, and user response
 var panelDimensions = { width: 0, height: 0 };
 
-let taskBarHeight;
+let taskBar_height;
 
 var svg;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
 
 var simulation; //so we're not restarting it every time updateVis is called;
+
+// var tooltipTimeout; 
 
 //global sizes
 let nodeMarkerLength, nodeMarkerHeight, checkboxSize;
@@ -327,14 +329,14 @@ function loadVis(id) {
   height = targetDiv.style("height").replace("px", "");
 
   // height = height*0.75;
-  taskBarHeight = 74;
+  taskBar_height = 74;
   //  console.log(width2,height2)
 
   visDimensions.width = width * 0.75 - 24;
-  visDimensions.height = height - taskBarHeight;
+  visDimensions.height = height - taskBar_height;
 
   panelDimensions.width = width * 0.25;
-  panelDimensions.height = height - taskBarHeight;
+  panelDimensions.height = height - taskBar_height;
 
 
   d3.select("#visPanel").style("width", panelDimensions.width + "px");
@@ -802,6 +804,7 @@ function updateVis() {
       .style("stroke", edgeColor)
       .attr("id", d => d.id)
       .on("mouseover",function(d){
+        
         // console.log (d)
         let tooltipData = d.type;
         
