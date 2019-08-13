@@ -27,6 +27,15 @@
 
     }
 
+    .nodeBorder {
+        stroke-width: 7px;
+        stroke:white;
+        fill:none
+    }
+
+    .label{
+        fill:#3a3a3a;
+    }
     
 
     .selectBox{
@@ -135,6 +144,7 @@
     .node {
         stroke-width: 1px;
         stroke:rgb(200, 200, 200);
+        /* stroke:white; */
     }
 
     .node.clicked{

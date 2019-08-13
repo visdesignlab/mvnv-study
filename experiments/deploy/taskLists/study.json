@@ -149,7 +149,7 @@
                 "hoveredNodeColor": "#fde8ca"
             },
             "nodeLink": {
-                "drawBars": false,
+                "drawBars": true,
                 "selectNeighbors": false,
                 "nodeHeight": 40,
                 "nodeWidth": 40,
@@ -160,7 +160,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -192,7 +192,7 @@
                 "type"
             ],
             "adjMatrixValues": {},
-            "nodeIsRect": false
+            "nodeIsRect": true
         },
         "answer": {
             "nodes": [],
@@ -360,7 +360,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -563,7 +563,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -762,7 +762,7 @@
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -967,7 +967,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -1169,7 +1169,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -1373,7 +1373,7 @@
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -1570,7 +1570,7 @@
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -1770,7 +1770,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -1969,7 +1969,7 @@
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -2170,7 +2170,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -2371,7 +2371,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -2570,7 +2570,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -2773,7 +2773,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -2813,10 +2813,11 @@
     },
     "S-task13": {
         "hypothesis": "Topology plus Simple Attribute Hypothesis",
-        "prompt": "How many europeans are within two interactions of Sereno?",
+        "prompt": "Of the North Americans who are within two interactions of Sereno, who has been on twitter the longest?",
         "replyType": [
-            "value"
+            "singleNodeSelection"
         ],
+        "replyCount": 1,
         "answerKey": {
             "nodes": [],
             "value": ""
@@ -2960,7 +2961,7 @@
                 "hoveredNodeColor": "#fde8ca"
             },
             "nodeLink": {
-                "drawBars": false,
+                "drawBars": true,
                 "selectNeighbors": true,
                 "nodeHeight": 50,
                 "nodeWidth": 50,
@@ -2971,7 +2972,7 @@
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
                 "noEdgeColor": "black",
-                "noNodeFill": "lightgrey",
+                "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
                     "#7b7cb1",
@@ -2996,13 +2997,14 @@
             "isMultiEdge": false,
             "graphSize": "large",
             "nodeAttributes": [
-                "continent"
+                "continent",
+                "memberFor_days"
             ],
             "edgeAttributes": [
                 "type"
             ],
             "adjMatrixValues": {},
-            "nodeIsRect": false
+            "nodeIsRect": true
         },
         "answer": {
             "nodes": [],

@@ -132,7 +132,7 @@
     },
     "nodeLink": {
         "noEdgeColor": "black",
-        "noNodeFill": "lightgrey",
+        "noNodeFill": "rgb(153, 191, 195)",
         "noNodeStroke": "#c8c8c8",
         "quantColors":["#7b7cb1",
             "#01a068",

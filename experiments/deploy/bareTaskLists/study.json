@@ -233,10 +233,11 @@
     },
     "S-task13": {
         "hypothesis":"Topology plus Simple Attribute Hypothesis",
-        "prompt": "How many europeans are within two interactions of Sereno?",
+        "prompt": "Of the North Americans who are within two interactions of Sereno, who has been on twitter the longest?",
         "replyType": [
-            "value"
+            "singleNodeSelection"
         ],
+        "replyCount":1,
         "answerKey": {
             "nodes": [],
             "value": ""

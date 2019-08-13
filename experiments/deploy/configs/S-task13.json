@@ -1,6 +1,6 @@
 {
     "nodeLink": {
-        "drawBars": false,
+        "drawBars": true,
         "selectNeighbors": true,
         "nodeHeight": 50,
         "nodeWidth": 50,
@@ -11,7 +11,7 @@
         "edgeWidthAttr": null,
         "edgeStrokeAttr": "type",
         "noEdgeColor": "black",
-        "noNodeFill": "lightgrey",
+        "noNodeFill": "rgb(153, 191, 195)",
         "noNodeStroke": "#c8c8c8",
         "quantColors": [
             "#7b7cb1",
@@ -36,11 +36,12 @@
     "isMultiEdge": false,
     "graphSize": "large",
     "nodeAttributes": [
-        "continent"
+        "continent",
+        "memberFor_days"
     ],
     "edgeAttributes": [
         "type"
     ],
     "adjMatrixValues": {},
-    "nodeIsRect": false
+    "nodeIsRect": true
 }

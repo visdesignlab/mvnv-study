@@ -37,12 +37,14 @@ var visDimensions = { width: 0, height: 0 };
 //Dimensions of the panel with the task, legend, and user response
 var panelDimensions = { width: 0, height: 0 };
 
-let taskBarHeight;
+let taskBar_height;
 
 var svg;
 var margin = { left: 0, right: 100, top: 0, bottom: 0 };
 
 var simulation; //so we're not restarting it every time updateVis is called;
+
+// var tooltipTimeout; 
 
 //global sizes
 let nodeMarkerLength, nodeMarkerHeight, checkboxSize;
@@ -187,7 +189,7 @@ function setGlobalScales() {
 
     let value = config.nodeLink.edgeWidthAttr
       ? edgeWidthScale(edge[config.nodeLink.edgeWidthAttr])
-      : (edgeWidthScale.range()[1] - edgeWidthScale.range()[0])/2
+      : (edgeWidthScale.range()[1] - edgeWidthScale.range()[0])/3
 
     
     return value;
@@ -327,20 +329,15 @@ function loadVis(id) {
   height = targetDiv.style("height").replace("px", "");
 
   // height = height*0.75;
-  taskBarHeight = 74;
+  taskBar_height = 74;
   //  console.log(width2,height2)
 
   visDimensions.width = width * 0.75 - 24;
-  visDimensions.height = height - taskBarHeight;
+  visDimensions.height = height - taskBar_height;
 
   panelDimensions.width = width * 0.25;
-  panelDimensions.height = height - taskBarHeight;
+  panelDimensions.height = height - taskBar_height;
 
-  d3.select("#panelControl").on("click", () => {
-    let panel = d3.select("#panelDiv");
-    let isVisible = panel.style("display") === "block";
-    panel.style("display", isVisible ? "none" : "block");
-  });
 
   d3.select("#visPanel").style("width", panelDimensions.width + "px");
 
@@ -807,6 +804,7 @@ function updateVis() {
       .style("stroke", edgeColor)
       .attr("id", d => d.id)
       .on("mouseover",function(d){
+        
         // console.log (d)
         let tooltipData = d.type;
         
@@ -843,7 +841,10 @@ function updateVis() {
       .append("g")
       .attr("class", "nodeGroup");
 
-    nodeEnter.append("rect").attr("class", "node");
+
+    nodeEnter.append("rect").attr("class", "nodeBorder nodeBox");
+    nodeEnter.append("rect").attr("class", "node nodeBox");
+
 
     nodeEnter.append("rect").attr("class", "labelBackground");
 
@@ -876,19 +877,18 @@ function updateVis() {
     let extraPadding = sizeDiff > 0 ? sizeDiff : 0;
 
       node
-      .select(".node")
+      .selectAll(".nodeBox")
       .attr("x", d => config.nodeIsRect ? -nodeLength(d) / 2 - 4 - nodePadding/2 -extraPadding/2  :-nodeLength(d) / 2 - 4)
       .attr("y", d => config.nodeIsRect ? -nodeHeight(d) / 2 - 14 :-nodeHeight(d) / 2 - 4 )
       .attr("width", d => config.nodeIsRect ? nodeLength(d) + 8 + nodePadding + extraPadding: nodeLength(d) + 8)
       .attr("height", d =>
         config.nodeIsRect ? nodeHeight(d) + 18 : nodeLength(d) + 8
       )
-      .style("fill", nodeFill)
-      // .style("stroke", d =>
-      //   nodeStroke(app.currentState().selected.includes(d.id))
-      // )
       .attr("rx", d => (config.nodeIsRect ? 0 : nodeLength(d))) //nodeLength(d)/20
-      .attr("ry", d => (config.nodeIsRect ? 0 : nodeHeight(d)))
+      .attr("ry", d => (config.nodeIsRect ? 0 : nodeHeight(d)));
+
+      node.select('.node')
+      .style("fill", nodeFill)
       .classed("clicked", d => app.currentState().selected.includes(d.id))
       .classed("selected", d => app.currentState().hardSelected.includes(d.id))
       
@@ -911,7 +911,7 @@ function updateVis() {
     node
       .select("text")
       .classed("selected", d => d.hardSelect)
-      .style("font-size", config.nodeLink.labelSize)
+      .style("font-size", config.nodeLink.drawBars ? config.nodeLink.labelSize : '18')
       .text(d => d[config.nodeLink.labelAttr])
       .attr("y", d =>
         config.nodeLink.drawBars ? -nodeMarkerHeight/2 -2  : ".5em"

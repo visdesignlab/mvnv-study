@@ -22,6 +22,7 @@ let app;
 let studyProvenance;
 let studyApp;
 
+
 async function setUpStudyProvenance(label) {
   const initialState = {
     workerID, //gets value from global workerID variable
@@ -58,6 +59,9 @@ function KeyPress(e) {
     } else {
       window.controller.model.provenance.goBackOneStep();
     }
+    //send update to studyProvenance
+    updateStudyProvenance('control Z used')
+
   }
 
   if (
@@ -69,7 +73,12 @@ function KeyPress(e) {
     d3.select(".searchInput")
       .node()
       .focus();
+
+      updateStudyProvenance('control F used')
+
   }
+
+
 }
 
 document.onkeydown = KeyPress;
@@ -384,9 +393,6 @@ d3.selectAll("#closeModal").on("click", () => {
   d3.select(".quickStart").classed("is-active", false);
   updateStudyProvenance("closed Help");
 });
-
-//set up callback for 'next Task';
-console.log('nextTask!')
 
 d3.select("#nextTask").on("click", async () => {
   let taskObj = taskList[currentTask];
@@ -779,24 +785,29 @@ function makeid(length) {
 }
 
 async function getResults() {
+
+  return; 
   let allResults = [];
   let allParticipants = [];
   let allProvenance = [];
 
-  // let ids = ['7eKPji','FaP5YL','MqknUo','GtVOYl','T391Hp','T7asXK','yXA0Sm'];
-  let ids = [];
+  let allVisProvenance = [];
 
-  let dbDump = ids.map(async id => {
-    db.collection(id)
-      .get()
-      .catch(function(error) {
-        console.log("Error getting document:", error);
-      })
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          allProvenance.push({ worker: id, id: doc.id, data: doc.data() });
-        });
-      });
+  // let ids = ['7eKPji','FaP5YL','MqknUo','GtVOYl','T391Hp','T7asXK','yXA0Sm'];
+
+  let id= 'TestUser'
+
+  // let dbDump = ids.map(async id => {
+  //   db.collection(id)
+  //     .get()
+  //     .catch(function(error) {
+  //       console.log("Error getting document:", error);
+  //     })
+  //     .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //         allProvenance.push({ worker: id, id: doc.id, data: doc.data() });
+  //       });
+  //     });
 
     let result = await db
       .collection("results")
@@ -806,18 +817,44 @@ async function getResults() {
     allResults.push({ worker: id, data: result.data() });
 
     let participant = await db
-      .collection("participants")
+      .collection("test_participants")
       .doc(id)
       .get();
 
     allParticipants.push({ worker: id, data: participant.data() });
-  });
 
-  // Promise.all(dbDump).then(() => {
-  //   saveToFile(JSON.stringify(allResults),'allResults.json');
-  //   saveToFile(JSON.stringify(allParticipants),'allParticipants.json');
-  //   saveToFile(JSON.stringify(allProvenance),'allProvenance.json');
+    let provenance = await db
+      .collection("participant_actions")
+      .doc(id)
+      .get();
+
+    allProvenance.push({ worker: id, data: provenance.data() });
+
+
+     
+    db.collection('provenance')
+      .get()
+      .catch(function(error) {
+        console.log("Error getting document:", error);
+      })
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          allVisProvenance.push({ id: doc.id, data: doc.data() });
+        });
+
+        saveToFile(JSON.stringify(allVisProvenance),'allVisProvenance.json');
+      });
+
+
+
+    saveToFile(JSON.stringify(allResults),'allResults.json');
+    saveToFile(JSON.stringify(allParticipants),'allParticipants.json');
+    saveToFile(JSON.stringify(allProvenance),'allProvenance.json');
+
+
+
   // });
+
 }
 
 async function loadTasks(visType, tasksType) {
@@ -1080,17 +1117,15 @@ d3.select("#clear-selection").on("click", () => {
     window.controller.clear();
   }
 
+  updateStudyProvenance('cleared all selections')
 
-  // d3.select('#clear-selection').attr('disabled', true)
 });
-console.log(d3.select("#search-input"), "search loading");
-
 let val = d3.select("#search-input").on("change", function() {
 
   // let selectedOption = d3.select(this).property("value");
   //this = d3.select("#search-input"); // resets context
   let selectedOption = d3.select("#search-input").property("value").trim();
-  console.log(selectedOption);
+
   //in case there are just spaces, this will reset it to 'empty'
   d3.select("#search-input").property("value",selectedOption);
 
@@ -1111,8 +1146,6 @@ let val = d3.select("#search-input").on("change", function() {
 
   if (searchSuccess === 1) {
     d3.select(".searchMsg").style("display", "none");
-
-    // d3.select('#clear-selection').attr('disabled', null)
   }
 
   //  if (searchSuccess === 0){
@@ -1120,9 +1153,11 @@ let val = d3.select("#search-input").on("change", function() {
   //   .style('display','block')
   //   .text(selectedOption + ' is already selected.');
   //  }
+
+  updateStudyProvenance('searched for node',{'searchedNode':selectedOption,'success':searchSuccess})
+
 });
 
-console.log(val);
 d3.select('#searchButton').on("click",function(){
 
   let selectedOption = d3.select('.searchInput').property("value").trim();
@@ -1154,6 +1189,9 @@ d3.select('#searchButton').on("click",function(){
       .style("display", "block")
       .text(selectedOption + " is already selected.");
   }
+
+  updateStudyProvenance('searched for node',{'searchedNode':selectedOption,'success':searchSuccess})
+
 });
 
 //Push an empty taskList to a new doc under the results or trials collection to start tracking the results
