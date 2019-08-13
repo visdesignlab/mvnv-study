@@ -150,7 +150,8 @@ var Model = /** @class */ (function () {
                 neighborSelect: {},
                 cellcol: {},
                 cellrow: {},
-                search: {}
+                search: {},
+                previousMouseovers: []
             }
         };
         var provenance = ProvenanceLibrary.initProvenance(initialState);
@@ -158,7 +159,7 @@ var Model = /** @class */ (function () {
         var app = this.getApplicationState();
         this.app = app;
         // creates the document with the name and worker ID
-        //pushProvenance(app.currentState());
+        pushProvenance(app.currentState());
         var columnElements = ['topoCol'];
         var rowElements = ['topoRow', 'attrRow'];
         var elementNamesFromSelection = {
@@ -178,6 +179,8 @@ var Model = /** @class */ (function () {
             // go through each interacted element, and determine which rows/columns should
             // be highlighted due to it's interaction
             for (var selectionType in state.selections) {
+                if (selectionType == 'previousMouseovers')
+                    continue;
                 for (var index in elementNamesFromSelection[selectionType]) {
                     var selectionElement = elementNamesFromSelection[selectionType][index];
                     for (var node in state.selections[selectionType]) {
@@ -262,11 +265,47 @@ var Model = /** @class */ (function () {
         this.controller.loadData(this.nodes, this.edges, this.matrix);
     };
     /**
+     * [changeInteractionWrapper description]
+     * @param  nodeID ID of the node being changed with
+     * @param  node   nodes corresponding to the element class interacted with (from d3 select nodes[i])
+     * @param  interactionType class name of element interacted with
+     * @return        [description]
+     */
+    Model.prototype.generateSortAction = function (sortKey) {
+        var _this = this;
+        return {
+            label: 'sort',
+            action: function (sortKey) {
+                var currentState = _this.controller.model.app.currentState();
+                //add time stamp to the state graph
+                currentState.time = Date.now();
+                currentState.event = 'sort';
+                currentState.sortKey = sortKey;
+                console.log(_this.controller.view, _this.controller.view.mouseoverEvents);
+                if (_this.controller.view, _this.controller.view.mouseoverEvents) {
+                    currentState.selections.previousMouseovers = _this.controller.view.mouseoverEvents;
+                    _this.controller.view.mouseoverEvents.length = 0;
+                }
+                return currentState;
+            },
+            args: [sortKey]
+        };
+    };
+    /**
      *   Determines the order of the current nodes
      * @param  type A string corresponding to the attribute screen_name to sort by.
      * @return      A numerical range in corrected order.
      */
     Model.prototype.changeOrder = function (type, node) {
+        if (node === void 0) { node = false; }
+        var action = this.generateSortAction(type);
+        if (this.provenance) {
+            this.provenance.applyAction(action);
+            pushProvenance(this.app.currentState());
+        }
+        return this.sortObserver(type, node);
+    };
+    Model.prototype.sortObserver = function (type, node) {
         var _this = this;
         if (node === void 0) { node = false; }
         var order;
