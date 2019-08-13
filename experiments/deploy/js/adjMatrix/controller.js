@@ -155,14 +155,16 @@ var Controller = /** @class */ (function () {
         var width = targetDiv.style("width").replace("px", ""), height = targetDiv.style("height").replace("px", "");
         var taskBarHeight = 74;
         var panelDimensions = {};
-        panelDimensions.width = width * 0.2;
+        /*panelDimensions.width = width * 0.245;*/
+        panelDimensions.width = 480; //d3.select("#visPanel").style("width")//, panelDimensions.width + "px");
         panelDimensions.height = height - taskBarHeight;
         d3.select("#visPanel").style("width", panelDimensions.width + "px");
+        d3.select("#visPanel").style("height", panelDimensions.height + "px");
         d3.select('#panelDiv').style('display', 'none');
         document.getElementById("visContent").style.width = '100vw';
         document.getElementById("visContent").style.overflowX = "scroll";
         this.visHeight = panelDimensions.height;
-        this.visWidth = width * 0.8 - 40;
+        this.visWidth = width - panelDimensions.width - 10;
         this.edgeWidth = this.visWidth - this.attrWidth;
         var filler = 0;
         if (panelDimensions.height < this.edgeWidth) {
