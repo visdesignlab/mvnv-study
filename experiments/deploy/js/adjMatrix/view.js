@@ -135,9 +135,9 @@ var View = /** @class */ (function () {
             .data(this.matrix)
             .enter().append("g")
             .attr("class", "column")
-            .attr('id', (d, i) => {
-                return "groupCol" + d[i].colid;
-              })
+            .attr('id', function (d, i) {
+            return "groupCol" + d[i].colid;
+        })
             .attr("transform", function (d, i) {
             return "translate(" + _this.orderingScale(i) + ")rotate(-90)";
         });
@@ -146,9 +146,9 @@ var View = /** @class */ (function () {
             .data(this.matrix)
             .enter().append("g")
             .attr("class", "row")
-            .attr('id', (d, i) => {
-                return "rowCol" + d[i].colid;
-              })
+            .attr('id', function (d, i) {
+            return "rowCol" + d[i].colid;
+        })
             .attr("transform", function (d, i) {
             return "translate(0," + _this.orderingScale(i) + ")";
         });
@@ -342,7 +342,12 @@ var View = /** @class */ (function () {
         var _this = this;
         var labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5 : 11;
         this.nodes.length < 50 ? labelSize = labelSize + 2 : null;
-        this.edgeRows.append("text")
+        this.edgeRows
+            .append('g')
+            .attr('id', function (d, i) {
+            return "tourRowLabel" + d[i].rowid;
+        })
+            .append("text")
             .attr('class', 'rowLabel')
             .attr("id", function (d, i) {
             return "rowLabel" + d[i].rowid;
@@ -382,7 +387,12 @@ var View = /** @class */ (function () {
             ;
             verticalOffset = verticalOffset / 12.5 + 3;
         }
-        this.edgeColumns.append("text")
+        this.edgeColumns
+            .append('g')
+            .attr('id', function (d, i) {
+            return "tourColLabel" + d[i].rowid;
+        })
+            .append("text")
             .attr("id", function (d, i) {
             return "colLabel" + d[i].rowid;
         })
@@ -1027,7 +1037,6 @@ var View = /** @class */ (function () {
             this.order = this.controller.changeOrder(order);
         }
         this.orderingScale.domain(this.order);
-        var transitionTime = 500;
         d3.selectAll(".row")
             //.transition()
             //.duration(transitionTime)
@@ -1301,6 +1310,10 @@ var View = /** @class */ (function () {
             else {
                 barMargin.left = 1;
                 var answerBox = _this.attributeRows
+                    .append('g')
+                    .attr('id', function (d, i) {
+                    return "tourAnswerBox" + d[_this.datumID];
+                })
                     .append('g')
                     .attr("class", "answerBox")
                     .attr("id", function (d) { return "answerBox" + d[_this.datumID]; })

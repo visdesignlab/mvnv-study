@@ -427,7 +427,12 @@ class View {
   appendEdgeLabels() {
     let labelSize = this.controller.configuration.nodeAttributes.length > 4 ? 9.5 : 11;
     this.nodes.length < 50 ? labelSize = labelSize + 2 : null;
-    this.edgeRows.append("text")
+    this.edgeRows
+      .append('g')
+      .attr('id',(d,i)=>{
+        return "tourRowLabel" + d[i].rowid;
+      })
+      .append("text")
       .attr('class', 'rowLabel')
       .attr("id", (d, i) => {
         return "rowLabel" + d[i].rowid;
@@ -470,7 +475,12 @@ class View {
       verticalOffset = verticalOffset/12.5 + 3;
     }
 
-    this.edgeColumns.append("text")
+    this.edgeColumns
+      .append('g')
+      .attr('id',(d,i)=>{
+        return "tourColLabel" + d[i].rowid;
+      })
+      .append("text")
       .attr("id", (d, i) => {
         return "colLabel" + d[i].rowid;
       })
@@ -1543,6 +1553,10 @@ class View {
       } else {
         barMargin.left = 1;
         let answerBox = this.attributeRows
+          .append('g')
+          .attr('id',(d,i)=>{
+            return "tourAnswerBox" + d[this.datumID];
+          })
           .append('g')
           .attr("class", "answerBox")
           .attr("id", d => "answerBox" + d[this.datumID])
