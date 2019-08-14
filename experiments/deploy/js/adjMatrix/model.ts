@@ -85,9 +85,9 @@ class Model {
       })
 
       this.controller = controller;
-
-      this.processData();
-
+      if (initalOrderType == "clusterSpectral" || initalOrderType == "clusterBary" || initalOrderType == "clusterLeaf") {
+        this.processData();
+      }
       //sort again based on sortkey
       //this.orderType = clusterFlag;
       console.log(this.edges)
@@ -387,6 +387,7 @@ class Model {
   changeOrder(type: string, node: boolean = false) {
 
     let action = this.generateSortAction(type);
+
     if(this.provenance){
       this.provenance.applyAction(action);
       pushProvenance(this.app.currentState())
@@ -399,6 +400,7 @@ class Model {
     let order;
     this.orderType = type;
     this.controller.configuration.adjMatrix.sortKey = type;
+
     if (type == "clusterSpectral" || type == "clusterBary" || type == "clusterLeaf") {
       this.edges= this.edges.filter(edge=>{
         return edge.source !== undefined && edge.target !== undefined;
@@ -428,7 +430,8 @@ class Model {
     } else if (this.orderType == 'id'){
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
     } else if (node == true) {
-      order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a]['shortName'].localeCompare(this.nodes[b]['shortName']));
+      console.log(node,type);
+      //order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a]['shortName'].localeCompare(this.nodes[b]['shortName']));
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b]['neighbors'].includes(parseInt(type)) - this.nodes[a]['neighbors'].includes(parseInt(type)); });
     }
     else if (!this.isQuant(this.orderType)) {// == "screen_name" || this.orderType == "name") {
