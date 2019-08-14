@@ -2,6 +2,38 @@ var shepherd;
 
 function welcome(vis) {
   shepherd = setupShepherd(vis);
+
+  //set up callbacks to move through tour
+  d3.select("#tourColLabel247943631").on("click", () => {
+      if (shepherd.isActive()){
+        shepherd.next();
+      }
+  })
+
+  //group all of Judge's neighbors in a group element
+  // const group = document.createElement('g');
+  // let parentGroup = vis === 'nodeLink' ? document.querySelector('.nodes') : document.querySelector('#edgeMargin');
+
+  let parentSelector = vis === 'nodeLink' ? '.nodes' : '#edgeMargin'
+
+  let neighbors = ["#groupRow318046158","#groupRow1652270612"];
+
+  let group = d3.select(parentSelector).append('g').attr('class','tourNeighborGroup')
+
+  neighbors.map(n=>{
+    let neighbor = document.querySelector(n)
+    group.node().appendChild(neighbor)
+    // neighbor.remove();
+  });
+
+
+  //  d3.select('.tourNeighborGroup')
+  // .append('rect')
+  // .attr('width',30)
+  // .attr('height',30)
+  // .attr('fill-opacity',1)
+  // .style('fill','green')
+
   shepherd.start();
 }
 
@@ -157,7 +189,7 @@ function setupShepherd(vis) {
           "Select judge's neighbors by clicking on the column label",
         attachTo: {
           // element: "#groupCol247943631",
-          element:'#colLabel247943631',
+          element:'#tourColLabel247943631',
           on: "right"
         },
         buttons: [
@@ -168,12 +200,12 @@ function setupShepherd(vis) {
             secondary: true,
             text: "Back"
           },
-          {
-            action: function() {
-              return this.next();
-            },
-            text: "Next"
-          }
+          // {
+          //   action: function() {
+          //     return this.next();
+          //   },
+          //   text: "Next"
+          // }
         ],
         id: "attaching"
       },
@@ -182,7 +214,7 @@ function setupShepherd(vis) {
         text:
         "This highlights all of Judge's neighbors in green.",
         attachTo: {
-          element: "#groupCol247943631",
+          element: ".tourNeighborGroup",
           // element:'#Judge_group',
           on: "right"
         },
@@ -284,7 +316,7 @@ function setupShepherd(vis) {
         text:
           "Click on the column header to sort by that attribute",
         attachTo: {
-          element: "#attributeMargin",
+          element: ".column-headers",
           on: "left"
         },
         buttons: [
@@ -332,8 +364,8 @@ function setupShepherd(vis) {
       {
         title: "Edge Hover ",
         text:
-          "Hovering over a cell (the edge) highlights both the row and the column intersecting at the cell. "+ 
-          " It also highlights the row corresponding to the selected column, and vice versa.",
+          "Hover over a cell (the edge)  to highlight both the row and the column intersecting at the cell. "+ 
+          " Notice this also highlights the row corresponding to the selected column, and vice versa.",
          
         attachTo: {
           element: ".svg-content",
@@ -360,7 +392,7 @@ function setupShepherd(vis) {
       {
         title: "Edge Click ",
         text:
-          "Click on a cell (edge) selects the rows and cols highlighted on hover, while also outlining the clicked edge  and the ‘mirror edge’ in red. ",
+          "Click on a cell (edge) to select the rows and cols highlighted on hover. This also outlines the clicked edge  and the ‘mirror edge’ in red. ",
          
         attachTo: {
           element: ".svg-content",
@@ -390,7 +422,7 @@ function setupShepherd(vis) {
           "To select a node the answer to a task, use the checkbox under the 'answer column' for that row.",
          
         attachTo: {
-          element: "#answerBox247943631",
+          element: "#tourAnswerBox16112517",
           on: "left"
         },
         buttons: [

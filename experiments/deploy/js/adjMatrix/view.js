@@ -751,6 +751,8 @@ var View = /** @class */ (function () {
             .attr('text-anchor', 'middle')
             .text("# of " + pluralType);
         var sideMargin = ((boxWidth) - (sampleNumbers.length * (rectWidth + 5))) / 2;
+
+        
         var groups = svg.selectAll('g')
             .data(sampleNumbers)
             .enter()
