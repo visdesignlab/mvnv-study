@@ -856,6 +856,8 @@ function updateVis() {
 
     node = nodeEnter.merge(node);
 
+    node.attr('id',d=>d.shortName + '_group')
+
     node.classed("muted", false)
     .classed("selected", false)
 

@@ -135,6 +135,9 @@ var View = /** @class */ (function () {
             .data(this.matrix)
             .enter().append("g")
             .attr("class", "column")
+            .attr('id', (d, i) => {
+                return "groupCol" + d[i].colid;
+              })
             .attr("transform", function (d, i) {
             return "translate(" + _this.orderingScale(i) + ")rotate(-90)";
         });
@@ -143,6 +146,9 @@ var View = /** @class */ (function () {
             .data(this.matrix)
             .enter().append("g")
             .attr("class", "row")
+            .attr('id', (d, i) => {
+                return "rowCol" + d[i].colid;
+              })
             .attr("transform", function (d, i) {
             return "translate(0," + _this.orderingScale(i) + ")";
         });

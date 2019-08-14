@@ -494,6 +494,7 @@ d3.select("#nextTask").on("click", async () => {
 
 
 async function resetPanel() {
+
   updateStudyProvenance("started Task");
 
   let task = taskList[currentTask];
@@ -521,10 +522,6 @@ async function resetPanel() {
   d3.select("#answerBox").property("value", "");
 
   d3.selectAll(".submit").attr("disabled", flexibleAnswer ? null : true);
-
-  // d3.select('#nextTrialTask').style('display','none');
-  // d3.select('#trialFeedback').select('.errorMsg').style('display','none');
-  // d3.select('#trialFeedback').select('.correctMsg').style('display','none');
 
   // //Clear Selected Node List
   d3.select("#selectedNodeList")
@@ -568,6 +565,9 @@ async function resetPanel() {
     console.log()
     window.controller.loadTask(currentTask);
   }
+   
+ setTimeout(function(){welcome(vis);},3000) ;
+
 }
 
 async function pushProvenance(provGraph, initialState = false, collectionName) {
@@ -948,19 +948,6 @@ async function loadTasks(visType, tasksType) {
     d3.selectAll(".nodeLink").remove();
   }
 
-  //create a list of taskItems under the taskMenu;
-
-
-//   <article class="message is-link">
-//   <div class="message-header">
-//     <p>Link</p>
-//     <button class="delete" aria-label="delete"></button>
-//   </div>
-//   <div class="message-body">
-//     Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac <em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor, tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
-//   </div>
-// </article>
-
 
   let taskButtons = d3.select('.taskMenu').select('.content').selectAll('article').data(taskList);
 
@@ -976,15 +963,6 @@ async function loadTasks(visType, tasksType) {
 
 
   taskButtonsEnter.append('div').attr('class','message-body');
-
-
-  // taskButtonsEnter
-  // .append('a')
-  // .attr('class','button taskShortcut')
-
-  // taskButtonsEnter
-  // .append('p')
-
 
   taskButtons.exit().remove();
 
@@ -1004,7 +982,6 @@ async function loadTasks(visType, tasksType) {
     currentTask = taskList.findIndex(t => t.taskID == d3.select(this).attr("id"));
     resetPanel();
   });
-
 
 
   //load script tags if this is the trials page or if there were no trials for this setup)
@@ -1054,6 +1031,7 @@ async function loadTasks(visType, tasksType) {
         .node()
         .appendChild(newStyleSheet);
     });
+
   }
 }
 
@@ -1090,6 +1068,11 @@ function loadScript(url, callback) {
 d3.select("#clear-selection").on("click", () => {
   // set app.currentState() selected to empty;
 
+      // (check if going through tour)
+      if (shepherd.isActive()){
+        shepherd.next();
+      }
+
   d3.select(".searchMsg").style("display", "none");
 
   d3.select('.searchInput')
@@ -1122,9 +1105,20 @@ d3.select("#clear-selection").on("click", () => {
 });
 let val = d3.select("#search-input").on("change", function() {
 
+
   // let selectedOption = d3.select(this).property("value");
   //this = d3.select("#search-input"); // resets context
   let selectedOption = d3.select("#search-input").property("value").trim();
+
+    // (check if going through tour)
+    if (shepherd.isActive()){
+      //check if the term used is in fact Judge;
+      if (selectedOption === 'Judge'){
+        shepherd.next();
+      } else {
+        return;
+      } 
+    }
 
   //in case there are just spaces, this will reset it to 'empty'
   d3.select("#search-input").property("value",selectedOption);
@@ -1155,6 +1149,7 @@ let val = d3.select("#search-input").on("change", function() {
   //  }
 
   updateStudyProvenance('searched for node',{'searchedNode':selectedOption,'success':searchSuccess})
+
 
 });
 

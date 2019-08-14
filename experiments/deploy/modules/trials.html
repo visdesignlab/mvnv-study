@@ -78,8 +78,11 @@
 
     updateStudyProvenance('started trials')
 
-    resetPanel();
+    await resetPanel();
 
+    // setTimeout(function(){startTour();}, 5000);
+   
+    
     d3.select('#nextTrialTask').on("click", async function () {
 
       let taskObj = taskList[currentTask];

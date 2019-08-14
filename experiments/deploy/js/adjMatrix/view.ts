@@ -188,6 +188,9 @@ class View {
       .data(this.matrix)
       .enter().append("g")
       .attr("class", "column")
+      .attr('id', (d, i) => {
+        return "groupCol" + d[i].colid;
+      })
       .attr("transform", (d, i) => {
         return "translate(" + this.orderingScale(i) + ")rotate(-90)";
       });
@@ -197,6 +200,9 @@ class View {
       .data(this.matrix)
       .enter().append("g")
       .attr("class", "row")
+      .attr('id', (d, i) => {
+        return "rowCol" + d[i].colid;
+      })
       .attr("transform", (d, i) => {
         return "translate(0," + this.orderingScale(i) + ")";
       });

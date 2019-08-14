@@ -16,6 +16,10 @@ body {
     cursor:pointer;
 }
 
+.shepherd-modal-is-visible .shepherd-modal-overlay-container {
+    opacity:.35!important;
+}
+
 div.tooltip {
     position: absolute;
     color:black;
