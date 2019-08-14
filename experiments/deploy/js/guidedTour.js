@@ -154,9 +154,9 @@ function setupShepherd(vis) {
       {
         title: "Selecting Neighbors",
         text:
-          "You can select neighbors by clicking on the column label",
+          "Select judge's neighbors by clicking on the column label",
         attachTo: {
-          element: "#colLabel247943631",
+          element: "#groupCol247943631",
           // element:'#Judge_group',
           on: "right"
         },
@@ -168,19 +168,19 @@ function setupShepherd(vis) {
             secondary: true,
             text: "Back"
           },
-        //   {
-        //     action: function() {
-        //       return this.next();
-        //     },
-        //     text: "Next"
-        //   }
+          {
+            action: function() {
+              return this.next();
+            },
+            text: "Next"
+          }
         ],
         id: "attaching"
       },
       {
         title: "Selected Neighbors ",
         text:
-          "Which highlights all those node neighbor's in green.",
+        "This highlights all of Judge's neighbors in green.",
         attachTo: {
           element: "#groupCol247943631",
           // element:'#Judge_group',
