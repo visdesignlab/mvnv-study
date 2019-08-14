@@ -459,6 +459,7 @@ class View {
           return this.controller.model.icons['cellSort'].d;
         }).style('fill', d => {return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
         .on('click', (d, i, nodes) => {
+          console.log(d[0].rowid)
           this.sort(d[0].rowid);
           //this.clickFunction(d, i, nodes);
           console.log(d3.select('#colLabel'+d[0].rowid));
@@ -1786,7 +1787,7 @@ class View {
       button.attr('cursor', 'pointer')
       button.append('rect').attr('width', this.margins.left - 5).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1)
       button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
-      let path = button.datum([sortNames[i])
+      let path = button.datum([sortNames[i]);
       let realPath = path
         .append('path').attr('class', 'sortIcon').attr('d', (d) => {
           return this.controller.model.icons[iconNames[i]].d;

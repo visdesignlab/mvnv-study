@@ -373,6 +373,7 @@ var View = /** @class */ (function () {
                 return _this.controller.model.icons['cellSort'].d;
             }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
                 .on('click', function (d, i, nodes) {
+                console.log(d[0].rowid);
                 _this.sort(d[0].rowid);
                 //this.clickFunction(d, i, nodes);
                 console.log(d3.select('#colLabel' + d[0].rowid));

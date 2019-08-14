@@ -58,7 +58,9 @@ var Model = /** @class */ (function () {
                 _this.idMap[node.id] = index;
             });
             _this.controller = controller;
-            _this.processData();
+            if (initalOrderType == "clusterSpectral" || initalOrderType == "clusterBary" || initalOrderType == "clusterLeaf") {
+                _this.processData();
+            }
             //sort again based on sortkey
             //this.orderType = clusterFlag;
             console.log(_this.edges);
@@ -362,7 +364,8 @@ var Model = /** @class */ (function () {
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[b][type] - _this.nodes[a][type]; });
         }
         else if (node == true) {
-            order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[a]['shortName'].localeCompare(_this.nodes[b]['shortName']); });
+            console.log(node, type);
+            //order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a]['shortName'].localeCompare(this.nodes[b]['shortName']));
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[b]['neighbors'].includes(parseInt(type)) - _this.nodes[a]['neighbors'].includes(parseInt(type)); });
         }
         else if (!this.isQuant(this.orderType)) { // == "screen_name" || this.orderType == "name") {
