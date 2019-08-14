@@ -786,74 +786,24 @@ function makeid(length) {
 
 async function getResults() {
 
-  return; 
-  let allResults = [];
-  let allParticipants = [];
-  let allProvenance = [];
+  let collectionNames = ['heuristics_participants','results', 'provenance','participant_actions','study_participants']
 
-  let allVisProvenance = [];
+  collectionNames.map(collectionName=>{
+    db.collection(collectionName)
+    .get()
+    .catch(function(error) {
+      console.log("Error getting document:", error);
+    })
+    .then(function(querySnapshot) {
 
-  // let ids = ['7eKPji','FaP5YL','MqknUo','GtVOYl','T391Hp','T7asXK','yXA0Sm'];
-
-  let id= 'TestUser'
-
-  // let dbDump = ids.map(async id => {
-  //   db.collection(id)
-  //     .get()
-  //     .catch(function(error) {
-  //       console.log("Error getting document:", error);
-  //     })
-  //     .then(function(querySnapshot) {
-  //       querySnapshot.forEach(function(doc) {
-  //         allProvenance.push({ worker: id, id: doc.id, data: doc.data() });
-  //       });
-  //     });
-
-    let result = await db
-      .collection("results")
-      .doc(id)
-      .get();
-
-    allResults.push({ worker: id, data: result.data() });
-
-    let participant = await db
-      .collection("test_participants")
-      .doc(id)
-      .get();
-
-    allParticipants.push({ worker: id, data: participant.data() });
-
-    let provenance = await db
-      .collection("participant_actions")
-      .doc(id)
-      .get();
-
-    allProvenance.push({ worker: id, data: provenance.data() });
-
-
-     
-    db.collection('provenance')
-      .get()
-      .catch(function(error) {
-        console.log("Error getting document:", error);
-      })
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          allVisProvenance.push({ id: doc.id, data: doc.data() });
-        });
-
-        saveToFile(JSON.stringify(allVisProvenance),'allVisProvenance.json');
+      let allData = []
+      querySnapshot.forEach(function(doc) {
+        allData.push({id: doc.id, data: doc.data() });
       });
 
-
-
-    saveToFile(JSON.stringify(allResults),'allResults.json');
-    saveToFile(JSON.stringify(allParticipants),'allParticipants.json');
-    saveToFile(JSON.stringify(allProvenance),'allProvenance.json');
-
-
-
-  // });
+      saveToFile(JSON.stringify(allData),collectionName + '.json');
+    });
+  })
 
 }
 
