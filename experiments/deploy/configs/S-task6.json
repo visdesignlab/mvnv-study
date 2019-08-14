@@ -28,7 +28,7 @@
         "neighborHighlightColor": "",
         "neighborSelect": true,
         "edgeBars": true,
-        "sortKey": "favourites_count"
+        "sortKey": "continent"
     },
     "taskID": "task4",
     "loadedGraph": "large_undirected_multiEdge",
