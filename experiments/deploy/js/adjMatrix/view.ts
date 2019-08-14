@@ -1191,11 +1191,9 @@ class View {
       console.log(order);
     } else {
       this.order = this.controller.changeOrder(order);
-
     }
     this.orderingScale.domain(this.order);
 
-    let transitionTime = 500;
     d3.selectAll(".row")
       //.transition()
       //.duration(transitionTime)

@@ -177,7 +177,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "statuses_count"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -580,7 +580,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "shortName"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -984,7 +984,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "continent"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -1186,7 +1186,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "continent"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -1390,7 +1390,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "shortName"
             },
             "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
@@ -1587,7 +1587,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "continent"
             },
             "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
@@ -1787,7 +1787,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "followers_count"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -1986,7 +1986,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "shortName"
             },
             "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
@@ -2187,7 +2187,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "friends_count"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -2388,7 +2388,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "clusterLeaf"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -2587,7 +2587,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "clusterLeaf"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -2790,7 +2790,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "shortName"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
@@ -2989,7 +2989,7 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "continent"
             },
             "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
