@@ -201,7 +201,7 @@ class View {
       .enter().append("g")
       .attr("class", "row")
       .attr('id', (d, i) => {
-        return "rowCol" + d[i].colid;
+        return "groupRow" + d[i].colid;
       })
       .attr("transform", (d, i) => {
         return "translate(0," + this.orderingScale(i) + ")";

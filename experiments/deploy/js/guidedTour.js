@@ -104,7 +104,7 @@ function setupShepherd(vis) {
         text:
           "This has selected the row representing Judge.",
         attachTo: {
-          element: "#rowCol247943631",
+          element: "#groupRow247943631",
           // element:'#Judge_group',
           on: "top"
         },
@@ -156,8 +156,8 @@ function setupShepherd(vis) {
         text:
           "Select judge's neighbors by clicking on the column label",
         attachTo: {
-          element: "#groupCol247943631",
-          // element:'#Judge_group',
+          // element: "#groupCol247943631",
+          element:'#colLabel247943631',
           on: "right"
         },
         buttons: [

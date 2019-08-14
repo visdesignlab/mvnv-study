@@ -811,7 +811,7 @@ async function loadTasks(visType, tasksType) {
   //reset currentTask to 0
   currentTask = 0;
 
-  getResults();
+  // getResults();
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
