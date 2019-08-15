@@ -44,9 +44,16 @@ var Model = /** @class */ (function () {
               this.orderType = 'shortName';//this.controller.configuration.adjMatrix.sortKey;
       
             } else {
-            }*/
+            }
+            this.controller.configuration.adjMatrix.sortKey = 'continent'
+            this.controller.configuration.secondarySortKey = "statuses_count"
+            if(this.controller.configuration.secondarySortKey){
+              //this.controller.configuration.secondarySortKey = 'Tweets'
+              this.order = this.changeOrder(this.controller.configuration.secondarySortKey);
+            } else {*/
             var initalOrderType = _this.controller.configuration.adjMatrix.sortKey;
             _this.order = _this.changeOrder('id');
+            //}
             // sorts quantitative by descending value, sorts qualitative by alphabetical
             //if (!this.isQuant(this.orderType)) {
             //  this.nodes = this.nodes.sort((a, b) => a[this.orderType].localeCompare(b[this.orderType]));

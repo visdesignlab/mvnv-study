@@ -67,10 +67,18 @@ class Model {
         this.orderType = 'shortName';//this.controller.configuration.adjMatrix.sortKey;
 
       } else {
-      }*/
-
+      }
+      this.controller.configuration.adjMatrix.sortKey = 'continent'
+      this.controller.configuration.secondarySortKey = "statuses_count"
+      if(this.controller.configuration.secondarySortKey){
+        //this.controller.configuration.secondarySortKey = 'Tweets'
+        this.order = this.changeOrder(this.controller.configuration.secondarySortKey);
+      } else {*/
       let initalOrderType = this.controller.configuration.adjMatrix.sortKey;
-      this.order = this.changeOrder('id');
+
+        this.order = this.changeOrder('id');
+      //}
+
 
       // sorts quantitative by descending value, sorts qualitative by alphabetical
       //if (!this.isQuant(this.orderType)) {
