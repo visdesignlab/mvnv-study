@@ -601,7 +601,7 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
 
   if (docSize > 0.75) {
     console.log(
-      "Provenance Graph for this user is too large! Considering storing each state in its own document"
+      "Provenance Graph for this user is too large! Considering storing each state in its own document", workerID
     );
   } else {
     let docRef = db.collection(collectionName).doc(docID);
