@@ -471,7 +471,7 @@ function setupShepherd(vis) {
             action: function() {
               return this.next();
             },
-            text: "Next"
+            text: "Done"
           }
         ],
         id: "attaching"
