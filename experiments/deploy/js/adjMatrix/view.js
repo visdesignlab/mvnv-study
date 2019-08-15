@@ -366,12 +366,17 @@ var View = /** @class */ (function () {
             _this.clickFunction(d, i, nodes);
         });
         var verticalOffset = 3;
+        var scale = 0.05;
         if (this.controller.configuration.adjMatrix.neighborSelect) {
-            verticalOffset = 187.5;
-            var horizontalOffset = this.nodes.length < 50 ? 143.75 : 0;
-            this.edgeColumns.append('path').attr('id', function (d) { return 'sortIcon' + d[0].rowid; }).attr('class', 'sortIcon').attr('d', function (d) {
+            verticalOffset = 1 / scale;
+            var horizontalOffset = ((this.orderingScale.bandwidth() + 5) / 2) / scale; //this.nodes.length < 50 ? 11/scale : (this.orderingScale.bandwidth()/1.2/scale// /2;
+            console.log(verticalOffset, horizontalOffset, (this.orderingScale.bandwidth() + 5) / 2);
+            this.edgeColumns.append('path').attr('id', function (d) { return 'sortIcon' + d[0].rowid; }).attr('class', 'sortIcon').attr('pointer-events', 'bounding-box')
+                //.attr("d", d3.symbol().size(30).type(d3.symbolTriangle))
+                .attr('d', function (d) {
                 return _this.controller.model.icons['cellSort'].d;
-            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
+            })
+                .style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(-90)")
                 .on('click', function (d, i, nodes) {
                 console.log(d[0].rowid);
                 var action = _this.generateSortAction(d[0].rowid);
@@ -388,8 +393,7 @@ var View = /** @class */ (function () {
             }).attr('cursor', 'pointer')
                 .on("mouseout", function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); })
                 .on('mouseover', function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); });
-            ;
-            verticalOffset = verticalOffset / 12.5 + 3;
+            verticalOffset = verticalOffset * scale + 10;
         }
         this.edgeColumns
             .append('g')
