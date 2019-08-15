@@ -133,7 +133,7 @@ var Controller = /** @class */ (function () {
                 currentState.event = 'clear';
                 console.log("before Clear:", currentState);
                 currentState.selections = {
-                    answerBox: {},
+                    answerBox: currentState.selections.answerBox,
                     attrRow: {},
                     rowLabel: {},
                     colLabel: {},
