@@ -1506,27 +1506,31 @@ var View = /** @class */ (function () {
         // Draw buttons for alternative sorts
         var initalY = -this.margins.left + 10;
         var buttonHeight = 15;
-        var text = ['name', 'cluster']; //, 'interacts'];
+        var text = ['Name', 'Cluster']; //, 'interacts'];
         var sortNames = ['shortName', 'clusterLeaf']; //, 'edges']
         var iconNames = ['alphabetical', 'categorical']; //, 'quant']
         var _loop_2 = function (i) {
             var button = this_2.edges.append('g')
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
-            button.attr('cursor', 'pointer');
-            button.append('rect').attr('width', this_2.margins.left - 5).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1);
-            button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
+            button.attr('cursor', 'pointer').on('click', function () {
+                _this.sort(sortNames[i]);
+            });
+            var rect = button.append('rect').attr('width', this_2.margins.left - 5).attr('height', buttonHeight).attr('fill', '#fafafa').attr('stroke', 'gray').attr('stroke-width', 1);
+            button.on('mouseover', function (d, i, nodes) {
+                d3.select(nodes[i]).select('rect').attr('fill', '#ffffff');
+            }).on('mouseout', function (d, i, nodes) {
+                d3.select(nodes[i]).select('rect').attr('fill', '#fafafa');
+            });
+            button.append('text').attr('x', 27).attr('y', 11.5).attr('font-size', 11).text(text[i]);
             var path = button.datum([sortNames[i]]);
             var realPath = path
                 .append('path').attr('class', 'sortIcon').attr('d', function (d) {
                 return _this.controller.model.icons[iconNames[i]].d;
-            }).style('fill', function () { return sortNames[i] == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-195) + "," + (-320) + ")") /*.on('click', (d,i,nodes) => {
+            }).style('fill', function () { return sortNames[i] == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-195) + "," + (-320) + ")"); /*.on('click', (d,i,nodes) => {
             this.sort(d);
           })*/
-                .attr('cursor', 'pointer');
             console.log(path, realPath);
-            button.on('click', function () {
-                _this.sort(sortNames[i]);
-            });
+            //button
             initalY += buttonHeight + 5;
         };
         var this_2 = this;

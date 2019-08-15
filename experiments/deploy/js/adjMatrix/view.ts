@@ -1778,26 +1778,31 @@ class View {
     // Draw buttons for alternative sorts
     let initalY = -this.margins.left + 10;
     let buttonHeight = 15;
-    let text = ['name', 'cluster']//, 'interacts'];
+    let text = ['Name', 'Cluster']//, 'interacts'];
     let sortNames = ['shortName', 'clusterLeaf']//, 'edges']
     let iconNames = ['alphabetical', 'categorical']//, 'quant']
     for (let i = 0; i < text.length; i++) {
       let button = this.edges.append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
-      button.attr('cursor', 'pointer')
-      button.append('rect').attr('width', this.margins.left - 5).attr('height', buttonHeight).attr('fill', 'none').attr('stroke', 'gray').attr('stroke-width', 1)
-      button.append('text').attr('x', 27).attr('y', 10).attr('font-size', 11).text(text[i]);
+      button.attr('cursor', 'pointer').on('click', () => {
+        this.sort(sortNames[i]);
+      })
+      let rect = button.append('rect').attr('width', this.margins.left - 5).attr('height', buttonHeight).attr('fill', '#fafafa').attr('stroke', 'gray').attr('stroke-width', 1)
+      button.on('mouseover',(d,i,nodes)=>{
+        d3.select(nodes[i]).select('rect').attr('fill', '#ffffff')
+      }).on('mouseout',(d,i,nodes)=>{
+        d3.select(nodes[i]).select('rect').attr('fill', '#fafafa')
+      })
+      button.append('text').attr('x', 27).attr('y', 11.5).attr('font-size', 11).text(text[i]);
       let path = button.datum([sortNames[i]);
       let realPath = path
         .append('path').attr('class', 'sortIcon').attr('d', (d) => {
           return this.controller.model.icons[iconNames[i]].d;
         }).style('fill', () => { return sortNames[i] == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-195) + "," + (-320) + ")")/*.on('click', (d,i,nodes) => {
         this.sort(d);
-      })*/.attr('cursor', 'pointer');
+      })*/
       console.log(path, realPath)
-      button.on('click', () => {
-        this.sort(sortNames[i]);
-      })
+      //button
       initalY += buttonHeight + 5;
     }
 
