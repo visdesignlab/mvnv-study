@@ -254,6 +254,20 @@ class View {
       })
       .attr('cursor', 'pointer')
 
+    cells.filter(d => d.rowid == d.colid)
+      .on('click', (d, i, nodes) => {
+        console.log(this.controller.model.app.currentState().selections.search);
+        if(d.rowid in this.controller.model.app.currentState().selections.search){
+          let action = this.changeInteractionWrapper(d.rowid, null, 'search');
+          this.controller.model.provenance.applyAction(action);
+          pushProvenance(this.controller.model.app.currentState())
+        }
+        // only trigger click if edge exists
+        console.log(d.rowid);
+
+
+      })
+
     this.controller.answerRow = {}
     this.controller.hoverRow = {}
     this.controller.hoverCol = {}

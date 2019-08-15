@@ -197,7 +197,6 @@ var Controller = /** @class */ (function () {
         d3.select('.loading').style('display', 'block');
         this.view = new View(this); // initalize view,
         this.model = new Model(this); //.reload();
-        //commented out by Carolina. loadTasks already sets the start Time
         // this.tasks[this.taskNum].startTime = Date.now();
         //
         //this.model = new Model(this); // start reading in data

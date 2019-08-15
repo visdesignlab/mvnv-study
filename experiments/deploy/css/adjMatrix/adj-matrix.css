@@ -181,6 +181,11 @@ pointer-events: none;
   height:10;*/
 }
 
+.searchCell{
+  stroke-width:3.5;
+  stroke: #000000;
+}
+
 .input {
     width:45% !important;
     position: relative;
