@@ -11,7 +11,7 @@
         "edgeWidthAttr": null,
         "edgeStrokeAttr": "type",
         "noEdgeColor": "black",
-        "noNodeFill": "white",
+        "noNodeFill": "rgb(153, 191, 195)",
         "noNodeStroke": "#c8c8c8",
         "quantColors": [
             "#7b7cb1",
@@ -36,10 +36,9 @@
     "isMultiEdge": false,
     "graphSize": "large",
     "nodeAttributes": [
-        "friends_count",
         "followers_count",
         "statuses_count",
-        "favourites_count",
+        "memberFor_days",
         "type",
         "continent"
     ],

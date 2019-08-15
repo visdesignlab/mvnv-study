@@ -13,3 +13,20 @@
             "type": "AGT"
         }
     }}
+
+    "S-task10": {
+        "hypothesis":"Cluster Hypothesis",
+        "prompt": "Who has the highest number of followers among the people in the cluster containing Alex?",
+        "replyType": [
+            "singleNodeSelection"
+        ],
+        "replyCount": 1,
+        "answerKey": {
+            "nodes": ["84043985"],
+            "value": ""
+        },
+        "taxonomy": {
+            "target": "clusters",
+            "type": "TGA"
+        }
+    },

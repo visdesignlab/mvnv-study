@@ -1,14 +1,4 @@
 {
-    "T-task1": {
-        "answerKey": {
-          "nodes": [],
-          "value": "866"
-      },
-        "prompt": "How many followers does Nick have?",
-        "replyType": [
-            "value"
-        ]
-    },
     "T-task2": {
         "answerKey": {
             "nodes": ["2873695769","2527017636","136400506"],
@@ -22,5 +12,15 @@
             "type": "at least",
             "value": 1
         }
-    }
+    },
+    "T-task1": {
+        "answerKey": {
+          "nodes": [],
+          "value": "866"
+      },
+        "prompt": "How many followers does Nick have?",
+        "replyType": [
+            "value"
+        ]
+    }   
 }

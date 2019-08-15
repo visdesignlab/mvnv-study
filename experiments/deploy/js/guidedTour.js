@@ -89,6 +89,8 @@ function groupRows(vis) {
 
 function setupShepherd(vis) {
   //   var prefix = "demo-";
+
+
   var shepherd = new Shepherd.Tour({
     defaultStepOptions: {
       //   classes: "class-1 class-2",
@@ -183,6 +185,8 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              //clear the search bar
+              d3.select('.searchInput').property('value','')
               window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
@@ -331,8 +335,8 @@ function setupShepherd(vis) {
                 .node()
                 .insertBefore(neighbor, n.insertBefore);
             });
-              window.controller.view.sort('shortName');
-              // window.controller.model.provenance.goBackOneStep();
+              // window.controller.view.sort('shortName');
+              window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -551,6 +555,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              window.controller.model.provenance.reset();
               return this.next();
             },
             secondary: true,
@@ -782,6 +787,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              provenance.reset();
               return this.next();
             },
             secondary: true,

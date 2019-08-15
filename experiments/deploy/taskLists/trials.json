@@ -1,5 +1,4 @@
 {
-    
     "T-task2": {
         "answerKey": {
             "nodes": [
@@ -349,7 +348,7 @@
             },
             "nodeLink": {
                 "drawBars": false,
-                "selectNeighbors": false,
+                "selectNeighbors": true,
                 "nodeHeight": 70,
                 "nodeWidth": 70,
                 "labelSize": 12,

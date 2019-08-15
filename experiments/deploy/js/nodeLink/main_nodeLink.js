@@ -972,7 +972,7 @@ function updateVis() {
       //if there is no selection to be made for this task, don't draw the checkbox
       .attr(
         "height",
-        (taskList[currentTask].replyType.length === 1 && taskList[currentTask].replyType.includes("value")) ? 0 : checkboxSize)
+        (taskList[currentTask].replyType.length === 1 && (taskList[currentTask].replyType.includes("value") || taskList[currentTask].replyType.includes("text"))) ? 0 : checkboxSize)
       .attr("x", function(d) {
         let nodeLabel = d3
           .select(d3.select(this).node().parentNode)

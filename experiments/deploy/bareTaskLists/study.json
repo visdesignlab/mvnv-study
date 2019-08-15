@@ -166,25 +166,9 @@
             "type": "TGA"
         }
     },
-    "S-task10": {
-        "hypothesis":"Cluster Hypothesis",
-        "prompt": "Who has the highest number of followers among the people in the cluster containing Alex?",
-        "replyType": [
-            "singleNodeSelection"
-        ],
-        "replyCount": 1,
-        "answerKey": {
-            "nodes": ["84043985"],
-            "value": ""
-        },
-        "taxonomy": {
-            "target": "clusters",
-            "type": "TGA"
-        }
-    },
     "S-task11": {
         "hypothesis": "Cluster Hypothesis",
-        "prompt": "Select all the people who are in a cluster with Alex. Estimate the average number of likes among the selected people?",
+        "prompt": "Select all the people who are in a cluster with Alex. Estimate the average number of likes among the selected people.",
         "replyType": ["multipleNodeSelection", "value"],
         "replyCount": {
             "type": "at least",
@@ -218,6 +202,25 @@
             "type": "TGA"
         }
     },
+    "S-task12A": {
+        "hypothesis":"Path Hypothesis",
+        "prompt": "Select all the North Americans on the shortest path between Noeska and Lane.",
+        "replyType": [
+            "multipleNodeSelection"
+        ],
+        "replyCount": {
+            "type": "at least",
+            "value": 1
+        },
+        "answerKey": {
+            "nodes": [],
+            "value": ""
+        },
+        "taxonomy": {
+            "target": "paths",
+            "type": "TGA"
+        }
+    },
     "S-task13": {
         "hypothesis":"Topology plus Simple Attribute Hypothesis",
         "prompt": "Of the North Americans who are within two interactions of Sereno, who has been on twitter the longest?",
@@ -234,11 +237,11 @@
             "type": "TGA"
         }
     },
-    "S-task14": {
+    "S-taskExplore": {
         "hypothesis":"Insight Generation Hypothesis",
-        "prompt": "Please explore the graph freely and report on your findings. Is there anything surprising or particularly interesting in the network? ",
+        "prompt": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network? ",
         "replyType": [
-            "value"
+            "text"
         ],
         "answerKey": {
             "nodes": [],

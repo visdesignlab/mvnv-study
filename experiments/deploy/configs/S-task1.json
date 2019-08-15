@@ -1,7 +1,7 @@
 {
     "nodeLink": {
         "drawBars": true,
-        "selectNeighbors": false,
+        "selectNeighbors": true,
         "nodeHeight": 40,
         "nodeWidth": 40,
         "labelSize": 12,

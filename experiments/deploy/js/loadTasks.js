@@ -137,6 +137,14 @@ d3.select("#answerBox").on("input", function() {
   updateAnswer(d3.select("#answerBox").property("value"));
 });
 
+
+//If there is a value, check for validity
+d3.select("#freeFormAnswer").on("input", function() {
+  updateAnswer(d3.select("#freeFormAnswer").property("value"));
+});
+
+
+
 //function that updates the answer in the side panel as well as in the results field in tasks
 //answer is either an array of node objects or a string from the answer box;
 function updateAnswer(answer) {
@@ -164,8 +172,9 @@ function updateAnswer(answer) {
     selectedList.text(d => d.shortName);
   }
 
+  let replyType = taskList[currentTask].replyType;
   //validate the entire answer object, but error check for only the field that is being updated
-  validateAnswer(taskObj.answer, answerType == "string" ? "value" : "nodes");
+  validateAnswer(taskObj.answer, replyType == 'text' ? 'text' : answerType == "string" ? "value" : "nodes");
 }
 
 //function that checks answers for the trials.
@@ -556,6 +565,14 @@ async function resetPanel() {
     d3.select("#nodeAnswer").style("display", "none");
   }
 
+  if (
+    task.replyType.includes("text") 
+  ) {
+    d3.select("#textAnswer").style("display", "block");
+  } else {
+    d3.select("#textAnswer").style("display", "none");
+  }
+
   d3.select("#taskArea")
     // .select(".card-header-title")
     .select(".taskText")
@@ -747,13 +764,24 @@ function validateAnswer(answer, errorCheckField, force = false) {
     }
   }
 
+  if (replyTypes.includes("text")) {
+    isValid = isValid && d3.select("#freeFormAnswer").property("value").length > 0;
+
+    if (errorCheckField === "text") {
+      if (d3.select("#freeFormAnswer").property("value").length < 1) {
+        errorMsg = "Please enter your findings in the input box.";
+      }
+    }
+  }
+
+
+
   //when running Validate answer with 'force' = true, then this is happening on submit;
   if (
     force &&
     errorCheckField === "nodes" &&
     task.replyCount.type === "at least"
   ) {
-    console.log("forcing!");
     isValid = isValid && numSelectedNodes >= task.replyCount.value;
     if (numSelectedNodes < 1) {
       errorMsg = "No nodes selected!";
@@ -767,11 +795,11 @@ function validateAnswer(answer, errorCheckField, force = false) {
     isValid || isFlexibleAnswer ? null : true
   );
   //toggle visibility of error message;
-
   let errorMsgSelector =
     errorCheckField === "value"
-      ? d3.select("#valueAnswer").select(".errorMsg")
-      : d3.select("#nodeAnswer").select(".errorMsg");
+      ? d3.select("#valueAnswer").select(".errorMsg") :
+      (errorCheckField == 'nodes' ?  d3.select("#nodeAnswer").select(".errorMsg")  : d3.select("#textAnswer").select(".errorMsg"))
+     
 
   errorMsgSelector
     .style("display", !isValid ? "inline" : "none")
@@ -910,8 +938,14 @@ async function loadTasks(visType, tasksType) {
   let taskListEntries = Object.entries(taskListObj);
 
   if (shuffleTasks && !onTrials) {
+
+    //remove the last task; 
+    let lastTask = taskListEntries.pop();
     //Randomly order the tasks.
     shuffle(taskListEntries);
+
+    //add back last last
+    taskListEntries = taskListEntries.concat(lastTask);
   }
   // insert order and taskID into each element in this list
   taskList = taskListEntries.map((t, i) => {

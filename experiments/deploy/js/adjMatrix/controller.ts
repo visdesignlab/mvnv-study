@@ -264,7 +264,7 @@ class Controller {
 
     this.view = new View(this); // initalize view,
     this.model = new Model(this); //.reload();
-    this.tasks[this.taskNum].startTime = Date.now();
+    // this.tasks[this.taskNum].startTime = Date.now();
     //
     //this.model = new Model(this); // start reading in data
   }

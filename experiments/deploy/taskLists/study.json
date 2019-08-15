@@ -7,7 +7,9 @@
         ],
         "replyCount": 1,
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "84043985"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -150,7 +152,7 @@
             },
             "nodeLink": {
                 "drawBars": true,
-                "selectNeighbors": false,
+                "selectNeighbors": true,
                 "nodeHeight": 40,
                 "nodeWidth": 40,
                 "labelSize": 12,
@@ -207,7 +209,9 @@
         ],
         "replyCount": 1,
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "909697437694087200"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -350,7 +354,7 @@
             },
             "nodeLink": {
                 "drawBars": true,
-                "selectNeighbors": false,
+                "selectNeighbors": true,
                 "nodeHeight": 40,
                 "nodeWidth": 40,
                 "labelSize": 12,
@@ -403,204 +407,6 @@
             "value": ""
         }
     },
-    "S-task2": {
-        "hypothesis": "NA",
-        "prompt": "How many followers does Alex have?",
-        "replyType": [
-            "value"
-        ],
-        "answerKey": {
-            "nodes": [],
-            "value": ""
-        },
-        "taxonomy": {
-            "target": "single node",
-            "type": "AGT"
-        },
-        "config": {
-            "graphFiles": {
-                "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
-            },
-            "attributeScales": {
-                "node": {
-                    "followers_count": {
-                        "label": "Followers",
-                        "domain": [
-                            0,
-                            1200
-                        ]
-                    },
-                    "friends_count": {
-                        "label": "Friends",
-                        "domain": [
-                            0,
-                            1200
-                        ]
-                    },
-                    "statuses_count": {
-                        "label": "Tweets",
-                        "domain": [
-                            0,
-                            5500
-                        ]
-                    },
-                    "count_followers_in_query": {
-                        "label": "In-Network followers",
-                        "domain": [
-                            0,
-                            35
-                        ]
-                    },
-                    "favourites_count": {
-                        "label": "Liked",
-                        "domain": [
-                            0,
-                            8000
-                        ]
-                    },
-                    "listed_count": {
-                        "label": "In Lists",
-                        "domain": [
-                            0,
-                            120
-                        ]
-                    },
-                    "memberFor_days": {
-                        "label": "Acct. Age",
-                        "domain": [
-                            175,
-                            4498
-                        ]
-                    },
-                    "query_tweet_count": {
-                        "label": "On-topic Tweets",
-                        "domain": [
-                            0,
-                            10
-                        ]
-                    },
-                    "type": {
-                        "label": "Type",
-                        "glyph": "circle",
-                        "domain": [
-                            "person",
-                            "institution"
-                        ],
-                        "legendLabels": [
-                            "Person",
-                            "Inst."
-                        ],
-                        "range": [
-                            "#e86b45",
-                            "#514ed9"
-                        ]
-                    },
-                    "continent": {
-                        "glyph": "square",
-                        "label": "Continent",
-                        "domain": [
-                            "North America",
-                            "South America",
-                            "Europe",
-                            "Asia"
-                        ],
-                        "legendLabels": [
-                            "NA",
-                            "SA",
-                            "EU",
-                            "AS"
-                        ],
-                        "range": [
-                            "#5ba3d0",
-                            "#7d6dcb",
-                            "#ce9333",
-                            "#6aa858"
-                        ]
-                    }
-                },
-                "edge": {
-                    "count": {
-                        "label": "# Interactions",
-                        "domain": [
-                            1,
-                            5
-                        ]
-                    },
-                    "type": {
-                        "label": "Edge Type",
-                        "domain": [
-                            "mentions",
-                            "retweet",
-                            "interacted"
-                        ],
-                        "range": [
-                            "#ff2700",
-                            "#008fd5",
-                            "rgb(91, 91, 91)"
-                        ]
-                    }
-                }
-            },
-            "style": {
-                "selectedNodeColor": "#e86b45",
-                "selectedEdgeColor": "#e86b45",
-                "hoveredNodeColor": "#fde8ca"
-            },
-            "nodeLink": {
-                "drawBars": false,
-                "selectNeighbors": false,
-                "nodeHeight": 40,
-                "nodeWidth": 40,
-                "labelSize": 12,
-                "labelAttr": "shortName",
-                "nodeFillAttr": null,
-                "nodeSizeAttr": "followers_count",
-                "edgeWidthAttr": null,
-                "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
-                "noNodeFill": "rgb(153, 191, 195)",
-                "noNodeStroke": "#c8c8c8",
-                "quantColors": [
-                    "#7b7cb1",
-                    "#01a068",
-                    "#bf8531",
-                    "#5472cf",
-                    "#4d8615",
-                    "#d63d61",
-                    "#ae76ed",
-                    "#f26336"
-                ]
-            },
-            "adjMatrix": {
-                "neighborHighlightColor": "",
-                "neighborSelect": true,
-                "edgeBars": true,
-                "sortKey": "shortName"
-            },
-            "taskID": "task1",
-            "loadedGraph": "large_undirected_singleEdge",
-            "isDirected": false,
-            "isMultiEdge": false,
-            "graphSize": "large",
-            "nodeAttributes": [
-                "followers_count"
-            ],
-            "edgeAttributes": [
-                "type"
-            ],
-            "adjMatrixValues": {},
-            "nodeIsRect": false
-        },
-        "answer": {
-            "nodes": [],
-            "value": ""
-        }
-    },
     "S-task3": {
         "hypothesis": "Scalable Attributes Hypothesis",
         "prompt": "Which person is frequently retweeted in this network despite having few tweets and likes in general?",
@@ -609,7 +415,11 @@
         ],
         "replyCount": 1,
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "208312922",
+                "81658145",
+                "247943631"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -814,7 +624,11 @@
             "value": 1
         },
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "191257554",
+                "36853217",
+                "15208867"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -1016,7 +830,9 @@
             "value": 1
         },
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "16112517"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -1220,7 +1036,9 @@
         ],
         "replyCount": 1,
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "16112517"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -1418,7 +1236,7 @@
         ],
         "answerKey": {
             "nodes": [],
-            "value": ""
+            "value": "North American"
         },
         "taxonomy": {
             "target": "neighbors",
@@ -1617,7 +1435,9 @@
         ],
         "replyCount": 1,
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "1652270612"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -1817,7 +1637,7 @@
         ],
         "answerKey": {
             "nodes": [],
-            "value": ""
+            "value": "mentions"
         },
         "taxonomy": {
             "target": "neighbors",
@@ -2017,7 +1837,12 @@
             "value": 1
         },
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "16112517",
+                "270431596",
+                "2924711485",
+                "446672281"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -2212,13 +2037,15 @@
     },
     "S-task10": {
         "hypothesis": "Cluster Hypothesis",
-        "prompt": "Who has the highest number  of  followers among the people in the cluster containing Alex?",
+        "prompt": "Who has the highest number of followers among the people in the cluster containing Alex?",
         "replyType": [
             "singleNodeSelection"
         ],
         "replyCount": 1,
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "84043985"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -2361,7 +2188,7 @@
             },
             "nodeLink": {
                 "drawBars": false,
-                "selectNeighbors": false,
+                "selectNeighbors": true,
                 "nodeHeight": 40,
                 "nodeWidth": 40,
                 "labelSize": 12,
@@ -2412,13 +2239,18 @@
     },
     "S-task11": {
         "hypothesis": "Cluster Hypothesis",
-        "prompt": "What is the average number of likes among the people in the cluster containing Alex?",
+        "prompt": "Select all the people who are in a cluster with Alex. Estimate the average number of likes among the selected people?",
         "replyType": [
+            "multipleNodeSelection",
             "value"
         ],
+        "replyCount": {
+            "type": "at least",
+            "value": 3
+        },
         "answerKey": {
             "nodes": [],
-            "value": ""
+            "value": "1500"
         },
         "taxonomy": {
             "target": "clusters",
@@ -2560,7 +2392,7 @@
             },
             "nodeLink": {
                 "drawBars": true,
-                "selectNeighbors": false,
+                "selectNeighbors": true,
                 "nodeHeight": 40,
                 "nodeWidth": 40,
                 "labelSize": 12,
@@ -2999,6 +2831,208 @@
             "nodeAttributes": [
                 "continent",
                 "memberFor_days"
+            ],
+            "edgeAttributes": [
+                "type"
+            ],
+            "adjMatrixValues": {},
+            "nodeIsRect": true
+        },
+        "answer": {
+            "nodes": [],
+            "value": ""
+        }
+    },
+    "S-taskExplore": {
+        "hypothesis": "Insight Generation Hypothesis",
+        "prompt": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network? ",
+        "replyType": [
+            "text"
+        ],
+        "answerKey": {
+            "nodes": [],
+            "value": ""
+        },
+        "taxonomy": {
+            "target": "NA",
+            "type": "NA"
+        },
+        "config": {
+            "graphFiles": {
+                "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+            },
+            "attributeScales": {
+                "node": {
+                    "followers_count": {
+                        "label": "Followers",
+                        "domain": [
+                            0,
+                            1200
+                        ]
+                    },
+                    "friends_count": {
+                        "label": "Friends",
+                        "domain": [
+                            0,
+                            1200
+                        ]
+                    },
+                    "statuses_count": {
+                        "label": "Tweets",
+                        "domain": [
+                            0,
+                            5500
+                        ]
+                    },
+                    "count_followers_in_query": {
+                        "label": "In-Network followers",
+                        "domain": [
+                            0,
+                            35
+                        ]
+                    },
+                    "favourites_count": {
+                        "label": "Liked",
+                        "domain": [
+                            0,
+                            8000
+                        ]
+                    },
+                    "listed_count": {
+                        "label": "In Lists",
+                        "domain": [
+                            0,
+                            120
+                        ]
+                    },
+                    "memberFor_days": {
+                        "label": "Acct. Age",
+                        "domain": [
+                            175,
+                            4498
+                        ]
+                    },
+                    "query_tweet_count": {
+                        "label": "On-topic Tweets",
+                        "domain": [
+                            0,
+                            10
+                        ]
+                    },
+                    "type": {
+                        "label": "Type",
+                        "glyph": "circle",
+                        "domain": [
+                            "person",
+                            "institution"
+                        ],
+                        "legendLabels": [
+                            "Person",
+                            "Inst."
+                        ],
+                        "range": [
+                            "#e86b45",
+                            "#514ed9"
+                        ]
+                    },
+                    "continent": {
+                        "glyph": "square",
+                        "label": "Continent",
+                        "domain": [
+                            "North America",
+                            "South America",
+                            "Europe",
+                            "Asia"
+                        ],
+                        "legendLabels": [
+                            "NA",
+                            "SA",
+                            "EU",
+                            "AS"
+                        ],
+                        "range": [
+                            "#5ba3d0",
+                            "#7d6dcb",
+                            "#ce9333",
+                            "#6aa858"
+                        ]
+                    }
+                },
+                "edge": {
+                    "count": {
+                        "label": "# Interactions",
+                        "domain": [
+                            1,
+                            5
+                        ]
+                    },
+                    "type": {
+                        "label": "Edge Type",
+                        "domain": [
+                            "mentions",
+                            "retweet",
+                            "interacted"
+                        ],
+                        "range": [
+                            "#ff2700",
+                            "#008fd5",
+                            "rgb(91, 91, 91)"
+                        ]
+                    }
+                }
+            },
+            "style": {
+                "selectedNodeColor": "#e86b45",
+                "selectedEdgeColor": "#e86b45",
+                "hoveredNodeColor": "#fde8ca"
+            },
+            "nodeLink": {
+                "drawBars": true,
+                "selectNeighbors": true,
+                "nodeHeight": 40,
+                "nodeWidth": 40,
+                "labelSize": 12,
+                "labelAttr": "shortName",
+                "nodeFillAttr": "continent",
+                "nodeSizeAttr": null,
+                "edgeWidthAttr": null,
+                "edgeStrokeAttr": "type",
+                "noEdgeColor": "black",
+                "noNodeFill": "rgb(153, 191, 195)",
+                "noNodeStroke": "#c8c8c8",
+                "quantColors": [
+                    "#7b7cb1",
+                    "#01a068",
+                    "#bf8531",
+                    "#5472cf",
+                    "#4d8615",
+                    "#d63d61",
+                    "#ae76ed",
+                    "#f26336"
+                ]
+            },
+            "adjMatrix": {
+                "neighborHighlightColor": "",
+                "neighborSelect": true,
+                "edgeBars": true,
+                "sortKey": "favourites_count"
+            },
+            "taskID": "task1",
+            "loadedGraph": "large_undirected_singleEdge",
+            "isDirected": false,
+            "isMultiEdge": false,
+            "graphSize": "large",
+            "nodeAttributes": [
+                "followers_count",
+                "statuses_count",
+                "memberFor_days",
+                "type",
+                "continent"
             ],
             "edgeAttributes": [
                 "type"
