@@ -374,7 +374,10 @@ var View = /** @class */ (function () {
             }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
                 .on('click', function (d, i, nodes) {
                 console.log(d[0].rowid);
-                _this.sort(d[0].rowid);
+                var action = _this.generateSortAction(d[0].rowid);
+                _this.controller.model.provenance.applyAction(action);
+                pushProvenance(_this.controller.model.app.currentState());
+                //this.sort(;
                 //this.clickFunction(d, i, nodes);
                 console.log(d3.select('#colLabel' + d[0].rowid));
                 /*var e = document.createEvent('UIEvents');
@@ -1023,19 +1026,41 @@ var View = /** @class */ (function () {
     
             */
     };
+    View.prototype.generateSortAction = function (sortKey) {
+        var _this = this;
+        return {
+            label: 'sort',
+            action: function (sortKey) {
+                _this.orderType = sortKey;
+                _this.controller.configuration.adjMatrix.sortKey = sortKey;
+                var currentState = _this.controller.model.app.currentState();
+                //add time stamp to the state graph
+                currentState.time = Date.now();
+                currentState.event = 'sort';
+                currentState.sortKey = sortKey;
+                if (_this.controller.view, _this.controller.view.mouseoverEvents) {
+                    currentState.selections.previousMouseovers = _this.controller.view.mouseoverEvents;
+                    _this.controller.view.mouseoverEvents.length = 0;
+                }
+                return currentState;
+            },
+            args: [sortKey]
+        };
+    };
     /**
      * [sort description]
      * @return [description]
      */
-    View.prototype.sort = function (order) {
+    View.prototype.sort = function (orderType) {
         var _this = this;
+        var sortKey = orderType;
         var nodeIDs = this.nodes.map(function (node) { return node.id; });
-        if (nodeIDs.includes(parseInt(order))) {
-            this.order = this.controller.changeOrder(order, true);
-            console.log(order);
+        if (nodeIDs.includes(parseInt(sortKey))) {
+            this.order = this.controller.changeOrder(sortKey, true);
+            console.log(sortKey);
         }
         else {
-            this.order = this.controller.changeOrder(order);
+            this.order = this.controller.changeOrder(sortKey);
         }
         this.orderingScale.domain(this.order);
         d3.selectAll(".row")
@@ -1054,7 +1079,7 @@ var View = /** @class */ (function () {
             .attr("transform", function (d, i) { return "translate(0," + _this.orderingScale(i) + ")"; });
         // update each highlightRowsIndex
         // if any other method other than neighbors sort
-        if (!nodeIDs.includes(parseInt(order))) {
+        if (!nodeIDs.includes(parseInt(sortKey))) {
             var t = this.edges; //.transition().duration(transitionTime);
             t.selectAll(".column")
                 //.delay((d, i) => { return this.orderingScale(i) * 4; })
@@ -1074,11 +1099,11 @@ var View = /** @class */ (function () {
         // change glyph coloring for sort
         d3.selectAll('.glyph').attr('fill', '#8B8B8B');
         // for quantitative values, change their color
-        if (this.controller.view.columnGlyphs[order]) {
-            this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
+        if (this.controller.view.columnGlyphs[sortKey]) {
+            this.controller.view.columnGlyphs[sortKey].attr('fill', '#EBB769');
         }
-        d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(function (d) { return d == order; }).style('fill', '#EBB769');
-        if (!nodeIDs.includes(parseInt(order))) {
+        d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(function (d) { return d == sortKey; }).style('fill', '#EBB769');
+        if (!nodeIDs.includes(parseInt(sortKey))) {
             var cells = d3.selectAll(".cell") //.selectAll('rect')
                 //.transition()
                 //.duration(transitionTime)
@@ -1089,7 +1114,7 @@ var View = /** @class */ (function () {
             });
         }
         else {
-            d3.select('#sortIcon' + order).style('fill', '#EBB769');
+            d3.select('#sortIcon' + sortKey).style('fill', '#EBB769');
         }
     };
     View.prototype.updateCheckBox = function (state) {
@@ -1482,7 +1507,10 @@ var View = /** @class */ (function () {
         })
             .on('click', function (d) {
             if (d !== 'selected') {
-                _this.sort(d);
+                var action = _this.generateSortAction(d);
+                _this.controller.model.provenance.applyAction(action);
+                pushProvenance(_this.controller.model.app.currentState());
+                //this.sort(d);
             }
         });
         columnHeaderGroups;
@@ -1492,7 +1520,9 @@ var View = /** @class */ (function () {
                 var variable = _this.isCategorical(d) ? 'categorical' : 'quant';
                 return _this.controller.model.icons[variable].d;
             }).style('fill', function (d) { console.log(d == _this.controller.model.orderType, d, _this.controller.model.orderType); return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', function (d, i, nodes) {
-                _this.sort(d);
+                var action = _this.generateSortAction(d);
+                _this.controller.model.provenance.applyAction(action);
+                pushProvenance(_this.controller.model.app.currentState());
             }).attr('cursor', 'pointer');
             console.log(path);
         }
@@ -1513,7 +1543,10 @@ var View = /** @class */ (function () {
             var button = this_2.edges.append('g')
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
             button.attr('cursor', 'pointer').on('click', function () {
-                _this.sort(sortNames[i]);
+                var action = _this.generateSortAction(sortNames[i]);
+                _this.controller.model.provenance.applyAction(action);
+                pushProvenance(_this.controller.model.app.currentState());
+                //this.sort();
             });
             var rect = button.append('rect').attr('width', this_2.margins.left - 5).attr('height', buttonHeight).attr('fill', '#fafafa').attr('stroke', 'gray').attr('stroke-width', 1);
             button.on('mouseover', function (d, i, nodes) {

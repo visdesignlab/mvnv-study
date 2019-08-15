@@ -460,7 +460,10 @@ class View {
         }).style('fill', d => {return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.075)translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
         .on('click', (d, i, nodes) => {
           console.log(d[0].rowid)
-          this.sort(d[0].rowid);
+          let action = this.generateSortAction(d[0].rowid);
+          this.controller.model.provenance.applyAction(action);
+          pushProvenance(this.controller.model.app.currentState())
+          //this.sort(;
           //this.clickFunction(d, i, nodes);
           console.log(d3.select('#colLabel'+d[0].rowid));
           /*var e = document.createEvent('UIEvents');
@@ -1197,18 +1200,51 @@ class View {
   private columnScale: any;
   private order: any;
 
+  generateSortAction(sortKey){
+
+    return {
+      label: 'sort',
+      action: (sortKey) => {
+        this.orderType = sortKey;
+        this.controller.configuration.adjMatrix.sortKey = sortKey;
+
+
+
+        const currentState = this.controller.model.app.currentState();
+
+        //add time stamp to the state graph
+        currentState.time = Date.now();
+        currentState.event = 'sort';
+
+        currentState.sortKey = sortKey
+
+        if(this.controller.view,this.controller.view.mouseoverEvents){
+          currentState.selections.previousMouseovers = this.controller.view.mouseoverEvents;
+          this.controller.view.mouseoverEvents.length = 0;
+        }
+
+        return currentState;
+      },
+      args: [sortKey]
+    }
+  }
   /**
    * [sort description]
    * @return [description]
    */
-  sort(order) {
+  sort(orderType) {
+    let sortKey = orderType;
+
     let nodeIDs = this.nodes.map(node=>node.id);
-    if(nodeIDs.includes(parseInt(order))){
-      this.order = this.controller.changeOrder(order,true);
-      console.log(order);
+
+    if(nodeIDs.includes(parseInt(sortKey))){
+      this.order = this.controller.changeOrder(sortKey,true);
+      console.log(sortKey);
     } else {
-      this.order = this.controller.changeOrder(order);
+      this.order = this.controller.changeOrder(sortKey);
     }
+
+
     this.orderingScale.domain(this.order);
 
     d3.selectAll(".row")
@@ -1233,7 +1269,7 @@ class View {
 
 
     // if any other method other than neighbors sort
-    if(!nodeIDs.includes(parseInt(order))){
+    if(!nodeIDs.includes(parseInt(sortKey))){
       var t = this.edges//.transition().duration(transitionTime);
       t.selectAll(".column")
         //.delay((d, i) => { return this.orderingScale(i) * 4; })
@@ -1256,12 +1292,12 @@ class View {
     // change glyph coloring for sort
     d3.selectAll('.glyph').attr('fill', '#8B8B8B');
     // for quantitative values, change their color
-    if (this.controller.view.columnGlyphs[order]) {
-      this.controller.view.columnGlyphs[order].attr('fill', '#EBB769');
+    if (this.controller.view.columnGlyphs[sortKey]) {
+      this.controller.view.columnGlyphs[sortKey].attr('fill', '#EBB769');
     }
 
-    d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(d => d == order).style('fill', '#EBB769')
-    if(!nodeIDs.includes(parseInt(order))){
+    d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(d => d == sortKey).style('fill', '#EBB769')
+    if(!nodeIDs.includes(parseInt(sortKey))){
       let cells = d3.selectAll(".cell")//.selectAll('rect')
         //.transition()
         //.duration(transitionTime)
@@ -1271,7 +1307,7 @@ class View {
           return 'translate(' + this.orderingScale(d.x) + ',0)'
         });
     } else {
-      d3.select('#sortIcon'+order).style('fill','#EBB769')
+      d3.select('#sortIcon'+sortKey).style('fill','#EBB769')
 
     }
 
@@ -1746,7 +1782,10 @@ class View {
       })
       .on('click', (d) => {
         if (d !== 'selected') {
-          this.sort(d);
+          let action = this.generateSortAction(d);
+          this.controller.model.provenance.applyAction(action);
+          pushProvenance(this.controller.model.app.currentState())
+          //this.sort(d);
         }
       })
 
@@ -1757,7 +1796,9 @@ class View {
         let variable = this.isCategorical(d) ? 'categorical' : 'quant'
         return this.controller.model.icons[variable].d;
       }).style('fill', d => { console.log(d == this.controller.model.orderType, d, this.controller.model.orderType); return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', (d, i, nodes) => {
-        this.sort(d);
+        let action = this.generateSortAction(d);
+        this.controller.model.provenance.applyAction(action);
+        pushProvenance(this.controller.model.app.currentState())
       }).attr('cursor', 'pointer');
       console.log(path);
     }
@@ -1785,7 +1826,10 @@ class View {
       let button = this.edges.append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
       button.attr('cursor', 'pointer').on('click', () => {
-        this.sort(sortNames[i]);
+        let action = this.generateSortAction(sortNames[i]);
+        this.controller.model.provenance.applyAction(action);
+        pushProvenance(this.controller.model.app.currentState())
+        //this.sort();
       })
       let rect = button.append('rect').attr('width', this.margins.left - 5).attr('height', buttonHeight).attr('fill', '#fafafa').attr('stroke', 'gray').attr('stroke-width', 1)
       button.on('mouseover',(d,i,nodes)=>{

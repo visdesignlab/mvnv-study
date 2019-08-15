@@ -331,6 +331,11 @@ class Model {
 
 
       }
+      let sortObserver = (state)=>{
+        console.log(state.sortKey)
+
+        window.controller.view.sort(state.sortKey);
+      }
       provenance.addObserver("selections.attrRow", updateHighlights)
       provenance.addObserver("selections.rowLabel", updateHighlights)
       provenance.addObserver("selections.colLabel", updateHighlights)
@@ -342,6 +347,7 @@ class Model {
       provenance.addObserver("selections.search", updateHighlights)
       provenance.addObserver("selections.answerBox", updateHighlights)
       provenance.addObserver("selections.answerBox", updateAnswerBox)
+      provenance.addObserver("sortKey", sortObserver)
 
     }
     setUpObservers();
@@ -366,24 +372,7 @@ class Model {
    * @return        [description]
    */
   generateSortAction(sortKey) {
-    return {
-      label: 'sort',
-      action: (sortKey) => {
-        const currentState = this.controller.model.app.currentState();
-        //add time stamp to the state graph
-        currentState.time = Date.now();
-        currentState.event = 'sort';
 
-        currentState.sortKey = sortKey
-        if(this.controller.view,this.controller.view.mouseoverEvents){
-          currentState.selections.previousMouseovers = this.controller.view.mouseoverEvents;
-          this.controller.view.mouseoverEvents.length = 0;
-        }
-
-        return currentState;
-      },
-      args: [sortKey]
-    }
   }
 
 
@@ -393,15 +382,12 @@ class Model {
    * @return      A numerical range in corrected order.
    */
   changeOrder(type: string, node: boolean = false) {
+      let val = this.sortObserver(type,node);
+      console.log(val)
+      // trigger sort
+      return val;
 
-    let action = this.generateSortAction(type);
 
-    if(this.provenance){
-      this.provenance.applyAction(action);
-      pushProvenance(this.app.currentState())
-    }
-
-    return this.sortObserver(type,node);
   }
 
   sortObserver(type: string, node: boolean = false){
