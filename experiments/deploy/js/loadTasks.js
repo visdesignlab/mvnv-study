@@ -562,11 +562,10 @@ async function resetPanel() {
   if (vis === "nodeLink") {
     loadTask(task);
   } else {
-    console.log()
     window.controller.loadTask(currentTask);
   }
    
- setTimeout(function(){welcome(vis);},3000) ;
+ setTimeout(function(){welcome(vis);},vis === 'nodeLink'? 500 : 3000) ;
 
 }
 
