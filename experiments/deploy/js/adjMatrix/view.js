@@ -1543,8 +1543,15 @@ var View = /** @class */ (function () {
         var text = ['Name', 'Cluster']; //, 'interacts'];
         var sortNames = ['shortName', 'clusterLeaf']; //, 'edges']
         var iconNames = ['alphabetical', 'categorical']; //, 'quant']
+
+        //added to use in the tour guide
+        let sortWrapper = this.edges.append('g').attr('class','tourSortWrapper');
+
+
         var _loop_2 = function (i) {
-            var button = this_2.edges.append('g')
+            var button =  sortWrapper//this_2.edges
+        .append('g')
+            
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
             button.attr('cursor', 'pointer').on('click', function () {
                 var action = _this.generateSortAction(sortNames[i]);
