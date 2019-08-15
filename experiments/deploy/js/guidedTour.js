@@ -1,40 +1,76 @@
 var shepherd;
 
+var neighborRows=[];
+
 function welcome(vis) {
   shepherd = setupShepherd(vis);
 
-  //set up callbacks to move through tour
-  d3.select("#tourColLabel247943631").on("click", () => {
-      if (shepherd.isActive()){
-        shepherd.next();
-      }
+  //set up a group wrapper for the sortIcon so as to not override the native click handler for the sort icon. 
+
+  let labelParent = d3.select('#groupCol247943631');
+  let labelGroup = labelParent.append('g').attr('class','tourLabelGroup');
+
+  labelGroup.node().append(document.querySelector('#sortIcon247943631')); //move the icon into the group wrapper
+
+    //callback for when user clicks on Judge Label
+    d3.select("#tourColLabel247943631").on("click", () => {
+        if (shepherd.isActive()){
+          groupRows();
+          shepherd.next();
+        }
   })
 
-  //group all of Judge's neighbors in a group element
-  // const group = document.createElement('g');
-  // let parentGroup = vis === 'nodeLink' ? document.querySelector('.nodes') : document.querySelector('#edgeMargin');
+   //callback for when user clicks on Judge sort
+   d3.select(".tourLabelGroup").on("click", () => {
+    if (shepherd.isActive()){
+      //slight timeout to give the sort time to do it's rearranging of rows 
+      setTimeout(function(){groupRows(); shepherd.next();},100)
+      
+    }
+})
+
+  shepherd.start();
+}
+
+
+function groupRows(vis) {
 
   let parentSelector = vis === 'nodeLink' ? '.nodes' : '#edgeMargin'
 
-  let neighbors = ["#groupRow318046158","#groupRow1652270612"];
+  let group = d3.select('.tourNeighborGroup');
+  if (group.size() === 0){
+    group = d3.select(parentSelector).append('g').attr('class','tourNeighborGroup');
+    //move to before gridlines;
+    document.querySelector(parentSelector).insertBefore(group.node(),document.querySelector('.gridLines'));
+  } 
 
-  let group = d3.select(parentSelector).append('g').attr('class','tourNeighborGroup')
+  let neighbors = ["#groupRow318046158","#groupRow1652270612","#groupRow136400506","#groupRow16112517","#groupRow1873322353","#groupRow19299318","#groupRow2873695769"];
 
-  neighbors.map(n=>{
-    let neighbor = document.querySelector(n)
-    group.node().appendChild(neighbor)
-    // neighbor.remove();
+  let neighborFlag = false;
+  d3.selectAll(".row").each(function(d, i) {
+    let selector = "#groupRow" + d.id;
+    let isNeighbor = neighbors.includes(selector);
+
+    if (neighborFlag && !isNeighbor) {
+      //tag this as the position you later want to reinsert the neighbor;
+      neighborRows.map(row =>
+        row.insertBefore
+          ? ""
+          : (row.insertBefore = document.querySelector(selector))
+      );
+    }
+
+    neighborFlag = false;
+    if (isNeighbor) {
+      neighborFlag = true;
+      neighborRows.push({ selector });
+    }
   });
 
-
-  //  d3.select('.tourNeighborGroup')
-  // .append('rect')
-  // .attr('width',30)
-  // .attr('height',30)
-  // .attr('fill-opacity',1)
-  // .style('fill','green')
-
-  shepherd.start();
+  neighbors.map(n => {
+    let neighbor = document.querySelector(n);
+    group.node().appendChild(neighbor);
+  });
 }
 
 function setupShepherd(vis) {
@@ -100,13 +136,7 @@ function setupShepherd(vis) {
             },
             secondary: true,
             text: "Back"
-          },
-        //   {
-        //     action: function() {
-        //       return this.next();
-        //     },
-        //     text: "Next"
-        //   }
+          }
         ],
         id: "creating",
         modalOverlayOpeningPadding: "10"
@@ -163,7 +193,6 @@ function setupShepherd(vis) {
           "As well as the Column",
         attachTo: {
           element: "#groupCol247943631",
-          // element:'#Judge_group',
           on: "right"
         },
         buttons: [
@@ -188,8 +217,59 @@ function setupShepherd(vis) {
         text:
           "Select judge's neighbors by clicking on the column label",
         attachTo: {
-          // element: "#groupCol247943631",
           element:'#tourColLabel247943631',
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          }
+        ],
+        id: "attaching"
+      },
+      {
+        title: "Selected Neighbors ",
+        text:
+        "This highlights all of Judge's neighbors in green.",
+        attachTo: {
+          element: ".tourNeighborGroup",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function (){
+              let parentSelector = vis === 'nodeLink' ? '.nodes' : '#edgeMargin'
+                        
+                neighborRows.map(n=>{
+                  let neighbor = document.querySelector(n.selector);
+                  d3.select(parentSelector).node().insertBefore(neighbor,n.insertBefore)
+                });
+
+                return this.next();
+              }
+            ,
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+      {
+        title: "Grouping Neighbors ",
+        text:
+          "You can bring all neighbors to the top of the matrix by clicking on the sort icon. Try it out!",
+        attachTo: {
+          element: "#sortIcon247943631",
           on: "right"
         },
         buttons: [
@@ -208,65 +288,12 @@ function setupShepherd(vis) {
           // }
         ],
         id: "attaching"
-      },
-      {
-        title: "Selected Neighbors ",
-        text:
-        "This highlights all of Judge's neighbors in green.",
-        attachTo: {
-          element: ".tourNeighborGroup",
-          // element:'#Judge_group',
-          on: "right"
-        },
-        buttons: [
-          {
-            action: function() {
-              return this.back();
-            },
-            secondary: true,
-            text: "Back"
-          },
-          {
-            action: function() {
-              return this.next();
-            },
-            text: "Next"
-          }
-        ],
-        id: "attaching"
-      },
-      {
-        title: "Grouping Neighbors ",
-        text:
-          "You can bring all neighbors to the top of the matrix by clicking on the sort icon. Try it out!",
-        attachTo: {
-          element: "#sortIcon247943631",
-          // element:'#Judge_group',
-          on: "right"
-        },
-        buttons: [
-          {
-            action: function() {
-              return this.back();
-            },
-            secondary: true,
-            text: "Back"
-          },
-          {
-            action: function() {
-              return this.next();
-            },
-            text: "Next"
-          }
-        ],
-        id: "attaching"
       },{
         title: "Grouping Neighbors ",
         text:
           "All of judge's neighbors are now grouped at the top of the matrix",
         attachTo: {
-          element: ".svg-content",
-          // element:'#Judge_group',
+          element: ".tourNeighborGroup",
           on: "right"
         },
         buttons: [
@@ -279,6 +306,13 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
+              let parentSelector = vis === 'nodeLink' ? '.nodes' : '#edgeMargin'
+                        
+              neighborRows.map(n=>{
+                let neighbor = document.querySelector(n.selector);
+                d3.select(parentSelector).node().insertBefore(neighbor,n.insertBefore)
+              });
+                  
               return this.next();
             },
             text: "Next"
