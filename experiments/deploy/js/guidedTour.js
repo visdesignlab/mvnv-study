@@ -519,6 +519,33 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
+        title: "Answer List",
+        text: "This populates the answer panel so you can easily keep track of the node(s) you are going to submit as your answer",
+        attachTo: {
+          element: ".answerCard",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              window.controller.model.provenance.goBackOneStep();
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            secondary: true,
+            text: "Next"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+      }, 
+      {
         title: "And you're ready!",
         text: "Thanks for taking the tour, you are ready to begin!",
         buttons: [
@@ -748,9 +775,7 @@ function setupShepherd(vis) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      },
-
-      
+      },      
       {
         title: "And you're ready!",
         text: "Thanks for taking the tour, you are ready to begin!",
@@ -765,7 +790,7 @@ function setupShepherd(vis) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      },
+      }
     ];
 
     shepherd.addSteps(steps);

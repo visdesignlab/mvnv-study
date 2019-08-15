@@ -233,6 +233,21 @@
             "target": "subnetwork",
             "type": "TGA"
         }
+    },
+    "S-task14": {
+        "hypothesis":"Insight Generation Hypothesis",
+        "prompt": "Please explore the graph freely and report on your findings. Is there anything surprising or particularly interesting in the network? ",
+        "replyType": [
+            "value"
+        ],
+        "answerKey": {
+            "nodes": [],
+            "value": ""
+        },
+        "taxonomy": {
+            "target": "NA",
+            "type": "NA"
+        }
     }
 
 }

@@ -500,6 +500,12 @@ async function resetPanel() {
   let task = taskList[currentTask];
   task.startTime = new Date().toString();
 
+  //update progress bar;
+  d3.select(".progressBar").select('.progress')
+  .attr('max',taskList.length)
+  .attr('value',currentTask+1)
+
+
   d3.selectAll(".taskShortcut").classed("currentTask", function() {
     return d3.select(this).attr("id") === taskList[currentTask].taskID;
   });
@@ -565,7 +571,10 @@ async function resetPanel() {
     window.controller.loadTask(currentTask);
   }
    
- setTimeout(function(){welcome(vis);},vis === 'nodeLink'? 500 : 3000) ;
+  if (onTrials && currentTask === 0){
+    setTimeout(function(){welcome(vis);},vis === 'nodeLink'? 500 : 3000) ;
+
+  }
 
 }
 
