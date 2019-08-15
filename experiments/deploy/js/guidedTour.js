@@ -137,7 +137,7 @@ function setupShepherd(vis) {
       },
       {
         title: "Searching for a Node",
-        text: "You can search for any node by name. Try searching for Judge",
+        text: "You can search for any node by name. <span class='instructions'>Try searching for Judge</span>",
         attachTo: {
           element: ".searchInput",
           on: "bottom"
@@ -183,6 +183,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -223,7 +224,7 @@ function setupShepherd(vis) {
       },
       {
         title: "Selecting Neighbors",
-        text: "Select judge's neighbors by clicking on the column label",
+        text: "<span class=instructions> Select judge's neighbors by clicking on the column label </span>",
         attachTo: {
           element: "#tourColLabel247943631",
           on: "right"
@@ -249,6 +250,17 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              let parentSelector =
+              vis === "nodeLink" ? ".nodes" : "#edgeMargin";
+
+            neighborRows.map(n => {
+              let neighbor = document.querySelector(n.selector);
+              d3.select(parentSelector)
+                .node()
+                .insertBefore(neighbor, n.insertBefore);
+            });
+
+              window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -276,7 +288,7 @@ function setupShepherd(vis) {
       {
         title: "Grouping Neighbors ",
         text:
-          "You can bring all neighbors to the top of the matrix by clicking on the sort icon. Try it out!",
+          "You can bring all neighbors to the top of the matrix by clicking on the sort icon. <span class=instructions>Try it out!</span>",
         attachTo: {
           element: "#sortIcon247943631",
           on: "right"
@@ -284,6 +296,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              groupRows(vis)
               return this.back();
             },
             secondary: true,
@@ -309,6 +322,17 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              let parentSelector =
+              vis === "nodeLink" ? ".nodes" : "#edgeMargin";
+
+            neighborRows.map(n => {
+              let neighbor = document.querySelector(n.selector);
+              d3.select(parentSelector)
+                .node()
+                .insertBefore(neighbor, n.insertBefore);
+            });
+              window.controller.view.sort('shortName');
+              // window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -343,6 +367,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              groupRows(vis);
               return this.back();
             },
             secondary: true,
@@ -359,7 +384,7 @@ function setupShepherd(vis) {
       },
       {
         title: "Sorting",
-        text: "Click on the column header to sort by that attribute",
+        text: "<span class=instructions>Click on a column header to sort by that attribute </span>",
         attachTo: {
           element: ".column-headers",
           on: "left"
@@ -367,6 +392,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              window.controller.view.sort('shortName');
               return this.back();
             },
             secondary: true,
@@ -384,7 +410,7 @@ function setupShepherd(vis) {
       {
         title: "Clearing Selections",
         text:
-          "At any point you can clear your selected nodes with the clear selection button. Try it out! ",
+          "At any point you can clear your selected nodes with the clear selection button. <span class='instructions'>Try it out!</span> ",
         attachTo: {
           element: "#clear-selection",
           on: "left"
@@ -392,6 +418,8 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              window.controller.view.sort('shortName');
+              // window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -420,6 +448,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -447,6 +476,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -464,7 +494,7 @@ function setupShepherd(vis) {
       {
         title: "Selecting an Answer ",
         text:
-          "To select a node the answer to a task, use the checkbox under the 'answer column' for that row.",
+          "To select a node as the answer to a task, use the checkbox under the 'answer column' for that row.",
 
         attachTo: {
           element: "#tourAnswerBox16112517",
@@ -473,6 +503,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,

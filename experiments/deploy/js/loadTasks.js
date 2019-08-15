@@ -601,7 +601,7 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
 
   if (docSize > 0.75) {
     console.log(
-      "Provenance Graph for this user is too large! Considering storing each state in its own document", workerID
+      "Provenance Graph for " , workerID ,  "  user is too large! Considering storing each state in its own document", 
     );
   } else {
     let docRef = db.collection(collectionName).doc(docID);
@@ -783,6 +783,28 @@ function makeid(length) {
   return result;
 }
 
+async function parseResults(){
+  
+    db.collection('results')
+    .get()
+    .catch(function(error) {
+      console.log("Error getting document:", error);
+    })
+    .then(function(querySnapshot) {
+
+      let allData = []
+      querySnapshot.forEach(function(doc) {
+        let data = doc.data();
+        allData.push();
+      });
+      // let csv = convertToCSV(allData); //saveToFile(JSON.stringify(allData),collectionName + '.json');
+      // saveToFile(csv,'resultsCSV.csv')
+      // exportCSVFile('',allData,'resultsCSV')
+    });
+
+
+}
+
 async function getResults() {
 
   let collectionNames = ['heuristics_participants','results', 'provenance','participant_actions','study_participants']
@@ -811,6 +833,7 @@ async function loadTasks(visType, tasksType) {
   currentTask = 0;
 
   // getResults();
+  parseResults();
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
