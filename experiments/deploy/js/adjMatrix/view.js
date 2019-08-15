@@ -146,9 +146,9 @@ var View = /** @class */ (function () {
             .data(this.matrix)
             .enter().append("g")
             .attr("class", "row")
-            .attr('id', (d, i) => {
-                return "groupRow" + d[i].colid;
-              })
+            .attr('id', function (d, i) {
+            return "groupRow" + d[i].colid;
+        })
             .attr("transform", function (d, i) {
             return "translate(0," + _this.orderingScale(i) + ")";
         });
@@ -752,8 +752,6 @@ var View = /** @class */ (function () {
             .attr('text-anchor', 'middle')
             .text("# of " + pluralType);
         var sideMargin = ((boxWidth) - (sampleNumbers.length * (rectWidth + 5))) / 2;
-
-        
         var groups = svg.selectAll('g')
             .data(sampleNumbers)
             .enter()
@@ -1508,9 +1506,9 @@ var View = /** @class */ (function () {
         // Draw buttons for alternative sorts
         var initalY = -this.margins.left + 10;
         var buttonHeight = 15;
-        var text = ['name', 'cluster', 'interacts'];
-        var sortNames = ['shortName', 'clusterLeaf', 'edges'];
-        var iconNames = ['alphabetical', 'categorical', 'quant'];
+        var text = ['name', 'cluster']; //, 'interacts'];
+        var sortNames = ['shortName', 'clusterLeaf']; //, 'edges']
+        var iconNames = ['alphabetical', 'categorical']; //, 'quant']
         var _loop_2 = function (i) {
             var button = this_2.edges.append('g')
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
@@ -1532,7 +1530,7 @@ var View = /** @class */ (function () {
             initalY += buttonHeight + 5;
         };
         var this_2 = this;
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < text.length; i++) {
             _loop_2(i);
         }
         // Append g's for table headers

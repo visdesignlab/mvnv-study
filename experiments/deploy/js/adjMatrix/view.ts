@@ -1778,10 +1778,10 @@ class View {
     // Draw buttons for alternative sorts
     let initalY = -this.margins.left + 10;
     let buttonHeight = 15;
-    let text = ['name', 'cluster', 'interacts'];
-    let sortNames = ['shortName', 'clusterLeaf', 'edges']
-    let iconNames = ['alphabetical', 'categorical', 'quant']
-    for (let i = 0; i < 3; i++) {
+    let text = ['name', 'cluster']//, 'interacts'];
+    let sortNames = ['shortName', 'clusterLeaf']//, 'edges']
+    let iconNames = ['alphabetical', 'categorical']//, 'quant']
+    for (let i = 0; i < text.length; i++) {
       let button = this.edges.append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
       button.attr('cursor', 'pointer')
