@@ -425,8 +425,8 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Sorting by Network Structure",
-        text: "You can also sort based on the node names or clusters in the graph.<span class=instructions>Try sorting by cluster, then by name. </span>",
+        title: "Sorting",
+        text: "You can also sort based on the node names [alphabetically] or clusters in the graph.<span class=instructions>Try sorting by cluster, then by name. </span>",
         attachTo: {
           element: ".tourSortWrapper",
           on: "right"
@@ -480,7 +480,7 @@ function setupShepherd(vis) {
       {
         title: "Edge Hover ",
         text:
-          "Hover over a cell (the edge)  to highlight both the row and the column intersecting at the cell. " +
+          "<span class=instructions>Hover over a cell (the edge)  to highlight both the row and the column intersecting at the cell.</span> " +
           " Notice this also highlights the row corresponding to the selected column, and vice versa.",
 
         attachTo: {
@@ -509,7 +509,7 @@ function setupShepherd(vis) {
       {
         title: "Edge Click ",
         text:
-          "Click on a cell (edge) to select the rows and cols highlighted on hover. This also outlines the clicked edge  and the ‘mirror edge’ in red. ",
+          "<span class=instructions>Click on a cell (edge) to select the rows and cols highlighted on hover.</span> This also outlines the clicked edge  and the ‘mirror edge’ in red. ",
 
         attachTo: {
           element: ".svg-content",
@@ -590,11 +590,12 @@ function setupShepherd(vis) {
       }, 
       {
         title: "And you're ready!",
-        text: "Thanks for taking the tour, you are ready to begin!",
+        text: "Thanks for taking the tour, you are ready to begin the practice tasks!",
         buttons: [
           {
             action: function() {
-              window.controller.model.provenance.reset();
+              // window.controller.model.provenance.reset();
+              
               return this.next();
             },
             secondary: true,
@@ -610,8 +611,8 @@ function setupShepherd(vis) {
   } else {
     const steps = [
       {
-        title: "Selected Node",
-        text: "This has selected the Node representing Judge. Try clicking on the node directly to unselect, then reselect the same node.",
+        title: "Highlighted Node",
+        text: "This has highlighted the Node representing Judge. <span class=instructions>Try clicking on the node [not on the label] to un-highlight, then re-highlight the same node.</span>",
         attachTo: {
           element: "#Judge_group",
           on: "top"
@@ -661,7 +662,7 @@ function setupShepherd(vis) {
       },
       {
         title: "Dragging Nodes",
-        text: "You can drag nodes around to get a better sense of the structure of the network. Try it out!",
+        text: "You can drag nodes around to get a better sense of the structure of the network. <span class=instructions>Try dragging a few nodes around.</span>",
         attachTo: {
           element: ".nodes",
           on: "top"
@@ -744,9 +745,9 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Clearing Selections",
+        title: "Clearing Highlights",
         text:
-          "At any point you can clear your selected nodes with the clear selection button. Try it out! ",
+          "At any point you can clear your highlighted nodes with the clear highlights button. <span class=instructions>Try it out!</span> ",
         attachTo: {
           element: "#clear-selection",
           on: "left"
@@ -770,7 +771,7 @@ function setupShepherd(vis) {
       },
       {
         title: "Selecting an Answer",
-        text: "To select a node as your answer, click anywhere on the top label of the node. Try it out!",
+        text: "To select a node as your answer, click anywhere on the top label of the node. <span class=instructions> Try selecting Sarah as an answer node</span>!",
         attachTo: {
           element: "#Sarah_group .labelBackground",
           on: "left"
@@ -822,11 +823,12 @@ function setupShepherd(vis) {
       },      
       {
         title: "And you're ready!",
-        text: "Thanks for taking the tour, you are ready to begin!",
+        text: "Thanks for taking the tour, you are ready to start the practice tasks!",
         buttons: [
           {
             action: function() {
               provenance.reset();
+
               return this.next();
             },
             secondary: true,
