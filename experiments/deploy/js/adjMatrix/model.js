@@ -70,17 +70,12 @@ var Model = /** @class */ (function () {
             }
             //sort again based on sortkey
             //this.orderType = clusterFlag;
-            console.log(_this.edges);
             _this.order = _this.changeOrder(initalOrderType);
-            console.log(_this.edges);
             _this.nodes = _this.sortNodesOnArray(_this.nodes, _this.order);
-            console.log(_this.edges);
             _this.nodes.forEach(function (node, index) {
                 node.index = index;
                 _this.idMap[node.id] = index;
             });
-            console.log(_this.edges);
-            console.log(_this.idMap);
             _this.processData();
             //
             _this.controller.loadData(_this.nodes, _this.edges, _this.matrix);
@@ -299,7 +294,6 @@ var Model = /** @class */ (function () {
                 d3.selectAll(cellSelectorQuery).selectAll('.baseCell').classed('searchCell', true);
             };
             var sortObserver = function (state) {
-                console.log(state.sortKey);
                 window.controller.view.sort(state.sortKey);
             };
             provenance.addObserver("selections.attrRow", updateHighlights);
@@ -338,7 +332,6 @@ var Model = /** @class */ (function () {
     Model.prototype.changeOrder = function (type, node) {
         if (node === void 0) { node = false; }
         var val = this.sortObserver(type, node);
-        console.log(val);
         // trigger sort
         return val;
     };
@@ -377,7 +370,6 @@ var Model = /** @class */ (function () {
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[b][type] - _this.nodes[a][type]; });
         }
         else if (node == true) {
-            console.log(node, type);
             //order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a]['shortName'].localeCompare(this.nodes[b]['shortName']));
             order = d3.range(this.nodes.length).sort(function (a, b) { return _this.nodes[b]['neighbors'].includes(parseInt(type)) - _this.nodes[a]['neighbors'].includes(parseInt(type)); });
         }
