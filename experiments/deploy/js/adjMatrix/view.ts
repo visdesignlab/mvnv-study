@@ -466,18 +466,21 @@ class View {
       })
 
     let verticalOffset = 3;
-    let scale = 0.05;
+    let scale = 0.0625;
     if(this.controller.configuration.adjMatrix.neighborSelect){
-
-      verticalOffset = 1/scale;
-      let horizontalOffset = ((this.orderingScale.bandwidth()+5)/ 2)/scale;//this.nodes.length < 50 ? 11/scale : (this.orderingScale.bandwidth()/1.2/scale// /2;
+      console.log(this.orderingScale.bandwidth());
+      verticalOffset = this.nodes.length > 50 ? (this.orderingScale.bandwidth()/11)/scale : 7.5/scale;
+      let horizontalOffset = ((this.orderingScale.bandwidth()+15)/ 2)/scale;//this.nodes.length < 50 ? 11/scale : (this.orderingScale.bandwidth()/1.2/scale// /2;
       console.log(verticalOffset,horizontalOffset,(this.orderingScale.bandwidth()+5)/ 2)
+      let temp = verticalOffset;
+      verticalOffset = horizontalOffset;
+      horizontalOffset = temp;
       this.edgeColumns.append('path').attr('id',d=>'sortIcon'+d[0].rowid).attr('class', 'sortIcon').attr('pointer-events','bounding-box')
         //.attr("d", d3.symbol().size(30).type(d3.symbolTriangle))
       .attr('d', (d) => {
           return this.controller.model.icons['cellSort'].d;
         })
-        .style('fill', d => {return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale("+scale+")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(-90)")
+        .style('fill', d => {return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale("+scale+")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(90)")
         .on('click', (d, i, nodes) => {
           console.log(d[0].rowid)
           let action = this.generateSortAction(d[0].rowid);
@@ -496,7 +499,7 @@ class View {
         .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
         .on('mouseover', (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) });
 
-      verticalOffset = verticalOffset*scale + 10;
+      verticalOffset = verticalOffset*scale + 5;
     }
 
     this.edgeColumns
@@ -1833,6 +1836,7 @@ class View {
     nonAnswerColumn.attr('cursor', 'pointer');
 
     d3.select('.loading').style('display', 'none');
+
     this.controller.model.setUpProvenance();
     window.focus();
 
