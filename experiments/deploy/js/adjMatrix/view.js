@@ -187,6 +187,17 @@ var View = /** @class */ (function () {
             _this.clickFunction(d, i, nodes);
         })
             .attr('cursor', 'pointer');
+        cells.filter(function (d) { return d.rowid == d.colid; })
+            .on('click', function (d, i, nodes) {
+            console.log(_this.controller.model.app.currentState().selections.search);
+            if (d.rowid in _this.controller.model.app.currentState().selections.search) {
+                var action = _this.changeInteractionWrapper(d.rowid, null, 'search');
+                _this.controller.model.provenance.applyAction(action);
+                pushProvenance(_this.controller.model.app.currentState());
+            }
+            // only trigger click if edge exists
+            console.log(d.rowid);
+        });
         this.controller.answerRow = {};
         this.controller.hoverRow = {};
         this.controller.hoverCol = {};

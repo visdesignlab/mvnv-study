@@ -566,7 +566,7 @@ async function resetPanel() {
   }
 
   if (
-    task.replyType.includes("text") 
+    task.replyType.includes("text")
   ) {
     d3.select("#textAnswer").style("display", "block");
   } else {
@@ -587,7 +587,7 @@ async function resetPanel() {
   } else {
     window.controller.loadTask(currentTask);
   }
-   
+
   if (onTrials && currentTask === 0){
     setTimeout(function(){welcome(vis);},vis === 'nodeLink'? 500 : 3000) ;
 
@@ -627,7 +627,7 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
 
   if (docSize > 0.75) {
     console.log(
-      "Provenance Graph for " , workerID ,  "  user is too large! Considering storing each state in its own document", 
+      "Provenance Graph for " , workerID ,  "  user is too large! Considering storing each state in its own document",
     );
   } else {
     let docRef = db.collection(collectionName).doc(docID);
@@ -799,7 +799,7 @@ function validateAnswer(answer, errorCheckField, force = false) {
     errorCheckField === "value"
       ? d3.select("#valueAnswer").select(".errorMsg") :
       (errorCheckField == 'nodes' ?  d3.select("#nodeAnswer").select(".errorMsg")  : d3.select("#textAnswer").select(".errorMsg"))
-     
+
 
   errorMsgSelector
     .style("display", !isValid ? "inline" : "none")
@@ -821,7 +821,7 @@ function makeid(length) {
 }
 
 async function parseResults(){
-  
+
     db.collection('results')
     .get()
     .catch(function(error) {
@@ -939,7 +939,7 @@ async function loadTasks(visType, tasksType) {
 
   if (shuffleTasks && !onTrials) {
 
-    //remove the last task; 
+    //remove the last task;
     let lastTask = taskListEntries.pop();
     //Randomly order the tasks.
     shuffle(taskListEntries);
@@ -1084,7 +1084,7 @@ d3.select("#clear-selection").on("click", () => {
   // set app.currentState() selected to empty;
 
       // (check if going through tour)
-      if (shepherd.isActive()){
+      if (shepherd && shepherd.isActive()){
         shepherd.next();
       }
 
@@ -1132,7 +1132,7 @@ let val = d3.select("#search-input").on("change", function() {
         shepherd.next();
       } else {
         return;
-      } 
+      }
     }
 
   //in case there are just spaces, this will reset it to 'empty'

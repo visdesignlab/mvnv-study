@@ -331,6 +331,28 @@ class Model {
 
 
       }
+
+      let updateSearchCells = (state)=>{
+        let cellNames = [];
+        Object.keys(state.selections.search).map(key => {
+
+          //let names = state.selections.search[key];
+          cellNames.push('cell'+key.toString()+'_'+key.toString())
+          /*names.map(name => {
+            let cellsNames = splitCellNames(name);
+            cellNames = cellNames.concat(cellsNames)
+          })*/
+
+          //names.map(name=>{
+          //})
+        })
+        let cellSelectorQuery = '#' + cellNames.join(',#')
+        // if no cells selected, return
+        d3.selectAll('.searchCell').classed('searchCell', false);
+        if (cellSelectorQuery == '#') return;
+        d3.selectAll(cellSelectorQuery).selectAll('.baseCell').classed('searchCell', true)
+      }
+
       let sortObserver = (state)=>{
         console.log(state.sortKey)
 
@@ -345,6 +367,8 @@ class Model {
       provenance.addObserver("selections.cellcol", updateCellClicks)
 
       provenance.addObserver("selections.search", updateHighlights)
+      provenance.addObserver("selections.search", updateSearchCells)
+
       provenance.addObserver("selections.answerBox", updateHighlights)
       provenance.addObserver("selections.answerBox", updateAnswerBox)
       provenance.addObserver("sortKey", sortObserver)
