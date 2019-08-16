@@ -26,7 +26,8 @@
     saveToFile(smallGraph, graphName.replace('large','small'));
 
   })
-})();
+})
+// ();
 
 // create large graphs
 (async function() {
@@ -264,8 +265,7 @@
 
   // saveToFile(bareBonesGraph,'layoutGraph.json')
   
-})
-// ();
+})();
 
 function saveToFile(data, filename) {
   if (!data) {

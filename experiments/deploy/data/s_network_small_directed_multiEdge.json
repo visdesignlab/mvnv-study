@@ -25,17 +25,23 @@
             "y": 456.97069733628155,
             "neighbors": [
                 208312922,
+                208312922,
                 81658145,
                 16112517,
                 1873322353,
-                743468486756868100
+                743468486756868100,
+                208312922,
+                208312922
             ],
             "edges": [
                 "91169926_208312922_retweet",
+                "208312922_91169926_mentions",
                 "91169926_81658145_retweet",
                 "91169926_16112517_retweet",
                 "91169926_1873322353_retweet",
-                "743468486756868100_91169926_retweet"
+                "743468486756868100_91169926_retweet",
+                "208312922_91169926_retweet",
+                "91169926_208312922_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -65,10 +71,12 @@
             "y": 377.72910844624437,
             "neighbors": [
                 91169926,
+                91169926,
                 191257554,
                 1085199426837188600,
                 318046158,
                 18406335,
+                1085199426837188600,
                 1006945298,
                 227831457,
                 84043985,
@@ -77,14 +85,18 @@
                 247943631,
                 403626099,
                 2873695769,
-                889998600
+                889998600,
+                91169926,
+                91169926
             ],
             "edges": [
                 "91169926_208312922_retweet",
+                "208312922_91169926_mentions",
                 "191257554_208312922_retweet",
                 "208312922_1085199426837188600_mentions",
                 "318046158_208312922_retweet",
                 "18406335_208312922_retweet",
+                "1085199426837188600_208312922_retweet",
                 "1006945298_208312922_retweet",
                 "227831457_208312922_retweet",
                 "84043985_208312922_retweet",
@@ -93,7 +105,9 @@
                 "208312922_247943631_retweet",
                 "403626099_208312922_retweet",
                 "2873695769_208312922_retweet",
-                "889998600_208312922_retweet"
+                "889998600_208312922_retweet",
+                "208312922_91169926_retweet",
+                "91169926_208312922_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -154,7 +168,7 @@
             "memberFor_days": 205,
             "type": "institution",
             "continent": "Europe",
-            "shortName": "Louie",
+            "shortName": "Carol",
             "x": 807.0490884257716,
             "y": 195.07944226887187,
             "neighbors": [
@@ -162,11 +176,21 @@
                 4058687172,
                 201277609,
                 40219508,
+                201277609,
                 19283433,
+                19283433,
+                40219508,
+                40219508,
                 2527017636,
+                2527017636,
+                208312922,
                 30009655,
+                30009655,
+                201277609,
                 19299318,
                 1035496563743842300,
+                1035496563743842300,
+                19299318,
                 81658145
             ],
             "edges": [
@@ -174,11 +198,21 @@
                 "4058687172_1085199426837188600_retweet",
                 "201277609_1085199426837188600_mentions",
                 "40219508_1085199426837188600_retweet",
+                "1085199426837188600_201277609_retweet",
                 "1085199426837188600_19283433_retweet",
+                "19283433_1085199426837188600_mentions",
+                "1085199426837188600_40219508_retweet",
+                "40219508_1085199426837188600_mentions",
                 "1085199426837188600_2527017636_retweet",
+                "2527017636_1085199426837188600_mentions",
+                "1085199426837188600_208312922_retweet",
                 "1085199426837188600_30009655_retweet",
+                "30009655_1085199426837188600_mentions",
+                "201277609_1085199426837188600_retweet",
                 "1085199426837188600_19299318_retweet",
                 "1085199426837188600_1035496563743842300_retweet",
+                "1035496563743842300_1085199426837188600_mentions",
+                "19299318_1085199426837188600_mentions",
                 "81658145_1085199426837188600_mentions"
             ],
             "userSelectedNeighbors": [],
@@ -212,8 +246,10 @@
                 78865306,
                 16112517,
                 2596138699,
+                1085199426837188600,
                 81658145,
                 30009655,
+                1085199426837188600,
                 711885257549680600
             ],
             "edges": [
@@ -221,8 +257,10 @@
                 "201277609_78865306_retweet",
                 "201277609_16112517_retweet",
                 "2596138699_201277609_retweet",
+                "1085199426837188600_201277609_retweet",
                 "201277609_81658145_retweet",
                 "30009655_201277609_mentions",
+                "201277609_1085199426837188600_retweet",
                 "711885257549680600_201277609_retweet"
             ],
             "userSelectedNeighbors": [],
@@ -246,9 +284,9 @@
             "name": "Alexander Lex",
             "location": "Salt Lake City, UT",
             "memberFor_days": 3588,
-            "type": "institution",
+            "type": "person",
             "continent": "North America",
-            "shortName": "Big Books",
+            "shortName": "Todd",
             "x": 912.5070191226615,
             "y": 465.12364595383747,
             "neighbors": [
@@ -263,11 +301,14 @@
                 201277609,
                 395853499,
                 85844572,
+                395853499,
+                395853499,
                 270431596,
                 16112517,
                 1652270612,
                 446672281,
                 2527017636,
+                19299318,
                 19299318,
                 1085199426837188600,
                 909697437694087200,
@@ -286,12 +327,15 @@
                 "201277609_81658145_retweet",
                 "395853499_81658145_retweet",
                 "81658145_85844572_mentions",
+                "81658145_395853499_mentions",
+                "81658145_395853499_retweet",
                 "81658145_270431596_mentions",
                 "81658145_16112517_retweet",
                 "1652270612_81658145_retweet",
                 "446672281_81658145_retweet",
                 "2527017636_81658145_retweet",
                 "19299318_81658145_mentions",
+                "81658145_19299318_mentions",
                 "81658145_1085199426837188600_mentions",
                 "81658145_909697437694087200_mentions",
                 "92951551_81658145_retweet",
@@ -332,11 +376,15 @@
                 40219508,
                 270431596,
                 19299318,
+                19299318,
                 944216617268973600,
                 395853499,
                 1325316703,
                 18406335,
+                270431596,
                 81658145,
+                40219508,
+                40219508,
                 30009655,
                 84043985,
                 18704160,
@@ -350,6 +398,7 @@
                 1068137549355515900,
                 19283433,
                 136400506,
+                1873322353,
                 31638712
             ],
             "edges": [
@@ -361,11 +410,15 @@
                 "16112517_40219508_mentions",
                 "16112517_270431596_mentions",
                 "16112517_19299318_retweet",
+                "19299318_16112517_mentions",
                 "944216617268973600_16112517_retweet",
                 "395853499_16112517_mentions",
                 "16112517_1325316703_retweet",
                 "18406335_16112517_retweet",
+                "270431596_16112517_retweet",
                 "81658145_16112517_retweet",
+                "16112517_40219508_retweet",
+                "40219508_16112517_mentions",
                 "30009655_16112517_mentions",
                 "84043985_16112517_retweet",
                 "18704160_16112517_retweet",
@@ -379,6 +432,7 @@
                 "16112517_1068137549355515900_mentions",
                 "19283433_16112517_retweet",
                 "136400506_16112517_retweet",
+                "1873322353_16112517_retweet",
                 "31638712_16112517_retweet"
             ],
             "userSelectedNeighbors": [],
@@ -434,6 +488,7 @@
                 2527017636,
                 44195788,
                 10414152,
+                31638712,
                 2873695769
             ],
             "edges": [
@@ -463,6 +518,7 @@
                 "2527017636_247943631_retweet",
                 "44195788_247943631_retweet",
                 "10414152_247943631_mentions",
+                "31638712_247943631_mentions",
                 "2873695769_247943631_mentions"
             ],
             "userSelectedNeighbors": [],
@@ -488,20 +544,24 @@
             "memberFor_days": 2152,
             "type": "institution",
             "continent": "North America",
-            "shortName": "Janice",
+            "shortName": "Maude",
             "x": 626.5945303989201,
             "y": 880.9677166667532,
             "neighbors": [
                 16112517,
                 247943631,
                 91169926,
+                136400506,
+                16112517,
                 136400506
             ],
             "edges": [
                 "16112517_1873322353_mentions",
                 "1873322353_247943631_retweet",
                 "91169926_1873322353_retweet",
-                "136400506_1873322353_retweet"
+                "136400506_1873322353_retweet",
+                "1873322353_16112517_retweet",
+                "1873322353_136400506_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -533,6 +593,7 @@
                 81658145,
                 1085199426837188600,
                 201277609,
+                1085199426837188600,
                 2596138699,
                 18325271,
                 16112517,
@@ -543,6 +604,7 @@
                 "30009655_81658145_mentions",
                 "1085199426837188600_30009655_retweet",
                 "30009655_201277609_mentions",
+                "30009655_1085199426837188600_mentions",
                 "30009655_2596138699_mentions",
                 "30009655_18325271_mentions",
                 "30009655_16112517_mentions",
@@ -581,13 +643,16 @@
                 40219508,
                 270431596,
                 16112517,
+                16112517,
                 2889052877,
                 43953969,
                 19283433,
                 1667081238,
                 1085199426837188600,
                 81658145,
-                909697437694087200
+                1085199426837188600,
+                909697437694087200,
+                81658145
             ],
             "edges": [
                 "19299318_247943631_mentions",
@@ -595,13 +660,16 @@
                 "19299318_40219508_mentions",
                 "19299318_270431596_mentions",
                 "16112517_19299318_retweet",
+                "19299318_16112517_mentions",
                 "2889052877_19299318_retweet",
                 "43953969_19299318_retweet",
                 "19283433_19299318_retweet",
                 "19299318_1667081238_mentions",
                 "1085199426837188600_19299318_retweet",
                 "19299318_81658145_mentions",
-                "19299318_909697437694087200_mentions"
+                "19299318_1085199426837188600_mentions",
+                "19299318_909697437694087200_mentions",
+                "81658145_19299318_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -743,17 +811,25 @@
                 40219508,
                 241173920,
                 81658145,
+                81658145,
                 18406335,
+                81658145,
                 16112517,
-                79908341
+                79908341,
+                40219508,
+                40219508
             ],
             "edges": [
                 "40219508_395853499_retweet",
                 "241173920_395853499_retweet",
                 "395853499_81658145_retweet",
+                "81658145_395853499_mentions",
                 "18406335_395853499_retweet",
+                "81658145_395853499_retweet",
                 "395853499_16112517_mentions",
-                "79908341_395853499_mentions"
+                "79908341_395853499_mentions",
+                "40219508_395853499_mentions",
+                "395853499_40219508_retweet"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -814,7 +890,7 @@
             "memberFor_days": 1900,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Jill",
+            "shortName": "Kerry",
             "x": 1133.2427711024243,
             "y": 320.8929098379619,
             "neighbors": [
@@ -822,7 +898,11 @@
                 446672281,
                 92951551,
                 1085199426837188600,
+                1085199426837188600,
+                446672281,
+                92951551,
                 158685605,
+                40219508,
                 247943631,
                 81658145
             ],
@@ -831,7 +911,11 @@
                 "446672281_2527017636_retweet",
                 "92951551_2527017636_retweet",
                 "1085199426837188600_2527017636_retweet",
+                "2527017636_1085199426837188600_mentions",
+                "2527017636_446672281_mentions",
+                "2527017636_92951551_mentions",
                 "2527017636_158685605_mentions",
+                "2527017636_40219508_retweet",
                 "2527017636_247943631_retweet",
                 "2527017636_81658145_retweet"
             ],
@@ -858,16 +942,18 @@
             "memberFor_days": 2783,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Joseph",
+            "shortName": "Tony",
             "x": 1258,
             "y": 433.31040591556115,
             "neighbors": [
+                2527017636,
                 2527017636,
                 40219508,
                 81658145
             ],
             "edges": [
                 "446672281_2527017636_retweet",
+                "2527017636_446672281_mentions",
                 "446672281_40219508_retweet",
                 "446672281_81658145_retweet"
             ],
@@ -894,15 +980,17 @@
             "memberFor_days": 3542,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Natasha",
+            "shortName": "Liz",
             "x": 1079.9265304277676,
             "y": 189.4340878184033,
             "neighbors": [
+                2527017636,
                 2527017636,
                 81658145
             ],
             "edges": [
                 "92951551_2527017636_retweet",
+                "2527017636_92951551_mentions",
                 "92951551_81658145_retweet"
             ],
             "userSelectedNeighbors": [],
@@ -1070,12 +1158,14 @@
             "neighbors": [
                 247943631,
                 16112517,
+                1873322353,
                 1873322353
             ],
             "edges": [
                 "136400506_247943631_retweet",
                 "136400506_16112517_retweet",
-                "136400506_1873322353_retweet"
+                "136400506_1873322353_retweet",
+                "1873322353_136400506_mentions"
             ],
             "userSelectedNeighbors": [],
             "selected": false
@@ -1098,9 +1188,9 @@
             "name": "SCI Institute",
             "location": "Salt Lake City, UT",
             "memberFor_days": 2578,
-            "type": "person",
+            "type": "institution",
             "continent": "North America",
-            "shortName": "Todd",
+            "shortName": "Louie",
             "x": 964.7605930952677,
             "y": 179,
             "neighbors": [
@@ -1117,15 +1207,23 @@
         {
             "source": 91169926,
             "target": 208312922,
-            "type": "interacted",
-            "count": 5,
+            "type": "retweet",
+            "count": 3,
             "id": "91169926_208312922_retweet",
+            "selected": false
+        },
+        {
+            "source": 208312922,
+            "target": 91169926,
+            "type": "mentions",
+            "count": 1,
+            "id": "208312922_91169926_mentions",
             "selected": false
         },
         {
             "source": 191257554,
             "target": 208312922,
-            "type": "interacted",
+            "type": "retweet",
             "count": 2,
             "id": "191257554_208312922_retweet",
             "selected": false
@@ -1133,23 +1231,23 @@
         {
             "source": 208312922,
             "target": 1085199426837188600,
-            "type": "interacted",
-            "count": 2,
+            "type": "mentions",
+            "count": 1,
             "id": "208312922_1085199426837188600_mentions",
             "selected": false
         },
         {
             "source": 201277609,
             "target": 1085199426837188600,
-            "type": "interacted",
-            "count": 5,
+            "type": "mentions",
+            "count": 4,
             "id": "201277609_1085199426837188600_mentions",
             "selected": false
         },
         {
             "source": 91169926,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "91169926_81658145_retweet",
             "selected": false
@@ -1157,7 +1255,7 @@
         {
             "source": 201277609,
             "target": 16112517,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "201277609_16112517_retweet",
             "selected": false
@@ -1165,23 +1263,23 @@
         {
             "source": 16112517,
             "target": 247943631,
-            "type": "interacted",
-            "count": 4,
+            "type": "mentions",
+            "count": 5,
             "id": "16112517_247943631_mentions",
             "selected": false
         },
         {
             "source": 16112517,
             "target": 1873322353,
-            "type": "interacted",
-            "count": 3,
+            "type": "mentions",
+            "count": 1,
             "id": "16112517_1873322353_mentions",
             "selected": false
         },
         {
             "source": 30009655,
             "target": 81658145,
-            "type": "interacted",
+            "type": "mentions",
             "count": 1,
             "id": "30009655_81658145_mentions",
             "selected": false
@@ -1189,7 +1287,7 @@
         {
             "source": 19299318,
             "target": 247943631,
-            "type": "interacted",
+            "type": "mentions",
             "count": 5,
             "id": "19299318_247943631_mentions",
             "selected": false
@@ -1197,7 +1295,7 @@
         {
             "source": 2873695769,
             "target": 19299318,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "2873695769_19299318_retweet",
             "selected": false
@@ -1205,15 +1303,23 @@
         {
             "source": 16112517,
             "target": 19299318,
-            "type": "interacted",
-            "count": 2,
+            "type": "retweet",
+            "count": 1,
             "id": "16112517_19299318_retweet",
+            "selected": false
+        },
+        {
+            "source": 19299318,
+            "target": 16112517,
+            "type": "mentions",
+            "count": 1,
+            "id": "19299318_16112517_mentions",
             "selected": false
         },
         {
             "source": 84043985,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "84043985_81658145_retweet",
             "selected": false
@@ -1221,15 +1327,23 @@
         {
             "source": 191257554,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 2,
             "id": "191257554_81658145_retweet",
             "selected": false
         },
         {
+            "source": 1085199426837188600,
+            "target": 201277609,
+            "type": "retweet",
+            "count": 1,
+            "id": "1085199426837188600_201277609_retweet",
+            "selected": false
+        },
+        {
             "source": 201277609,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "201277609_81658145_retweet",
             "selected": false
@@ -1237,7 +1351,7 @@
         {
             "source": 318046158,
             "target": 208312922,
-            "type": "interacted",
+            "type": "retweet",
             "count": 2,
             "id": "318046158_208312922_retweet",
             "selected": false
@@ -1245,23 +1359,39 @@
         {
             "source": 395853499,
             "target": 81658145,
-            "type": "interacted",
-            "count": 4,
+            "type": "retweet",
+            "count": 2,
             "id": "395853499_81658145_retweet",
+            "selected": false
+        },
+        {
+            "source": 81658145,
+            "target": 395853499,
+            "type": "mentions",
+            "count": 3,
+            "id": "81658145_395853499_mentions",
             "selected": false
         },
         {
             "source": 18406335,
             "target": 395853499,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "18406335_395853499_retweet",
             "selected": false
         },
         {
+            "source": 81658145,
+            "target": 395853499,
+            "type": "retweet",
+            "count": 1,
+            "id": "81658145_395853499_retweet",
+            "selected": false
+        },
+        {
             "source": 395853499,
             "target": 16112517,
-            "type": "interacted",
+            "type": "mentions",
             "count": 1,
             "id": "395853499_16112517_mentions",
             "selected": false
@@ -1269,7 +1399,7 @@
         {
             "source": 18406335,
             "target": 16112517,
-            "type": "interacted",
+            "type": "retweet",
             "count": 2,
             "id": "18406335_16112517_retweet",
             "selected": false
@@ -1277,7 +1407,7 @@
         {
             "source": 81658145,
             "target": 16112517,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "81658145_16112517_retweet",
             "selected": false
@@ -1285,7 +1415,7 @@
         {
             "source": 18406335,
             "target": 208312922,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "18406335_208312922_retweet",
             "selected": false
@@ -1293,55 +1423,103 @@
         {
             "source": 446672281,
             "target": 2527017636,
-            "type": "interacted",
-            "count": 3,
+            "type": "retweet",
+            "count": 1,
             "id": "446672281_2527017636_retweet",
             "selected": false
         },
         {
             "source": 92951551,
             "target": 2527017636,
-            "type": "interacted",
-            "count": 3,
+            "type": "retweet",
+            "count": 1,
             "id": "92951551_2527017636_retweet",
             "selected": false
         },
         {
             "source": 1085199426837188600,
             "target": 2527017636,
-            "type": "interacted",
-            "count": 4,
+            "type": "retweet",
+            "count": 2,
             "id": "1085199426837188600_2527017636_retweet",
+            "selected": false
+        },
+        {
+            "source": 2527017636,
+            "target": 1085199426837188600,
+            "type": "mentions",
+            "count": 2,
+            "id": "2527017636_1085199426837188600_mentions",
+            "selected": false
+        },
+        {
+            "source": 2527017636,
+            "target": 446672281,
+            "type": "mentions",
+            "count": 2,
+            "id": "2527017636_446672281_mentions",
+            "selected": false
+        },
+        {
+            "source": 2527017636,
+            "target": 92951551,
+            "type": "mentions",
+            "count": 2,
+            "id": "2527017636_92951551_mentions",
+            "selected": false
+        },
+        {
+            "source": 1085199426837188600,
+            "target": 208312922,
+            "type": "retweet",
+            "count": 1,
+            "id": "1085199426837188600_208312922_retweet",
             "selected": false
         },
         {
             "source": 1085199426837188600,
             "target": 30009655,
-            "type": "interacted",
-            "count": 2,
+            "type": "retweet",
+            "count": 1,
             "id": "1085199426837188600_30009655_retweet",
             "selected": false
         },
         {
             "source": 30009655,
             "target": 201277609,
-            "type": "interacted",
+            "type": "mentions",
             "count": 1,
             "id": "30009655_201277609_mentions",
             "selected": false
         },
         {
+            "source": 30009655,
+            "target": 1085199426837188600,
+            "type": "mentions",
+            "count": 1,
+            "id": "30009655_1085199426837188600_mentions",
+            "selected": false
+        },
+        {
             "source": 227831457,
             "target": 208312922,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "227831457_208312922_retweet",
             "selected": false
         },
         {
+            "source": 201277609,
+            "target": 1085199426837188600,
+            "type": "retweet",
+            "count": 1,
+            "id": "201277609_1085199426837188600_retweet",
+            "selected": false
+        },
+        {
             "source": 84043985,
             "target": 208312922,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "84043985_208312922_retweet",
             "selected": false
@@ -1349,7 +1527,7 @@
         {
             "source": 29700681,
             "target": 208312922,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "29700681_208312922_retweet",
             "selected": false
@@ -1357,7 +1535,7 @@
         {
             "source": 208312922,
             "target": 4597853354,
-            "type": "interacted",
+            "type": "mentions",
             "count": 1,
             "id": "208312922_4597853354_mentions",
             "selected": false
@@ -1365,15 +1543,15 @@
         {
             "source": 1085199426837188600,
             "target": 19299318,
-            "type": "interacted",
-            "count": 2,
+            "type": "retweet",
+            "count": 1,
             "id": "1085199426837188600_19299318_retweet",
             "selected": false
         },
         {
             "source": 318046158,
             "target": 247943631,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "318046158_247943631_retweet",
             "selected": false
@@ -1381,7 +1559,7 @@
         {
             "source": 30009655,
             "target": 16112517,
-            "type": "interacted",
+            "type": "mentions",
             "count": 1,
             "id": "30009655_16112517_mentions",
             "selected": false
@@ -1389,7 +1567,7 @@
         {
             "source": 1873322353,
             "target": 247943631,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "1873322353_247943631_retweet",
             "selected": false
@@ -1397,7 +1575,7 @@
         {
             "source": 1652270612,
             "target": 247943631,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "1652270612_247943631_retweet",
             "selected": false
@@ -1405,7 +1583,7 @@
         {
             "source": 208312922,
             "target": 247943631,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "208312922_247943631_retweet",
             "selected": false
@@ -1413,7 +1591,7 @@
         {
             "source": 136400506,
             "target": 247943631,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "136400506_247943631_retweet",
             "selected": false
@@ -1421,7 +1599,7 @@
         {
             "source": 2527017636,
             "target": 247943631,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "2527017636_247943631_retweet",
             "selected": false
@@ -1429,7 +1607,7 @@
         {
             "source": 84043985,
             "target": 16112517,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "84043985_16112517_retweet",
             "selected": false
@@ -1437,15 +1615,15 @@
         {
             "source": 1652270612,
             "target": 16112517,
-            "type": "interacted",
-            "count": 4,
+            "type": "retweet",
+            "count": 5,
             "id": "1652270612_16112517_retweet",
             "selected": false
         },
         {
             "source": 1652270612,
             "target": 30009655,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "1652270612_30009655_retweet",
             "selected": false
@@ -1453,7 +1631,7 @@
         {
             "source": 1652270612,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "1652270612_81658145_retweet",
             "selected": false
@@ -1461,7 +1639,7 @@
         {
             "source": 446672281,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "446672281_81658145_retweet",
             "selected": false
@@ -1469,7 +1647,7 @@
         {
             "source": 2873695769,
             "target": 208312922,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "2873695769_208312922_retweet",
             "selected": false
@@ -1477,7 +1655,7 @@
         {
             "source": 318046158,
             "target": 16112517,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "318046158_16112517_retweet",
             "selected": false
@@ -1485,7 +1663,7 @@
         {
             "source": 91169926,
             "target": 16112517,
-            "type": "interacted",
+            "type": "retweet",
             "count": 3,
             "id": "91169926_16112517_retweet",
             "selected": false
@@ -1493,7 +1671,7 @@
         {
             "source": 2527017636,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "2527017636_81658145_retweet",
             "selected": false
@@ -1501,7 +1679,7 @@
         {
             "source": 91169926,
             "target": 1873322353,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "91169926_1873322353_retweet",
             "selected": false
@@ -1509,15 +1687,31 @@
         {
             "source": 19299318,
             "target": 81658145,
-            "type": "interacted",
-            "count": 2,
+            "type": "mentions",
+            "count": 1,
             "id": "19299318_81658145_mentions",
+            "selected": false
+        },
+        {
+            "source": 19299318,
+            "target": 1085199426837188600,
+            "type": "mentions",
+            "count": 1,
+            "id": "19299318_1085199426837188600_mentions",
+            "selected": false
+        },
+        {
+            "source": 81658145,
+            "target": 19299318,
+            "type": "mentions",
+            "count": 1,
+            "id": "81658145_19299318_mentions",
             "selected": false
         },
         {
             "source": 81658145,
             "target": 1085199426837188600,
-            "type": "interacted",
+            "type": "mentions",
             "count": 1,
             "id": "81658145_1085199426837188600_mentions",
             "selected": false
@@ -1525,7 +1719,7 @@
         {
             "source": 2873695769,
             "target": 247943631,
-            "type": "interacted",
+            "type": "mentions",
             "count": 2,
             "id": "2873695769_247943631_mentions",
             "selected": false
@@ -1533,15 +1727,23 @@
         {
             "source": 92951551,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "92951551_81658145_retweet",
             "selected": false
         },
         {
+            "source": 208312922,
+            "target": 91169926,
+            "type": "retweet",
+            "count": 1,
+            "id": "208312922_91169926_retweet",
+            "selected": false
+        },
+        {
             "source": 136400506,
             "target": 16112517,
-            "type": "interacted",
+            "type": "retweet",
             "count": 1,
             "id": "136400506_16112517_retweet",
             "selected": false
@@ -1549,17 +1751,41 @@
         {
             "source": 136400506,
             "target": 1873322353,
-            "type": "interacted",
-            "count": 2,
+            "type": "retweet",
+            "count": 1,
             "id": "136400506_1873322353_retweet",
+            "selected": false
+        },
+        {
+            "source": 1873322353,
+            "target": 16112517,
+            "type": "retweet",
+            "count": 2,
+            "id": "1873322353_16112517_retweet",
+            "selected": false
+        },
+        {
+            "source": 1873322353,
+            "target": 136400506,
+            "type": "mentions",
+            "count": 1,
+            "id": "1873322353_136400506_mentions",
             "selected": false
         },
         {
             "source": 701375574,
             "target": 81658145,
-            "type": "interacted",
+            "type": "retweet",
             "count": 3,
             "id": "701375574_81658145_retweet",
+            "selected": false
+        },
+        {
+            "source": 91169926,
+            "target": 208312922,
+            "type": "mentions",
+            "count": 1,
+            "id": "91169926_208312922_mentions",
             "selected": false
         }
     ]

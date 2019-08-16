@@ -154,7 +154,7 @@
             "memberFor_days": 205,
             "type": "institution",
             "continent": "Europe",
-            "shortName": "Louie",
+            "shortName": "Carol",
             "x": 807.0490884257716,
             "y": 195.07944226887187,
             "neighbors": [
@@ -246,9 +246,9 @@
             "name": "Alexander Lex",
             "location": "Salt Lake City, UT",
             "memberFor_days": 3588,
-            "type": "institution",
+            "type": "person",
             "continent": "North America",
-            "shortName": "Big Books",
+            "shortName": "Todd",
             "x": 912.5070191226615,
             "y": 465.12364595383747,
             "neighbors": [
@@ -488,7 +488,7 @@
             "memberFor_days": 2152,
             "type": "institution",
             "continent": "North America",
-            "shortName": "Janice",
+            "shortName": "Maude",
             "x": 626.5945303989201,
             "y": 880.9677166667532,
             "neighbors": [
@@ -814,7 +814,7 @@
             "memberFor_days": 1900,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Jill",
+            "shortName": "Kerry",
             "x": 1133.2427711024243,
             "y": 320.8929098379619,
             "neighbors": [
@@ -858,7 +858,7 @@
             "memberFor_days": 2783,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Joseph",
+            "shortName": "Tony",
             "x": 1258,
             "y": 433.31040591556115,
             "neighbors": [
@@ -894,7 +894,7 @@
             "memberFor_days": 3542,
             "type": "person",
             "continent": "Europe",
-            "shortName": "Natasha",
+            "shortName": "Liz",
             "x": 1079.9265304277676,
             "y": 189.4340878184033,
             "neighbors": [
@@ -1098,9 +1098,9 @@
             "name": "SCI Institute",
             "location": "Salt Lake City, UT",
             "memberFor_days": 2578,
-            "type": "person",
+            "type": "institution",
             "continent": "North America",
-            "shortName": "Todd",
+            "shortName": "Louie",
             "x": 964.7605930952677,
             "y": 179,
             "neighbors": [
