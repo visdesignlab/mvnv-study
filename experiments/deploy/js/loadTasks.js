@@ -945,7 +945,7 @@ async function loadTasks(visType, tasksType) {
     shuffle(taskListEntries);
 
     //add back last last
-    taskListEntries = taskListEntries.concat(lastTask);
+    taskListEntries = taskListEntries.concat([lastTask]);
   }
   // insert order and taskID into each element in this list
   taskList = taskListEntries.map((t, i) => {

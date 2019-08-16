@@ -700,7 +700,11 @@
         shuffleTasks,
         taskMenu,
         configPanel,
-        trials
+        trials,
+        PROLIFIC_PID,
+        STUDY_ID,
+        SESSION_ID
+
     } = getUrlVars();
 
     mode = mode || 'study'; //can be 'develop', 'test', 'heuristics', or 'study'
@@ -773,6 +777,7 @@
             break;
     }
 
+   
  
 
     //set up  user on firestore to track answers and usage;
@@ -800,6 +805,15 @@
                 merge: true
             });
         }
+    } else {
+        //add prolific specific parameters to database
+        db.collection(participantCollection).doc(workerID).set({
+                PROLIFIC_PID,
+                STUDY_ID,
+                SESSION_ID
+            }, {
+                merge: true
+            });
     }
 
 

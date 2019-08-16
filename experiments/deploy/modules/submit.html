@@ -95,7 +95,7 @@
         <div>
 
           <p>
-            <strong>A completion code for Prolific will display below after you submit successfully. </strong>
+            <strong>A link to complete the study and return to Prolific will display below after you submit successfully. </strong>
           </p>
 
           <a class="button" id="submitFeedback" type="button">Submit</a>
@@ -120,8 +120,11 @@
 
 
           <p>
-            <strong>Please copy and paste the following code back on Prolific before closing this
-              window:</strong>
+            <strong> 
+              <!-- Please copy and paste the following code back on Prolific before closing this
+              window.  -->
+            
+              <a href="https://app.prolific.co/submissions/complete?cc=HX615JBC">You must click here to complete the study and return to Proflific!</a></strong>
           </p>
           <h2 id="postId"></h2>
         </div>
@@ -224,7 +227,7 @@
             //display the completion code; 
             d3.select('#submitSuccessful').text('Submit Successful! Thanks again for participating in this study.');
             d3.select('#codeBox').style('display','inline')
-            d3.select('#postId').text(participantCode)
+            // d3.select('#postId').text(participantCode)
 
             updateStudyProvenance('submitted feedback')
 
