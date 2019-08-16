@@ -20,6 +20,13 @@ function welcome(vis) {
       }
     });
 
+    d3.select('#tourAnswerBox247943631').on("click",()=>{
+      if (shepherd.isActive()) {
+        setTimeout(function(){shepherd.next();},100);
+      }
+
+    })
+
     //callback for when user clicks on Judge sort
     d3.select(".tourLabelGroup").on("click", () => {
       if (shepherd.isActive()) {
@@ -98,7 +105,7 @@ function setupShepherd(vis) {
         behavior: "smooth",
         block: "center"
       },
-      showCancelLink: true,
+      showCancelLink: false,
       tippyOptions: {
         maxWidth: "400px",
         popperOptions: {
@@ -175,8 +182,8 @@ function setupShepherd(vis) {
   if (vis === "adjMatrix") {
     const steps = [
       {
-        title: "Selected Row",
-        text: "This has selected the row representing Judge.",
+        title: "Highlighted Row",
+        text: "This has highlighted the row representing Judge.",
         attachTo: {
           element: "#groupRow247943631",
           // element:'#Judge_group',
@@ -203,7 +210,7 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Selected Column ",
+        title: "Highlighted Column ",
         text: "As well as the Column",
         attachTo: {
           element: "#groupCol247943631",
@@ -227,8 +234,8 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Selecting Neighbors",
-        text: "<span class=instructions> Select judge's neighbors by clicking on the column label </span>",
+        title: "Highlighting Neighbors",
+        text: "<span class=instructions> Highlight judge's neighbors by clicking on the column label </span>",
         attachTo: {
           element: "#tourColLabel247943631",
           on: "right"
@@ -242,10 +249,12 @@ function setupShepherd(vis) {
             text: "Back"
           }
         ],
-        id: "attaching"
+        id: "attaching",
+        modalOverlayOpeningPadding: "5"
+
       },
       {
-        title: "Selected Neighbors ",
+        title: "Neighbors ",
         text: "This highlights all of Judge's neighbors in green.",
         attachTo: {
           element: ".tourNeighborGroup",
@@ -287,7 +296,8 @@ function setupShepherd(vis) {
             text: "Next"
           }
         ],
-        id: "attaching"
+        id: "attaching",
+
       },
       {
         title: "Grouping Neighbors ",
@@ -313,7 +323,9 @@ function setupShepherd(vis) {
           //   text: "Next"
           // }
         ],
-        id: "attaching"
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+
       },
       {
         title: "Grouping Neighbors ",
@@ -359,7 +371,8 @@ function setupShepherd(vis) {
             text: "Next"
           }
         ],
-        id: "attaching"
+        id: "attaching",
+
       },
       {
         title: "Attributes  ",
@@ -387,7 +400,7 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Sorting",
+        title: "Sorting by Attribute",
         text: "<span class=instructions>Click on a column header to sort by that attribute </span>",
         attachTo: {
           element: ".column-headers",
@@ -412,12 +425,38 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Clearing Selections",
+        title: "Sorting by Network Structure",
+        text: "You can also sort based on the node names or clusters in the graph.<span class=instructions>Try sorting by cluster, then by name. </span>",
+        attachTo: {
+          element: ".tourSortWrapper",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              window.controller.view.sort('shortName');
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+      
+      {
+        title: "Clearing Highlights",
         text:
-          "At any point you can clear your selected nodes with the clear selection button. <span class='instructions'>Try it out!</span> ",
+          " <span class='instructions'>Clear all highlights by clicking on the 'Clear Highlighted Nodes' to the left</span> ",
         attachTo: {
           element: "#clear-selection",
-          on: "left"
+          on: "right"
         },
         buttons: [
           {
@@ -501,7 +540,7 @@ function setupShepherd(vis) {
           "To select a node as the answer to a task, use the checkbox under the 'answer column' for that row.",
 
         attachTo: {
-          element: "#tourAnswerBox16112517",
+          element: "#tourAnswerBox247943631",
           on: "left"
         },
         buttons: [
@@ -513,12 +552,12 @@ function setupShepherd(vis) {
             secondary: true,
             text: "Back"
           },
-          {
-            action: function() {
-              return this.next();
-            },
-            text: "Next"
-          }
+          // {
+          //   action: function() {
+          //     return this.next();
+          //   },
+          //   text: "Next"
+          // }
         ],
         id: "attaching"
       },

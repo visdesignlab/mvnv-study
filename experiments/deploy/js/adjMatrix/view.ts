@@ -1830,10 +1830,8 @@ class View {
     let iconNames = ['alphabetical', 'categorical']//, 'quant']
 
     let sortWrapper = this.edges.append('g').attr('class','tourSortWrapper');
-    
-    for (let i = 0; i < text.length; i++) {
 
-      
+    for (let i = 0; i < text.length; i++) {
       let button = sortWrapper //this.edges
         .append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
