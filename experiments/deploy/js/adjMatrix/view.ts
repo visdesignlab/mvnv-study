@@ -1846,8 +1846,12 @@ class View {
     let text = ['Name', 'Cluster']//, 'interacts'];
     let sortNames = ['shortName', 'clusterLeaf']//, 'edges']
     let iconNames = ['alphabetical', 'categorical']//, 'quant']
+
+    let sortWrapper = this.edges.append('g').attr('class','tourSortWrapper');
+
     for (let i = 0; i < text.length; i++) {
-      let button = this.edges.append('g')
+      let button = sortWrapper //this.edges
+        .append('g')
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
       button.attr('cursor', 'pointer').on('click', () => {
         let action = this.generateSortAction(sortNames[i]);
