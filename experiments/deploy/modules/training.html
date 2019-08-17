@@ -9,8 +9,10 @@
 
   <div class="card">
     <div class="card-image">
-      <video id="trainingVideo" width="1152px" height="648px" controls preload="none">
-        <source  src="" type="video/mp4" />
+      <video id="trainingVideoNodeLink" class="trainingVideo" width="1152px" height="648px" style="display:none" controls preload="none">
+        <source  src="training/nodeLink-Training_small.mp4" type="video/mp4" /></video>
+     <video id="trainingVideoAdjMatrix" class="trainingVideo" width="1152px" height="648px" style="display:none"  controls preload="none">
+        <source  src="training/adjMatrix-Training_small.mp4" type="video/mp4" /></video>
     </div>
   </div>
 
@@ -37,17 +39,22 @@
     let src = vis === 'nodeLink' ? 'training/nodeLink-Training_small.mp4' :
       'training/adjMatrix-Training_small.mp4'
 
-      console.log('src is ', src)
     //add correct link to video: 
-    console.log('setting source')
-    d3.select('#trainingVideo').select("source").attr('src', src)
+    // d3.select('#trainingVideo').select("source").attr('src', src)
 
-    debugger;
+    if (vis === 'nodeLink'){
+      d3.select('#trainingVideoNodeLink').style('display', 'block')
 
+      d3.select('#trainingVideoAdjMatrix').remove()
+    } else {
+      d3.select('#trainingVideoAdjMatrix').style('display', 'block')
+
+      d3.select('#trainingVideoNodeLink').remove()
+    }
     d3.select('#trainingTitle').text(vis === 'nodeLink' ? 'Node-Link Diagram' : 'Adjacency Matrix')
     
     //Only show Start Trials button when the training video is done playing;
-    document.getElementById('trainingVideo').onended = function() {
+    document.getElementsByClassName('trainingVideo')[0].onended = function() {
       d3.select('#start-trials').style('display','block')
     };
 

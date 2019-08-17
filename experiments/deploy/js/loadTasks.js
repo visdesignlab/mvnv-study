@@ -566,7 +566,7 @@ async function resetPanel() {
   d3.select("#taskArea")
     // .select(".card-header-title")
     .select(".taskText")
-    .text(task.prompt + (mode === 'study' ?  '' :  " (" + task.taskID + ")"));
+    .text(task.prompt + (mode === 'study' || mode === 'test' ?  '' :  " (" + task.taskID + ")"));
 
   config = task.config;
 
@@ -880,10 +880,6 @@ async function assignVisType() {
         },
         { merge: true }
       );
-
-      // setTimeout(() => {
-      //   resolve('🤡');
-      // }, 2000);
       resolve();
   });
 

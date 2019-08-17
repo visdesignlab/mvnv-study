@@ -137,6 +137,7 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
+              updateStudyProvenance("started guided tour");
               return this.next();
             },
             text: "Next"
@@ -594,8 +595,9 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              // window.controller.model.provenance.reset();
-              
+              window.controller.model.provenance.reset();
+              updateStudyProvenance("ended guided tour");
+
               return this.next();
             },
             secondary: true,
@@ -828,6 +830,7 @@ function setupShepherd(vis) {
           {
             action: function() {
               provenance.reset();
+              updateStudyProvenance("ended guided tour");
 
               return this.next();
             },
