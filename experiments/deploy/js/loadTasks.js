@@ -301,7 +301,7 @@ d3.select("#submitButton").on("click", async function() {
       isValid = isValid && validateValue;
     }
     if (!isValid) {
-      updateStudyProvenance("submitted invalid answer", errorMsg);
+      updateStudyProvenance("submitted invalid answer", {answer:task.answer,errorMsg});
       return;
     }
   }
