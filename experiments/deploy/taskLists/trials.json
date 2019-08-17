@@ -23,7 +23,8 @@
                 "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+                "sample": "data/s_network_small_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -182,7 +183,7 @@
                 "sortKey": "followers_count"
             },
             "taskID": "trialTask2",
-            "loadedGraph": "small_undirected_singleEdge",
+            "loadedGraph": "sample",
             "isDirected": false,
             "isMultiEdge": false,
             "graphSize": "small",
@@ -219,7 +220,8 @@
                 "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+                "sample": "data/s_network_small_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -378,7 +380,7 @@
                 "sortKey": "favourites_count"
             },
             "taskID": "trialTask1",
-            "loadedGraph": "small_undirected_singleEdge",
+            "loadedGraph": "sample",
             "isDirected": false,
             "isMultiEdge": false,
             "graphSize": "small",

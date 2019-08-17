@@ -1,7 +1,7 @@
 {
     "S-task1": {
         "hypothesis":"Distractor Effect Hypothesis, Attribute Sorting Hypothesis",
-        "prompt": "Find the North American with the most Tweets",
+        "prompt": "Find the <span class='attribute'>North American</span> with the <span class='attribute'>most Tweets</span>",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -17,7 +17,7 @@
     },
     "S-task1A": {
         "hypothesis":"Distractor Effect Hypothesis, Attribute Sorting Hypothesis",
-        "prompt": "Find the European with the least likes",
+        "prompt": "Find the <span class='attribute'>European</span> with the <span class='attribute'>least likes </span>",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -33,7 +33,7 @@
     },
     "S-task3": {
         "hypothesis":"Scalable Attributes Hypothesis",
-        "prompt": "Which person is frequently retweeted in this network despite having few tweets and likes in general?",
+        "prompt": "Which <span class='attribute'>person</span> is  <span class='attribute'> frequently retweeted</span> in this network despite having <span class='attribute'>few tweets and likes</span> in general?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -49,7 +49,7 @@
     },
     "S-task4": {
         "hypothesis":"Distractor Effects Hypothesis",
-        "prompt": "Find all of Lane's European Neighbors",
+        "prompt": "Find all of Lane's <span class='attribute'>European</span> Neighbors",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -68,7 +68,7 @@
     },
     "S-task4A": {
         "hypothesis":"Distractor Effects Hypothesis",
-        "prompt": "Find all of giCentre's North American Neighbors",
+        "prompt": "Find all of giCentre's <span class='attribute'>North American</span> Neighbors",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -87,7 +87,7 @@
     },
     "S-task5": {
         "hypothesis":"Edge Attribute Hypothesis",
-        "prompt": "Who had the most mentions interactions with Jeffrey?",
+        "prompt": "Who had the <span class='attribute'>most mention interactions</span> with Jeffrey?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -103,7 +103,7 @@
     },
     "S-task6": {
         "hypothesis":"Topology plus Simple Attributes Hypothesis",
-        "prompt": "Does Alex have retweet interactions with North American or European accounts more?",
+        "prompt": "Does Alex have <span class='attribute'>retweet</span> interactions with <span class='attribute'>North American or European</span> accounts more?",
         "replyType": [
             "value"
         ],
@@ -118,7 +118,7 @@
     },
     "S-task7": {
         "hypothesis":"Topology plus Simple Attributes Hypothesis, Common Neighbor Hypothesis",
-        "prompt": "Among all people who have interacted with both Jeffrey and Robert, who has the most followers?",
+        "prompt": "Among all people who have interacted with both Jeffrey and Robert, who has the <span class='attribute'>most followers</span>?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -134,7 +134,7 @@
     },
     "S-task8": {
         "hypothesis":"Edge Attribute Hypothesis",
-        "prompt": "What is the most common form of interaction between Evis19 and Jon? How often has this interaction happened?",
+        "prompt": "What is the <span class='attribute' >most common form of interaction </span> between Evis19 and Jon? How often has this interaction happened?",
         "replyType": [
             "value"
         ],
@@ -148,8 +148,8 @@
         }
     },
     "S-task9": {
-        "hypothesis":"Within Node Comparison Hypothesis",
-        "prompt": "Select all of Noeska’s neighbors that are people and have more friends than followers",
+        "hypothesis":"Within Node Comparison Hypothesis, Small/Large Effect",
+        "prompt": "Select all of Noeska’s neighbors that are <span class='attribute'>people</span> and have <span class='attribute'>more friends than followers</span>",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -166,9 +166,28 @@
             "type": "TGA"
         }
     },
+    "S-task9A": {
+        "hypothesis":"Small/Large Network",
+        "prompt": "Select the <span class='attribute'>people</span> who have interacted with Thomas and have <span class='attribute'>more friends than followers</span>",
+        "replyType": [
+            "multipleNodeSelection"
+        ],
+        "replyCount": {
+            "type": "at least",
+            "value": 1
+        },
+        "answerKey": {
+            "nodes": [],
+            "value": ""
+        },
+        "taxonomy": {
+            "target": "subnetwork",
+            "type": "TGA"
+        }
+    },
     "S-task11": {
         "hypothesis": "Cluster Hypothesis",
-        "prompt": "Select all the people who are in a cluster with Alex. Estimate the average number of likes among the selected people.",
+        "prompt": "Select all the <span class='attribute'>people</span> who are in a cluster with Alex. Estimate the <span class='attribute'>average number of  likes</span> among the selected people.",
         "replyType": ["multipleNodeSelection", "value"],
         "replyCount": {
             "type": "at least",
@@ -185,7 +204,7 @@
     },
     "S-task12": {
         "hypothesis":"Path Hypothesis",
-        "prompt": "Select all the Europeans on the shortest path between Noeska and Lane.",
+        "prompt": "Select all the <span class='attribute'>Europeans</span> on the shortest path between Noeska and Lane.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -204,7 +223,7 @@
     },
     "S-task12A": {
         "hypothesis":"Path Hypothesis",
-        "prompt": "Select all the North Americans on the shortest path between Noeska and Lane.",
+        "prompt": "Select all the <span class='attribute'>North Americans</span> on the shortest path between Alex and John.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -223,7 +242,7 @@
     },
     "S-task13": {
         "hypothesis":"Topology plus Simple Attribute Hypothesis",
-        "prompt": "Of the North Americans who are within two interactions of Sereno, who has been on twitter the longest?",
+        "prompt": "Of the <span class='attribute'>North Americans</span> who are within two interactions of Sereno, who has <span class='attribute'>been on twitter the longest</span>?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -239,7 +258,7 @@
     },
     "S-taskExplore": {
         "hypothesis":"Insight Generation Hypothesis",
-        "prompt": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network? ",
+        "prompt": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network?  ",
         "replyType": [
             "text"
         ],

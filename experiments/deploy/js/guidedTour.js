@@ -15,7 +15,7 @@ function welcome(vis) {
     //callback for when user clicks on Judge Label
     d3.select("#tourColLabel247943631").on("click", () => {
       if (shepherd.isActive()) {
-        groupRows();
+        groupRows('neighbors',"tourNeighborGroup");
         shepherd.next();
       }
     });
@@ -32,7 +32,7 @@ function welcome(vis) {
       if (shepherd.isActive()) {
         //slight timeout to give the sort time to do it's rearranging of rows
         setTimeout(function() {
-          groupRows();
+          groupRows('neighbors',"tourNeighborGroup");
           shepherd.next();
         }, 100);
       }
@@ -42,22 +42,56 @@ function welcome(vis) {
   shepherd.start();
 }
 
-function groupRows(vis) {
+
+function unGroupRows(){
+  let parentSelector =
+  vis === "nodeLink" ? ".nodes" : "#edgeMargin";
+
+neighborRows.map(n => {
+  let neighbor = document.querySelector(n.selector);
+  d3.select(parentSelector)
+    .node()
+    .insertBefore(neighbor, n.insertBefore);
+});
+
+}
+
+function highlightCells(){
+
+  let ids = ["81658145","30009655","201277609","1652270612","16112517"] ;
+  let cellIDs=[];
+  
+  ids.map(source=>{
+    ids.map(target=>{
+      cellIDs.push('#cell'+source + '_' + target);
+      cellIDs.push('#cell'+target + '_' + source);
+    })
+  })
+
+  cellIDs.map(id=>{
+    d3.select(id).classed('clusterSelected',true);
+  })
+}
+
+function unHighlightCells(){
+  d3.selectAll('.clusterSelected').classed('clusterSelected',false);
+}
+function groupRows(mode,className) {
   let parentSelector = vis === "nodeLink" ? ".nodes" : "#edgeMargin";
 
-  let group = d3.select(".tourNeighborGroup");
+  let group = d3.select("." + className);
   if (group.size() === 0) {
     group = d3
       .select(parentSelector)
       .append("g")
-      .attr("class", "tourNeighborGroup");
+      .attr("class",className);
     //move to before gridlines;
     document
       .querySelector(parentSelector)
       .insertBefore(group.node(), document.querySelector(".gridLines"));
   }
 
-  let neighbors = [
+  let neighbors = mode === 'neighbors' ? [
     "#groupRow318046158",
     "#groupRow1652270612",
     "#groupRow136400506",
@@ -65,7 +99,8 @@ function groupRows(vis) {
     "#groupRow1873322353",
     "#groupRow19299318",
     "#groupRow2873695769"
-  ];
+  ] : ["#groupRow81658145","#groupRow30009655","#groupRow201277609","#groupRow1652270612"] ;
+  // "#groupCol81658145", "#groupCol30009655","#groupCol201277609","#groupCol1652270612"];
 
   let neighborFlag = false;
   d3.selectAll(".row").each(function(d, i) {
@@ -264,16 +299,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              let parentSelector =
-              vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-            neighborRows.map(n => {
-              let neighbor = document.querySelector(n.selector);
-              d3.select(parentSelector)
-                .node()
-                .insertBefore(neighbor, n.insertBefore);
-            });
-
+               unGroupRows();
               window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
@@ -282,15 +308,7 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
-              let parentSelector =
-                vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-              neighborRows.map(n => {
-                let neighbor = document.querySelector(n.selector);
-                d3.select(parentSelector)
-                  .node()
-                  .insertBefore(neighbor, n.insertBefore);
-              });
+              unGroupRows();
 
               return this.next();
             },
@@ -311,7 +329,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              groupRows(vis)
+              groupRows('neighbors',"tourNeighborGroup")
               return this.back();
             },
             secondary: true,
@@ -339,15 +357,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              let parentSelector =
-              vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-            neighborRows.map(n => {
-              let neighbor = document.querySelector(n.selector);
-              d3.select(parentSelector)
-                .node()
-                .insertBefore(neighbor, n.insertBefore);
-            });
+              unGroupRows();
               // window.controller.view.sort('shortName');
               window.controller.model.provenance.goBackOneStep();
               return this.back();
@@ -357,15 +367,7 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
-              let parentSelector =
-                vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-              neighborRows.map(n => {
-                let neighbor = document.querySelector(n.selector);
-                d3.select(parentSelector)
-                  .node()
-                  .insertBefore(neighbor, n.insertBefore);
-              });
+             unGroupRows()
 
               return this.next();
             },
@@ -385,7 +387,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              groupRows(vis);
+              groupRows('neighbors',"tourNeighborGroup");
               return this.back();
             },
             secondary: true,
@@ -426,32 +428,6 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Sorting",
-        text: "You can also sort based on the node names [alphabetically] or clusters in the graph.<span class=instructions>Try sorting by cluster, then by name. </span>",
-        attachTo: {
-          element: ".tourSortWrapper",
-          on: "right"
-        },
-        buttons: [
-          {
-            action: function() {
-              window.controller.view.sort('shortName');
-              return this.back();
-            },
-            secondary: true,
-            text: "Back"
-          },
-          {
-            action: function() {
-              return this.next();
-            },
-            text: "Next"
-          }
-        ],
-        id: "attaching"
-      },
-      
-      {
         title: "Clearing Highlights",
         text:
           " <span class='instructions'>Clear all highlights by clicking on the 'Clear Highlighted Nodes' to the left</span> ",
@@ -478,6 +454,61 @@ function setupShepherd(vis) {
         ],
         id: "attaching"
       },
+      {
+        title: "Sorting",
+        text: "You can also sort based on the node names [alphabetically] or clusters in the graph.<span class=instructions>Try sorting by cluster! </span>",
+        attachTo: {
+          element: ".tourSortWrapper",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              window.controller.provenance.goBackOneStep();
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              groupRows('cluster','tourClusterWrapper')
+              highlightCells();
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+      {
+        title: "Clusters",
+        text: "The edges highlighted in red connect the nodes in a cluster",
+        attachTo: {
+          element: ".tourClusterWrapper",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              unGroupRows();
+              unHighlightCells();
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              unGroupRows();
+              unHighlightCells();
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },      
       {
         title: "Edge Hover ",
         text:
@@ -729,15 +760,7 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
-              let parentSelector =
-                vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-              neighborRows.map(n => {
-                let neighbor = document.querySelector(n.selector);
-                d3.select(parentSelector)
-                  .node()
-                  .insertBefore(neighbor, n.insertBefore);
-              });
+              unGroupRows()
 
               return this.next();
             },

@@ -38,7 +38,7 @@
 
 
 <!-- Helper scripts to generate graphs and complete task Configurations -->
-<!-- <script src="js/generateTwitterGraph.js" type="text/javascript"></script> -->
+<script src="js/generateTwitterGraph.js" type="text/javascript"></script>
 <script src="js/createTaskConfig.js" type="text/javascript"></script>
 
 
@@ -805,17 +805,7 @@
                 merge: true
             });
         }
-    } else {
-
-        //add prolific specific parameters to database
-        db.collection(participantCollection).doc(workerID).set({
-                PROLIFIC_PID,
-                STUDY_ID,
-                SESSION_ID
-            }, {
-                merge: true
-            });
-    }
+    } 
     
 
 

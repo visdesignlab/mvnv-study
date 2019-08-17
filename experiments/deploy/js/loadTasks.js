@@ -330,7 +330,7 @@ d3.select("#submitButton").on("click", async function() {
         .select(".errorMsg")
         .html(errorMsg);
 
-      updateStudyProvenance("submitted incorrect answer", task.answer);
+      updateStudyProvenance("submitted incorrect answer", {answer:task.answer,errorMsg});
 
       // d3.select('#trialFeedback').select('.correctMsg').style('display','none');
       // d3.select('#nextTrialTask').style('display','none');
@@ -566,7 +566,7 @@ async function resetPanel() {
   d3.select("#taskArea")
     // .select(".card-header-title")
     .select(".taskText")
-    .text(task.prompt + (mode === 'study' || mode === 'test' ?  '' :  " (" + task.taskID + ")"));
+    .html(task.prompt + (mode === 'study' || mode === 'test' ?  '' :  " (" + task.taskID + ")"));
 
   config = task.config;
 
@@ -622,7 +622,7 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
     console.log(
       "Provenance Graph for ",
       workerID,
-      "  user is too large! Considering storing each state in its own document"
+     " user in  ", collectionName , "is too large! Considering storing each state in its own document"
     );
   } else {
     let docRef = db.collection(collectionName).doc(docID);
@@ -1123,7 +1123,7 @@ let val = d3.select("#search-input").on("change", function() {
     .trim();
 
   // (check if going through tour)
-  if (shepherd.isActive()) {
+  if (shepherd && shepherd.isActive()) {
     //check if the term used is in fact Judge;
     if (selectedOption === "Judge") {
       shepherd.next();
