@@ -4,6 +4,7 @@
     <h2 class="subtitle trainingIntro">
       Watch the video below to learn about the network you will be interacting with.
     </h2>
+    <br/>
   </div>
 
   <div class="card">
@@ -22,27 +23,30 @@
 <script src="js/carousel-js.js"></script>
 
 <script>
+
   (async function () {
     updateStudyProvenance(' started training');
 
     experimentr.hideNext()
 
     if (vis === undefined) {
+      console.log('before assign')
       await assignVisType();
     }
 
-    console.log('vis is ', vis)
+    let src = vis === 'nodeLink' ? 'training/nodeLink-Training_small.mp4' :
+      'training/adjMatrix-Training_small.mp4'
+
+      console.log('src is ', src)
     //add correct link to video: 
-    d3.select('#trainingVideo').select("source").attr('src', vis === 'nodeLink' ? 'training/nodeLink-Training_small.mp4' :
-      'training/adjMatrix-Training_small.mp4')
+    console.log('setting source')
+    d3.select('#trainingVideo').select("source").attr('src', src)
+
+    debugger;
+
     d3.select('#trainingTitle').text(vis === 'nodeLink' ? 'Node-Link Diagram' : 'Adjacency Matrix')
     
-    // document.getElementById('trainingVideo').addEventListener('ended',videoEnd,false);
-    // function videoEnd(e) {
-    //    console.log('video Ended') // What you want to do after the event
-    //    d3.select('#start-trials').attr('display','block')
-    // }
-
+    //Only show Start Trials button when the training video is done playing;
     document.getElementById('trainingVideo').onended = function() {
       d3.select('#start-trials').style('display','block')
     };
@@ -51,5 +55,7 @@
       updateStudyProvenance('finished training')
       experimentr.next()
     });
+
+    // d3.select('#trainingVideo').node().play()
   })();
 </script>

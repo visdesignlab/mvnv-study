@@ -132,16 +132,26 @@
 
                 //start tracking user interaction with study_provenance
                 await setUpStudyProvenance('signed consent form');
-                
+
+                if (vis === undefined){
+                    await assignVisType();
+                }
+
                 db.collection(participantCollection).doc(workerID).set({
                     screenSize,
                     completionCode:makeid(6),
                     startTime:new Date().toString(),
+                   
+
+                },{merge:true}); 
+
+                if (PROLIFIC_PID){
+                    db.collection(participantCollection).doc(workerID).set({
                     PROLIFIC_PID,
                     STUDY_ID,
                     SESSION_ID
-
                 },{merge:true}); 
+                }
 
                 
                 experimentr.next();

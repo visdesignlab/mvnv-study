@@ -566,7 +566,7 @@ async function resetPanel() {
   d3.select("#taskArea")
     // .select(".card-header-title")
     .select(".taskText")
-    .text(task.prompt + " (" + task.taskID + ")");
+    .text(task.prompt + (mode === 'study' ?  '' :  " (" + task.taskID + ")"));
 
   config = task.config;
 
@@ -861,6 +861,7 @@ async function getResults() {
 
 async function assignVisType() {
 
+  return new Promise(async resolve => {
     //find out which group to delegate ;
     var conditionsRef = db.collection("studyTracking").doc("conditions");
 
@@ -879,6 +880,14 @@ async function assignVisType() {
         },
         { merge: true }
       );
+
+      // setTimeout(() => {
+      //   resolve('🤡');
+      // }, 2000);
+      resolve();
+  });
+
+   
 }
 async function loadTasks(visType, tasksType) {
   //reset currentTask to 0
