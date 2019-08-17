@@ -117,7 +117,9 @@
                 //if the user consents to particpate in the study, create a random completion code, add him to the list of particpants, and set the global
                 // memberID variable
 
-                let screenSize = screenTest(1400,850);
+                // let screenSize = screenTest(1400,850);
+                let screenSize = screenTest(0,0);
+
                 //check screen size before allowing the user to proceed; 
                 if (!screenSize){
                     d3.select('#consentYes').attr('disabled', true);
@@ -134,7 +136,10 @@
                 db.collection(participantCollection).doc(workerID).set({
                     screenSize,
                     completionCode:makeid(6),
-                    startTime:new Date().toString()
+                    startTime:new Date().toString(),
+                    PROLIFIC_PID,
+                    STUDY_ID,
+                    SESSION_ID
 
                 },{merge:true}); 
 

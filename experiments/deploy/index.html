@@ -806,6 +806,7 @@
             });
         }
     } else {
+
         //add prolific specific parameters to database
         db.collection(participantCollection).doc(workerID).set({
                 PROLIFIC_PID,
@@ -815,6 +816,7 @@
                 merge: true
             });
     }
+    
 
 
     switch (mode) {

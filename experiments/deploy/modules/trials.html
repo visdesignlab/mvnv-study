@@ -55,6 +55,10 @@
 
     onTrials = true;
 
+    if (vis === undefined){
+      assignVisType();
+    }
+
     await loadTasks(vis, 'trials');
 
     if (track) {

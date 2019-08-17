@@ -22,7 +22,6 @@ let app;
 let studyProvenance;
 let studyApp;
 
-
 async function setUpStudyProvenance(label) {
   const initialState = {
     workerID, //gets value from global workerID variable
@@ -60,8 +59,7 @@ function KeyPress(e) {
       window.controller.model.provenance.goBackOneStep();
     }
     //send update to studyProvenance
-    updateStudyProvenance('control Z used')
-
+    updateStudyProvenance("control Z used");
   }
 
   if (
@@ -74,11 +72,8 @@ function KeyPress(e) {
       .node()
       .focus();
 
-      updateStudyProvenance('control F used')
-
+    updateStudyProvenance("control F used");
   }
-
-
 }
 
 document.onkeydown = KeyPress;
@@ -137,13 +132,10 @@ d3.select("#answerBox").on("input", function() {
   updateAnswer(d3.select("#answerBox").property("value"));
 });
 
-
 //If there is a value, check for validity
 d3.select("#freeFormAnswer").on("input", function() {
   updateAnswer(d3.select("#freeFormAnswer").property("value"));
 });
-
-
 
 //function that updates the answer in the side panel as well as in the results field in tasks
 //answer is either an array of node objects or a string from the answer box;
@@ -174,7 +166,10 @@ function updateAnswer(answer) {
 
   let replyType = taskList[currentTask].replyType;
   //validate the entire answer object, but error check for only the field that is being updated
-  validateAnswer(taskObj.answer, replyType == 'text' ? 'text' : answerType == "string" ? "value" : "nodes");
+  validateAnswer(
+    taskObj.answer,
+    replyType == "text" ? "text" : answerType == "string" ? "value" : "nodes"
+  );
 }
 
 //function that checks answers for the trials.
@@ -197,7 +192,7 @@ function checkAnswer(answer) {
 
   if (replyTypes.includes("multipleNodeSelection")) {
     task.answer.nodes.map(
-      n => (correct = correct && task.answerKey.nodes.find(an=>an==n.id))
+      n => (correct = correct && task.answerKey.nodes.find(an => an == n.id))
     );
     if (!correct) {
       let numAnswers = task.answerKey.nodes.length;
@@ -209,31 +204,30 @@ function checkAnswer(answer) {
       ).length;
 
       // console.log(numSelections,numCorrectAnswers , '/', numAnswers)
-        if (numSelections > numAnswers) {
-          if (numCorrectAnswers == numAnswers) {
-            errorMsg =
-              "Try again! <span class='hint'>Here's a hint: You have all " +
-              numAnswers +
-              " of the answers, but " +
-              (numSelections - numAnswers) +
-              "  extra nodes in there as well</span>";
-          } else {
-            errorMsg =
-              "Try again!  <span class='hint'>Here's a hint: You have " +
-              numCorrectAnswers +
-              " out of " +
-              numAnswers +
-              " of the answers.</span>";
-          }
+      if (numSelections > numAnswers) {
+        if (numCorrectAnswers == numAnswers) {
+          errorMsg =
+            "Try again! <span class='hint'>Here's a hint: You have all " +
+            numAnswers +
+            " of the answers, but " +
+            (numSelections - numAnswers) +
+            "  extra nodes in there as well</span>";
         } else {
           errorMsg =
-            "Try again! <span class='hint'>Here's a hint: You have " +
+            "Try again!  <span class='hint'>Here's a hint: You have " +
             numCorrectAnswers +
             " out of " +
             numAnswers +
             " of the answers.</span>";
         }
-
+      } else {
+        errorMsg =
+          "Try again! <span class='hint'>Here's a hint: You have " +
+          numCorrectAnswers +
+          " out of " +
+          numAnswers +
+          " of the answers.</span>";
+      }
     }
   }
 
@@ -501,19 +495,17 @@ d3.select("#nextTask").on("click", async () => {
   }
 });
 
-
 async function resetPanel() {
-
   updateStudyProvenance("started Task");
 
   let task = taskList[currentTask];
   task.startTime = new Date().toString();
 
   //update progress bar;
-  d3.select(".progressBar").select('.progress')
-  .attr('max',taskList.length)
-  .attr('value',currentTask+1)
-
+  d3.select(".progressBar")
+    .select(".progress")
+    .attr("max", taskList.length)
+    .attr("value", currentTask + 1);
 
   d3.selectAll(".taskShortcut").classed("currentTask", function() {
     return d3.select(this).attr("id") === taskList[currentTask].taskID;
@@ -565,9 +557,7 @@ async function resetPanel() {
     d3.select("#nodeAnswer").style("display", "none");
   }
 
-  if (
-    task.replyType.includes("text")
-  ) {
+  if (task.replyType.includes("text")) {
     d3.select("#textAnswer").style("display", "block");
   } else {
     d3.select("#textAnswer").style("display", "none");
@@ -588,11 +578,14 @@ async function resetPanel() {
     window.controller.loadTask(currentTask);
   }
 
-  if (onTrials && currentTask === 0){
-    setTimeout(function(){welcome(vis);},vis === 'nodeLink'? 500 : 3000) ;
-
+  if (onTrials && currentTask === 0) {
+    setTimeout(
+      function() {
+        welcome(vis);
+      },
+      vis === "nodeLink" ? 500 : 3000
+    );
   }
-
 }
 
 async function pushProvenance(provGraph, initialState = false, collectionName) {
@@ -627,7 +620,9 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
 
   if (docSize > 0.75) {
     console.log(
-      "Provenance Graph for " , workerID ,  "  user is too large! Considering storing each state in its own document",
+      "Provenance Graph for ",
+      workerID,
+      "  user is too large! Considering storing each state in its own document"
     );
   } else {
     let docRef = db.collection(collectionName).doc(docID);
@@ -663,36 +658,36 @@ async function loadNewGraph(fileName) {
   // console.log(graph.links)
   //
   //update the datalist associated to the search box (in case the nodes in the new graph have changed)
- //if (vis === 'nodeLink'){
+  //if (vis === 'nodeLink'){
   d3.select("#search-input").attr("list", "characters");
   let inputParent = d3.select("#search-input").node().parentNode;
 
-    let datalist = d3
-      .select(inputParent)
-      .selectAll("#characters")
-      .data([0]);
+  let datalist = d3
+    .select(inputParent)
+    .selectAll("#characters")
+    .data([0]);
 
-    let enterSelection = datalist
-      .enter()
-      .append("datalist")
-      .attr("id", "characters");
+  let enterSelection = datalist
+    .enter()
+    .append("datalist")
+    .attr("id", "characters");
 
-    datalist.exit().remove();
+  datalist.exit().remove();
 
-    datalist = enterSelection.merge(datalist);
+  datalist = enterSelection.merge(datalist);
 
-    let options = datalist.selectAll("option").data(graph.nodes);
+  let options = datalist.selectAll("option").data(graph.nodes);
 
-    let optionsEnter = options.enter().append("option");
-    options.exit().remove();
+  let optionsEnter = options.enter().append("option");
+  options.exit().remove();
 
-    options = optionsEnter.merge(options);
+  options = optionsEnter.merge(options);
 
-    options.attr("value", d => d.shortName);
-    options.attr("id", d => d.id);
-    // options.attr('onclick',"console.log('clicked')");
+  options.attr("value", d => d.shortName);
+  options.attr("id", d => d.id);
+  // options.attr('onclick',"console.log('clicked')");
 
-    // options.on("click",console.log('clicked an option!'))
+  // options.on("click",console.log('clicked an option!'))
 }
 
 //validates answer
@@ -765,7 +760,8 @@ function validateAnswer(answer, errorCheckField, force = false) {
   }
 
   if (replyTypes.includes("text")) {
-    isValid = isValid && d3.select("#freeFormAnswer").property("value").length > 0;
+    isValid =
+      isValid && d3.select("#freeFormAnswer").property("value").length > 0;
 
     if (errorCheckField === "text") {
       if (d3.select("#freeFormAnswer").property("value").length < 1) {
@@ -773,8 +769,6 @@ function validateAnswer(answer, errorCheckField, force = false) {
       }
     }
   }
-
-
 
   //when running Validate answer with 'force' = true, then this is happening on submit;
   if (
@@ -797,9 +791,10 @@ function validateAnswer(answer, errorCheckField, force = false) {
   //toggle visibility of error message;
   let errorMsgSelector =
     errorCheckField === "value"
-      ? d3.select("#valueAnswer").select(".errorMsg") :
-      (errorCheckField == 'nodes' ?  d3.select("#nodeAnswer").select(".errorMsg")  : d3.select("#textAnswer").select(".errorMsg"))
-
+      ? d3.select("#valueAnswer").select(".errorMsg")
+      : errorCheckField == "nodes"
+      ? d3.select("#nodeAnswer").select(".errorMsg")
+      : d3.select("#textAnswer").select(".errorMsg");
 
   errorMsgSelector
     .style("display", !isValid ? "inline" : "none")
@@ -820,16 +815,14 @@ function makeid(length) {
   return result;
 }
 
-async function parseResults(){
-
-    db.collection('results')
+async function parseResults() {
+  db.collection("results")
     .get()
     .catch(function(error) {
       console.log("Error getting document:", error);
     })
     .then(function(querySnapshot) {
-
-      let allData = []
+      let allData = [];
       querySnapshot.forEach(function(doc) {
         let data = doc.data();
         allData.push();
@@ -838,39 +831,61 @@ async function parseResults(){
       // saveToFile(csv,'resultsCSV.csv')
       // exportCSVFile('',allData,'resultsCSV')
     });
-
-
 }
 
 async function getResults() {
+  let collectionNames = [
+    "heuristics_participants",
+    "results",
+    "provenance",
+    "participant_actions",
+    "study_participants"
+  ];
 
-  let collectionNames = ['heuristics_participants','results', 'provenance','participant_actions','study_participants']
-
-  collectionNames.map(collectionName=>{
+  collectionNames.map(collectionName => {
     db.collection(collectionName)
-    .get()
-    .catch(function(error) {
-      console.log("Error getting document:", error);
-    })
-    .then(function(querySnapshot) {
+      .get()
+      .catch(function(error) {
+        console.log("Error getting document:", error);
+      })
+      .then(function(querySnapshot) {
+        let allData = [];
+        querySnapshot.forEach(function(doc) {
+          allData.push({ id: doc.id, data: doc.data() });
+        });
 
-      let allData = []
-      querySnapshot.forEach(function(doc) {
-        allData.push({id: doc.id, data: doc.data() });
+        saveToFile(JSON.stringify(allData), collectionName + ".json");
       });
-
-      saveToFile(JSON.stringify(allData),collectionName + '.json');
-    });
-  })
-
+  });
 }
 
+async function assignVisType() {
+
+    //find out which group to delegate ;
+    var conditionsRef = db.collection("studyTracking").doc("conditions");
+
+    let conditionsObj = await conditionsRef.get();
+    let conditions = conditionsObj.data().conditionList;
+    group = conditionsObj.data().currentGroup;
+
+    vis = conditions[group].type;
+
+    //update currentGroup
+    db.collection("studyTracking")
+      .doc("conditions")
+      .set(
+        {
+          currentGroup: (group + 1) % conditions.length
+        },
+        { merge: true }
+      );
+}
 async function loadTasks(visType, tasksType) {
   //reset currentTask to 0
   currentTask = 0;
 
   // getResults();
-  parseResults();
+  // parseResults();
   //Helper function to shuffle the order of tasks given - based on https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -882,39 +897,17 @@ async function loadTasks(visType, tasksType) {
   //find out which group to delegate and load appropriate taskList json file; ;
   var conditionsRef = db.collection("studyTracking").doc("conditions");
 
-  let conditionsObj = await conditionsRef.get().catch(function(error) {
-    console.log("Error getting document:", error);
-  });
+  let conditionsObj = await conditionsRef.get();
 
   let taskListFiles = conditionsObj.data().tasks;
   let conditions = conditionsObj.data().conditionList;
   studyTracking.numConditions = conditions.length;
 
-  let group;
-
-  // dynamically assign a vistype according to firebase tracking
-  if (visType === undefined) {
-    group = conditionsObj.data().currentGroup;
-
-    //update currentGroup
-    db.collection("studyTracking")
-      .doc("conditions")
-      .set(
-        {
-          currentGroup: (group + 1) % studyTracking.numConditions
-        },
-        { merge: true }
-      );
-  } else {
-    group = visType === "nodeLink" ? 0 : 1;
-  }
-
+  let group = visType === "nodeLink" ? 0 : 1;
+  
   studyTracking.group = group;
 
-  let selectedCondition = conditions[group];
-  let selectedVis = selectedCondition.type;
-
-  vis = selectedVis;
+  vis = conditions[group].type;
 
   //set the source for the quickStart guide image in the modal;
   d3.select(".quickStart")
@@ -931,14 +924,12 @@ async function loadTasks(visType, tasksType) {
     .style("width", "calc(100vh - 100px)");
 
   //do an async load of the designated task list;
-  console.log(taskListFiles,tasksType)
   let taskListObj = await d3.json(taskListFiles[tasksType]);
   studyTracking.taskListObj = taskListObj;
 
   let taskListEntries = Object.entries(taskListObj);
 
   if (shuffleTasks && !onTrials) {
-
     //remove the last task;
     let lastTask = taskListEntries.pop();
     //Randomly order the tasks.
@@ -957,47 +948,50 @@ async function loadTasks(visType, tasksType) {
   });
 
   //remove divs that are irrelevant to the vis approach being used am/nl
-  if (selectedVis === "nodeLink") {
+  if (vis === "nodeLink") {
     d3.selectAll(".adjMatrix").remove();
   } else {
     d3.selectAll(".nodeLink").remove();
   }
 
+  let taskButtons = d3
+    .select(".taskMenu")
+    .select(".content")
+    .selectAll("article")
+    .data(taskList);
 
-  let taskButtons = d3.select('.taskMenu').select('.content').selectAll('article').data(taskList);
+  let taskButtonsEnter = taskButtons
+    .enter()
+    .append("article")
+    .attr("class", "message is-link");
 
-  let taskButtonsEnter = taskButtons.enter().append('article').attr('class','message is-link');
+  let header = taskButtonsEnter.append("div").attr("class", "message-header");
 
-  let header = taskButtonsEnter.append('div').attr('class','message-header');
+  header.append("p");
 
-  header
-  .append('p')
+  header.append("a").attr("class", "button taskShortcut");
 
-  header.append('a')
-  .attr('class','button taskShortcut')
-
-
-  taskButtonsEnter.append('div').attr('class','message-body');
+  taskButtonsEnter.append("div").attr("class", "message-body");
 
   taskButtons.exit().remove();
 
-  taskButtons = taskButtonsEnter.merge(taskButtons)
+  taskButtons = taskButtonsEnter.merge(taskButtons);
 
-  taskButtons.select('p')
-  .text(d=>d.prompt)
+  taskButtons.select("p").text(d => d.prompt);
 
-  taskButtons.select('.message-body')
-  .text(d=>d.hypothesis)
+  taskButtons.select(".message-body").text(d => d.hypothesis);
 
-  taskButtons.select('a')
-  .attr('id',d=>d.taskID)
-  .text(d=>d.taskID)
-  .on("click", function() {
-    //set new currentTask then call resetPanel;
-    currentTask = taskList.findIndex(t => t.taskID == d3.select(this).attr("id"));
-    resetPanel();
-  });
-
+  taskButtons
+    .select("a")
+    .attr("id", d => d.taskID)
+    .text(d => d.taskID)
+    .on("click", function() {
+      //set new currentTask then call resetPanel;
+      currentTask = taskList.findIndex(
+        t => t.taskID == d3.select(this).attr("id")
+      );
+      resetPanel();
+    });
 
   //load script tags if this is the trials page or if there were no trials for this setup)
 
@@ -1030,7 +1024,7 @@ async function loadTasks(visType, tasksType) {
     // //   dynamically load only js/css relevant to the vis approach being used;
     const loadAllScripts = async () => {
       return await Promise.all(
-        scriptTags[selectedVis].map(async src => {
+        scriptTags[vis].map(async src => {
           return await loadScript(src, () => "");
         })
       );
@@ -1038,7 +1032,7 @@ async function loadTasks(visType, tasksType) {
 
     await loadAllScripts();
 
-    cssTags[selectedVis].map(href => {
+    cssTags[vis].map(href => {
       var newStyleSheet = document.createElement("link");
       newStyleSheet.href = href;
       newStyleSheet.rel = "stylesheet";
@@ -1046,7 +1040,6 @@ async function loadTasks(visType, tasksType) {
         .node()
         .appendChild(newStyleSheet);
     });
-
   }
 }
 
@@ -1083,22 +1076,21 @@ function loadScript(url, callback) {
 d3.select("#clear-selection").on("click", () => {
   // set app.currentState() selected to empty;
 
-      // (check if going through tour)
-      if (shepherd && shepherd.isActive()){
-        shepherd.next();
-      }
+  // (check if going through tour)
+  if (shepherd && shepherd.isActive()) {
+    shepherd.next();
+  }
 
   d3.select(".searchMsg").style("display", "none");
 
-  d3.select('.searchInput')
-  .property('value','')
-  if(vis == 'nodeLink'){
+  d3.select(".searchInput").property("value", "");
+  if (vis == "nodeLink") {
     let action = {
       label: "cleared all selected nodes",
       action: () => {
         const currentState = app.currentState();
         //add time stamp to the state graph
-        currentState.time = new Date().toString()
+        currentState.time = new Date().toString();
         //Add label describing what the event was
         currentState.event = "cleared all selected nodes";
         //Update actual node data
@@ -1115,29 +1107,28 @@ d3.select("#clear-selection").on("click", () => {
     window.controller.clear();
   }
 
-  updateStudyProvenance('cleared all selections')
-
+  updateStudyProvenance("cleared all selections");
 });
 let val = d3.select("#search-input").on("change", function() {
-
-
   // let selectedOption = d3.select(this).property("value");
   //this = d3.select("#search-input"); // resets context
-  let selectedOption = d3.select("#search-input").property("value").trim();
+  let selectedOption = d3
+    .select("#search-input")
+    .property("value")
+    .trim();
 
-    // (check if going through tour)
-    if (shepherd.isActive()){
-      //check if the term used is in fact Judge;
-      if (selectedOption === 'Judge'){
-        shepherd.next();
-      } else {
-        return;
-      }
+  // (check if going through tour)
+  if (shepherd.isActive()) {
+    //check if the term used is in fact Judge;
+    if (selectedOption === "Judge") {
+      shepherd.next();
+    } else {
+      return;
     }
+  }
 
   //in case there are just spaces, this will reset it to 'empty'
-  d3.select("#search-input").property("value",selectedOption);
-
+  d3.select("#search-input").property("value", selectedOption);
 
   //empty search box;
   if (selectedOption.length === 0) {
@@ -1145,7 +1136,10 @@ let val = d3.select("#search-input").on("change", function() {
     return;
   }
 
-  let searchSuccess = (vis === 'nodeLink') ?  searchFor(selectedOption): window.controller.view.search(selectedOption);
+  let searchSuccess =
+    vis === "nodeLink"
+      ? searchFor(selectedOption)
+      : window.controller.view.search(selectedOption);
 
   //  if (searchSuccess === -1){
   //    d3.select('.searchMsg')
@@ -1163,14 +1157,17 @@ let val = d3.select("#search-input").on("change", function() {
   //   .text(selectedOption + ' is already selected.');
   //  }
 
-  updateStudyProvenance('searched for node',{'searchedNode':selectedOption,'success':searchSuccess})
-
-
+  updateStudyProvenance("searched for node", {
+    searchedNode: selectedOption,
+    success: searchSuccess
+  });
 });
 
-d3.select('#searchButton').on("click",function(){
-
-  let selectedOption = d3.select('.searchInput').property("value").trim();
+d3.select("#searchButton").on("click", function() {
+  let selectedOption = d3
+    .select(".searchInput")
+    .property("value")
+    .trim();
 
   //empty search box;
   if (selectedOption.length === 0) {
@@ -1180,7 +1177,10 @@ d3.select('#searchButton').on("click",function(){
     return;
   }
 
-    let searchSuccess = vis == 'nodeLink' ?  searchFor(selectedOption):  window.controller.view.search(selectedOption);
+  let searchSuccess =
+    vis == "nodeLink"
+      ? searchFor(selectedOption)
+      : window.controller.view.search(selectedOption);
 
   if (searchSuccess === -1) {
     d3.select(".searchMsg")
@@ -1200,8 +1200,10 @@ d3.select('#searchButton').on("click",function(){
       .text(selectedOption + " is already selected.");
   }
 
-  updateStudyProvenance('searched for node',{'searchedNode':selectedOption,'success':searchSuccess})
-
+  updateStudyProvenance("searched for node", {
+    searchedNode: selectedOption,
+    success: searchSuccess
+  });
 });
 
 //Push an empty taskList to a new doc under the results or trials collection to start tracking the results
