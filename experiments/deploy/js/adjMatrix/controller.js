@@ -75,12 +75,9 @@ var Controller = /** @class */ (function () {
         this.model = new Model(this); // start reading in data
     };
     Controller.prototype.loadTask = function (taskNum) {
-        console.log(this.tasks);
         this.tasks = taskList;
-        console.log(this.tasks);
         this.taskNum = taskNum;
         this.task = this.tasks[this.taskNum];
-        console.log(this.task, this.tasks, this.tasks[this.taskNum], this.taskNum);
         this.configuration = this.task.config;
         //let prompt = 'Task ' + (this.taskNum + 1) + ' - ' + this.task.prompt;
         //this.configuration.adjMatrix.edgeBars = true;
@@ -131,7 +128,6 @@ var Controller = /** @class */ (function () {
                 //add time stamp to the state graph
                 currentState.time = Date.now();
                 currentState.event = 'clear';
-                console.log("before Clear:", currentState);
                 currentState.selections = {
                     answerBox: currentState.selections.answerBox,
                     attrRow: {},
@@ -143,7 +139,6 @@ var Controller = /** @class */ (function () {
                     neighborSelect: {},
                     previousMouseovers: []
                 };
-                console.log("after Clear:", currentState);
                 return currentState;
             },
             args: []

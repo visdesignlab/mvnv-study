@@ -100,7 +100,6 @@ class View {
    */
   search(searchNode: string) {
     let selectedOption = searchNode.toLowerCase()//d3.select(nodes[i]).property("value");
-    console.log(selectedOption);
 
     if (selectedOption.length === 0) {
       return;
@@ -114,7 +113,6 @@ class View {
     name = name[0][this.datumID];
 
     let state = this.controller.model.app.currentState();
-    console.log(state.selections.search, state, name);
     if (name in state.selections.search) {
       return 0;
     }
@@ -256,14 +254,12 @@ class View {
 
     cells.filter(d => d.rowid == d.colid)
       .on('click', (d, i, nodes) => {
-        console.log(this.controller.model.app.currentState().selections.search);
-        if(d.rowid in this.controller.model.app.currentState().selections.search){
+        if (d.rowid in this.controller.model.app.currentState().selections.search) {
           let action = this.changeInteractionWrapper(d.rowid, null, 'search');
           this.controller.model.provenance.applyAction(action);
           pushProvenance(this.controller.model.app.currentState())
         }
         // only trigger click if edge exists
-        console.log(d.rowid);
 
 
       })
@@ -370,11 +366,9 @@ class View {
     }
 
     let message = [interactedMessage, retweetMessage, mentionsMessage].filter(Boolean).join("</br>");//retweetMessage+'</br>'+mentionsMessage
-    console.log(message);
 
     if (message !== '') {
       let yOffset = (retweetMessage !== '' && mentionsMessage !== '') ? 45 : 30;
-      console.log(yOffset);
       this.tooltip.html(message)
         .style("left", (window.pageXOffset + matrix.e - 45) + "px")
         .style("top", (window.pageYOffset + matrix.f - yOffset) + "px");
@@ -443,7 +437,7 @@ class View {
     this.nodes.length < 50 ? labelSize = labelSize + 2 : null;
     this.edgeRows
       .append('g')
-      .attr('id',(d,i)=>{
+      .attr('id', (d, i) => {
         return "tourRowLabel" + d[i].rowid;
       })
       .append("text")
@@ -466,42 +460,38 @@ class View {
       })
 
     let verticalOffset = 3;
-    let scale = 0.05;
-    if(this.controller.configuration.adjMatrix.neighborSelect){
+    let scale = 0.0625;
+    let rotation = 90
+    if (this.controller.configuration.adjMatrix.neighborSelect) {
+      verticalOffset = this.nodes.length > 50 ? (this.orderingScale.bandwidth() / 11) / scale : 7.5 / scale;
+      let horizontalOffset = ((this.orderingScale.bandwidth() + 15) / 2) / scale;//this.nodes.length < 50 ? 11/scale : (this.orderingScale.bandwidth()/1.2/scale// /2;
 
-      verticalOffset = 1/scale;
-      let horizontalOffset = ((this.orderingScale.bandwidth()+5)/ 2)/scale;//this.nodes.length < 50 ? 11/scale : (this.orderingScale.bandwidth()/1.2/scale// /2;
-      console.log(verticalOffset,horizontalOffset,(this.orderingScale.bandwidth()+5)/ 2)
-      this.edgeColumns.append('path').attr('id',d=>'sortIcon'+d[0].rowid).attr('class', 'sortIcon').attr('pointer-events','bounding-box')
-        //.attr("d", d3.symbol().size(30).type(d3.symbolTriangle))
-      .attr('d', (d) => {
-          return this.controller.model.icons['cellSort'].d;
-        })
-        .style('fill', d => {return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale("+scale+")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(-90)")
+      if (rotation == 90 || rotation == -90) {
+        let temp = verticalOffset;
+        verticalOffset = horizontalOffset;
+        horizontalOffset = temp;
+      }
+
+      this.edgeColumns.append('path').attr('id', d => 'sortIcon' + d[0].rowid).attr('class', 'sortIcon').attr('pointer-events', 'bounding-box')
+        .attr('d', (d) => { return this.controller.model.icons['cellSort'].d; })
+        .style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
         .on('click', (d, i, nodes) => {
-          console.log(d[0].rowid)
+
           let action = this.generateSortAction(d[0].rowid);
           this.controller.model.provenance.applyAction(action);
           pushProvenance(this.controller.model.app.currentState())
-          //this.sort(;
-          //this.clickFunction(d, i, nodes);
-          console.log(d3.select('#colLabel'+d[0].rowid));
-          /*var e = document.createEvent('UIEvents');
-          e.initUIEvent('click', true, true, /* ... *///);
-          /*d3.select('#colLabel'+d[0].rowid).node().dispatchEvent(e);*/
 
-          //let action = this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
-          //this.controller.model.provenance.applyAction(action);
+
         }).attr('cursor', 'pointer')
         .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
         .on('mouseover', (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) });
 
-      verticalOffset = verticalOffset*scale + 10;
+      verticalOffset = verticalOffset * scale + 5;
     }
 
     this.edgeColumns
       .append('g')
-      .attr('id',(d,i)=>{
+      .attr('id', (d, i) => {
         return "tourColLabel" + d[i].rowid;
       })
       .append("text")
@@ -563,7 +553,6 @@ class View {
       let extent = [0, this.controller.configuration.attributeScales.edge.count.domain[1]];
       //model.maxTracker[type]]
       // set up scale
-      console.log(extent);
       let typeIndex = this.controller.configuration.attributeScales.edge.type.domain.indexOf(type);
 
       //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
@@ -624,7 +613,6 @@ class View {
       .attr("y2", this.edgeHeight + this.margins.bottom)
       .style('stroke', '#aaa')
       .style('opacity', 0.3)
-      console.log(one,two)
     // adds column lines
     /*this.edgeColumns.append("line")
       .attr("x1", -this.edgeWidth)
@@ -688,11 +676,8 @@ class View {
       label: interactionType,
       action: (nodeID) => {
         const currentState = this.controller.model.app.currentState();
-        console.log(this.mouseoverEvents,currentState.selections.previousMouseovers);
-          currentState.selections.previousMouseovers = this.mouseoverEvents;
-          this.mouseoverEvents.length = 0;
-          console.log(this.mouseoverEvents);
-        console.log(currentState);
+        currentState.selections.previousMouseovers = this.mouseoverEvents;
+        this.mouseoverEvents.length = 0;
         //add time stamp to the state graph
         currentState.time = Date.now();
         currentState.event = interactionType;
@@ -730,7 +715,7 @@ class View {
           })
           return currentState;
 
-        } else if (interactionName == 'attrRow'){
+        } else if (interactionName == 'attrRow') {
           interactionName
 
         }
@@ -1220,7 +1205,7 @@ class View {
   private columnScale: any;
   private order: any;
 
-  generateSortAction(sortKey){
+  generateSortAction(sortKey) {
 
     return {
       label: 'sort',
@@ -1238,7 +1223,7 @@ class View {
 
         currentState.sortKey = sortKey
 
-        if(this.controller.view,this.controller.view.mouseoverEvents){
+        if (this.controller.view, this.controller.view.mouseoverEvents) {
           currentState.selections.previousMouseovers = this.controller.view.mouseoverEvents;
           this.controller.view.mouseoverEvents.length = 0;
         }
@@ -1255,11 +1240,10 @@ class View {
   sort(orderType) {
     let sortKey = orderType;
 
-    let nodeIDs = this.nodes.map(node=>node.id);
+    let nodeIDs = this.nodes.map(node => node.id);
 
-    if(nodeIDs.includes(parseInt(sortKey))){
-      this.order = this.controller.changeOrder(sortKey,true);
-      console.log(sortKey);
+    if (nodeIDs.includes(parseInt(sortKey))) {
+      this.order = this.controller.changeOrder(sortKey, true);
     } else {
       this.order = this.controller.changeOrder(sortKey);
     }
@@ -1289,7 +1273,7 @@ class View {
 
 
     // if any other method other than neighbors sort
-    if(!nodeIDs.includes(parseInt(sortKey))){
+    if (!nodeIDs.includes(parseInt(sortKey))) {
       var t = this.edges//.transition().duration(transitionTime);
       t.selectAll(".column")
         //.delay((d, i) => { return this.orderingScale(i) * 4; })
@@ -1317,7 +1301,7 @@ class View {
     }
 
     d3.selectAll('.sortIcon').style('fill', '#8B8B8B').filter(d => d == sortKey).style('fill', '#EBB769')
-    if(!nodeIDs.includes(parseInt(sortKey))){
+    if (!nodeIDs.includes(parseInt(sortKey))) {
       let cells = d3.selectAll(".cell")//.selectAll('rect')
         //.transition()
         //.duration(transitionTime)
@@ -1327,7 +1311,7 @@ class View {
           return 'translate(' + this.orderingScale(d.x) + ',0)'
         });
     } else {
-      d3.select('#sortIcon'+sortKey).style('fill','#EBB769')
+      d3.select('#sortIcon' + sortKey).style('fill', '#EBB769')
 
     }
 
@@ -1570,7 +1554,6 @@ class View {
           .attr('x', columnPosition + barMargin.left)
           .attr('y', barMargin.top) // as y is set by translate
           .attr('fill', d => {
-            console.log(this.controller.model.orderType, column);
             return this.controller.model.orderType == column ? '#EBB769' : '#8B8B8B'
           })
           .on('mouseover', function(d) {
@@ -1611,7 +1594,7 @@ class View {
         barMargin.left = 1;
         let answerBox = this.attributeRows
           .append('g')
-          .attr('id',(d,i)=>{
+          .attr('id', (d, i) => {
             return "tourAnswerBox" + d[this.datumID];
           })
           .append('g')
@@ -1639,10 +1622,10 @@ class View {
             .style('stroke', 'lightgray');
         } else {
           let initalHeight = barHeight;
-          let newBarHeight = d3.min([barHeight,15])
+          let newBarHeight = d3.min([barHeight, 15])
           let rect = answerBox.append("rect")
             .attr("x", (columnWidths[column] / 2) - newBarHeight / 2) // if column with is 1, we want this at 1/4, and 1/2 being mid point
-            .attr("y", barMargin.top + (initalHeight-newBarHeight)/2)
+            .attr("y", barMargin.top + (initalHeight - newBarHeight) / 2)
             //.attr("rx", barHeight / 2)
             //.attr("ry", barHeight / 2)
             .style("fill", "white")
@@ -1810,17 +1793,15 @@ class View {
       })
 
     columnHeaderGroups
-    //console.log(this.controller.model.categoricalSortSvg)
     if (columns.length < 6) {
       let path = columnHeaderGroups.filter(d => { return d !== 'selected' }).append('path').attr('class', 'sortIcon').attr('d', (d) => {
         let variable = this.isCategorical(d) ? 'categorical' : 'quant'
         return this.controller.model.icons[variable].d;
-      }).style('fill', d => { console.log(d == this.controller.model.orderType, d, this.controller.model.orderType); return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', (d, i, nodes) => {
+      }).style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', (d, i, nodes) => {
         let action = this.generateSortAction(d);
         this.controller.model.provenance.applyAction(action);
         pushProvenance(this.controller.model.app.currentState())
       }).attr('cursor', 'pointer');
-      console.log(path);
     }
 
 
@@ -1833,6 +1814,7 @@ class View {
     nonAnswerColumn.attr('cursor', 'pointer');
 
     d3.select('.loading').style('display', 'none');
+
     this.controller.model.setUpProvenance();
     window.focus();
 
@@ -1843,7 +1825,7 @@ class View {
     let sortNames = ['shortName', 'clusterLeaf']//, 'edges']
     let iconNames = ['alphabetical', 'categorical']//, 'quant']
 
-    let sortWrapper = this.edges.append('g').attr('class','tourSortWrapper');
+    let sortWrapper = this.edges.append('g').attr('class', 'tourSortWrapper');
 
     for (let i = 0; i < text.length; i++) {
       let button = sortWrapper //this.edges
@@ -1856,9 +1838,9 @@ class View {
         //this.sort();
       })
       let rect = button.append('rect').attr('width', this.margins.left - 5).attr('height', buttonHeight).attr('fill', '#fafafa').attr('stroke', 'gray').attr('stroke-width', 1)
-      button.on('mouseover',(d,i,nodes)=>{
+      button.on('mouseover', (d, i, nodes) => {
         d3.select(nodes[i]).select('rect').attr('fill', '#ffffff')
-      }).on('mouseout',(d,i,nodes)=>{
+      }).on('mouseout', (d, i, nodes) => {
         d3.select(nodes[i]).select('rect').attr('fill', '#fafafa')
       })
       button.append('text').attr('x', 27).attr('y', 11.5).attr('font-size', 11).text(text[i]);
@@ -1869,7 +1851,6 @@ class View {
         }).style('fill', () => { return sortNames[i] == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-195) + "," + (-320) + ")")/*.on('click', (d,i,nodes) => {
         this.sort(d);
       })*/
-      console.log(path, realPath)
       //button
       initalY += buttonHeight + 5;
     }
@@ -2059,7 +2040,6 @@ class View {
         .style('font-size', 11)
       //.attr('transform', 'rotate(-90)')
       rect1.on('mouseover', (d, index, nodes) => {
-        console.log(attributeInfo.domain[i]);
         let matrix = nodes[index].getScreenCTM()
           .translate(+nodes[index].getAttribute("x"), +nodes[index].getAttribute("y"));
 

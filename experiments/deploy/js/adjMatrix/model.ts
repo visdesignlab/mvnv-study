@@ -98,17 +98,12 @@ class Model {
       }
       //sort again based on sortkey
       //this.orderType = clusterFlag;
-      console.log(this.edges)
       this.order = this.changeOrder(initalOrderType);
-      console.log(this.edges)
       this.nodes = this.sortNodesOnArray(this.nodes,this.order);
-      console.log(this.edges)
       this.nodes.forEach((node, index) => {
         node.index = index;
         this.idMap[node.id] = index;
       })
-      console.log(this.edges)
-      console.log(this.idMap);
       this.processData();
 
       //
@@ -354,8 +349,6 @@ class Model {
       }
 
       let sortObserver = (state)=>{
-        console.log(state.sortKey)
-
         window.controller.view.sort(state.sortKey);
       }
       provenance.addObserver("selections.attrRow", updateHighlights)
@@ -407,7 +400,6 @@ class Model {
    */
   changeOrder(type: string, node: boolean = false) {
       let val = this.sortObserver(type,node);
-      console.log(val)
       // trigger sort
       return val;
 
@@ -448,7 +440,6 @@ class Model {
     } else if (this.orderType == 'id'){
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b][type] - this.nodes[a][type]; });
     } else if (node == true) {
-      console.log(node,type);
       //order = d3.range(this.nodes.length).sort((a, b) => this.nodes[a]['shortName'].localeCompare(this.nodes[b]['shortName']));
       order = d3.range(this.nodes.length).sort((a, b) => { return this.nodes[b]['neighbors'].includes(parseInt(type)) - this.nodes[a]['neighbors'].includes(parseInt(type)); });
     }
