@@ -177,12 +177,12 @@ div.tooltip {
 
 }
 #clear-selection{
-    color:black;
     background-color:#898989;
 }
 
 .attribute{
     font-weight:bold;
+    color:#f7e671;
 }
 
 
