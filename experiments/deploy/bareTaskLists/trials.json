@@ -1,10 +1,10 @@
 {
     "T-task2": {
         "answerKey": {
-            "nodes": ["2873695769","2527017636","136400506"],
+            "nodes": ["2527017636","2873695769"],
             "value": ""
         },
-        "prompt": "Select all of Judge's neighbors that are *people* and have more friends than followers.",
+        "prompt": "Select all of Judge's neighbors that are <span class='attribute'>people</span> and have <span class='attribute'>more friends than followers</span>.",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -18,7 +18,7 @@
           "nodes": [],
           "value": "866"
       },
-        "prompt": "How many followers does Nick have?",
+        "prompt": "How many <span class='attribute'>followers</span> does Nick have?",
         "replyType": [
             "value"
         ]

@@ -194,6 +194,7 @@ function checkAnswer(answer) {
     task.answer.nodes.map(
       n => (correct = correct && task.answerKey.nodes.find(an => an == n.id))
     );
+    correct = correct && task.answer.nodes.length == task.answerKey.nodes.length;
     if (!correct) {
       let numAnswers = task.answerKey.nodes.length;
 
