@@ -223,7 +223,7 @@
     },
     "S-task12A": {
         "hypothesis":"Path Hypothesis",
-        "prompt": "Select all the <span class='attribute'>North Americans</span> on the shortest path between Alex and John.",
+        "prompt": "Select all the <span class='attribute'>North Americans</span> on the shortest path starting at Alex and ending with John.",
         "replyType": [
             "multipleNodeSelection"
         ],
