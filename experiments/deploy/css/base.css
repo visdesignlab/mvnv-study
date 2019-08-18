@@ -193,7 +193,7 @@ div.tooltip {
 }
 
 .clusterSelected .nestedEdges{
-    fill:red;
+    fill:#ff6a00bf;
 }
 
 .taskCard .errorMsg{

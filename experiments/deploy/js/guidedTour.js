@@ -157,7 +157,7 @@ function setupShepherd(vis) {
     steps: [
       {
         title: "Task Definition",
-        text: "This is the task that you will be answering.",
+        text: "This area contains the task you will be answering.",
         attachTo: {
           element: ".taskCard",
           on: "right"
@@ -270,6 +270,34 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
+        title: "Un-highlighting a search result",
+        text: "To un-highlight nodes that are highlighted through search, click on the black outlined cell at the intersection of that node's row and column. <span class=instructions> Try it here to unselect Judge's row and column</span>",
+        attachTo: {
+          element: "#cell247943631_247943631",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              window.controller.model.provenance.goBackOneStep();
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "5"
+
+      },
+
+      {
         title: "Highlighting Neighbors",
         text: "<span class=instructions> Highlight judge's neighbors by clicking on the column label </span>",
         attachTo: {
@@ -279,6 +307,8 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              d3.select("#search-input").property("value",'');
+              d3.select("#search-input").property("value",'Judge');
               return this.back();
             },
             secondary: true,
@@ -464,7 +494,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              window.controller.provenance.goBackOneStep();
+              window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
@@ -483,7 +513,7 @@ function setupShepherd(vis) {
       },
       {
         title: "Clusters",
-        text: "The edges highlighted in red connect the nodes in a cluster",
+        text: "The edges highlighted in orange connect the nodes in a cluster. You can generally idenitify clusters as closely placed groups of edges along the diagonal of the matrix.",
         attachTo: {
           element: ".tourClusterWrapper",
           on: "right"
@@ -493,6 +523,7 @@ function setupShepherd(vis) {
             action: function() {
               unGroupRows();
               unHighlightCells();
+              window.controller.view.sort('shortName');
               return this.back();
             },
             secondary: true,
@@ -523,7 +554,8 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              window.controller.model.provenance.goBackOneStep();
+              groupRows('cluster','tourClusterWrapper')
+              highlightCells();
               return this.back();
             },
             secondary: true,
@@ -653,6 +685,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              d3.select('.searchInput').property('value','')
               return this.back();
             },
             secondary: true,
