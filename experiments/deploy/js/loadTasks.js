@@ -592,6 +592,16 @@ async function resetPanel() {
       vis === "nodeLink" ? 500 : 3000
     );
   }
+
+  if (onTrials && currentTask === 1 && vis=='nodeLink') {
+    setTimeout(
+      function() {
+        console.log('welcome bubbles')
+        welcome(vis,'bubbles');
+      },500
+    );
+  }
+
 }
 
 async function pushProvenance(provGraph, initialState = false, collectionName) {

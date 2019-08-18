@@ -1867,7 +1867,7 @@ function drawLegend() {
     .text(d => d.label)
     // .text(d=>{return config.attributeScales.node[d.label].label})
     // .attr('x',circleScale(sizeAttributeValues[1]))
-    .attr("y", 0);
+    .attr("y", -10);
 
   //center group with circles;
   upperGroupElement = d3

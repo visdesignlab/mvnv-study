@@ -2,8 +2,8 @@ var shepherd;
 
 var neighborRows = [];
 
-function welcome(vis) {
-  shepherd = setupShepherd(vis);
+function welcome(vis,mode) {
+  shepherd = setupShepherd(vis,mode);
 
   if (vis === "adjMatrix") {
     //set up a group wrapper for the sortIcon so as to not override the native click handler for the sort icon.
@@ -129,7 +129,7 @@ function groupRows(mode,className) {
   });
 }
 
-function setupShepherd(vis) {
+function setupShepherd(vis,mode) {
   //   var prefix = "demo-";
 
 
@@ -154,53 +154,7 @@ function setupShepherd(vis) {
     },
     // classPrefix: prefix,
     // This should add the first tour step
-    steps: [
-      {
-        title: "Task Definition",
-        text: "This area contains the task you will be answering.",
-        attachTo: {
-          element: ".taskCard",
-          on: "right"
-        },
-        buttons: [
-          {
-            action: function() {
-              return this.cancel();
-            },
-            secondary: true,
-            text: "Exit"
-          },
-          {
-            action: function() {
-              updateStudyProvenance("started guided tour");
-              return this.next();
-            },
-            text: "Next"
-          }
-        ],
-        id: "welcome"
-      },
-      {
-        title: "Searching for a Node",
-        text: "You can search for any node by name. <span class='instructions'>Try searching for Judge</span>",
-        attachTo: {
-          element: ".searchInput",
-          on: "bottom"
-        },
-        buttons: [
-          {
-            action: function() {
-              return this.back();
-            },
-            secondary: true,
-            text: "Back"
-          }
-        ],
-        id: "creating",
-        modalOverlayOpeningPadding: "10"
-      }
-    ],
-
+    steps: [],
     useModalOverlay: true,
     styleVariables: {
       // arrowSize:2.5,
@@ -214,6 +168,58 @@ function setupShepherd(vis) {
       overlayOpacity: 0.25
     }
   });
+
+  let introSteps = [
+    {
+      title: "Task Definition",
+      text: "This area contains the task you will be answering.",
+      attachTo: {
+        element: ".taskCard",
+        on: "right"
+      },
+      buttons: [
+        {
+          action: function() {
+            return this.cancel();
+          },
+          secondary: true,
+          text: "Exit"
+        },
+        {
+          action: function() {
+            updateStudyProvenance("started guided tour");
+            return this.next();
+          },
+          text: "Next"
+        }
+      ],
+      id: "welcome"
+    },
+    {
+      title: "Searching for a Node",
+      text: "You can search for any node by name. <span class='instructions'>Try searching for Judge</span>",
+      attachTo: {
+        element: ".searchInput",
+        on: "bottom"
+      },
+      buttons: [
+        {
+          action: function() {
+            return this.back();
+          },
+          secondary: true,
+          text: "Back"
+        }
+      ],
+      id: "creating",
+      modalOverlayOpeningPadding: "10"
+    }
+  ];
+
+  //don't add introSteps for 'bubble' mode
+  if (mode === undefined){
+    shepherd.addSteps(introSteps);
+  }
 
   if (vis === "adjMatrix") {
     const steps = [
@@ -673,7 +679,7 @@ function setupShepherd(vis) {
     ];
 
     shepherd.addSteps(steps);
-  } else {
+  } else if (vis === 'nodeLink' && mode === undefined) {
     const steps = [
       {
         title: "Highlighted Node",
@@ -881,7 +887,7 @@ function setupShepherd(vis) {
       },      
       {
         title: "And you're ready!",
-        text: "Thanks for taking the tour, you are ready to start the practice tasks!",
+        text: "Thanks for taking this tour, you are ready to start the practice tasks!",
         buttons: [
           {
             action: function() {
@@ -901,28 +907,134 @@ function setupShepherd(vis) {
 
     shepherd.addSteps(steps);
 
-    // This should add steps after the ones added with `addSteps`
-    // shepherd.addStep({
-    //   title: "Centered Shepherd Element",
-    //   text:
-    //     'But attachment is totally optional!\n       Without a target, a tour step will create an element that\'s centered within the view.       Check out the <a href="https://shepherdjs.dev/docs/">documentation</a> to learn more.',
-    //   buttons: [
-    //     {
-    //       action: function() {
-    //         return this.back();
-    //       },
-    //       secondary: true,
-    //       text: "Back"
-    //     },
-    //     {
-    //       action: function() {
-    //         return this.next();
-    //       },
-    //       text: "Next"
-    //     }
-    //   ],
-    //   id: "centered-example"
-    // });
+  } else if (vis === 'nodeLink' && mode === 'bubbles'){
+    steps = [
+      {
+        title: "Colored and Sized Nodes",
+        text: "You will also see representations of this network where color and size are used to encode attributes.",
+        attachTo: {
+          element: ".nodes",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.cancel();
+            },
+            secondary: true,
+            text: "Exit"
+          },
+          {
+            action: function() {
+              updateStudyProvenance("started second guided tour");
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+
+      },
+      {
+        title: "Highlight Neighbors ",
+        text: "Just as with the previous task, clicking on a node [outside of its label] highlights the node as well as all of its neighbors. <span class='instructions'>Try it out!</span>",
+        attachTo: {
+          element: "#Judge_group",
+          on: "left"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+      {
+        title: "Legend",
+        text: "<p>The legend on the left shows what the color and size of the nodes represent.</p> " +  
+        
+        "<p>In this case, the color represents the continent of origin. <span class='instructions'>You can hover over the legend labels to see the full names.</span> </p> " + 
+        " <p>The size is proportional to the the number of followers.</p>",
+        attachTo: {
+          element: "#legendDiv",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              unGroupRows()
+
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+      {
+        title: "Answer Box",
+        text: "Answers that require a numeric or string value, provide an input text box such as this one.",
+        attachTo: {
+          element: ".answerCard",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            secondary: true,
+            text: "Next"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+      },      
+      {
+        title: "And you're ready!",
+        text: "Thanks for taking this second tour, you are ready to take your last practice task!",
+        buttons: [
+          {
+            action: function() {
+              provenance.reset();
+              updateStudyProvenance("ended guided tour");
+
+              return this.next();
+            },
+            secondary: true,
+            text: "Let's Get Started"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+      }
+    ];
+    shepherd.addSteps(steps);
   }
 
   return shepherd;
