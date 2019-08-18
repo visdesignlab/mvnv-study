@@ -102,9 +102,13 @@ var tabFocus = (function() {
 tabFocus(function() {
   //start counting 'unfocus time' and add to current taskObject;
   if (tabFocus()) {
-    updateStudyProvenance("Focused Tab");
+    if (studyProvenance) {
+      updateStudyProvenance("Focused Tab");
+    }
   } else {
-    updateStudyProvenance("Unfocused Tab");
+    if (studyProvenance){
+      updateStudyProvenance("Unfocused Tab");
+    }
   }
   // document.title = tabFocus() ? 'Visible' : 'Not visible';
 });
