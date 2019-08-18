@@ -411,7 +411,7 @@
     },
     "S-task3": {
         "hypothesis": "Scalable Attributes Hypothesis",
-        "prompt": "Which <span class='attribute'>person</span> is  <span class='attribute'> frequently retweeted</span> in this network despite having <span class='attribute'>few tweets and likes</span> in general?",
+        "prompt": "Which <span class='attribute'>person</span> has several <span class='attribute'> retweet interactions </span> in this network but few <span class='attribute'>tweets and liked tweets</span> in general?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -1236,7 +1236,7 @@
     },
     "S-task6": {
         "hypothesis": "Topology plus Simple Attributes Hypothesis",
-        "prompt": "Does Alex have <span class='attribute'>retweet</span> interactions with <span class='attribute'>North American or European</span> accounts more?",
+        "prompt": "Does Alex have <span class='attribute'>mention</span> interactions with <span class='attribute'>North American or European</span> accounts more?",
         "replyType": [
             "value"
         ],
