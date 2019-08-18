@@ -16,7 +16,7 @@
     "T-task1": {
         "answerKey": {
           "nodes": [],
-          "value": "866"
+          "value": "1146"
       },
         "prompt": "How many <span class='attribute'>followers</span> does Nick have?",
         "replyType": [
