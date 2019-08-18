@@ -1783,6 +1783,8 @@ function drawLegend() {
 
   label.text(d => d.label);
 
+  label.attr('y',-10 )
+
   let sizeCircles = node_link_legend
     .selectAll(".sizeCircles")
     //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale

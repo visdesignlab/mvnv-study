@@ -195,6 +195,7 @@ function checkAnswer(answer) {
       n => (correct = correct && task.answerKey.nodes.find(an => an == n.id))
     );
     correct = correct && task.answer.nodes.length == task.answerKey.nodes.length;
+
     if (!correct) {
       let numAnswers = task.answerKey.nodes.length;
 
@@ -983,7 +984,7 @@ async function loadTasks(visType, tasksType) {
 
   taskButtons = taskButtonsEnter.merge(taskButtons);
 
-  taskButtons.select("p").text(d => d.prompt);
+  taskButtons.select("p").html(d => d.prompt);
 
   taskButtons.select(".message-body").text(d => d.hypothesis);
 

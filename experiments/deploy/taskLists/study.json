@@ -2457,7 +2457,7 @@
     },
     "S-task12": {
         "hypothesis": "Path Hypothesis",
-        "prompt": "Select all the <span class='attribute'>Europeans</span> on the shortest path between Noeska and Lane.",
+        "prompt": "Select all the <span class='attribute'>Europeans</span> on the shortest path starting at Alex and ending with Mandy.",
         "replyType": [
             "multipleNodeSelection"
         ],
