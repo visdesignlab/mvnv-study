@@ -1152,7 +1152,7 @@ async function loadTasks(visType, tasksType) {
 
   //load script tags if this is the trials page or if there were no trials for this setup)
 
-  if (tasksType === "trials" || !trials || getCookie('onPage')==='hit') {
+  if (tasksType === "trials" || !trials || taskBar_height === undefined) {
     let scriptTags = {
       nodeLink: [
         "js/nodeLink/main_nodeLink.js",
