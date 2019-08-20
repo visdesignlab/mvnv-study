@@ -8,7 +8,10 @@
         "replyCount": 1,
         "answerKey": {
             "nodes": [
-                "84043985"
+                "T.J"
+            ],
+            "id": [
+                "18704160"
             ],
             "value": ""
         },
@@ -57,7 +60,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -211,6 +214,9 @@
         "replyCount": 1,
         "answerKey": {
             "nodes": [
+                "EVis2018"
+            ],
+            "ids": [
                 "909697437694087200"
             ],
             "value": ""
@@ -260,7 +266,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -411,13 +417,18 @@
     },
     "S-task3": {
         "hypothesis": "Scalable Attributes Hypothesis",
-        "prompt": "Which <span class='attribute'>person</span> has several <span class='attribute'> retweet interactions </span> in this network but few <span class='attribute'>tweets and liked tweets</span> in general?",
+        "prompt": "Which <span class='attribute'>person</span> has <span class='attribute'>many interactions (edges) </span> in this network, <span class='attribute'>several followers</span>, but  <span class='attribute'>few tweets and likes</span> in general?",
         "replyType": [
             "singleNodeSelection"
         ],
         "replyCount": 1,
         "answerKey": {
             "nodes": [
+                "Rob",
+                "Alex",
+                "Jeffrey"
+            ],
+            "ids": [
                 "208312922",
                 "81658145",
                 "247943631"
@@ -469,7 +480,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -572,8 +583,8 @@
                 "labelAttr": "shortName",
                 "nodeFillAttr": "continent",
                 "nodeSizeAttr": "favourites_count",
-                "edgeWidthAttr": "count",
-                "edgeStrokeAttr": "type",
+                "edgeWidthAttr": null,
+                "edgeStrokeAttr": null,
                 "noEdgeColor": "black",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
@@ -595,19 +606,17 @@
                 "sortKey": "favourites_count"
             },
             "taskID": "task4",
-            "loadedGraph": "large_undirected_multiEdge",
+            "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
-            "isMultiEdge": true,
+            "isMultiEdge": false,
             "graphSize": "large",
             "nodeAttributes": [
                 "type",
                 "favourites_count",
-                "statuses_count"
+                "statuses_count",
+                "followers_count"
             ],
-            "edgeAttributes": [
-                "type",
-                "count"
-            ],
+            "edgeAttributes": [],
             "adjMatrixValues": {},
             "nodeIsRect": true
         },
@@ -628,9 +637,16 @@
         },
         "answerKey": {
             "nodes": [
+                "AA",
+                "Noeska",
+                "Till",
+                "Joe"
+            ],
+            "ids": [
                 "191257554",
                 "36853217",
-                "15208867"
+                "15208867",
+                "40219508"
             ],
             "value": ""
         },
@@ -679,7 +695,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -774,10 +790,10 @@
                 "hoveredNodeColor": "#fde8ca"
             },
             "nodeLink": {
-                "drawBars": false,
+                "drawBars": true,
                 "selectNeighbors": true,
-                "nodeHeight": 60,
-                "nodeWidth": 60,
+                "nodeHeight": 40,
+                "nodeWidth": 40,
                 "labelSize": 12,
                 "labelAttr": "shortName",
                 "nodeFillAttr": "continent",
@@ -835,6 +851,9 @@
         },
         "answerKey": {
             "nodes": [
+                "Robert"
+            ],
+            "ids": [
                 "16112517"
             ],
             "value": ""
@@ -884,7 +903,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -1042,6 +1061,9 @@
         "replyCount": 1,
         "answerKey": {
             "nodes": [
+                "Robert"
+            ],
+            "id": [
                 "16112517"
             ],
             "value": ""
@@ -1091,7 +1113,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -1236,13 +1258,14 @@
     },
     "S-task6": {
         "hypothesis": "Topology plus Simple Attributes Hypothesis",
-        "prompt": "Does Alex have <span class='attribute'>mention</span> interactions with <span class='attribute'>North American or European</span> accounts more?",
+        "prompt": "Does Alex have <span class='attribute'>more mention</span> interactions with <span class='attribute'>North American or European</span> accounts?",
         "replyType": [
-            "value"
+            "radio"
         ],
         "answerKey": {
             "nodes": [],
-            "value": "North American"
+            "ids": [],
+            "value": "European"
         },
         "taxonomy": {
             "target": "neighbors",
@@ -1289,7 +1312,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -1443,6 +1466,9 @@
         "replyCount": 1,
         "answerKey": {
             "nodes": [
+                "Chris"
+            ],
+            "ids": [
                 "1652270612"
             ],
             "value": ""
@@ -1492,7 +1518,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -1641,6 +1667,7 @@
         "hypothesis": "Edge Attribute Hypothesis",
         "prompt": "What is the <span class='attribute' >most common form of interaction </span> between Evis19 and Jon? How often has this interaction happened?",
         "replyType": [
+            "radio",
             "value"
         ],
         "answerKey": {
@@ -1692,7 +1719,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -1847,6 +1874,12 @@
         },
         "answerKey": {
             "nodes": [
+                "Robert",
+                "Klaus",
+                "Lonni",
+                "Anna"
+            ],
+            "ids": [
                 "16112517",
                 "270431596",
                 "2924711485",
@@ -1899,7 +1932,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -2056,7 +2089,12 @@
             "value": 1
         },
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "Anna"
+            ],
+            "ids": [
+                "446672281"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -2104,7 +2142,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -2263,7 +2301,7 @@
         },
         "answerKey": {
             "nodes": [],
-            "value": "1500"
+            "value": "2000"
         },
         "taxonomy": {
             "target": "clusters",
@@ -2310,7 +2348,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -2457,7 +2495,7 @@
     },
     "S-task12": {
         "hypothesis": "Path Hypothesis",
-        "prompt": "Select all the <span class='attribute'>Europeans</span> on the shortest path starting at Alex and ending with Mandy.",
+        "prompt": "Select all the <span class='attribute'>Europeans</span> on the shortest <span class='attribute'>path [3 nodes / 2 edges]</span> from Alex to Mandy [including Alex and Mandy].",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -2466,7 +2504,14 @@
             "value": 1
         },
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "EVis19",
+                "Mandy"
+            ],
+            "id": [
+                "1085199426837188600",
+                "1035496563743842300"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -2514,7 +2559,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -2660,7 +2705,7 @@
     },
     "S-task12A": {
         "hypothesis": "Path Hypothesis",
-        "prompt": "Select all the <span class='attribute'>North Americans</span> on the shortest path starting at Alex and ending with John.",
+        "prompt": "Select all the <span class='attribute'>North Americans</span> on the shortest <span class='attribute'>path [3 nodes / 2 edges]</span> from Roeland to Micah [including Roeland and Micah].",
         "replyType": [
             "multipleNodeSelection"
         ],
@@ -2669,7 +2714,12 @@
             "value": 1
         },
         "answerKey": {
-            "nodes": [],
+            "ids": [
+                "81658145"
+            ],
+            "nodes": [
+                "Alex"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -2717,7 +2767,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -2863,13 +2913,18 @@
     },
     "S-task13": {
         "hypothesis": "Topology plus Simple Attribute Hypothesis",
-        "prompt": "Of the <span class='attribute'>North Americans</span> who are within two interactions of Sereno, who has <span class='attribute'>been on twitter the longest</span>?",
+        "prompt": "Of the <span class='attribute'>North Americans</span> who are <span class='attribute'>within two interactions</span> of Sereno, who has <span class='attribute'>been on twitter the longest</span>?",
         "replyType": [
             "singleNodeSelection"
         ],
         "replyCount": 1,
         "answerKey": {
-            "nodes": [],
+            "nodes": [
+                "Robert"
+            ],
+            "ids": [
+                "16112517"
+            ],
             "value": ""
         },
         "taxonomy": {
@@ -2917,7 +2972,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -3117,7 +3172,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000

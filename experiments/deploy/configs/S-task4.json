@@ -1,9 +1,9 @@
 {
     "nodeLink": {
-        "drawBars": false,
+        "drawBars": true,
         "selectNeighbors": true,
-        "nodeHeight": 60,
-        "nodeWidth": 60,
+        "nodeHeight": 40,
+        "nodeWidth": 40,
         "labelSize": 12,
         "labelAttr": "shortName",
         "nodeFillAttr": "continent",

@@ -1,5 +1,5 @@
 //global variable that defines the tasks to be shown to the user and the (randomized) order in which to show them
-var taskList;
+let taskList;
 let workerID; // to be populated when the user goes through the consent form;
 let currentTask; //start at task 0
 let onTrials = false;
@@ -137,19 +137,34 @@ d3.select("#answerBox").on("input", function() {
 });
 
 //If there is a value, check for validity
+d3.select("#radioAnswer").selectAll('.control').on("change", function() {
+  let value = d3.selectAll("input[name=edgeType]")
+  .filter(function() {
+    return d3.select(this).property("checked");
+  }).attr('value')
+  updateAnswer(value,'radio');
+});
+
+
+//If there is a value, check for validity
 d3.select("#freeFormAnswer").on("input", function() {
   updateAnswer(d3.select("#freeFormAnswer").property("value"));
 });
 
 //function that updates the answer in the side panel as well as in the results field in tasks
 //answer is either an array of node objects or a string from the answer box;
-function updateAnswer(answer) {
+function updateAnswer(answer,type) {
   //Update answer inside taskList;
   let taskObj = taskList[currentTask];
   let answerType = typeof answer;
 
   if (answerType === "string") {
-    taskObj.answer.value = answer;
+    if (type === 'radio'){
+      taskObj.answer.radio = answer;
+
+    } else {
+      taskObj.answer.value = answer;
+    }
   } else {
     taskObj.answer.nodes = answer.map(a => {
       return { id: a.id, name: a.shortName };
@@ -170,9 +185,10 @@ function updateAnswer(answer) {
 
   let replyType = taskList[currentTask].replyType;
   //validate the entire answer object, but error check for only the field that is being updated
+
   validateAnswer(
     taskObj.answer,
-    replyType == "text" ? "text" : answerType == "string" ? "value" : "nodes"
+    replyType == "text" ? "text" : (type == 'radio' ? "radio" : answerType == "string" ? "value": "nodes")
   );
 }
 
@@ -546,6 +562,11 @@ async function resetPanel() {
     .selectAll("input")
     .property("checked", false);
 
+    //Clear all Radio buttons
+    d3.select("#radioAnswer")
+    .selectAll("input")
+    .property("checked", false);
+
   //check for different reply types
 
   if (task.replyType.includes("value")) {
@@ -567,6 +588,24 @@ async function resetPanel() {
     d3.select("#textAnswer").style("display", "block");
   } else {
     d3.select("#textAnswer").style("display", "none");
+  }
+
+  if (task.replyType.includes("radio")) {
+    //set correct values; 
+    if (task. prompt.includes('European')){
+      d3.select('.opt1').select('input').attr('value','North American')
+      d3.select('.opt1').select('.radioLabel').html('North American');
+      d3.select('.opt2').select('input').attr('value','European')
+      d3.select('.opt2').select('.radioLabel').html('European');
+    }else {
+      d3.select('.opt1').select('input').attr('value','Mentions')
+      d3.select('.opt1').select('.radioLabel').html('Mentions');
+      d3.select('.opt2').select('input').attr('value','Retweets')
+      d3.select('.opt2').select('.radioLabel').html('Retweets');
+    }
+    d3.select("#radioAnswer").style("display", "block");
+  } else {
+    d3.select("#radioAnswer").style("display", "none");
   }
 
   d3.select("#taskArea")
@@ -596,7 +635,6 @@ async function resetPanel() {
   if (onTrials && currentTask === 1 && vis=='nodeLink') {
     setTimeout(
       function() {
-        console.log('welcome bubbles')
         welcome(vis,'bubbles');
       },500
     );
@@ -711,6 +749,7 @@ async function loadNewGraph(fileName) {
 //error checks the field specified to show any error msgs.
 //force argument is true when this is run from the submit button. Forces error message to show up that wouldn't otherwise.
 function validateAnswer(answer, errorCheckField, force = false) {
+
   let task = taskList[currentTask];
   let replyTypes = task.replyType;
 
@@ -770,7 +809,22 @@ function validateAnswer(answer, errorCheckField, force = false) {
     if (errorCheckField === "value") {
       if (d3.select("#answerBox").property("value").length < 1) {
         errorMsg = "Please enter a value in the answer box.";
-        console.log("should be here");
+      }
+    }
+  }
+
+  if (replyTypes.includes("radio")) {
+    let checkedRadio = d3
+    .selectAll("input[name=edgeType]")
+    .filter(function() {
+      return d3.select(this).property("checked");
+    });
+
+    isValid = isValid && checkedRadio.size() > 0;
+
+    if (errorCheckField === "radio") {
+      if (checkedRadio.size() < 1) {
+        errorMsg = "Please select an option from the radio buttons.";
       }
     }
   }
@@ -805,13 +859,24 @@ function validateAnswer(answer, errorCheckField, force = false) {
     isValid || isFlexibleAnswer ? null : true
   );
   //toggle visibility of error message;
-  let errorMsgSelector =
-    errorCheckField === "value"
-      ? d3.select("#valueAnswer").select(".errorMsg")
-      : errorCheckField == "nodes"
-      ? d3.select("#nodeAnswer").select(".errorMsg")
-      : d3.select("#textAnswer").select(".errorMsg");
+  let errorMsgSelector;
+  
+  switch (errorCheckField){
+    case ("value"):
+      errorMsgSelector = d3.select("#valueAnswer").select(".errorMsg");
+    break;
+    case ("nodes"):
+        errorMsgSelector = d3.select("#nodeAnswer").select(".errorMsg");
+      break
+    case("text"):
+    errorMsgSelector = d3.select("#textAnswer").select(".errorMsg");
+      break
+    case("radio"):
+    errorMsgSelector = d3.select("#radioAnswer").select(".errorMsg");
+      break;
 
+  }
+   
   errorMsgSelector
     .style("display", !isValid ? "inline" : "none")
     .text(errorMsg);
@@ -854,6 +919,8 @@ async function getResults() {
     "heuristics_participants",
     "results",
     "provenance",
+    "trial_provenance",
+    "trial_results",
     "participant_actions",
     "study_participants"
   ];
@@ -915,20 +982,24 @@ async function loadTasks(visType, tasksType) {
     }
   }
 
-  //find out which group to delegate and load appropriate taskList json file; ;
+  let taskListFiles;
+  if (track){
+      //find out which group to delegate and load appropriate taskList json file; ;
   var conditionsRef = db.collection("studyTracking").doc("conditions");
 
   let conditionsObj = await conditionsRef.get();
 
-  let taskListFiles = conditionsObj.data().tasks;
+  taskListFiles = conditionsObj.data().tasks;
   let conditions = conditionsObj.data().conditionList;
   studyTracking.numConditions = conditions.length;
+  }
+
 
   let group = visType === "nodeLink" ? 0 : 1;
   
   studyTracking.group = group;
 
-  vis = conditions[group].type;
+  // vis =  track ? conditions[group].type : '/taskLists/study.json';
 
   //set the source for the quickStart guide image in the modal;
   d3.select(".quickStart")
@@ -945,7 +1016,9 @@ async function loadTasks(visType, tasksType) {
     .style("width", "calc(100vh - 100px)");
 
   //do an async load of the designated task list;
-  let taskListObj = await d3.json(taskListFiles[tasksType]);
+
+  let taskListFile =  track ? taskListFiles[tasksType] : 'taskLists/study.json';
+  let taskListObj = await d3.json(taskListFile);
   studyTracking.taskListObj = taskListObj;
 
   let taskListEntries = Object.entries(taskListObj);
@@ -959,6 +1032,7 @@ async function loadTasks(visType, tasksType) {
     //add back last last
     taskListEntries = taskListEntries.concat([lastTask]);
   }
+
   // insert order and taskID into each element in this list
   taskList = taskListEntries.map((t, i) => {
     let task = t[1];
@@ -1062,6 +1136,8 @@ async function loadTasks(visType, tasksType) {
         .appendChild(newStyleSheet);
     });
   }
+
+  console.log('taskList is ', taskList)
 }
 
 //function that loads in a .js script tag and only resolves the promise once the script is fully loaded

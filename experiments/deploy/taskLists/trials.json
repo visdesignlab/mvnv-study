@@ -56,7 +56,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -253,7 +253,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
