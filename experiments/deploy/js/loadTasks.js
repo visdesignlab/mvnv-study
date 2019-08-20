@@ -1065,7 +1065,9 @@ async function loadTasks(visType, tasksType) {
     taskListEntries = taskListEntries.concat([lastTask]);
   }
 
-  if (getCookie('taskOrder')!=="" && getCookie('onPage')=== 'hit'){
+  let existingOrder = getCookie('taskOrder').split(',')
+
+  if (existingOrder.length >10 && getCookie('onPage')=== 'hit'){
 
     console.log('using existing task order', getCookie('taskOrder').split(','))
 
