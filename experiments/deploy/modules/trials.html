@@ -46,14 +46,21 @@
 
 <script>
   //turn on 'welcome modal' 
-  setCookie('onPage','trials');
-
-  d3.select('.modalStartTrials').classed('is-active', true);
+ 
+  console.log(getCookie('onPage'))
+  if (getCookie('onPage') === 'trials'){
+    startTrials();
+  } else {
+    d3.select('.modalStartTrials').classed('is-active', true);
+  }
   experimentr.hideNext()
 
+  setCookie('onPage','trials');
 
-  d3.select('#startTrials').on('click', async function () {
 
+  d3.select('#startTrials').on('click', startTrials);
+
+  async function startTrials(){
     d3.select('.modalStartTrials').classed('is-active', false);
 
 
@@ -129,7 +136,5 @@
       }
 
     })
-
-
-  });
+  }
 </script>
