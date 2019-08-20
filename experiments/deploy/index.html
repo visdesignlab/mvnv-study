@@ -703,6 +703,14 @@
 
 
 <script>
+    //if this is a reload, refresh global workerID variable: 
+    if (getCookie('workerID').length > 0) {
+        workerID = getCookie('workerID');
+
+        //restart tracking user interaction with study_provenance
+        setUpStudyProvenance('reloaded page');
+    }
+
     function getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&*#]*)/gi, function (m, key, value) {
@@ -844,16 +852,17 @@
             repeatVisitor = getCookie('onPage');
 
             sequence = [
+                'modules/consent.html',
                 'modules/training.html',
                 'modules/trials.html',
                 'modules/hit.html',
                 'modules/submit.html'
             ];
-            console.log( 'repeatVisitor', repeatVisitor)
+            console.log('repeatVisitor', repeatVisitor)
 
             if (repeatVisitor) {
                 let onPage = getCookie('onPage');
-  
+
                 switch (onPage) {
                     case ('training'):
                         sequence.shift();
@@ -870,12 +879,12 @@
 
                 }
             }
-           
+
             break;
         case 'test':
-             //check if the user has completed any tasks already;
-             repeatVisitor = getCookie('onPage');
-            console.log( 'repeatVisitor', repeatVisitor)
+            //check if the user has completed any tasks already;
+            repeatVisitor = getCookie('onPage');
+            console.log('repeatVisitor', repeatVisitor)
 
             sequence = [
                 'modules/training.html',
@@ -886,7 +895,7 @@
 
             if (repeatVisitor) {
                 let onPage = getCookie('onPage');
-                
+
 
                 switch (onPage) {
                     case ('training'):
@@ -904,19 +913,19 @@
                         break;
 
                 }
-                
+
             }
             break;
 
-        //     sequence = []; //['modules/training.html'];
+            //     sequence = []; //['modules/training.html'];
 
-        //     sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
+            //     sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
 
-        //     sequence = sequence.concat([
-        //         'modules/hit.html',
-        //         'modules/submit.html'
-        //     ])
-        //     break;
+            //     sequence = sequence.concat([
+            //         'modules/hit.html',
+            //         'modules/submit.html'
+            //     ])
+            //     break;
         case 'develop':
 
             sequence = trials ? ['modules/trials.html'] : [];
