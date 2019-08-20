@@ -703,14 +703,6 @@
 
 
 <script>
-    //if this is a reload, refresh global workerID variable: 
-    if (getCookie('workerID').length > 0) {
-        workerID = getCookie('workerID');
-
-        //restart tracking user interaction with study_provenance
-        setUpStudyProvenance('reloaded page');
-    }
-
     function getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&*#]*)/gi, function (m, key, value) {
@@ -777,166 +769,181 @@
 
     participantCollection = mode + '_participants';
 
-    //remove ui components that are not relevant
-    if (!configPanel) {
-        d3.selectAll('.development').remove();
-    }
+    let reload = false;
 
-    if (!taskMenu) {
-        d3.select('.taskMenu').remove();
-    }
+    (async function () {
 
-
-    if (track) {
-        //connect to firestore;
-        fireStore.connect();
-    }
-
-
-    let sequence;
-
-    switch (mode) {
-        case 'heuristics':
-            workerID = makeid(6);
-            break;
-        case 'develop':
-            workerID = 'DevelopUser';
-            break;
-        case 'test':
-            workerID = 'TestUser';
-            break;
-    }
-
-
-
-
-    //set up  user on firestore to track answers and usage;
-    if (track) {
-
-        if (mode !== 'study') {
-
-            //start tracking user interaction with study_provenance
-            setUpStudyProvenance(mode + ' - started');
-
-            let screenSize = {
-                availWidth: window.screen.availWidth,
-                availHeight: window.screen.availHeight,
-                width: window.screen.width,
-                height: window.screen.height,
-                colorDepth: window.screen.colorDepth,
-                pixelDepth: window.screen.pixelDepth
-            };
-
-            db.collection(participantCollection).doc(workerID).set({
-                screenSize,
-                completionCode: makeid(6),
-                startTime: new Date().toString()
-            }, {
-                merge: true
-            });
+        //if this is a reload, refresh global workerID variable: 
+        if (getCookie('workerID').length > 0) {
+            reload = true;
+            workerID = getCookie('workerID');
         }
-    }
 
-    let repeatVisitor;
+        //remove ui components that are not relevant
+        if (!configPanel) {
+            d3.selectAll('.development').remove();
+        }
+
+        if (!taskMenu) {
+            d3.select('.taskMenu').remove();
+        }
 
 
-    switch (mode) {
-        case 'heuristics':
-            sequence = [
-                'modules/hit.html',
-                'modules/submit.html'
-            ];
-            break;
-        case 'study':
-            //check if the user has completed any tasks already;
-            repeatVisitor = getCookie('onPage');
+        if (track) {
+            //connect to firestore;
+            fireStore.connect();
+            if (reload){
+                await setUpStudyProvenance('reloaded page');
+            }
+           
+        }
 
-            sequence = [
-                'modules/consent.html',
-                'modules/training.html',
-                'modules/trials.html',
-                'modules/hit.html',
-                'modules/submit.html'
-            ];
-            console.log('repeatVisitor', repeatVisitor)
 
-            if (repeatVisitor) {
-                let onPage = getCookie('onPage');
+        let sequence;
 
-                switch (onPage) {
-                    case ('training'):
-                        sequence.shift();
-                        break;
-                    case ('trials'):
-                        sequence.shift();
-                        sequence.shift();
-                        break;
-                    case ('hit'):
-                        sequence.shift();
-                        sequence.shift();
-                        sequence.shift();
-                        break;
+        switch (mode) {
+            case 'heuristics':
+                workerID = makeid(6);
+                break;
+            case 'develop':
+                workerID = 'DevelopUser';
+                break;
+            case 'test':
+                workerID = 'TestUser';
+                break;
+        }
+
+
+
+
+        //set up  user on firestore to track answers and usage;
+        if (track) {
+
+            if (mode !== 'study') {
+
+                //start tracking user interaction with study_provenance
+                setUpStudyProvenance(mode + ' - started');
+
+                let screenSize = {
+                    availWidth: window.screen.availWidth,
+                    availHeight: window.screen.availHeight,
+                    width: window.screen.width,
+                    height: window.screen.height,
+                    colorDepth: window.screen.colorDepth,
+                    pixelDepth: window.screen.pixelDepth
+                };
+
+                db.collection(participantCollection).doc(workerID).set({
+                    screenSize,
+                    completionCode: makeid(6),
+                    startTime: new Date().toString()
+                }, {
+                    merge: true
+                });
+            }
+        }
+
+        let repeatVisitor;
+
+
+        switch (mode) {
+            case 'heuristics':
+                sequence = [
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ];
+                break;
+            case 'study':
+                //check if the user has completed any tasks already;
+                repeatVisitor = getCookie('onPage');
+
+                sequence = [
+                    'modules/consent.html',
+                    'modules/training.html',
+                    'modules/trials.html',
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ];
+                console.log('repeatVisitor', repeatVisitor)
+
+                if (repeatVisitor) {
+                    let onPage = getCookie('onPage');
+
+                    switch (onPage) {
+                        case ('training'):
+                            sequence.shift();
+                            break;
+                        case ('trials'):
+                            sequence.shift();
+                            sequence.shift();
+                            break;
+                        case ('hit'):
+                            sequence.shift();
+                            sequence.shift();
+                            sequence.shift();
+                            break;
+
+                    }
+                }
+
+                break;
+            case 'test':
+                //check if the user has completed any tasks already;
+                repeatVisitor = getCookie('onPage');
+                console.log('repeatVisitor', repeatVisitor)
+
+                sequence = [
+                    'modules/training.html',
+                    'modules/trials.html',
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ];
+
+                if (repeatVisitor) {
+                    let onPage = getCookie('onPage');
+
+
+                    switch (onPage) {
+                        case ('training'):
+                            // sequence.shift();
+                            break;
+                        case ('trials'):
+                            console.log('here')
+                            // sequence.shift();
+                            sequence.shift();
+                            break;
+                        case ('hit'):
+                            // sequence.shift();
+                            sequence.shift();
+                            sequence.shift();
+                            break;
+
+                    }
 
                 }
-            }
+                break;
 
-            break;
-        case 'test':
-            //check if the user has completed any tasks already;
-            repeatVisitor = getCookie('onPage');
-            console.log('repeatVisitor', repeatVisitor)
+                //     sequence = []; //['modules/training.html'];
 
-            sequence = [
-                'modules/training.html',
-                'modules/trials.html',
-                'modules/hit.html',
-                'modules/submit.html'
-            ];
+                //     sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
 
-            if (repeatVisitor) {
-                let onPage = getCookie('onPage');
+                //     sequence = sequence.concat([
+                //         'modules/hit.html',
+                //         'modules/submit.html'
+                //     ])
+                //     break;
+            case 'develop':
 
+                sequence = trials ? ['modules/trials.html'] : [];
 
-                switch (onPage) {
-                    case ('training'):
-                        // sequence.shift();
-                        break;
-                    case ('trials'):
-                        console.log('here')
-                        // sequence.shift();
-                        sequence.shift();
-                        break;
-                    case ('hit'):
-                        // sequence.shift();
-                        sequence.shift();
-                        sequence.shift();
-                        break;
+                sequence = sequence.concat([
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ]);
+                break;
+        }
 
-                }
-
-            }
-            break;
-
-            //     sequence = []; //['modules/training.html'];
-
-            //     sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
-
-            //     sequence = sequence.concat([
-            //         'modules/hit.html',
-            //         'modules/submit.html'
-            //     ])
-            //     break;
-        case 'develop':
-
-            sequence = trials ? ['modules/trials.html'] : [];
-
-            sequence = sequence.concat([
-                'modules/hit.html',
-                'modules/submit.html'
-            ]);
-            break;
-    }
-
-    console.log('sequence is ', sequence)
-    experimentr.sequence(sequence).start();
+        console.log('sequence is ', sequence)
+        experimentr.sequence(sequence).start();
+    })();
 </script>

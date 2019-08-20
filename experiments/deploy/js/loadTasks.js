@@ -669,10 +669,14 @@ async function resetPanel() {
 }
 
 async function pushProvenance(provGraph, initialState = false, collectionName) {
+
+
   //Only push provenance is tracking is set to true;
   if (!track) {
     return;
   }
+
+
 
   let overallStudyProvenance = collectionName ? true : false;
   collectionName = overallStudyProvenance
@@ -692,7 +696,6 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
     .get();
 
   let doc = provGraphDoc.data();
-
   let docSize = calcFirestoreDocSize(collectionName, docID, doc) / 1000000;
 
   // console.log("Provenance graph size for ", docID, " is ", docSize, " MB");

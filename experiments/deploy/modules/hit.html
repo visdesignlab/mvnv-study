@@ -16,6 +16,7 @@
       if (getCookie('onPage') === 'hit') {
         startStudy();
       } else {
+        updateStudyProvenance('started study')
         d3.select('.modalStartStudy').classed('is-active', true);
 
       }
@@ -50,7 +51,7 @@
         // included script already auto loads the vis. 
       }
 
-      updateStudyProvenance('started study')
+      
       resetPanel();
     }
 
