@@ -29,6 +29,8 @@
   (async function () {
     updateStudyProvenance(' started training');
 
+    setCookie('onPage','training');
+
     experimentr.hideNext()
 
     if (vis === undefined) {

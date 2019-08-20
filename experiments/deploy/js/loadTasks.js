@@ -22,6 +22,30 @@ let app;
 let studyProvenance;
 let studyApp;
 
+function setCookie(cname, cvalue, exdays=1) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  var expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+
 async function setUpStudyProvenance(label) {
   const initialState = {
     workerID, //gets value from global workerID variable
@@ -520,6 +544,8 @@ d3.select("#nextTask").on("click", async () => {
 async function resetPanel() {
   updateStudyProvenance("started Task");
 
+  setCookie('onTask',currentTask);
+  console.log('cTask is ', currentTask)
   let task = taskList[currentTask];
   task.startTime = new Date().toString();
 
@@ -970,7 +996,13 @@ async function assignVisType() {
 }
 async function loadTasks(visType, tasksType) {
   //reset currentTask to 0
-  currentTask = 0;
+  let cachedTask = getCookie('onTask');
+
+  if (cachedTask.length>0){
+    currentTask = Number(cachedTask);
+  }else {
+    currentTask = 0;
+  }
 
   // getResults();
   // parseResults();
@@ -1033,14 +1065,42 @@ async function loadTasks(visType, tasksType) {
     taskListEntries = taskListEntries.concat([lastTask]);
   }
 
-  // insert order and taskID into each element in this list
-  taskList = taskListEntries.map((t, i) => {
-    let task = t[1];
-    task.order = i;
-    task.taskID = t[0];
-    task.workerID = workerID;
-    return task;
-  });
+  if (getCookie('taskOrder')!=="" && getCookie('onPage')=== 'hit'){
+
+    console.log('using existing task order', getCookie('taskOrder').split(','))
+
+    let taskOrder = getCookie('taskOrder').split(',');
+    // reorder tasks according to the cached order;
+    
+    taskList = taskOrder.map((id,i)=>{
+      let t = taskListEntries.find(t=>t[0] === id);
+      let task = t[1];
+      task.order = i;
+      task.taskID = t[0];
+      task.workerID = workerID;
+
+      return task
+    })
+    console.log(taskList,currentTask)
+
+  } else {
+    let taskOrder = [];
+
+   // insert order and taskID into each element in this list
+    taskList = taskListEntries.map((t, i) => {
+      taskOrder.push(t[0]);
+      let task = t[1];
+      task.order = i;
+      task.taskID = t[0];
+      task.workerID = workerID;
+      return task;
+    });
+  
+    console.log('setting new task order', taskOrder)
+
+    setCookie('taskOrder',taskOrder);
+  }
+ 
 
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (vis === "nodeLink") {
@@ -1090,7 +1150,7 @@ async function loadTasks(visType, tasksType) {
 
   //load script tags if this is the trials page or if there were no trials for this setup)
 
-  if (tasksType === "trials" || !trials) {
+  if (tasksType === "trials" || !trials || getCookie('onPage')==='hit') {
     let scriptTags = {
       nodeLink: [
         "js/nodeLink/main_nodeLink.js",
@@ -1137,7 +1197,6 @@ async function loadTasks(visType, tasksType) {
     });
   }
 
-  console.log('taskList is ', taskList)
 }
 
 //function that loads in a .js script tag and only resolves the promise once the script is fully loaded

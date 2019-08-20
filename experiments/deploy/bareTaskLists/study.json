@@ -195,7 +195,7 @@
             "type": "TGA"
         }
     },
-    "S-task11": {
+    "S-task10": {
         "hypothesis": "Cluster Hypothesis",
         "prompt": "Select all the <span class='attribute'>people</span> who are in a cluster with Alex. Estimate the <span class='attribute'>average number of  likes</span> among the selected people.",
         "replyType": ["multipleNodeSelection", "value"],
@@ -212,7 +212,7 @@
             "type": "AGT"
         }
     },
-    "S-task12": {
+    "S-task11": {
         "hypothesis":"Path Hypothesis",
         "prompt": "Select all the <span class='attribute'>Europeans</span> on the shortest <span class='attribute'>path [3 nodes / 2 edges]</span> from Alex to Mandy [including Alex and Mandy].",
         "replyType": [
@@ -232,7 +232,7 @@
             "type": "TGA"
         }
     },
-    "S-task12A": {
+    "S-task11A": {
         "hypothesis":"Path Hypothesis",
         "prompt": "Select all the <span class='attribute'>North Americans</span> on the shortest <span class='attribute'>path [3 nodes / 2 edges]</span> from Roeland to Micah [including Roeland and Micah].",
         "replyType": [
@@ -252,7 +252,7 @@
             "type": "TGA"
         }
     },
-    "S-task13": {
+    "S-task12": {
         "hypothesis":"Topology plus Simple Attribute Hypothesis",
         "prompt": "Of the <span class='attribute'>North Americans</span> who are <span class='attribute'>within two interactions</span> of Sereno, who has <span class='attribute'>been on twitter the longest</span>?",
         "replyType": [

@@ -60,33 +60,35 @@
 
                                     <p class="card-header-title" id="taskDefinition">
                                         <span class="task">Task: </span><span class="taskText"> </span>
-                                        <div class="progressBar"><progress class="progress is-small" value="4" max="8"></progress></div>
+                                        <div class="progressBar"><progress class="progress is-small" value="4"
+                                                max="8"></progress></div>
 
                                     </p>
-                                  
+
                                 </div>
 
                                 <div class="card">
                                     <div class="card-content">
                                         <div class="content">
-                                            <div >
+                                            <div>
 
-                
+
 
                                                 <span id="searchArea">
-                                                        <input class="input searchInput" type="text"
+                                                    <input class="input searchInput" type="text"
                                                         placeholder="Search for node" id="search-input"></input>
-                                                    <a class="button is-pulled-right search" id="searchButton">Search</a>
+                                                    <a class="button is-pulled-right search"
+                                                        id="searchButton">Search</a>
                                                 </span>
                                                 <!-- <label class="label">Search for Nodes</label> -->
-                                              
+
                                                 <p class='searchMsg errorMsg'></p>
 
                                                 <a class="button" id="clear-selection">Clear Highlighted Nodes</a>
 
                                             </div>
 
-                     
+
 
                                         </div>
 
@@ -142,15 +144,15 @@
                                                 <br />
                                                 <div class="control">
                                                     <label class="radio opt1">
-                                                      <input type="radio" name="edgeType" value="">
-                                                      <span class='radioLabel'></span>
+                                                        <input type="radio" name="edgeType" value="">
+                                                        <span class='radioLabel'></span>
                                                     </label>
                                                     <label class="radio opt2">
-                                                      <input type="radio" name="edgeType" value ="">
-                                                      <span class='radioLabel'></span>
+                                                        <input type="radio" name="edgeType" value="">
+                                                        <span class='radioLabel'></span>
 
                                                     </label>
-                                                  </div>
+                                                </div>
                                                 <p class='errorMsg' style=display:none></p>
                                             </span>
 
@@ -165,17 +167,18 @@
 
 
                                             <span id="textAnswer">
-                                                    <label><strong>Enter Findings Below</strong></label>
-                                                    <br />
-                                                    <textarea class="textarea" placeholder="Describe your findings." rows="10" id="freeFormAnswer"></textarea>
+                                                <label><strong>Enter Findings Below</strong></label>
+                                                <br />
+                                                <textarea class="textarea" placeholder="Describe your findings."
+                                                    rows="10" id="freeFormAnswer"></textarea>
 
-                                                    <br />
-                                                    <p class='errorMsg' style=display:none></p>
-                                                </span>
+                                                <br />
+                                                <p class='errorMsg' style=display:none></p>
+                                            </span>
 
-                                         
 
-                                               
+
+
 
 
                                         </div>
@@ -206,7 +209,7 @@
                                 </header>
                                 <div class="card-content">
                                     <div class="content">
-                                            <!-- <article class="message is-link">
+                                        <!-- <article class="message is-link">
                                                     <div class="message-header">
                                                       <p>Link</p>
                                                       <button class="delete" aria-label="delete"></button>
@@ -667,12 +670,13 @@
             <section class="modal-card-body">
                 <div class="content">
 
-                    <p>You will be presented with <strong>16 tasks</strong> in <strong>random order of difficulty</strong>. </p>
-                        
-                        
-                        <p>The survey should take approximately 45 minutes to complete</p>
+                    <p>You will be presented with <strong>16 tasks</strong> in <strong>random order of
+                            difficulty</strong>. </p>
 
-                        <p> Let's get started! </p>
+
+                    <p>The survey should take approximately 45 minutes to complete</p>
+
+                    <p> Let's get started! </p>
 
 
                 </div>
@@ -683,7 +687,7 @@
             </footer>
         </div>
     </div>
-    
+
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -775,9 +779,9 @@
     }
 
 
-    if (track){
-            //connect to firestore;
-    fireStore.connect();
+    if (track) {
+        //connect to firestore;
+        fireStore.connect();
     }
 
 
@@ -795,16 +799,16 @@
             break;
     }
 
-   
- 
+
+
 
     //set up  user on firestore to track answers and usage;
     if (track) {
 
         if (mode !== 'study') {
 
-               //start tracking user interaction with study_provenance
-                setUpStudyProvenance(mode + ' - started');
+            //start tracking user interaction with study_provenance
+            setUpStudyProvenance(mode + ' - started');
 
             let screenSize = {
                 availWidth: window.screen.availWidth,
@@ -818,13 +822,13 @@
             db.collection(participantCollection).doc(workerID).set({
                 screenSize,
                 completionCode: makeid(6),
-                startTime:new Date().toString()
+                startTime: new Date().toString()
             }, {
                 merge: true
             });
         }
-    } 
-    
+    }
+
 
 
     switch (mode) {
@@ -836,18 +840,38 @@
             break;
         case 'study':
             //check if the user has completed any tasks already;
-            
-            sequence = [
+            let repeatVisitor = getCookie('workerID');
+            if (repeatVisitor) {
+                let onPage = getCookie('onPage');
+                sequence = [
                 'modules/consent.html',
                 'modules/training.html',
                 'modules/trials.html',
                 'modules/hit.html',
                 'modules/submit.html'
-            ]
+            ];
+
+                switch (onPage) {
+                    case ('training'):
+                        sequence.pop();
+                        break;
+                    case ('trials'):
+                        sequence.pop();
+                        sequence.pop();
+                        break;
+                    case ('hit'):
+                        sequence.pop();
+                        sequence.pop();
+                        sequence.pop();
+                        break;
+
+                }
+            }
+           
             break;
         case 'test':
 
-            sequence = ['modules/training.html'];
+            sequence = []; //['modules/training.html'];
 
             sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
 

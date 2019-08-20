@@ -130,6 +130,9 @@
                 //set global variable to be the santizied version of the input workerID; 
                 workerID = sanitizeWorkerID(data.workerId);
 
+                //keep track just in case the user needs to reload
+                setCookie('workerID',workerID);
+
                 //start tracking user interaction with study_provenance
                 await setUpStudyProvenance('signed consent form');
 
