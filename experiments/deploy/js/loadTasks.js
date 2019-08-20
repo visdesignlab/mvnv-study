@@ -1101,6 +1101,8 @@ async function loadTasks(visType, tasksType) {
     console.log('setting new task order', taskOrder)
 
     setCookie('taskOrder',taskOrder);
+    setCookie('onTask',0)
+    currentTask = 0;
   }
  
 
@@ -1152,7 +1154,9 @@ async function loadTasks(visType, tasksType) {
 
   //load script tags if this is the trials page or if there were no trials for this setup)
 
-  if (tasksType === "trials" || !trials || taskBar_height === undefined) {
+  let notLoadedFiles = typeof taskBar_height === 'undefined'
+
+  if (tasksType === "trials" || !trials || notLoadedFiles) {
     let scriptTags = {
       nodeLink: [
         "js/nodeLink/main_nodeLink.js",

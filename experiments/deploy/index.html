@@ -829,6 +829,7 @@
         }
     }
 
+    let repeatVisitor;
 
 
     switch (mode) {
@@ -840,29 +841,31 @@
             break;
         case 'study':
             //check if the user has completed any tasks already;
-            let repeatVisitor = getCookie('workerID');
-            if (repeatVisitor) {
-                let onPage = getCookie('onPage');
-                sequence = [
-                'modules/consent.html',
+            repeatVisitor = getCookie('onPage');
+
+            sequence = [
                 'modules/training.html',
                 'modules/trials.html',
                 'modules/hit.html',
                 'modules/submit.html'
             ];
+            console.log( 'repeatVisitor', repeatVisitor)
 
+            if (repeatVisitor) {
+                let onPage = getCookie('onPage');
+  
                 switch (onPage) {
                     case ('training'):
-                        sequence.pop();
+                        sequence.shift();
                         break;
                     case ('trials'):
-                        sequence.pop();
-                        sequence.pop();
+                        sequence.shift();
+                        sequence.shift();
                         break;
                     case ('hit'):
-                        sequence.pop();
-                        sequence.pop();
-                        sequence.pop();
+                        sequence.shift();
+                        sequence.shift();
+                        sequence.shift();
                         break;
 
                 }
@@ -870,16 +873,50 @@
            
             break;
         case 'test':
+             //check if the user has completed any tasks already;
+             repeatVisitor = getCookie('onPage');
+            console.log( 'repeatVisitor', repeatVisitor)
 
-            sequence = []; //['modules/training.html'];
-
-            sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
-
-            sequence = sequence.concat([
+            sequence = [
+                'modules/training.html',
+                'modules/trials.html',
                 'modules/hit.html',
                 'modules/submit.html'
-            ])
+            ];
+
+            if (repeatVisitor) {
+                let onPage = getCookie('onPage');
+                
+
+                switch (onPage) {
+                    case ('training'):
+                        // sequence.shift();
+                        break;
+                    case ('trials'):
+                        console.log('here')
+                        // sequence.shift();
+                        sequence.shift();
+                        break;
+                    case ('hit'):
+                        // sequence.shift();
+                        sequence.shift();
+                        sequence.shift();
+                        break;
+
+                }
+                
+            }
             break;
+
+        //     sequence = []; //['modules/training.html'];
+
+        //     sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
+
+        //     sequence = sequence.concat([
+        //         'modules/hit.html',
+        //         'modules/submit.html'
+        //     ])
+        //     break;
         case 'develop':
 
             sequence = trials ? ['modules/trials.html'] : [];
@@ -887,8 +924,10 @@
             sequence = sequence.concat([
                 'modules/hit.html',
                 'modules/submit.html'
-            ])
+            ]);
+            break;
     }
 
+    console.log('sequence is ', sequence)
     experimentr.sequence(sequence).start();
 </script>
