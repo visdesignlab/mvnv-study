@@ -2481,7 +2481,7 @@
             "graphSize": "large",
             "nodeAttributes": [
                 "type",
-                "favourites_count"
+                "followers_count"
             ],
             "edgeAttributes": [
                 "type"
