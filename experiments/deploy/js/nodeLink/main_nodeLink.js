@@ -812,6 +812,11 @@ function updateVis() {
           tooltipData = tooltipData.concat (" [" + d.count + "]")
         }
 
+        if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+          return;
+        }
+        
+
         showTooltip(tooltipData,400)
 
 
@@ -906,7 +911,11 @@ function updateVis() {
           tooltipData = tooltipData.concat(config.attributeScales.node[config.nodeLink.nodeSizeAttr].label + ":" + Math.round(d[config.nodeLink.nodeSizeAttr]) + " " )
         }
 
-        config.nodeLink.drawBars ? "" : showTooltip(tooltipData)
+        if (config.nodeLink.drawBars || d3.select(d3.select(this).node().parentNode).classed("muted")){
+          return;
+        }
+        
+        showTooltip(tooltipData)
       })
 
 
@@ -1074,6 +1083,11 @@ function updateVis() {
 
     bars.on("mouseover",function(d){
       let label = config.attributeScales.node[d.attr].label
+
+      if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+        return;
+      }
+      
       showTooltip(label + " : " + Math.round(d.data))
     })
   
@@ -1155,6 +1169,12 @@ function updateVis() {
     catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
     catGlyphs.on("mouseover",function(d){
+
+      if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+        return;
+      }
+      
+
       showTooltip(d.attr  + ":" + d.data)
     })
   
@@ -1595,6 +1615,12 @@ function drawLegend() {
   catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
   catGlyphs.on("mouseover",function(d){
+
+    if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+      return;
+    }
+    
+
     showTooltip(d.value)
   })
 
@@ -1702,6 +1728,11 @@ function drawLegend() {
     .style("fill", "white");
 
     circles.on("mouseover",function(d){
+      if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+        return;
+      }
+      
+      
       showTooltip(d.value)
     })
   
