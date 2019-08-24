@@ -914,7 +914,7 @@ function setupShepherd(vis,mode) {
         text: "You will also see representations of this network where color and size are used to encode attributes.",
         attachTo: {
           element: ".nodes",
-          on: "right"
+          on: "left"
         },
         buttons: [
           {

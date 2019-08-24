@@ -162,7 +162,7 @@ d3.select("#answerBox").on("input", function() {
 
 //If there is a value, check for validity
 d3.select("#radioAnswer").selectAll('.control').on("change", function() {
-  let value = d3.selectAll("input[name=edgeType]")
+  let value = d3.selectAll("input[name=radio]")
   .filter(function() {
     return d3.select(this).property("checked");
   }).attr('value')
@@ -617,18 +617,25 @@ async function resetPanel() {
   }
 
   if (task.replyType.includes("radio")) {
-    //set correct values; 
-    if (task. prompt.includes('European')){
-      d3.select('.opt1').select('input').attr('value','North American')
-      d3.select('.opt1').select('.radioLabel').html('North American');
-      d3.select('.opt2').select('input').attr('value','European')
-      d3.select('.opt2').select('.radioLabel').html('European');
-    }else {
-      d3.select('.opt1').select('input').attr('value','Mentions')
-      d3.select('.opt1').select('.radioLabel').html('Mentions');
-      d3.select('.opt2').select('input').attr('value','Retweets')
-      d3.select('.opt2').select('.radioLabel').html('Retweets');
-    }
+
+    let rButtons = d3.select('#radioAnswer').select('.control').selectAll('label').data(task.radioButtons);
+
+    let rButtonsEnter = rButtons.enter().append('label').attr('class','radio');
+
+    rButtonsEnter.append('input')
+    .attr('type','radio')
+    .attr('name','radio');
+
+    rButtonsEnter.append('span').attr('class', 'radioLabel');
+
+    rButtons.exit().remove();
+
+    rButtons = rButtonsEnter.merge(rButtons);
+
+    rButtons.select('input').attr('value',d=>d);
+    rButtons.select('.radioLabel').html(d=>' ' + d);
+
+
     d3.select("#radioAnswer").style("display", "block");
   } else {
     d3.select("#radioAnswer").style("display", "none");
@@ -844,7 +851,7 @@ function validateAnswer(answer, errorCheckField, force = false) {
 
   if (replyTypes.includes("radio")) {
     let checkedRadio = d3
-    .selectAll("input[name=edgeType]")
+    .selectAll("input[name=radio]")
     .filter(function() {
       return d3.select(this).property("checked");
     });

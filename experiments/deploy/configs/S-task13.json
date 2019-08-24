@@ -1,6 +1,6 @@
 {
     "nodeLink": {
-        "drawBars": false,
+        "drawBars": true,
         "selectNeighbors": true,
         "nodeHeight": 50,
         "nodeWidth": 50,
@@ -35,7 +35,8 @@
     "isMultiEdge": false,
     "graphSize": "large",
     "nodeAttributes": [
-        "continent"
+        "continent",
+        "type"
     ],
     "edgeAttributes": [
         "type"
