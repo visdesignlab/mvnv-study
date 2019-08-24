@@ -6,7 +6,7 @@
         "nodeWidth": 40,
         "labelSize": 12,
         "labelAttr": "shortName",
-        "nodeFillAttr": null,
+        "nodeFillAttr": "type",
         "nodeSizeAttr": "followers_count",
         "edgeWidthAttr": null,
         "edgeStrokeAttr": "type",

@@ -103,10 +103,11 @@
     },
     "S-task07": {
         "hypothesis":"Topology plus Simple Attributes Hypothesis",
-        "prompt": "Does Alex have <span class='attribute'>more mention</span> interactions with <span class='attribute'>North American or European</span> accounts?",
+        "prompt": "Does Alex have <span class='attribute'>more mention</span> interactions with <span class='attribute'>North American or European</span> accounts? Who does he have the <span class='attribute'>most mentions interactions</span> with?",
         "replyType": [
-            "radio"
+            "singleNodeSelection","radio"
         ],
+        "replyCount": 1,
         "radioButtons":["European","North American"],
         "answerKey": {
             "value": "European"

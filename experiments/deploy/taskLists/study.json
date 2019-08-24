@@ -1252,10 +1252,12 @@
     },
     "S-task07": {
         "hypothesis": "Topology plus Simple Attributes Hypothesis",
-        "prompt": "Does Alex have <span class='attribute'>more mention</span> interactions with <span class='attribute'>North American or European</span> accounts?",
+        "prompt": "Does Alex have <span class='attribute'>more mention</span> interactions with <span class='attribute'>North American or European</span> accounts? Who does he have the <span class='attribute'>most mentions interactions</span> with?",
         "replyType": [
+            "singleNodeSelection",
             "radio"
         ],
+        "replyCount": 1,
         "radioButtons": [
             "European",
             "North American"
@@ -1615,7 +1617,7 @@
                 "nodeWidth": 40,
                 "labelSize": 12,
                 "labelAttr": "shortName",
-                "nodeFillAttr": null,
+                "nodeFillAttr": "type",
                 "nodeSizeAttr": "followers_count",
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
@@ -2449,7 +2451,7 @@
                 "nodeWidth": 30,
                 "labelSize": 12,
                 "labelAttr": "shortName",
-                "nodeFillAttr": null,
+                "nodeFillAttr": "type",
                 "nodeSizeAttr": "followers_count",
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
@@ -2659,8 +2661,8 @@
             "nodeLink": {
                 "drawBars": true,
                 "selectNeighbors": true,
-                "nodeHeight": 50,
-                "nodeWidth": 50,
+                "nodeHeight": 40,
+                "nodeWidth": 30,
                 "labelSize": 12,
                 "labelAttr": "shortName",
                 "nodeFillAttr": "continent",
