@@ -649,7 +649,7 @@ function arcPath(leftHand, d, state = false) {
 
   
 
-  // if (config.isMultiEdge){
+  if (config.isMultiEdge){
     return (
       "M" +
       x1 +
@@ -672,10 +672,10 @@ function arcPath(leftHand, d, state = false) {
     );
 
 
-  // } else {
-  //   return (
-  //     'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
-  // }
+  } else {
+    return (
+      'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
+  }
 
   
 

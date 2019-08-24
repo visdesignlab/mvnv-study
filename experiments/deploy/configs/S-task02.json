@@ -11,7 +11,7 @@
         "edgeWidthAttr": null,
         "edgeStrokeAttr": "type",
         "noEdgeColor": "black",
-        "noNodeFill": "lightgrey",
+        "noNodeFill": "white",
         "noNodeStroke": "#c8c8c8",
         "quantColors": [
             "#7b7cb1",
@@ -28,17 +28,19 @@
         "neighborHighlightColor": "",
         "neighborSelect": true,
         "edgeBars": true,
-        "sortKey": "friends_count"
+        "sortKey": "favourites_count"
     },
-    "taskID": "task9A",
-    "loadedGraph": "small_undirected_singleEdge",
+    "loadedGraph": "large_undirected_singleEdge",
     "isDirected": false,
     "isMultiEdge": false,
-    "graphSize": "small",
+    "graphSize": "large",
     "nodeAttributes": [
         "friends_count",
         "followers_count",
-        "type"
+        "statuses_count",
+        "favourites_count",
+        "type",
+        "continent"
     ],
     "edgeAttributes": [
         "type"

@@ -30,7 +30,6 @@
         "edgeBars": true,
         "sortKey": "shortName"
     },
-    "taskID": "task4",
     "loadedGraph": "large_undirected_multiEdge",
     "isDirected": false,
     "isMultiEdge": true,

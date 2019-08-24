@@ -28,19 +28,15 @@
         "neighborHighlightColor": "",
         "neighborSelect": true,
         "edgeBars": true,
-        "sortKey": "favourites_count"
+        "sortKey": "continent"
     },
-    "taskID": "task1",
     "loadedGraph": "large_undirected_singleEdge",
     "isDirected": false,
     "isMultiEdge": false,
     "graphSize": "large",
     "nodeAttributes": [
-        "followers_count",
-        "statuses_count",
-        "memberFor_days",
-        "type",
-        "continent"
+        "continent",
+        "memberFor_days"
     ],
     "edgeAttributes": [
         "type"

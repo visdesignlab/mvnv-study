@@ -1,5 +1,5 @@
 {
-    "S-task1": {
+    "S-task01": {
         "hypothesis": "Distractor Effect Hypothesis, Attribute Sorting Hypothesis",
         "prompt": "Find the <span class='attribute'>North American</span> with the <span class='attribute'>most Tweets</span>",
         "replyType": [
@@ -12,8 +12,7 @@
             ],
             "id": [
                 "18704160"
-            ],
-            "value": ""
+            ]
         },
         "taxonomy": {
             "target": "single node",
@@ -27,7 +26,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -155,7 +155,7 @@
                 "hoveredNodeColor": "#fde8ca"
             },
             "nodeLink": {
-                "drawBars": true,
+                "drawBars": false,
                 "selectNeighbors": true,
                 "nodeHeight": 40,
                 "nodeWidth": 40,
@@ -165,7 +165,7 @@
                 "nodeSizeAttr": "statuses_count",
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -185,7 +185,6 @@
                 "edgeBars": true,
                 "sortKey": "statuses_count"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -205,9 +204,9 @@
             "value": ""
         }
     },
-    "S-task1A": {
+    "S-task02": {
         "hypothesis": "Distractor Effect Hypothesis, Attribute Sorting Hypothesis",
-        "prompt": "Find the <span class='attribute'>European</span> with the <span class='attribute'>least likes </span>",
+        "prompt": "Find the <span class='attribute'>European person or institution </span> with the <span class='attribute'>least likes </span>",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -218,8 +217,7 @@
             ],
             "ids": [
                 "909697437694087200"
-            ],
-            "value": ""
+            ]
         },
         "taxonomy": {
             "target": "single node",
@@ -233,7 +231,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -371,7 +370,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -391,7 +390,6 @@
                 "edgeBars": true,
                 "sortKey": "favourites_count"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -415,7 +413,7 @@
             "value": ""
         }
     },
-    "S-task3": {
+    "S-task03": {
         "hypothesis": "Scalable Attributes Hypothesis",
         "prompt": "Which <span class='attribute'>person</span> has <span class='attribute'>many interactions (edges) </span> in this network, <span class='attribute'>several followers</span>, but  <span class='attribute'>few tweets and likes</span> in general?",
         "replyType": [
@@ -432,8 +430,7 @@
                 "208312922",
                 "81658145",
                 "247943631"
-            ],
-            "value": ""
+            ]
         },
         "taxonomy": {
             "target": "single node",
@@ -447,7 +444,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -585,7 +583,7 @@
                 "nodeSizeAttr": "favourites_count",
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": null,
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -605,7 +603,6 @@
                 "edgeBars": true,
                 "sortKey": "favourites_count"
             },
-            "taskID": "task4",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -625,7 +622,7 @@
             "value": ""
         }
     },
-    "S-task4": {
+    "S-task04": {
         "hypothesis": "Distractor Effects Hypothesis",
         "prompt": "Find all of Lane's <span class='attribute'>European</span> Neighbors",
         "replyType": [
@@ -647,8 +644,7 @@
                 "36853217",
                 "15208867",
                 "40219508"
-            ],
-            "value": ""
+            ]
         },
         "taxonomy": {
             "target": "neighbors",
@@ -662,7 +658,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -790,7 +787,7 @@
                 "hoveredNodeColor": "#fde8ca"
             },
             "nodeLink": {
-                "drawBars": true,
+                "drawBars": false,
                 "selectNeighbors": true,
                 "nodeHeight": 40,
                 "nodeWidth": 40,
@@ -800,7 +797,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -820,7 +817,6 @@
                 "edgeBars": true,
                 "sortKey": "continent"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -839,7 +835,7 @@
             "value": ""
         }
     },
-    "S-task4A": {
+    "S-task05": {
         "hypothesis": "Distractor Effects Hypothesis",
         "prompt": "Find all of giCentre's <span class='attribute'>North American</span> Neighbors",
         "replyType": [
@@ -855,8 +851,7 @@
             ],
             "ids": [
                 "16112517"
-            ],
-            "value": ""
+            ]
         },
         "taxonomy": {
             "target": "neighbors",
@@ -870,7 +865,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -1008,7 +1004,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -1028,7 +1024,6 @@
                 "edgeBars": true,
                 "sortKey": "continent"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -1052,7 +1047,7 @@
             "value": ""
         }
     },
-    "S-task5": {
+    "S-task06": {
         "hypothesis": "Edge Attribute Hypothesis",
         "prompt": "Who had the <span class='attribute'>most mention interactions</span> with Jeffrey?",
         "replyType": [
@@ -1065,8 +1060,7 @@
             ],
             "id": [
                 "16112517"
-            ],
-            "value": ""
+            ]
         },
         "taxonomy": {
             "target": "neighbors",
@@ -1080,7 +1074,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -1218,7 +1213,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -1238,7 +1233,6 @@
                 "edgeBars": true,
                 "sortKey": "shortName"
             },
-            "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
             "isDirected": false,
             "isMultiEdge": true,
@@ -1256,15 +1250,13 @@
             "value": ""
         }
     },
-    "S-task6": {
+    "S-task07": {
         "hypothesis": "Topology plus Simple Attributes Hypothesis",
         "prompt": "Does Alex have <span class='attribute'>more mention</span> interactions with <span class='attribute'>North American or European</span> accounts?",
         "replyType": [
             "radio"
         ],
         "answerKey": {
-            "nodes": [],
-            "ids": [],
             "value": "European"
         },
         "taxonomy": {
@@ -1279,7 +1271,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -1417,7 +1410,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -1437,7 +1430,6 @@
                 "edgeBars": true,
                 "sortKey": "continent"
             },
-            "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
             "isDirected": false,
             "isMultiEdge": true,
@@ -1457,7 +1449,7 @@
             "value": ""
         }
     },
-    "S-task7": {
+    "S-task08": {
         "hypothesis": "Topology plus Simple Attributes Hypothesis, Common Neighbor Hypothesis",
         "prompt": "Among all people who have interacted with both Jeffrey and Robert, who has the <span class='attribute'>most followers</span>?",
         "replyType": [
@@ -1470,8 +1462,7 @@
             ],
             "ids": [
                 "1652270612"
-            ],
-            "value": ""
+            ]
         },
         "taxonomy": {
             "target": "neighbors",
@@ -1485,7 +1476,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -1619,11 +1611,11 @@
                 "nodeWidth": 40,
                 "labelSize": 12,
                 "labelAttr": "shortName",
-                "nodeFillAttr": "continent",
+                "nodeFillAttr": null,
                 "nodeSizeAttr": "followers_count",
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -1643,7 +1635,6 @@
                 "edgeBars": true,
                 "sortKey": "followers_count"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -1663,7 +1654,7 @@
             "value": ""
         }
     },
-    "S-task8": {
+    "S-task09": {
         "hypothesis": "Edge Attribute Hypothesis",
         "prompt": "What is the <span class='attribute' >most common form of interaction </span> between Evis19 and Jon? How often has this interaction happened?",
         "replyType": [
@@ -1671,8 +1662,8 @@
             "value"
         ],
         "answerKey": {
-            "nodes": [],
-            "value": "mentions"
+            "radio": "mentions",
+            "valule": "mentions"
         },
         "taxonomy": {
             "target": "neighbors",
@@ -1686,7 +1677,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -1824,7 +1816,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": "count",
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -1844,7 +1836,6 @@
                 "edgeBars": true,
                 "sortKey": "shortName"
             },
-            "taskID": "task4",
             "loadedGraph": "large_undirected_multiEdge",
             "isDirected": false,
             "isMultiEdge": true,
@@ -1862,8 +1853,8 @@
             "value": ""
         }
     },
-    "S-task9": {
-        "hypothesis": "Within Node Comparison Hypothesis, Small/Large Effect",
+    "S-task10": {
+        "hypothesis": "Within Node Comparison Hypothesis, Small/Large Network Hypothesis",
         "prompt": "Select all of Noeska’s neighbors that are <span class='attribute'>people</span> and have <span class='attribute'>more friends than followers</span>",
         "replyType": [
             "multipleNodeSelection"
@@ -1899,7 +1890,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -2037,7 +2029,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -2057,7 +2049,6 @@
                 "edgeBars": true,
                 "sortKey": "friends_count"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -2078,8 +2069,8 @@
             "value": ""
         }
     },
-    "S-task9A": {
-        "hypothesis": "Small/Large Network",
+    "S-task11": {
+        "hypothesis": "Small/Large Network Hypothesis",
         "prompt": "Select the <span class='attribute'>people</span> who have interacted with Thomas and have <span class='attribute'>more friends than followers</span>",
         "replyType": [
             "multipleNodeSelection"
@@ -2109,7 +2100,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -2247,7 +2239,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -2267,7 +2259,6 @@
                 "edgeBars": true,
                 "sortKey": "friends_count"
             },
-            "taskID": "task9A",
             "loadedGraph": "small_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -2288,9 +2279,9 @@
             "value": ""
         }
     },
-    "S-task11": {
+    "S-task12": {
         "hypothesis": "Cluster Hypothesis",
-        "prompt": "Select all the <span class='attribute'>people</span> who are in a cluster with Alex. Estimate the <span class='attribute'>average number of  likes</span> among the selected people.",
+        "prompt": "Select all the <span class='attribute'>people</span> who are in a cluster with Alex. Estimate the <span class='attribute'>average number of  followers</span> among the selected people.",
         "replyType": [
             "multipleNodeSelection",
             "value"
@@ -2315,7 +2306,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -2443,17 +2435,17 @@
                 "hoveredNodeColor": "#fde8ca"
             },
             "nodeLink": {
-                "drawBars": true,
+                "drawBars": false,
                 "selectNeighbors": true,
-                "nodeHeight": 40,
-                "nodeWidth": 40,
+                "nodeHeight": 30,
+                "nodeWidth": 30,
                 "labelSize": 12,
                 "labelAttr": "shortName",
-                "nodeFillAttr": "type",
+                "nodeFillAttr": null,
                 "nodeSizeAttr": "followers_count",
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -2473,8 +2465,7 @@
                 "edgeBars": true,
                 "sortKey": "clusterLeaf"
             },
-            "taskID": "task1",
-            "loadedGraph": "large_undirected_singleEdge",
+            "loadedGraph": "cluster",
             "isDirected": false,
             "isMultiEdge": false,
             "graphSize": "large",
@@ -2493,8 +2484,8 @@
             "value": ""
         }
     },
-    "S-task12": {
-        "hypothesis": "Path Hypothesis",
+    "S-task13": {
+        "hypothesis": "Path Hypothesis, Small/Large Network Hypothesis",
         "prompt": "Select all the <span class='attribute'>Europeans</span> on the shortest <span class='attribute'>path [3 nodes / 2 edges]</span> from Alex to Mandy [including Alex and Mandy].",
         "replyType": [
             "multipleNodeSelection"
@@ -2526,7 +2517,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -2664,7 +2656,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -2684,7 +2676,6 @@
                 "edgeBars": true,
                 "sortKey": "shortName"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -2703,8 +2694,8 @@
             "value": ""
         }
     },
-    "S-task12A": {
-        "hypothesis": "Path Hypothesis",
+    "S-task14": {
+        "hypothesis": "Path Hypothesis, Small/Large Network Hypothesis",
         "prompt": "Select all the <span class='attribute'>North Americans</span> on the shortest <span class='attribute'>path [3 nodes / 2 edges]</span> from Roeland to Micah [including Roeland and Micah].",
         "replyType": [
             "multipleNodeSelection"
@@ -2734,7 +2725,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -2872,7 +2864,7 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -2892,7 +2884,6 @@
                 "edgeBars": true,
                 "sortKey": "shortName"
             },
-            "taskID": "task1",
             "loadedGraph": "small_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,
@@ -2911,9 +2902,9 @@
             "value": ""
         }
     },
-    "S-task13": {
+    "S-task15": {
         "hypothesis": "Topology plus Simple Attribute Hypothesis",
-        "prompt": "Of the <span class='attribute'>North Americans</span> who are <span class='attribute'>within two interactions</span> of Sereno, who has <span class='attribute'>been on twitter the longest</span>?",
+        "prompt": "Of the <span class='attribute'>North Americans</span> who are <span class='attribute'>two interactions away</span> from Sereno, who has <span class='attribute'>been on twitter the longest</span>?",
         "replyType": [
             "singleNodeSelection"
         ],
@@ -2939,207 +2930,8 @@
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
                 "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
-            },
-            "attributeScales": {
-                "node": {
-                    "followers_count": {
-                        "label": "Followers",
-                        "domain": [
-                            0,
-                            1200
-                        ]
-                    },
-                    "friends_count": {
-                        "label": "Friends",
-                        "domain": [
-                            0,
-                            1200
-                        ]
-                    },
-                    "statuses_count": {
-                        "label": "Tweets",
-                        "domain": [
-                            0,
-                            5500
-                        ]
-                    },
-                    "count_followers_in_query": {
-                        "label": "In-Network followers",
-                        "domain": [
-                            0,
-                            35
-                        ]
-                    },
-                    "favourites_count": {
-                        "label": "Likes",
-                        "domain": [
-                            0,
-                            8000
-                        ]
-                    },
-                    "listed_count": {
-                        "label": "In Lists",
-                        "domain": [
-                            0,
-                            120
-                        ]
-                    },
-                    "memberFor_days": {
-                        "label": "Acct. Age",
-                        "domain": [
-                            175,
-                            4498
-                        ]
-                    },
-                    "query_tweet_count": {
-                        "label": "On-topic Tweets",
-                        "domain": [
-                            0,
-                            10
-                        ]
-                    },
-                    "type": {
-                        "label": "Type",
-                        "glyph": "circle",
-                        "domain": [
-                            "person",
-                            "institution"
-                        ],
-                        "legendLabels": [
-                            "Person",
-                            "Inst."
-                        ],
-                        "range": [
-                            "#e86b45",
-                            "#514ed9"
-                        ]
-                    },
-                    "continent": {
-                        "glyph": "square",
-                        "label": "Continent",
-                        "domain": [
-                            "North America",
-                            "South America",
-                            "Europe",
-                            "Asia"
-                        ],
-                        "legendLabels": [
-                            "NA",
-                            "SA",
-                            "EU",
-                            "AS"
-                        ],
-                        "range": [
-                            "#5ba3d0",
-                            "#7d6dcb",
-                            "#ce9333",
-                            "#6aa858"
-                        ]
-                    }
-                },
-                "edge": {
-                    "count": {
-                        "label": "# Interactions",
-                        "domain": [
-                            1,
-                            5
-                        ]
-                    },
-                    "type": {
-                        "label": "Edge Type",
-                        "domain": [
-                            "mentions",
-                            "retweet",
-                            "interacted"
-                        ],
-                        "range": [
-                            "#ff2700",
-                            "#008fd5",
-                            "rgb(91, 91, 91)"
-                        ]
-                    }
-                }
-            },
-            "style": {
-                "selectedNodeColor": "#e86b45",
-                "selectedEdgeColor": "#e86b45",
-                "hoveredNodeColor": "#fde8ca"
-            },
-            "nodeLink": {
-                "drawBars": true,
-                "selectNeighbors": true,
-                "nodeHeight": 50,
-                "nodeWidth": 50,
-                "labelSize": 12,
-                "labelAttr": "shortName",
-                "nodeFillAttr": "continent",
-                "nodeSizeAttr": null,
-                "edgeWidthAttr": null,
-                "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
-                "noNodeFill": "rgb(153, 191, 195)",
-                "noNodeStroke": "#c8c8c8",
-                "quantColors": [
-                    "#7b7cb1",
-                    "#01a068",
-                    "#bf8531",
-                    "#5472cf",
-                    "#4d8615",
-                    "#d63d61",
-                    "#ae76ed",
-                    "#f26336"
-                ]
-            },
-            "adjMatrix": {
-                "neighborHighlightColor": "",
-                "neighborSelect": true,
-                "edgeBars": true,
-                "sortKey": "continent"
-            },
-            "taskID": "task1",
-            "loadedGraph": "large_undirected_singleEdge",
-            "isDirected": false,
-            "isMultiEdge": false,
-            "graphSize": "large",
-            "nodeAttributes": [
-                "continent",
-                "memberFor_days"
-            ],
-            "edgeAttributes": [
-                "type"
-            ],
-            "adjMatrixValues": {},
-            "nodeIsRect": true
-        },
-        "answer": {
-            "nodes": [],
-            "value": ""
-        }
-    },
-    "S-taskExplore": {
-        "hypothesis": "Insight Generation Hypothesis",
-        "prompt": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network?  ",
-        "replyType": [
-            "text"
-        ],
-        "answerKey": {
-            "nodes": [],
-            "value": ""
-        },
-        "taxonomy": {
-            "target": "NA",
-            "type": "NA"
-        },
-        "config": {
-            "graphFiles": {
-                "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
-                "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
-                "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
-                "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
-                "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
-                "sample": "data/s_network_small_undirected_singleEdge.json"
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
             },
             "attributeScales": {
                 "node": {
@@ -3277,7 +3069,207 @@
                 "nodeSizeAttr": null,
                 "edgeWidthAttr": null,
                 "edgeStrokeAttr": "type",
-                "noEdgeColor": "black",
+                "noEdgeColor": "rgb(91, 91, 91)",
+                "noNodeFill": "rgb(153, 191, 195)",
+                "noNodeStroke": "#c8c8c8",
+                "quantColors": [
+                    "#7b7cb1",
+                    "#01a068",
+                    "#bf8531",
+                    "#5472cf",
+                    "#4d8615",
+                    "#d63d61",
+                    "#ae76ed",
+                    "#f26336"
+                ]
+            },
+            "adjMatrix": {
+                "neighborHighlightColor": "",
+                "neighborSelect": true,
+                "edgeBars": true,
+                "sortKey": "continent"
+            },
+            "loadedGraph": "large_undirected_singleEdge",
+            "isDirected": false,
+            "isMultiEdge": false,
+            "graphSize": "large",
+            "nodeAttributes": [
+                "continent",
+                "memberFor_days"
+            ],
+            "edgeAttributes": [
+                "type"
+            ],
+            "adjMatrixValues": {},
+            "nodeIsRect": true
+        },
+        "answer": {
+            "nodes": [],
+            "value": ""
+        }
+    },
+    "S-task16": {
+        "hypothesis": "Insight Generation Hypothesis",
+        "prompt": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network?  ",
+        "replyType": [
+            "text"
+        ],
+        "answerKey": {
+            "nodes": [],
+            "value": ""
+        },
+        "taxonomy": {
+            "target": "NA",
+            "type": "NA"
+        },
+        "config": {
+            "graphFiles": {
+                "small_directed_multiEdge": "data/network_small_directed_multiEdge.json",
+                "large_directed_multiEdge": "data/network_large_directed_multiEdge.json",
+                "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
+                "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
+                "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+                "sample": "data/s_network_small_undirected_singleEdge.json",
+                "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
+            },
+            "attributeScales": {
+                "node": {
+                    "followers_count": {
+                        "label": "Followers",
+                        "domain": [
+                            0,
+                            1200
+                        ]
+                    },
+                    "friends_count": {
+                        "label": "Friends",
+                        "domain": [
+                            0,
+                            1200
+                        ]
+                    },
+                    "statuses_count": {
+                        "label": "Tweets",
+                        "domain": [
+                            0,
+                            5500
+                        ]
+                    },
+                    "count_followers_in_query": {
+                        "label": "In-Network followers",
+                        "domain": [
+                            0,
+                            35
+                        ]
+                    },
+                    "favourites_count": {
+                        "label": "Likes",
+                        "domain": [
+                            0,
+                            8000
+                        ]
+                    },
+                    "listed_count": {
+                        "label": "In Lists",
+                        "domain": [
+                            0,
+                            120
+                        ]
+                    },
+                    "memberFor_days": {
+                        "label": "Acct. Age",
+                        "domain": [
+                            175,
+                            4498
+                        ]
+                    },
+                    "query_tweet_count": {
+                        "label": "On-topic Tweets",
+                        "domain": [
+                            0,
+                            10
+                        ]
+                    },
+                    "type": {
+                        "label": "Type",
+                        "glyph": "circle",
+                        "domain": [
+                            "person",
+                            "institution"
+                        ],
+                        "legendLabels": [
+                            "Person",
+                            "Inst."
+                        ],
+                        "range": [
+                            "#e86b45",
+                            "#514ed9"
+                        ]
+                    },
+                    "continent": {
+                        "glyph": "square",
+                        "label": "Continent",
+                        "domain": [
+                            "North America",
+                            "South America",
+                            "Europe",
+                            "Asia"
+                        ],
+                        "legendLabels": [
+                            "NA",
+                            "SA",
+                            "EU",
+                            "AS"
+                        ],
+                        "range": [
+                            "#5ba3d0",
+                            "#7d6dcb",
+                            "#ce9333",
+                            "#6aa858"
+                        ]
+                    }
+                },
+                "edge": {
+                    "count": {
+                        "label": "# Interactions",
+                        "domain": [
+                            1,
+                            5
+                        ]
+                    },
+                    "type": {
+                        "label": "Edge Type",
+                        "domain": [
+                            "mentions",
+                            "retweet",
+                            "interacted"
+                        ],
+                        "range": [
+                            "#ff2700",
+                            "#008fd5",
+                            "rgb(91, 91, 91)"
+                        ]
+                    }
+                }
+            },
+            "style": {
+                "selectedNodeColor": "#e86b45",
+                "selectedEdgeColor": "#e86b45",
+                "hoveredNodeColor": "#fde8ca"
+            },
+            "nodeLink": {
+                "drawBars": true,
+                "selectNeighbors": true,
+                "nodeHeight": 40,
+                "nodeWidth": 40,
+                "labelSize": 12,
+                "labelAttr": "shortName",
+                "nodeFillAttr": "continent",
+                "nodeSizeAttr": null,
+                "edgeWidthAttr": null,
+                "edgeStrokeAttr": "type",
+                "noEdgeColor": "rgb(91, 91, 91)",
                 "noNodeFill": "rgb(153, 191, 195)",
                 "noNodeStroke": "#c8c8c8",
                 "quantColors": [
@@ -3297,7 +3289,6 @@
                 "edgeBars": true,
                 "sortKey": "favourites_count"
             },
-            "taskID": "task1",
             "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
             "isMultiEdge": false,

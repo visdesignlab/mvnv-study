@@ -6,8 +6,8 @@
         "nodeWidth": 40,
         "labelSize": 12,
         "labelAttr": "shortName",
-        "nodeFillAttr": null,
-        "nodeSizeAttr": "followers_count",
+        "nodeFillAttr": "continent",
+        "nodeSizeAttr": null,
         "edgeWidthAttr": null,
         "edgeStrokeAttr": "type",
         "noEdgeColor": "black",
@@ -28,15 +28,14 @@
         "neighborHighlightColor": "",
         "neighborSelect": true,
         "edgeBars": true,
-        "sortKey": "shortName"
+        "sortKey": "continent"
     },
-    "taskID": "task1",
     "loadedGraph": "large_undirected_singleEdge",
     "isDirected": false,
     "isMultiEdge": false,
     "graphSize": "large",
     "nodeAttributes": [
-        "followers_count"
+        "continent"
     ],
     "edgeAttributes": [
         "type"

@@ -3,9 +3,9 @@
 (async ()=>{
 
     let taskLists = {
-      'trials':[],
-      'study':[],
-      'heuristics':[]
+      // 'trials':[],
+      'study':[]
+      // 'heuristics':[]
     };
 
     let baseConfig = await d3.json("configs/baseConfig.json");
