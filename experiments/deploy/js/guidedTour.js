@@ -709,7 +709,7 @@ function setupShepherd(vis,mode) {
 
       },
       {
-        title: "Highlight Neighbors ",
+        title: "Highlight Neighbors",
         text: "Selecting a node, whether through click or search, also highlights all of its neighbors",
         attachTo: {
           element: ".nodes",
@@ -737,7 +737,7 @@ function setupShepherd(vis,mode) {
         text: "You can drag nodes around to get a better sense of the structure of the network. <span class=instructions>Try dragging a few nodes around.</span>",
         attachTo: {
           element: ".nodes",
-          on: "top"
+          on: "left"
         },
         buttons: [
           {
@@ -784,7 +784,7 @@ function setupShepherd(vis,mode) {
       },
       {
         title: "Legend",
-        text: "The legend on the left shows what the bars and other icons represent. In this case, the bars represent the number of followers, and the number of friends, while the colored circles show if the node is a person or an institution.",
+        text: "The legend on the left shows what the bars and other icons represent. In this case, the bars represent the number of followers, and the number of friends, while the colored circles show if the node is a person or an institution.  <p> Note that '1.2k' (1.2 kilo) is a short form for 1200. </p>",
         attachTo: {
           element: "#legendDiv",
           on: "right"
