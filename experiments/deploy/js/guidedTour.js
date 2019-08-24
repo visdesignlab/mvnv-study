@@ -225,7 +225,7 @@ function setupShepherd(vis,mode) {
     const steps = [
       {
         title: "Highlighted Row",
-        text: "This has highlighted the row representing Judge.",
+        text: "This has highlighted the row representing Judge. It also highlights the cell where Judge's row intersects with his column with a black frame.",
         attachTo: {
           element: "#groupRow247943631",
           // element:'#Judge_group',
@@ -253,7 +253,7 @@ function setupShepherd(vis,mode) {
       },
       {
         title: "Highlighted Column ",
-        text: "As well as the Column",
+        text: "Every row has a corresponding column. When you highlight a row, the corresponding column is also highlighted. ",
         attachTo: {
           element: "#groupCol247943631",
           on: "right"
@@ -519,7 +519,7 @@ function setupShepherd(vis,mode) {
       },
       {
         title: "Clusters",
-        text: "The edges highlighted in orange connect the nodes in a cluster. You can generally idenitify clusters as closely placed groups of edges along the diagonal of the matrix.",
+        text: "The edges highlighted in orange connect the nodes in a cluster. You can generally identify clusters as groups of edges, meaning groups of filled in cells.",
         attachTo: {
           element: ".tourClusterWrapper",
           on: "right"

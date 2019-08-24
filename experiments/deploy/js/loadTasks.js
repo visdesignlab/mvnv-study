@@ -257,7 +257,7 @@ function checkAnswer(answer) {
             numAnswers +
             " of the answers, but " +
             (numSelections - numAnswers) +
-            "  extra nodes in there as well</span>";
+            "  extra node(s) in there as well</span>";
         } else {
           errorMsg =
             "Try again!  <span class='hint'>Here's a hint: You have " +

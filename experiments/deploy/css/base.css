@@ -67,7 +67,7 @@ div.tooltip {
     padding-left:0px;
 }
 
-.message-header p, .message-body{
+.message-header p, .message-body, .hint{
     white-space: normal;
 }
 
