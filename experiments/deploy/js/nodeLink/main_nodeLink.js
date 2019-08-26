@@ -1732,7 +1732,7 @@ function drawLegend() {
         return;
       }
       
-      
+
       showTooltip(d.value)
     })
   
@@ -1819,10 +1819,20 @@ function drawLegend() {
   let sizeCircles = node_link_legend
     .selectAll(".sizeCircles")
     //for each bar associate the relevant data from the parent node, and the attr name to use the correct scale
-    .data(d =>
-      d.domain.map(domain => {
+    .data(d =>{
+      let circleSizes = d.type === 'node' ? [d.domain[0], (d.domain[0]+d.domain[1])/2, d.domain[1]] : d.domain;
+
+      if (d.type == 'node'){
+        circleScale.domain([0,2])
+      }
+
+      return circleSizes.map(domain => {
         return { data: domain, type: d.type };
       })
+
+
+    }
+      
     );
 
   let sizeCirclesEnter = sizeCircles
@@ -1838,9 +1848,9 @@ function drawLegend() {
   sizeCircles = sizeCirclesEnter.merge(sizeCircles);
 
   sizeCircles.attr("transform", (d, i) => {
-    let radius = d.type === "node" ? 35 : d.type === "edgeType" ? 0 : 50;
+    let radius = d.type === "node" ? 15 : d.type === "edgeType" ? 0 : 50;
     let yOffset = d.type === "edgeType" ? 50 : 0;
-    return "translate(" + i * radius + "," + i * yOffset + ")";
+    return "translate(" + (i*radius+circleScale(i)) + "," + i * yOffset + ")";
   });
 
 
@@ -1858,6 +1868,7 @@ function drawLegend() {
       : circleScale(i)     
     )
     .attr("width", (d, i) => (d.type === "node" ? circleScale(i) : 30))
+    .attr('x',(d,i)=>circleScale(i)/2)
     .attr("y", (d, i) =>
       d.type === "node"
         ? findCenter(i) + 5
@@ -1878,17 +1889,17 @@ function drawLegend() {
       (d, i) =>
         "translate(" +
         (d.type === "node"
-          ? circleScale(i) / 2
+          ? circleScale(i)
           : d.type === "edgeWidth"
           ? edgeScale(i)
           : 0) +
         "," +
         (d.type === "edgeType"
-          ? circleScale.range()[1] / 2 + 20
-          : circleScale.range()[1] + 25) +
+          ? circleScale.range()[1] / 2 + 30
+          : circleScale.range()[1] + 35) +
         ")"
     )
-    .style("text-anchor", "start")
+    .style("text-anchor", d=>d.type == 'node' ? "middle" : "start")
     .style("font-weight", "bold");
 
   node_link_legend

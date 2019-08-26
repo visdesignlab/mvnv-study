@@ -568,7 +568,8 @@ d3.select("#nextTask").on("click", async () => {
       });
   }
 
-  updateStudyProvenance("ended task - submitted feedback");
+
+  updateStudyProvenance("ended task",{"taskID":taskList[currentTask].taskID});
 
   //increment current task;
   if (currentTask < taskList.length - 1) {
@@ -609,7 +610,7 @@ d3.select("#nextTask").on("click", async () => {
 });
 
 async function resetPanel() {
-  updateStudyProvenance("started Task");
+  updateStudyProvenance("started Task",{"taskID":taskList[currentTask].taskID});
 
   setCookie('onTask',currentTask);
   console.log('cTask is ', currentTask)

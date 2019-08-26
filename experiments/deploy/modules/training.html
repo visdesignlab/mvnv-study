@@ -30,22 +30,16 @@
 <script>
 
   (async function () {
-    updateStudyProvenance(' started training');
+    updateStudyProvenance('started training');
 
     setCookie('onPage','training');
 
     experimentr.hideNext()
 
     if (vis === undefined) {
-      console.log('before assign')
       await assignVisType();
     }
 
-    let src = vis === 'nodeLink' ? 'training/nodeLink-Training_small.mp4' :
-      'training/adjMatrix-Training_small.mp4'
-
-    //add correct link to video: 
-    // d3.select('#trainingVideo').select("source").attr('src', src)
 
     if (vis === 'nodeLink'){
       d3.select('#trainingVideoNodeLink').style('display', 'block')

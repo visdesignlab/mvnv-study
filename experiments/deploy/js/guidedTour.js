@@ -180,6 +180,7 @@ function setupShepherd(vis,mode) {
       buttons: [
         {
           action: function() {
+            updateStudyProvenance("exited tour");
             return this.cancel();
           },
           secondary: true,
@@ -205,6 +206,7 @@ function setupShepherd(vis,mode) {
       buttons: [
         {
           action: function() {
+            updateStudyProvenance("back");
             return this.back();
           },
           secondary: true,
@@ -236,6 +238,7 @@ function setupShepherd(vis,mode) {
             action: function() {
               //clear the search bar
               d3.select('.searchInput').property('value','')
+              updateStudyProvenance("back");
               window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
@@ -244,6 +247,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -261,6 +265,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -268,6 +273,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -286,6 +292,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               window.controller.model.provenance.goBackOneStep();
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -293,6 +300,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -315,6 +323,7 @@ function setupShepherd(vis,mode) {
             action: function() {
               d3.select("#search-input").property("value",'');
               d3.select("#search-input").property("value",'Judge');
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -337,6 +346,7 @@ function setupShepherd(vis,mode) {
             action: function() {
                unGroupRows();
               window.controller.model.provenance.goBackOneStep();
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -345,7 +355,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               unGroupRows();
-
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -366,17 +376,12 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               groupRows('neighbors',"tourNeighborGroup")
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
             text: "Back"
           }
-          // {
-          //   action: function() {
-          //     return this.next();
-          //   },
-          //   text: "Next"
-          // }
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
@@ -395,6 +400,7 @@ function setupShepherd(vis,mode) {
             action: function() {
               unGroupRows();
               // window.controller.view.sort('shortName');
+              updateStudyProvenance("back");
               window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
@@ -404,7 +410,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
              unGroupRows()
-
+             updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -424,6 +430,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               groupRows('neighbors',"tourNeighborGroup");
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -431,6 +438,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -449,6 +457,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               window.controller.view.sort('shortName');
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -456,6 +465,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -475,18 +485,13 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               window.controller.view.sort('shortName');
+              updateStudyProvenance("back");
               // window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
             secondary: true,
             text: "Back"
           }
-          //   {
-          //     action: function() {
-          //       return this.next();
-          //     },
-          //     text: "Next"
-          //   }
         ],
         id: "attaching"
       },
@@ -501,6 +506,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               window.controller.model.provenance.goBackOneStep();
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -510,6 +516,7 @@ function setupShepherd(vis,mode) {
             action: function() {
               groupRows('cluster','tourClusterWrapper')
               highlightCells();
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -530,6 +537,7 @@ function setupShepherd(vis,mode) {
               unGroupRows();
               unHighlightCells();
               window.controller.view.sort('shortName');
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -539,6 +547,7 @@ function setupShepherd(vis,mode) {
             action: function() {
               unGroupRows();
               unHighlightCells();
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -562,6 +571,7 @@ function setupShepherd(vis,mode) {
             action: function() {
               groupRows('cluster','tourClusterWrapper')
               highlightCells();
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -569,6 +579,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -590,6 +601,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               window.controller.model.provenance.goBackOneStep();
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -597,6 +609,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -617,17 +630,12 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               window.controller.model.provenance.goBackOneStep();
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
             text: "Back"
-          },
-          // {
-          //   action: function() {
-          //     return this.next();
-          //   },
-          //   text: "Next"
-          // }
+          }
         ],
         id: "attaching"
       },
@@ -642,6 +650,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               window.controller.model.provenance.goBackOneStep();
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -649,6 +658,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             secondary: true,
@@ -666,7 +676,6 @@ function setupShepherd(vis,mode) {
             action: function() {
               window.controller.model.provenance.reset();
               updateStudyProvenance("ended guided tour");
-
               return this.next();
             },
             secondary: true,
@@ -692,6 +701,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               d3.select('.searchInput').property('value','')
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -699,6 +709,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -718,6 +729,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -725,6 +737,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -742,6 +755,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -749,6 +763,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -766,6 +781,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -773,6 +789,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             secondary: true,
@@ -792,6 +809,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -800,7 +818,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               unGroupRows()
-
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -819,17 +837,12 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
             text: "Back"
           }
-          //   {
-          //     action: function() {
-          //       return this.next();
-          //     },
-          //     text: "Next"
-          //   }
         ],
         id: "attaching"
       },
@@ -843,6 +856,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -850,6 +864,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             secondary: true,
@@ -869,6 +884,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -876,6 +892,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             secondary: true,
@@ -919,6 +936,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("exited tour");
               return this.cancel();
             },
             secondary: true,
@@ -946,6 +964,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -953,6 +972,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -973,6 +993,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -981,7 +1002,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               unGroupRows()
-
+              updateStudyProvenance("next");
               return this.next();
             },
             text: "Next"
@@ -999,6 +1020,7 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
+              updateStudyProvenance("back");
               return this.back();
             },
             secondary: true,
@@ -1006,6 +1028,7 @@ function setupShepherd(vis,mode) {
           },
           {
             action: function() {
+              updateStudyProvenance("next");
               return this.next();
             },
             secondary: true,
@@ -1022,7 +1045,7 @@ function setupShepherd(vis,mode) {
           {
             action: function() {
               provenance.reset();
-              updateStudyProvenance("ended guided tour");
+              updateStudyProvenance("ended second guided tour");
 
               return this.next();
             },
