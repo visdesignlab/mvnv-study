@@ -649,7 +649,7 @@ function arcPath(leftHand, d, state = false) {
 
   
 
-  // if (config.isMultiEdge){
+  if (config.isMultiEdge){
     return (
       "M" +
       x1 +
@@ -672,10 +672,10 @@ function arcPath(leftHand, d, state = false) {
     );
 
 
-  // } else {
-  //   return (
-  //     'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
-  // }
+  } else {
+    return (
+      'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
+  }
 
   
 
@@ -812,6 +812,11 @@ function updateVis() {
           tooltipData = tooltipData.concat (" [" + d.count + "]")
         }
 
+        if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+          return;
+        }
+        
+
         showTooltip(tooltipData,400)
 
 
@@ -906,7 +911,11 @@ function updateVis() {
           tooltipData = tooltipData.concat(config.attributeScales.node[config.nodeLink.nodeSizeAttr].label + ":" + Math.round(d[config.nodeLink.nodeSizeAttr]) + " " )
         }
 
-        config.nodeLink.drawBars ? "" : showTooltip(tooltipData)
+        if (config.nodeLink.drawBars || d3.select(d3.select(this).node().parentNode).classed("muted")){
+          return;
+        }
+        
+        showTooltip(tooltipData)
       })
 
 
@@ -1074,6 +1083,11 @@ function updateVis() {
 
     bars.on("mouseover",function(d){
       let label = config.attributeScales.node[d.attr].label
+
+      if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+        return;
+      }
+      
       showTooltip(label + " : " + Math.round(d.data))
     })
   
@@ -1155,6 +1169,12 @@ function updateVis() {
     catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
     catGlyphs.on("mouseover",function(d){
+
+      if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+        return;
+      }
+      
+
       showTooltip(d.attr  + ":" + d.data)
     })
   
@@ -1595,6 +1615,12 @@ function drawLegend() {
   catGlyphs = catGlyphsEnter.merge(catGlyphs);
 
   catGlyphs.on("mouseover",function(d){
+
+    if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+      return;
+    }
+    
+
     showTooltip(d.value)
   })
 
@@ -1702,6 +1728,11 @@ function drawLegend() {
     .style("fill", "white");
 
     circles.on("mouseover",function(d){
+      if (d3.select(d3.select(this).node().parentNode).classed("muted")){
+        return;
+      }
+      
+      
       showTooltip(d.value)
     })
   
@@ -1782,6 +1813,8 @@ function drawLegend() {
   label = labelEnter.merge(label);
 
   label.text(d => d.label);
+
+  label.attr('y',-10 )
 
   let sizeCircles = node_link_legend
     .selectAll(".sizeCircles")
@@ -1865,7 +1898,7 @@ function drawLegend() {
     .text(d => d.label)
     // .text(d=>{return config.attributeScales.node[d.label].label})
     // .attr('x',circleScale(sizeAttributeValues[1]))
-    .attr("y", 0);
+    .attr("y", -10);
 
   //center group with circles;
   upperGroupElement = d3

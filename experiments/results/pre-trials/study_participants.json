@@ -1,0 +1,304 @@
+[{
+    "id": "5a791168f49c9a0001f31061",
+    "data": {
+        "completionCode": "swsY01",
+        "demographics": {
+            "age": "40-49",
+            "degree": "Masters",
+            "sex": "Male",
+            "vis_experience": "1"
+        },
+        "endTime": "Sun Aug 18 2019 06:19:00 GMT-0400 (Eastern Daylight Time)",
+        "feedback": {
+            "overall": "I felt like I was overwhelmed with trying to figure it out. I needed more time really try it out before being thrown into the deep end.",
+            "training": {
+                "explanation": "I needed it to be more showing to do it and less talking.",
+                "helpful": "1"
+            }
+        },
+        "minutesToComplete": 61.71666666666667,
+        "screenSize": {
+            "availHeight": 900,
+            "availWidth": 1600,
+            "colorDepth": 24,
+            "height": 900,
+            "pixelDepth": 24,
+            "width": 1600
+        },
+        "startTime": "Sun Aug 18 2019 05:17:17 GMT-0400 (Eastern Daylight Time)"
+    }
+}, {
+    "id": "5c21f91a867f660001ad4a2a",
+    "data": {
+        "completionCode": "6RrTgD",
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Sun Aug 18 2019 10:26:49 GMT+0300 (Israel Daylight Time)"
+    }
+}, {
+    "id": "5c27fe6047ec3c00012d6542",
+    "data": {
+        "completionCode": "664GZq",
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Sun Aug 18 2019 10:54:33 GMT+0300 (Θερινή ώρα Ανατολικής Ευρώπης)"
+    }
+}, {
+    "id": "5c4271f51b4bf300018b0920",
+    "data": {
+        "completionCode": "JP9P3P",
+        "demographics": {
+            "age": "18-25",
+            "degree": "High School",
+            "sex": "Male",
+            "vis_experience": "2"
+        },
+        "endTime": "Fri Aug 16 2019 20:58:59 GMT+0100 (Hora de verão da Europa Ocidental)",
+        "feedback": {
+            "overall": "Those images were to big so was a bit difficult to see some things and only saw them in the later tasks.",
+            "training": {
+                "explanation": "",
+                "helpful": "3"
+            }
+        },
+        "minutesToComplete": 30.916666666666668,
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Fri Aug 16 2019 20:28:04 GMT+0100 (Hora de verão da Europa Ocidental)"
+    }
+}, {
+    "id": "5c54e4d276146900011656c1",
+    "data": {
+        "completionCode": "QMhAcx",
+        "demographics": {
+            "age": "25-39",
+            "degree": "Masters",
+            "sex": "Male",
+            "vis_experience": "4"
+        },
+        "endTime": "Sun Aug 18 2019 09:45:52 GMT+0100 (Western European Summer Time)",
+        "feedback": {
+            "overall": "This was an interesting experiment, that is quite novel and hopefully helps us understand better how social media works.",
+            "training": {
+                "explanation": "They were somewhat useful, even though the scale was quite different in the actual tasks.",
+                "helpful": "5"
+            }
+        },
+        "minutesToComplete": 35.61666666666667,
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Sun Aug 18 2019 09:10:15 GMT+0100 (Western European Summer Time)"
+    }
+}, {
+    "id": "5c731ec1cbfa390001bab10b",
+    "data": {
+        "completionCode": "zREsxe",
+        "screenSize": {
+            "availHeight": 955,
+            "availWidth": 1680,
+            "colorDepth": 24,
+            "height": 1050,
+            "pixelDepth": 24,
+            "width": 1680
+        },
+        "startTime": "Fri Aug 16 2019 15:19:22 GMT-0400 (EDT)"
+    }
+}, {
+    "id": "5cf770915fd5830001d5a1a6",
+    "data": {
+        "completionCode": "ytohqd",
+        "demographics": {
+            "age": "25-39",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "3"
+        },
+        "endTime": "Sun Aug 18 2019 09:31:29 GMT+0300 (Israel Daylight Time)",
+        "feedback": {
+            "overall": "Good and quality test. all worked very good!",
+            "training": {
+                "explanation": "",
+                "helpful": "7"
+            }
+        },
+        "minutesToComplete": 36.916666666666664,
+        "screenSize": {
+            "availHeight": 1112,
+            "availWidth": 2048,
+            "colorDepth": 24,
+            "height": 1152,
+            "pixelDepth": 24,
+            "width": 2048
+        },
+        "startTime": "Sun Aug 18 2019 08:54:34 GMT+0300 (Israel Daylight Time)"
+    }
+}, {
+    "id": "Dylan",
+    "data": {
+        "completionCode": "FB4A65",
+        "demographics": {
+            "age": "18-25",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "7"
+        },
+        "endTime": "Thu Aug 15 2019 16:23:55 GMT-0600 (Mountain Daylight Time)",
+        "feedback": {
+            "overall": "AM seems half-baked... ",
+            "training": {
+                "explanation": "I was in love with those videos :)! ",
+                "helpful": "7"
+            }
+        },
+        "minutesToComplete": 31.983333333333334,
+        "screenSize": {
+            "availHeight": 1057,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Thu Aug 15 2019 15:51:56 GMT-0600 (Mountain Daylight Time)"
+    }
+}, {
+    "id": "Jen",
+    "data": {
+        "completionCode": "vfgIok",
+        "demographics": {
+            "age": "25-39",
+            "degree": "Masters",
+            "sex": "Female",
+            "vis_experience": "5"
+        },
+        "endTime": "Tue Aug 13 2019 16:44:51 GMT-0600 (Mountain Daylight Time)",
+        "feedback": {
+            "overall": "I think it looks good! I had the most trouble with the clusters. Maybe add more description into the help section on the extend of the clusters. Because the cluster questions did not have the same highlight interaction as the rest of the questions I am thinking that was on purpose? It left me wanting that functionality though. ",
+            "training": {
+                "explanation": "I think more description in the help tab would be useful! The video is really well made but because it covers a lot of information in the beginning and there was no sound (unless that was a bug on my side?) I had trouble thinking back to everything in the video.",
+                "helpful": "6"
+            }
+        },
+        "minutesToComplete": 41.7,
+        "screenSize": {
+            "availHeight": 1097,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1200,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Tue Aug 13 2019 16:03:09 GMT-0600 (Mountain Daylight Time)"
+    }
+}, {
+    "id": "jimmy",
+    "data": {
+        "completionCode": "Pm63Yu",
+        "demographics": {
+            "age": "25-39",
+            "degree": "Masters",
+            "sex": "Male",
+            "vis_experience": "7"
+        },
+        "endTime": "Tue Aug 13 2019 14:26:32 GMT-0600 (Mountain Daylight Time)",
+        "feedback": {
+            "overall": "I guess it's my fault for not really knowing what this was testing.  Some of these questions were harder than others and I'm assuming it's down exploring different encoding and searching techniques.  Hope this was helpful! x_x",
+            "training": {
+                "explanation": "I only had one training example and it did not cover all the interaction types and techniques used in the tutorial",
+                "helpful": "3"
+            }
+        },
+        "minutesToComplete": 46.983333333333334,
+        "screenSize": {
+            "availHeight": 877,
+            "availWidth": 1440,
+            "colorDepth": 24,
+            "height": 900,
+            "pixelDepth": 24,
+            "width": 1440
+        },
+        "startTime": "Tue Aug 13 2019 13:39:33 GMT-0600 (Mountain Daylight Time)"
+    }
+}, {
+    "id": "jochen",
+    "data": {
+        "completionCode": "JeNaTP",
+        "demographics": {
+            "age": "25-39",
+            "degree": "Masters",
+            "sex": "Male",
+            "vis_experience": "5"
+        },
+        "endTime": "Tue Aug 13 2019 14:40:19 GMT-0600 (Mountain Daylight Time)",
+        "feedback": {
+            "overall": "Some of these questions are really hard!",
+            "training": {
+                "explanation": "",
+                "helpful": "3"
+            }
+        },
+        "minutesToComplete": 45.416666666666664,
+        "screenSize": {
+            "availHeight": 1177,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1200,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Tue Aug 13 2019 13:54:54 GMT-0600 (Mountain Daylight Time)"
+    }
+}, {
+    "id": "jwilburn",
+    "data": {
+        "completionCode": "tp4LMs",
+        "demographics": {
+            "age": "18-25",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "6"
+        },
+        "endTime": "Wed Aug 14 2019 10:39:11 GMT-0600 (Mountain Daylight Time)",
+        "feedback": {
+            "overall": "Being able to sort by 2 variables would be a great improvement. Also, having the sorts persist into the next sort would help a little too.",
+            "training": {
+                "explanation": "They gave a good foundation for how to complete the tasks. I struggled doing the network traversals so including that in the training may be useful (although I'm sure it's a limitation of the adjacency matrix vs the network graph)",
+                "helpful": "6"
+            }
+        },
+        "minutesToComplete": 55.9,
+        "screenSize": {
+            "availHeight": 1035,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Wed Aug 14 2019 09:43:17 GMT-0600 (Mountain Daylight Time)"
+    }
+}]

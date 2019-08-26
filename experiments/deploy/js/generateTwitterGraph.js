@@ -3,7 +3,7 @@
 (async function() {
   let smallGraphPosName = 'smallGraphPos.json';
 
-  let largeGraphs = ['s_network_large_undirected_singleEdge.json','s_network_large_undirected_multiEdge.json','s_network_large_directed_multiEdge.json']
+  let largeGraphs = ['network_large_undirected_singleEdge.json','network_large_undirected_multiEdge.json','network_large_directed_multiEdge.json']
   
   largeGraphs.map(async graphName=>{
     let largeGraph = await d3.json("data/" + graphName);
@@ -23,11 +23,12 @@
 
     // debugger
 
-    saveToFile(smallGraph, graphName.replace('large','small'));
+    // saveToFile(smallGraph, graphName.replace('large','small'));
 
   })
-})
-// ();
+})();
+
+
 
 // create large graphs
 (async function() {
@@ -37,12 +38,15 @@
 
   tweets = tweets.tweets;
 
-  let nodes = await d3.json("data/raw/sample_curated_info.json");
+  // let nodes = await d3.json("data/raw/sample_curated_info.json");
+  let nodes = await d3.json("data/raw/curated_info.json");
 
   let config = await d3.json("configs/baseConfig.json");
 
   // let mds = await d3.json("data/raw/largeGraphVisone.json");
-  let mds = await d3.json("data/raw/sample_manual_pos.json");
+  // let mds = await d3.json("data/raw/sample_manual_pos.json");
+  let mds = await d3.json("data/raw/large_manual_pos.json");
+
 
   
   // let mds = await d3.json("data/raw/smallGraphVisone.json")
@@ -204,6 +208,25 @@
             }
           });
 
+          //Manually add Edges; 
+
+        
+          newEdges = [{source:201277609, target:1652270612, type:'retweet'}, //edge between sample nodes
+        {source:40219508,target:19283433,type:'mention'}, //edge between Noeska and giCentre
+        {source:40219508,target:10414152,type:'mention'}, //edge between Noeska and Lane
+        // {source:40219508,target:30009655,type:'retweet'}, //edge between Noeska and James
+        // {source:40219508,target:201277609,type:'retweet'}, //edge between Noeska and Jon
+        {source:40219508,target:81658145,type:'mention'}]; //edge between Alex and Noeska
+
+          newEdges.map(edge=>{
+            let source = graph.nodes.find(n => n.id === edge.source);
+            let target = graph.nodes.find(
+              n => n.id === edge.target
+            );
+
+            createEdge(source, target, edge.type);
+          })
+
           //adjust node data that falls outside of the domains established in the config file;
           Object.keys(config.attributeScales.node).map(attr => {
             let scale = config.attributeScales.node[attr];
@@ -246,7 +269,7 @@
             "_" +
             (hasEdgeTypes ? "multiEdge" : "singleEdge") +
             ".json";
-          saveToFile(newGraph, filename);
+          // saveToFile(newGraph, filename);
         }
       });
     });
@@ -268,6 +291,8 @@
 })();
 
 function saveToFile(data, filename) {
+
+  console.log( 'saving ', filename)
   if (!data) {
     console.error("Console.save: No data");
     return;

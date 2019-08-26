@@ -5,7 +5,9 @@
         "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
         "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
         "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-        "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+        "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+        "sample": "data/s_network_small_undirected_singleEdge.json",
+        "cluster": "data/network_large_undirected_singleEdge_cytoscape.json"
     },
     "attributeScales": {
         "node": {
@@ -38,7 +40,7 @@
                 ]
             },
             "favourites_count": {
-                "label":"Liked",
+                "label":"Likes",
                 "domain": [
                     0,
                     8000
@@ -131,7 +133,7 @@
         "hoveredNodeColor": "#fde8ca"
     },
     "nodeLink": {
-        "noEdgeColor": "black",
+        "noEdgeColor": "rgb(91, 91, 91)",
         "noNodeFill": "rgb(153, 191, 195)",
         "noNodeStroke": "#c8c8c8",
         "quantColors":["#7b7cb1",

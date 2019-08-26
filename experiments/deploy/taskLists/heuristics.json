@@ -12,7 +12,8 @@
                 "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+                "sample": "data/s_network_small_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -45,7 +46,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -206,7 +207,8 @@
                 "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+                "sample": "data/s_network_small_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -239,7 +241,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -399,7 +401,8 @@
                 "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+                "sample": "data/s_network_small_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -432,7 +435,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000
@@ -600,7 +603,8 @@
                 "small_undirected_multiEdge": "data/network_small_undirected_multiEdge.json",
                 "large_undirected_multiEdge": "data/network_large_undirected_multiEdge.json",
                 "small_undirected_singleEdge": "data/network_small_undirected_singleEdge.json",
-                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json"
+                "large_undirected_singleEdge": "data/network_large_undirected_singleEdge.json",
+                "sample": "data/s_network_small_undirected_singleEdge.json"
             },
             "attributeScales": {
                 "node": {
@@ -633,7 +637,7 @@
                         ]
                     },
                     "favourites_count": {
-                        "label": "Liked",
+                        "label": "Likes",
                         "domain": [
                             0,
                             8000

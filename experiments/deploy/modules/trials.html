@@ -26,10 +26,12 @@
     <section class="modal-card-body">
       <div class="content">
 
-        <p>In this section, you will get familiar with the visualization by answering four practice tasks.
-          You will only be allowed to proceed once you have
-          answered those questions correctly to make sure that you understand the encodings and how to
-          interact with the visualization. </p>
+        <p>In this section, you will get familiar with the visualization by following a guided tour of
+          the visualization, and then answering two practice tasks.</p>
+
+          <p>
+          <strong>You will only be allowed to proceed once you have
+          answered those questions correctly.</strong> </p>
 
         <p>You are not being timed for this portion of the study so take your time!</p>
 
@@ -44,16 +46,29 @@
 
 <script>
   //turn on 'welcome modal' 
-  d3.select('.modalStartTrials').classed('is-active', true);
+ 
+  console.log(getCookie('onPage'))
+  if (getCookie('onPage') === 'trials'){
+    startTrials();
+  } else {
+    d3.select('.modalStartTrials').classed('is-active', true);
+  }
   experimentr.hideNext()
 
+  setCookie('onPage','trials');
 
-  d3.select('#startTrials').on('click', async function () {
 
+  d3.select('#startTrials').on('click', startTrials);
+
+  async function startTrials(){
     d3.select('.modalStartTrials').classed('is-active', false);
 
 
     onTrials = true;
+
+    if (vis === undefined){
+      assignVisType();
+    }
 
     await loadTasks(vis, 'trials');
 
@@ -121,7 +136,5 @@
       }
 
     })
-
-
-  });
+  }
 </script>

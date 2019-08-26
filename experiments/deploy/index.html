@@ -26,19 +26,12 @@
 <script src="libs/provenance.min.js"></script>
 <script src="libs/experimentr.js"></script>
 
-<!-- <script src="js/carousel-js.js"></script> -->
-
-<filter id="shadow" x="0" y="0" width="200%" height="200%">
-        <feDropShadow dx="40" dy="40" stdDeviation="35" flood-color="#ff0000" flood-opacity="1" />
-      </filter>
-      
-
 <!-- <script src="https://d3js.org/d3.v5.min.js" type="text/javascript"></script> -->
 <script src="libs/d3.min.js" type="text/javascript"></script>
 
 
 <!-- Helper scripts to generate graphs and complete task Configurations -->
-<!-- <script src="js/generateTwitterGraph.js" type="text/javascript"></script> -->
+<script src="js/generateTwitterGraph.js" type="text/javascript"></script>
 <script src="js/createTaskConfig.js" type="text/javascript"></script>
 
 
@@ -67,33 +60,35 @@
 
                                     <p class="card-header-title" id="taskDefinition">
                                         <span class="task">Task: </span><span class="taskText"> </span>
-                                        <div class="progressBar"><progress class="progress is-small" value="4" max="8"></progress></div>
+                                        <div class="progressBar"><progress class="progress is-small" value="4"
+                                                max="8"></progress></div>
 
                                     </p>
-                                  
+
                                 </div>
 
                                 <div class="card">
                                     <div class="card-content">
                                         <div class="content">
-                                            <div >
+                                            <div>
 
-                
+
 
                                                 <span id="searchArea">
-                                                        <input class="input searchInput" type="text"
+                                                    <input class="input searchInput" type="text"
                                                         placeholder="Search for node" id="search-input"></input>
-                                                    <a class="button is-pulled-right search" id="searchButton">Search</a>
+                                                    <a class="button is-pulled-right search"
+                                                        id="searchButton">Search</a>
                                                 </span>
                                                 <!-- <label class="label">Search for Nodes</label> -->
-                                              
+
                                                 <p class='searchMsg errorMsg'></p>
 
                                                 <a class="button" id="clear-selection">Clear Highlighted Nodes</a>
 
                                             </div>
 
-                     
+
 
                                         </div>
 
@@ -144,6 +139,22 @@
 
                                             </span>
 
+                                            <span id="radioAnswer">
+                                                <label><strong>Select Answer Below</strong></label>
+                                                <br />
+                                                <div class="control">
+                                                    <!-- <label class="radio opt1">
+                                                        <input type="radio" name="edgeType" value="">
+                                                        <span class='radioLabel'></span>
+                                                    </label>
+                                                    <label class="radio opt2">
+                                                        <input type="radio" name="edgeType" value="">
+                                                        <span class='radioLabel'></span>
+                                                    </label> -->
+                                                </div>
+                                                <p class='errorMsg' style=display:none></p>
+                                            </span>
+
                                             <span id="valueAnswer">
                                                 <label><strong>Enter Answer Below</strong></label>
                                                 <br />
@@ -155,13 +166,18 @@
 
 
                                             <span id="textAnswer">
-                                                    <label><strong>Enter Findings Below</strong></label>
-                                                    <br />
-                                                    <textarea class="textarea" placeholder="Describe your findings." rows="10" id="freeFormAnswer"></textarea>
+                                                <label><strong>Enter Findings Below</strong></label>
+                                                <br />
+                                                <textarea class="textarea" placeholder="Describe your findings."
+                                                    rows="10" id="freeFormAnswer"></textarea>
 
-                                                    <br />
-                                                    <p class='errorMsg' style=display:none></p>
-                                                </span>
+                                                <br />
+                                                <p class='errorMsg' style=display:none></p>
+                                            </span>
+
+
+
+
 
 
                                         </div>
@@ -192,7 +208,7 @@
                                 </header>
                                 <div class="card-content">
                                     <div class="content">
-                                            <!-- <article class="message is-link">
+                                        <!-- <article class="message is-link">
                                                     <div class="message-header">
                                                       <p>Link</p>
                                                       <button class="delete" aria-label="delete"></button>
@@ -653,10 +669,13 @@
             <section class="modal-card-body">
                 <div class="content">
 
-                    <p>You will be presented with <strong>16 tasks</strong> in <em>random order of difficulty</em>. The
-                        survey should take approximately 45 minutes to complete</p>
+                    <p>You will be presented with <strong>16 tasks</strong> in <strong>random order of
+                            difficulty</strong>. </p>
 
-                        <p> Let's get started! </p>
+
+                    <p>The survey should take approximately 45 minutes to complete</p>
+
+                    <p> Let's get started! </p>
 
 
                 </div>
@@ -667,7 +686,7 @@
             </footer>
         </div>
     </div>
-    
+
 </body>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -686,7 +705,6 @@
     function getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&*#]*)/gi, function (m, key, value) {
-            console.log(key, value)
             vars[key] = value;
         });
         return vars;
@@ -750,109 +768,181 @@
 
     participantCollection = mode + '_participants';
 
-    //remove ui components that are not relevant
-    if (!configPanel) {
-        d3.selectAll('.development').remove();
-    }
+    let reload = false;
 
-    if (!taskMenu) {
-        d3.select('.taskMenu').remove();
-    }
+    (async function () {
+
+        //if this is a reload, refresh global workerID variable: 
+        if (getCookie('workerID').length > 0) {
+            reload = true;
+            workerID = getCookie('workerID');
+        }
+
+        //remove ui components that are not relevant
+        if (!configPanel) {
+            d3.selectAll('.development').remove();
+        }
+
+        if (!taskMenu) {
+            d3.select('.taskMenu').remove();
+        }
 
 
-    //connect to firestore;
-    fireStore.connect();
+        if (track) {
+            //connect to firestore;
+            fireStore.connect();
+            if (reload){
+                await setUpStudyProvenance('reloaded page');
+            }
+           
+        }
 
-    let sequence;
 
-    switch (mode) {
-        case 'heuristics':
-            workerID = makeid(6);
-            break;
-        case 'develop':
-            workerID = 'DevelopUser';
-            break;
-        case 'test':
-            workerID = 'TestUser';
-            break;
-    }
+        let sequence;
 
-   
- 
+        switch (mode) {
+            case 'heuristics':
+                workerID = makeid(6);
+                break;
+            case 'develop':
+                workerID = 'DevelopUser';
+                break;
+            case 'test':
+                workerID = 'TestUser';
+                break;
+        }
 
-    //set up  user on firestore to track answers and usage;
-    if (track) {
 
-        if (mode !== 'study') {
 
-               //start tracking user interaction with study_provenance
+
+        //set up  user on firestore to track answers and usage;
+        if (track) {
+
+            if (mode !== 'study') {
+
+                //start tracking user interaction with study_provenance
                 setUpStudyProvenance(mode + ' - started');
 
-            let screenSize = {
-                availWidth: window.screen.availWidth,
-                availHeight: window.screen.availHeight,
-                width: window.screen.width,
-                height: window.screen.height,
-                colorDepth: window.screen.colorDepth,
-                pixelDepth: window.screen.pixelDepth
-            };
+                let screenSize = {
+                    availWidth: window.screen.availWidth,
+                    availHeight: window.screen.availHeight,
+                    width: window.screen.width,
+                    height: window.screen.height,
+                    colorDepth: window.screen.colorDepth,
+                    pixelDepth: window.screen.pixelDepth
+                };
 
-            db.collection(participantCollection).doc(workerID).set({
-                screenSize,
-                completionCode: makeid(6),
-                startTime:new Date().toString()
-            }, {
-                merge: true
-            });
+                db.collection(participantCollection).doc(workerID).set({
+                    screenSize,
+                    completionCode: makeid(6),
+                    startTime: new Date().toString()
+                }, {
+                    merge: true
+                });
+            }
         }
-    } else {
-        //add prolific specific parameters to database
-        db.collection(participantCollection).doc(workerID).set({
-                PROLIFIC_PID,
-                STUDY_ID,
-                SESSION_ID
-            }, {
-                merge: true
-            });
-    }
+
+        let repeatVisitor;
 
 
-    switch (mode) {
-        case 'heuristics':
-            sequence = [
-                'modules/hit.html',
-                'modules/submit.html'
-            ];
-            break;
-        case 'study':
-            sequence = [
-                'modules/consent.html',
-                'modules/training.html',
-                'modules/trials.html',
-                'modules/hit.html',
-                'modules/submit.html'
-            ]
-            break;
-        case 'test':
+        switch (mode) {
+            case 'heuristics':
+                sequence = [
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ];
+                break;
+            case 'study':
+                //check if the user has completed any tasks already;
+                repeatVisitor = getCookie('onPage');
 
-            sequence = ['modules/training.html'];
+                sequence = [
+                    'modules/consent.html',
+                    'modules/training.html',
+                    'modules/trials.html',
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ];
+                console.log('repeatVisitor', repeatVisitor)
 
-            sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
+                if (repeatVisitor) {
+                    let onPage = getCookie('onPage');
 
-            sequence = sequence.concat([
-                'modules/hit.html',
-                'modules/submit.html'
-            ])
-            break;
-        case 'develop':
+                    switch (onPage) {
+                        case ('training'):
+                            sequence.shift();
+                            break;
+                        case ('trials'):
+                            sequence.shift();
+                            sequence.shift();
+                            break;
+                        case ('hit'):
+                            sequence.shift();
+                            sequence.shift();
+                            sequence.shift();
+                            break;
 
-            sequence = trials ? ['modules/trials.html'] : [];
+                    }
+                }
 
-            sequence = sequence.concat([
-                'modules/hit.html',
-                'modules/submit.html'
-            ])
-    }
+                break;
+            case 'test':
+                //check if the user has completed any tasks already;
+                repeatVisitor = getCookie('onPage');
+                console.log('repeatVisitor', repeatVisitor)
 
-    experimentr.sequence(sequence).start();
+                sequence = [
+                    'modules/training.html',
+                    'modules/trials.html',
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ];
+
+                if (repeatVisitor) {
+                    let onPage = getCookie('onPage');
+
+
+                    switch (onPage) {
+                        case ('training'):
+                            // sequence.shift();
+                            break;
+                        case ('trials'):
+                            console.log('here')
+                            // sequence.shift();
+                            sequence.shift();
+                            break;
+                        case ('hit'):
+                            // sequence.shift();
+                            sequence.shift();
+                            sequence.shift();
+                            break;
+
+                    }
+
+                }
+                break;
+
+                //     sequence = []; //['modules/training.html'];
+
+                //     sequence = trials ? sequence.concat(['modules/trials.html']) : sequence;
+
+                //     sequence = sequence.concat([
+                //         'modules/hit.html',
+                //         'modules/submit.html'
+                //     ])
+                //     break;
+            case 'develop':
+
+                sequence = trials ? ['modules/trials.html'] : [];
+
+                sequence = sequence.concat([
+                    'modules/hit.html',
+                    'modules/submit.html'
+                ]);
+                break;
+        }
+
+        console.log('sequence is ', sequence)
+        experimentr.sequence(sequence).start();
+    })();
 </script>

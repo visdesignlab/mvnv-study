@@ -31,7 +31,7 @@
         "sortKey": "followers_count"
     },
     "taskID": "trialTask2",
-    "loadedGraph": "small_undirected_singleEdge",
+    "loadedGraph": "sample",
     "isDirected": false,
     "isMultiEdge": false,
     "graphSize": "small",

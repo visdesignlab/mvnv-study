@@ -2,8 +2,8 @@ var shepherd;
 
 var neighborRows = [];
 
-function welcome(vis) {
-  shepherd = setupShepherd(vis);
+function welcome(vis,mode) {
+  shepherd = setupShepherd(vis,mode);
 
   if (vis === "adjMatrix") {
     //set up a group wrapper for the sortIcon so as to not override the native click handler for the sort icon.
@@ -15,7 +15,7 @@ function welcome(vis) {
     //callback for when user clicks on Judge Label
     d3.select("#tourColLabel247943631").on("click", () => {
       if (shepherd.isActive()) {
-        groupRows();
+        groupRows('neighbors',"tourNeighborGroup");
         shepherd.next();
       }
     });
@@ -32,7 +32,7 @@ function welcome(vis) {
       if (shepherd.isActive()) {
         //slight timeout to give the sort time to do it's rearranging of rows
         setTimeout(function() {
-          groupRows();
+          groupRows('neighbors',"tourNeighborGroup");
           shepherd.next();
         }, 100);
       }
@@ -42,22 +42,56 @@ function welcome(vis) {
   shepherd.start();
 }
 
-function groupRows(vis) {
+
+function unGroupRows(){
+  let parentSelector =
+  vis === "nodeLink" ? ".nodes" : "#edgeMargin";
+
+neighborRows.map(n => {
+  let neighbor = document.querySelector(n.selector);
+  d3.select(parentSelector)
+    .node()
+    .insertBefore(neighbor, n.insertBefore);
+});
+
+}
+
+function highlightCells(){
+
+  let ids = ["81658145","30009655","201277609","1652270612","16112517"] ;
+  let cellIDs=[];
+  
+  ids.map(source=>{
+    ids.map(target=>{
+      cellIDs.push('#cell'+source + '_' + target);
+      cellIDs.push('#cell'+target + '_' + source);
+    })
+  })
+
+  cellIDs.map(id=>{
+    d3.select(id).classed('clusterSelected',true);
+  })
+}
+
+function unHighlightCells(){
+  d3.selectAll('.clusterSelected').classed('clusterSelected',false);
+}
+function groupRows(mode,className) {
   let parentSelector = vis === "nodeLink" ? ".nodes" : "#edgeMargin";
 
-  let group = d3.select(".tourNeighborGroup");
+  let group = d3.select("." + className);
   if (group.size() === 0) {
     group = d3
       .select(parentSelector)
       .append("g")
-      .attr("class", "tourNeighborGroup");
+      .attr("class",className);
     //move to before gridlines;
     document
       .querySelector(parentSelector)
       .insertBefore(group.node(), document.querySelector(".gridLines"));
   }
 
-  let neighbors = [
+  let neighbors = mode === 'neighbors' ? [
     "#groupRow318046158",
     "#groupRow1652270612",
     "#groupRow136400506",
@@ -65,7 +99,8 @@ function groupRows(vis) {
     "#groupRow1873322353",
     "#groupRow19299318",
     "#groupRow2873695769"
-  ];
+  ] : ["#groupRow81658145","#groupRow30009655","#groupRow201277609","#groupRow1652270612"] ;
+  // "#groupCol81658145", "#groupCol30009655","#groupCol201277609","#groupCol1652270612"];
 
   let neighborFlag = false;
   d3.selectAll(".row").each(function(d, i) {
@@ -94,7 +129,7 @@ function groupRows(vis) {
   });
 }
 
-function setupShepherd(vis) {
+function setupShepherd(vis,mode) {
   //   var prefix = "demo-";
 
 
@@ -119,52 +154,7 @@ function setupShepherd(vis) {
     },
     // classPrefix: prefix,
     // This should add the first tour step
-    steps: [
-      {
-        title: "Task Definition",
-        text: "This is the task that you will be answering.",
-        attachTo: {
-          element: ".taskCard",
-          on: "right"
-        },
-        buttons: [
-          {
-            action: function() {
-              return this.cancel();
-            },
-            secondary: true,
-            text: "Exit"
-          },
-          {
-            action: function() {
-              return this.next();
-            },
-            text: "Next"
-          }
-        ],
-        id: "welcome"
-      },
-      {
-        title: "Searching for a Node",
-        text: "You can search for any node by name. <span class='instructions'>Try searching for Judge</span>",
-        attachTo: {
-          element: ".searchInput",
-          on: "bottom"
-        },
-        buttons: [
-          {
-            action: function() {
-              return this.back();
-            },
-            secondary: true,
-            text: "Back"
-          }
-        ],
-        id: "creating",
-        modalOverlayOpeningPadding: "10"
-      }
-    ],
-
+    steps: [],
     useModalOverlay: true,
     styleVariables: {
       // arrowSize:2.5,
@@ -178,6 +168,58 @@ function setupShepherd(vis) {
       overlayOpacity: 0.25
     }
   });
+
+  let introSteps = [
+    {
+      title: "Task Definition",
+      text: "This area contains the task you will be answering.",
+      attachTo: {
+        element: ".taskCard",
+        on: "right"
+      },
+      buttons: [
+        {
+          action: function() {
+            return this.cancel();
+          },
+          secondary: true,
+          text: "Exit"
+        },
+        {
+          action: function() {
+            updateStudyProvenance("started guided tour");
+            return this.next();
+          },
+          text: "Next"
+        }
+      ],
+      id: "welcome"
+    },
+    {
+      title: "Searching for a Node",
+      text: "You can search for any node by name. <span class='instructions'>Try searching for Judge</span>",
+      attachTo: {
+        element: ".searchInput",
+        on: "bottom"
+      },
+      buttons: [
+        {
+          action: function() {
+            return this.back();
+          },
+          secondary: true,
+          text: "Back"
+        }
+      ],
+      id: "creating",
+      modalOverlayOpeningPadding: "10"
+    }
+  ];
+
+  //don't add introSteps for 'bubble' mode
+  if (mode === undefined){
+    shepherd.addSteps(introSteps);
+  }
 
   if (vis === "adjMatrix") {
     const steps = [
@@ -234,6 +276,34 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
+        title: "Un-highlighting a search result",
+        text: "To un-highlight nodes that are highlighted through search, click on the black outlined cell at the intersection of that node's row and column. <span class=instructions> Try it here to unselect Judge's row and column</span>",
+        attachTo: {
+          element: "#cell247943631_247943631",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              window.controller.model.provenance.goBackOneStep();
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "5"
+
+      },
+
+      {
         title: "Highlighting Neighbors",
         text: "<span class=instructions> Highlight judge's neighbors by clicking on the column label </span>",
         attachTo: {
@@ -243,6 +313,8 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              d3.select("#search-input").property("value",'');
+              d3.select("#search-input").property("value",'Judge');
               return this.back();
             },
             secondary: true,
@@ -263,16 +335,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              let parentSelector =
-              vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-            neighborRows.map(n => {
-              let neighbor = document.querySelector(n.selector);
-              d3.select(parentSelector)
-                .node()
-                .insertBefore(neighbor, n.insertBefore);
-            });
-
+               unGroupRows();
               window.controller.model.provenance.goBackOneStep();
               return this.back();
             },
@@ -281,15 +344,7 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
-              let parentSelector =
-                vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-              neighborRows.map(n => {
-                let neighbor = document.querySelector(n.selector);
-                d3.select(parentSelector)
-                  .node()
-                  .insertBefore(neighbor, n.insertBefore);
-              });
+              unGroupRows();
 
               return this.next();
             },
@@ -310,7 +365,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              groupRows(vis)
+              groupRows('neighbors',"tourNeighborGroup")
               return this.back();
             },
             secondary: true,
@@ -338,15 +393,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              let parentSelector =
-              vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-            neighborRows.map(n => {
-              let neighbor = document.querySelector(n.selector);
-              d3.select(parentSelector)
-                .node()
-                .insertBefore(neighbor, n.insertBefore);
-            });
+              unGroupRows();
               // window.controller.view.sort('shortName');
               window.controller.model.provenance.goBackOneStep();
               return this.back();
@@ -356,15 +403,7 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
-              let parentSelector =
-                vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-              neighborRows.map(n => {
-                let neighbor = document.querySelector(n.selector);
-                d3.select(parentSelector)
-                  .node()
-                  .insertBefore(neighbor, n.insertBefore);
-              });
+             unGroupRows()
 
               return this.next();
             },
@@ -384,7 +423,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              groupRows(vis);
+              groupRows('neighbors',"tourNeighborGroup");
               return this.back();
             },
             secondary: true,
@@ -425,32 +464,6 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
-        title: "Sorting",
-        text: "You can also sort based on the node names [alphabetically] or clusters in the graph.<span class=instructions>Try sorting by cluster, then by name. </span>",
-        attachTo: {
-          element: ".tourSortWrapper",
-          on: "right"
-        },
-        buttons: [
-          {
-            action: function() {
-              window.controller.view.sort('shortName');
-              return this.back();
-            },
-            secondary: true,
-            text: "Back"
-          },
-          {
-            action: function() {
-              return this.next();
-            },
-            text: "Next"
-          }
-        ],
-        id: "attaching"
-      },
-
-      {
         title: "Clearing Highlights",
         text:
           " <span class='instructions'>Clear all highlights by clicking on the 'Clear Highlighted Nodes' to the left</span> ",
@@ -478,6 +491,66 @@ function setupShepherd(vis) {
         id: "attaching"
       },
       {
+        title: "Sorting",
+        text: "You can also sort based on the node names [alphabetically] or clusters in the graph.<span class=instructions>Try sorting by cluster! </span>",
+        attachTo: {
+          element: ".tourSortWrapper",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              window.controller.model.provenance.goBackOneStep();
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              groupRows('cluster','tourClusterWrapper')
+              highlightCells();
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+<<<<<<< HEAD
+
+=======
+>>>>>>> 7e71de7152d14d2b5917e105d72e0e5426ec453d
+      {
+        title: "Clusters",
+        text: "The edges highlighted in orange connect the nodes in a cluster. You can generally idenitify clusters as closely placed groups of edges along the diagonal of the matrix.",
+        attachTo: {
+          element: ".tourClusterWrapper",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              unGroupRows();
+              unHighlightCells();
+              window.controller.view.sort('shortName');
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              unGroupRows();
+              unHighlightCells();
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },      
+      {
         title: "Edge Hover ",
         text:
           "<span class=instructions>Hover over a cell (the edge)  to highlight both the row and the column intersecting at the cell.</span> " +
@@ -491,7 +564,8 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
-              window.controller.model.provenance.goBackOneStep();
+              groupRows('cluster','tourClusterWrapper')
+              highlightCells();
               return this.back();
             },
             secondary: true,
@@ -594,7 +668,12 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+<<<<<<< HEAD
               // window.controller.model.provenance.reset();
+=======
+              window.controller.model.provenance.reset();
+              updateStudyProvenance("ended guided tour");
+>>>>>>> 7e71de7152d14d2b5917e105d72e0e5426ec453d
 
               return this.next();
             },
@@ -608,7 +687,7 @@ function setupShepherd(vis) {
     ];
 
     shepherd.addSteps(steps);
-  } else {
+  } else if (vis === 'nodeLink' && mode === undefined) {
     const steps = [
       {
         title: "Highlighted Node",
@@ -620,6 +699,7 @@ function setupShepherd(vis) {
         buttons: [
           {
             action: function() {
+              d3.select('.searchInput').property('value','')
               return this.back();
             },
             secondary: true,
@@ -637,7 +717,7 @@ function setupShepherd(vis) {
 
       },
       {
-        title: "Highlight Neighbors ",
+        title: "Highlight Neighbors",
         text: "Selecting a node, whether through click or search, also highlights all of its neighbors",
         attachTo: {
           element: ".nodes",
@@ -665,7 +745,7 @@ function setupShepherd(vis) {
         text: "You can drag nodes around to get a better sense of the structure of the network. <span class=instructions>Try dragging a few nodes around.</span>",
         attachTo: {
           element: ".nodes",
-          on: "top"
+          on: "left"
         },
         buttons: [
           {
@@ -712,7 +792,7 @@ function setupShepherd(vis) {
       },
       {
         title: "Legend",
-        text: "The legend on the left shows what the bars and other icons represent. In this case, the bars represent the number of followers, and the number of friends, while the colored circles show if the node is a person or an institution.",
+        text: "The legend on the left shows what the bars and other icons represent. In this case, the bars represent the number of followers, and the number of friends, while the colored circles show if the node is a person or an institution.  <p> Note that '1.2k' (1.2 kilo) is a short form for 1200. </p>",
         attachTo: {
           element: "#legendDiv",
           on: "right"
@@ -727,15 +807,7 @@ function setupShepherd(vis) {
           },
           {
             action: function() {
-              let parentSelector =
-                vis === "nodeLink" ? ".nodes" : "#edgeMargin";
-
-              neighborRows.map(n => {
-                let neighbor = document.querySelector(n.selector);
-                d3.select(parentSelector)
-                  .node()
-                  .insertBefore(neighbor, n.insertBefore);
-              });
+              unGroupRows()
 
               return this.next();
             },
@@ -823,11 +895,12 @@ function setupShepherd(vis) {
       },
       {
         title: "And you're ready!",
-        text: "Thanks for taking the tour, you are ready to start the practice tasks!",
+        text: "Thanks for taking this tour, you are ready to start the practice tasks!",
         buttons: [
           {
             action: function() {
               provenance.reset();
+              updateStudyProvenance("ended guided tour");
 
               return this.next();
             },
@@ -842,28 +915,134 @@ function setupShepherd(vis) {
 
     shepherd.addSteps(steps);
 
-    // This should add steps after the ones added with `addSteps`
-    // shepherd.addStep({
-    //   title: "Centered Shepherd Element",
-    //   text:
-    //     'But attachment is totally optional!\n       Without a target, a tour step will create an element that\'s centered within the view.       Check out the <a href="https://shepherdjs.dev/docs/">documentation</a> to learn more.',
-    //   buttons: [
-    //     {
-    //       action: function() {
-    //         return this.back();
-    //       },
-    //       secondary: true,
-    //       text: "Back"
-    //     },
-    //     {
-    //       action: function() {
-    //         return this.next();
-    //       },
-    //       text: "Next"
-    //     }
-    //   ],
-    //   id: "centered-example"
-    // });
+  } else if (vis === 'nodeLink' && mode === 'bubbles'){
+    steps = [
+      {
+        title: "Colored and Sized Nodes",
+        text: "You will also see representations of this network where color and size are used to encode attributes.",
+        attachTo: {
+          element: ".nodes",
+          on: "left"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.cancel();
+            },
+            secondary: true,
+            text: "Exit"
+          },
+          {
+            action: function() {
+              updateStudyProvenance("started second guided tour");
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+
+      },
+      {
+        title: "Highlight Neighbors ",
+        text: "Just as with the previous task, clicking on a node [outside of its label] highlights the node as well as all of its neighbors. <span class='instructions'>Try it out!</span>",
+        attachTo: {
+          element: "#Judge_group",
+          on: "left"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+      {
+        title: "Legend",
+        text: "<p>The legend on the left shows what the color and size of the nodes represent.</p> " +  
+        
+        "<p>In this case, the color represents the continent of origin. <span class='instructions'>You can hover over the legend labels to see the full names.</span> </p> " + 
+        " <p>The size is proportional to the the number of followers.</p>",
+        attachTo: {
+          element: "#legendDiv",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              unGroupRows()
+
+              return this.next();
+            },
+            text: "Next"
+          }
+        ],
+        id: "attaching"
+      },
+      {
+        title: "Answer Box",
+        text: "Answers that require a numeric or string value, provide an input text box such as this one.",
+        attachTo: {
+          element: ".answerCard",
+          on: "right"
+        },
+        buttons: [
+          {
+            action: function() {
+              return this.back();
+            },
+            secondary: true,
+            text: "Back"
+          },
+          {
+            action: function() {
+              return this.next();
+            },
+            secondary: true,
+            text: "Next"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+      },      
+      {
+        title: "And you're ready!",
+        text: "Thanks for taking this second tour, you are ready to take your last practice task!",
+        buttons: [
+          {
+            action: function() {
+              provenance.reset();
+              updateStudyProvenance("ended guided tour");
+
+              return this.next();
+            },
+            secondary: true,
+            text: "Let's Get Started"
+          }
+        ],
+        id: "attaching",
+        modalOverlayOpeningPadding: "10"
+      }
+    ];
+    shepherd.addSteps(steps);
   }
 
   return shepherd;
