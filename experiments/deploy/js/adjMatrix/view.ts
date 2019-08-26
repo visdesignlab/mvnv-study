@@ -472,16 +472,26 @@ class View {
         horizontalOffset = temp;
       }
 
-      this.edgeColumns.append('path').attr('id', d => 'sortIcon' + d[0].rowid).attr('class', 'sortIcon').attr('pointer-events', 'bounding-box')
-        .attr('d', (d) => { return this.controller.model.icons['cellSort'].d; })
-        .style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
-        .on('click', (d, i, nodes) => {
+      let edgeSortGlyphs = this.edgeColumns/*.append('g')
+      edgeSortGlyphs.append('rect')
+        .attr('fill-opacity',1)
+        .attr('x',horizontalOffset*scale)
+        .attr('y',verticalOffset*scale)
+        .attr('width',this.orderingScale.bandwidth()/1.2)
+        .attr('height',this.orderingScale.bandwidth()/1.2)
+        .attr('fill','pink')//.attr('cursor','pointer')
 
+      edgeSortGlyphs*/.append('path')
+      .attr('id', d => 'sortIcon' + d[0].rowid)
+      .attr('class', 'sortIcon').style('pointer-events', 'bounding-box')
+        .attr('d', (d) => { return this.controller.model.icons['cellSort'].d; })
+        .style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' })
+        .attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
+      //edgeSortGlyphs
+        .on('click', (d, i, nodes) => {
           let action = this.generateSortAction(d[0].rowid);
           this.controller.model.provenance.applyAction(action);
           pushProvenance(this.controller.model.app.currentState())
-
-
         }).attr('cursor', 'pointer')
         .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
         .on('mouseover', (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) });

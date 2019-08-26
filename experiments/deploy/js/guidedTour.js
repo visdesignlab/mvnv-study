@@ -28,7 +28,7 @@ function welcome(vis) {
     })
 
     //callback for when user clicks on Judge sort
-    d3.select(".tourLabelGroup").on("click", () => {
+    d3.select(".tourLabelGroup").attr('pointer-events','bounding-box').on("click", () => {
       if (shepherd.isActive()) {
         //slight timeout to give the sort time to do it's rearranging of rows
         setTimeout(function() {
@@ -449,7 +449,7 @@ function setupShepherd(vis) {
         ],
         id: "attaching"
       },
-      
+
       {
         title: "Clearing Highlights",
         text:
@@ -587,7 +587,7 @@ function setupShepherd(vis) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      }, 
+      },
       {
         title: "And you're ready!",
         text: "Thanks for taking the tour, you are ready to begin the practice tasks!",
@@ -595,7 +595,7 @@ function setupShepherd(vis) {
           {
             action: function() {
               // window.controller.model.provenance.reset();
-              
+
               return this.next();
             },
             secondary: true,
@@ -820,7 +820,7 @@ function setupShepherd(vis) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      },      
+      },
       {
         title: "And you're ready!",
         text: "Thanks for taking the tour, you are ready to start the practice tasks!",

@@ -381,9 +381,23 @@ var View = /** @class */ (function () {
                 verticalOffset = horizontalOffset;
                 horizontalOffset = temp;
             }
-            this.edgeColumns.append('path').attr('id', function (d) { return 'sortIcon' + d[0].rowid; }).attr('class', 'sortIcon').attr('pointer-events', 'bounding-box')
+            var edgeSortGlyphs = this.edgeColumns /*.append('g')
+            edgeSortGlyphs.append('rect')
+              .attr('fill-opacity',1)
+              .attr('x',horizontalOffset*scale)
+              .attr('y',verticalOffset*scale)
+              .attr('width',this.orderingScale.bandwidth()/1.2)
+              .attr('height',this.orderingScale.bandwidth()/1.2)
+              .attr('fill','pink')//.attr('cursor','pointer')
+      
+            edgeSortGlyphs*/
+                .append('path')
+                .attr('id', function (d) { return 'sortIcon' + d[0].rowid; })
+                .attr('class', 'sortIcon').style('pointer-events', 'bounding-box')
                 .attr('d', function (d) { return _this.controller.model.icons['cellSort'].d; })
-                .style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
+                .style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; })
+                .attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
+                //edgeSortGlyphs
                 .on('click', function (d, i, nodes) {
                 var action = _this.generateSortAction(d[0].rowid);
                 _this.controller.model.provenance.applyAction(action);
