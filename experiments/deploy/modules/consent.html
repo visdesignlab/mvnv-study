@@ -53,7 +53,8 @@
 
             <p>
                 Please enter your Worker ID to confirm you have read and agree to this document: </p>
-            <strong>You may only complete this survey, or the companion survey, once.</strong> Subsequent completions cannot be accepted:
+            <strong>You may only complete this survey, or the companion survey, once.</strong> Subsequent completions
+            cannot be accepted:
 
 
             <input class="input" type="text" placeholder="Enter Worker Id" id="workerId" name="workerId" size="30" />
@@ -113,6 +114,7 @@
             workers = null;
         init();
 
+
         function init() {
             experimentr.hideNext();
             d3.select('#workerId').attr('disabled', null);
@@ -147,7 +149,10 @@
                 //start tracking user interaction with study_provenance
                 await setUpStudyProvenance('signed consent form');
 
+                let browserInfo = detectBrowser();
+
                 db.collection(participantCollection).doc(workerID).set({
+                    browserInfo,
                     screenSize,
                     completionCode: makeid(6),
                     startTime: new Date().toString(),
@@ -202,4 +207,6 @@
         }
 
     }());
+
+   
 </script>
