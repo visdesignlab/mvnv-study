@@ -60,7 +60,7 @@ function highlightCells(){
 
   let ids = ["81658145","30009655","201277609","1652270612","16112517"] ;
   let cellIDs=[];
-  
+
   ids.map(source=>{
     ids.map(target=>{
       cellIDs.push('#cell'+source + '_' + target);
@@ -517,10 +517,6 @@ function setupShepherd(vis,mode) {
         ],
         id: "attaching"
       },
-<<<<<<< HEAD
-
-=======
->>>>>>> 7e71de7152d14d2b5917e105d72e0e5426ec453d
       {
         title: "Clusters",
         text: "The edges highlighted in orange connect the nodes in a cluster. You can generally idenitify clusters as closely placed groups of edges along the diagonal of the matrix.",
@@ -549,7 +545,7 @@ function setupShepherd(vis,mode) {
           }
         ],
         id: "attaching"
-      },      
+      },
       {
         title: "Edge Hover ",
         text:
@@ -668,12 +664,9 @@ function setupShepherd(vis,mode) {
         buttons: [
           {
             action: function() {
-<<<<<<< HEAD
-              // window.controller.model.provenance.reset();
-=======
+
               window.controller.model.provenance.reset();
               updateStudyProvenance("ended guided tour");
->>>>>>> 7e71de7152d14d2b5917e105d72e0e5426ec453d
 
               return this.next();
             },
@@ -970,9 +963,9 @@ function setupShepherd(vis,mode) {
       },
       {
         title: "Legend",
-        text: "<p>The legend on the left shows what the color and size of the nodes represent.</p> " +  
-        
-        "<p>In this case, the color represents the continent of origin. <span class='instructions'>You can hover over the legend labels to see the full names.</span> </p> " + 
+        text: "<p>The legend on the left shows what the color and size of the nodes represent.</p> " +
+
+        "<p>In this case, the color represents the continent of origin. <span class='instructions'>You can hover over the legend labels to see the full names.</span> </p> " +
         " <p>The size is proportional to the the number of followers.</p>",
         attachTo: {
           element: "#legendDiv",
@@ -1022,7 +1015,7 @@ function setupShepherd(vis,mode) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      },      
+      },
       {
         title: "And you're ready!",
         text: "Thanks for taking this second tour, you are ready to take your last practice task!",

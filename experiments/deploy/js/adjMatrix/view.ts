@@ -1693,8 +1693,15 @@ class View {
     // Add headers
 
 
+    let attributeNames = Object.keys(this.controller.configuration.attributeScales.node);
+    let attributeLabels = Object.values(this.controller.configuration.attributeScales.node).map(obj=>obj.label);
+    this.columnNames = {};
+    for(let i = 0; i < attributeNames.length; i++){
+      this.columnNames[attributeNames[i]] = attributeLabels[i];
+    }
+    this.columnNames['selected'] = 'Answer';
 
-    this.columnNames = {
+    /*this.columnNames = {
       "followers_count": "Followers",
       "query_tweet_count": "On-Topic Tweets", // not going to be used (how active this person was on the conference)
       "friends_count": "Friends",
@@ -1706,7 +1713,7 @@ class View {
       "memberFor_days": "Account Age",
       "listed_count": "In Lists",
       "selected": "Answer"
-    }
+    }*/
     let that = this;
     function calculateMaxChars(numColumns) {
       switch (numColumns) {

@@ -1422,19 +1422,26 @@ var View = /** @class */ (function () {
             .attr("y2", this.attributeHeight + this.margins.bottom)
             .attr('stroke-opacity', 0.4);
         // Add headers
-        this.columnNames = {
-            "followers_count": "Followers",
-            "query_tweet_count": "On-Topic Tweets",
-            "friends_count": "Friends",
-            "statuses_count": "Tweets",
-            "favourites_count": "Liked Tweets",
-            "count_followers_in_query": "In-Network Followers",
-            "continent": "Continent",
-            "type": "Type",
-            "memberFor_days": "Account Age",
-            "listed_count": "In Lists",
-            "selected": "Answer"
-        };
+        var attributeNames = Object.keys(this.controller.configuration.attributeScales.node);
+        var attributeLabels = Object.values(this.controller.configuration.attributeScales.node).map(function (obj) { return obj.label; });
+        this.columnNames = {};
+        for (var i = 0; i < attributeNames.length; i++) {
+            this.columnNames[attributeNames[i]] = attributeLabels[i];
+        }
+        this.columnNames['selected'] = 'Answer';
+        /*this.columnNames = {
+          "followers_count": "Followers",
+          "query_tweet_count": "On-Topic Tweets", // not going to be used (how active this person was on the conference)
+          "friends_count": "Friends",
+          "statuses_count": "Tweets",
+          "favourites_count": "Liked Tweets",
+          "count_followers_in_query": "In-Network Followers",
+          "continent": "Continent",
+          "type": "Type",
+          "memberFor_days": "Account Age",
+          "listed_count": "In Lists",
+          "selected": "Answer"
+        }*/
         var that = this;
         function calculateMaxChars(numColumns) {
             switch (numColumns) {
