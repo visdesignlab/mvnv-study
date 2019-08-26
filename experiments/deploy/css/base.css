@@ -63,6 +63,10 @@ div.tooltip {
     overflow-y:scroll;
 }
 
+
+#ageDiv{
+    width:150px;
+}
 #easyLabel{
     padding-left:0px;
 }
@@ -85,7 +89,7 @@ div.tooltip {
     overflow-y:scroll;
 }
 
-.taskMenu .button{
+.taskMenu .button, #codeBox .button, #submitFeedback{
     padding:10px 10px;
     color:white;
     background-color:#4285f4;
