@@ -1756,9 +1756,11 @@ class View {
       .attr('height', 20)
       .attr('y', 0)
       .attr('x', 0)
-      .attr('fill', 'none')
+      .attr('fill-opacity',0)
+      /*.attr('fill', 'none')*/
       .attr('stroke', 'lightgray')
       .attr('stroke-width', 1)
+      .attr('stroke-opacity', 1)
 
     columnHeaderGroups
       .append('text')
