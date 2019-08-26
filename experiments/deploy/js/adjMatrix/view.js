@@ -1459,6 +1459,14 @@ var View = /** @class */ (function () {
             .enter()
             .append('g')
             .attr('transform', function (d) { return 'translate(' + (_this.columnScale(d)) + ',' + (-65) + ')'; });
+        columnHeaderGroups.on('click', function (d) {
+            if (d !== 'selected') {
+                var action = _this.generateSortAction(d);
+                _this.controller.model.provenance.applyAction(action);
+                pushProvenance(_this.controller.model.app.currentState());
+                //this.sort(d);
+            }
+        }).attr('cursor', 'pointer').attr('pointer-events', 'bounding-box');
         columnHeaderGroups
             .append('rect')
             .attr('width', function (d) { return _this.columnWidths[d]; })
@@ -1499,25 +1507,14 @@ var View = /** @class */ (function () {
         })
             .on('mouseout', function (d) {
             that.tooltip.transition().duration(250).style("opacity", 0);
-        })
-            .on('click', function (d) {
-            if (d !== 'selected') {
-                var action = _this.generateSortAction(d);
-                _this.controller.model.provenance.applyAction(action);
-                pushProvenance(_this.controller.model.app.currentState());
-                //this.sort(d);
-            }
         });
         columnHeaderGroups;
         if (columns.length < 6) {
             var path = columnHeaderGroups.filter(function (d) { return d !== 'selected'; }).append('path').attr('class', 'sortIcon').attr('d', function (d) {
                 var variable = _this.isCategorical(d) ? 'categorical' : 'quant';
                 return _this.controller.model.icons[variable].d;
-            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', function (d, i, nodes) {
-                var action = _this.generateSortAction(d);
-                _this.controller.model.provenance.applyAction(action);
-                pushProvenance(_this.controller.model.app.currentState());
-            }).attr('cursor', 'pointer');
+            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")")
+                .attr('cursor', 'pointer');
         }
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('font-weight', 650);

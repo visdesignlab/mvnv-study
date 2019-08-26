@@ -1732,11 +1732,23 @@ class View {
     //this.createColumnHeaders();
     let columnHeaders = this.attributes.append('g')
       .classed('column-headers', true)
+
+
     let columnHeaderGroups = columnHeaders.selectAll('.header')
       .data(columns)
       .enter()
       .append('g')
       .attr('transform', (d) => 'translate(' + (this.columnScale(d)) + ',' + (-65) + ')')
+
+    columnHeaderGroups.on('click', (d) => {
+        if (d !== 'selected') {
+          let action = this.generateSortAction(d);
+          this.controller.model.provenance.applyAction(action);
+          pushProvenance(this.controller.model.app.currentState())
+          //this.sort(d);
+        }
+      }).attr('cursor','pointer').attr('pointer-events','bounding-box');
+
 
     columnHeaderGroups
       .append('rect')
@@ -1783,25 +1795,15 @@ class View {
       .on('mouseout', function(d) {
         that.tooltip.transition().duration(250).style("opacity", 0);
       })
-      .on('click', (d) => {
-        if (d !== 'selected') {
-          let action = this.generateSortAction(d);
-          this.controller.model.provenance.applyAction(action);
-          pushProvenance(this.controller.model.app.currentState())
-          //this.sort(d);
-        }
-      })
+
 
     columnHeaderGroups
     if (columns.length < 6) {
       let path = columnHeaderGroups.filter(d => { return d !== 'selected' }).append('path').attr('class', 'sortIcon').attr('d', (d) => {
         let variable = this.isCategorical(d) ? 'categorical' : 'quant'
         return this.controller.model.icons[variable].d;
-      }).style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', (d, i, nodes) => {
-        let action = this.generateSortAction(d);
-        this.controller.model.provenance.applyAction(action);
-        pushProvenance(this.controller.model.app.currentState())
-      }).attr('cursor', 'pointer');
+      }).style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")")
+      .attr('cursor', 'pointer');
     }
 
 
