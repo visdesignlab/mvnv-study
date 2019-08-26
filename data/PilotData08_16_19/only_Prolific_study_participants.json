@@ -1,0 +1,44 @@
+[{
+  "id": "5c4271f51b4bf300018b0920",
+  "data": {
+    "completionCode": "JP9P3P",
+    "demographics": {
+      "age": "18-25",
+      "degree": "High School",
+      "sex": "Male",
+      "vis_experience": "2"
+    },
+    "endTime": "Fri Aug 16 2019 20:58:59 GMT+0100 (Hora de verão da Europa Ocidental)",
+    "feedback": {
+      "overall": "Those images were to big so was a bit difficult to see some things and only saw them in the later tasks.",
+      "training": {
+        "explanation": "",
+        "helpful": "3"
+      }
+    },
+    "minutesToComplete": 30.916666666666668,
+    "screenSize": {
+      "availHeight": 1040,
+      "availWidth": 1920,
+      "colorDepth": 24,
+      "height": 1080,
+      "pixelDepth": 24,
+      "width": 1920
+    },
+    "startTime": "Fri Aug 16 2019 20:28:04 GMT+0100 (Hora de verão da Europa Ocidental)"
+  }
+}, {
+  "id": "5c731ec1cbfa390001bab10b",
+  "data": {
+    "completionCode": "zREsxe",
+    "screenSize": {
+      "availHeight": 955,
+      "availWidth": 1680,
+      "colorDepth": 24,
+      "height": 1050,
+      "pixelDepth": 24,
+      "width": 1680
+    },
+    "startTime": "Fri Aug 16 2019 15:19:22 GMT-0400 (EDT)"
+  }
+}]

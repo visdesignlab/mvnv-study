@@ -28,7 +28,7 @@ function welcome(vis,mode) {
     })
 
     //callback for when user clicks on Judge sort
-    d3.select(".tourLabelGroup").on("click", () => {
+    d3.select(".tourLabelGroup").attr('pointer-events','bounding-box').on("click", () => {
       if (shepherd.isActive()) {
         //slight timeout to give the sort time to do it's rearranging of rows
         setTimeout(function() {
@@ -60,7 +60,7 @@ function highlightCells(){
 
   let ids = ["81658145","30009655","201277609","1652270612","16112517"] ;
   let cellIDs=[];
-  
+
   ids.map(source=>{
     ids.map(target=>{
       cellIDs.push('#cell'+source + '_' + target);
@@ -554,7 +554,7 @@ function setupShepherd(vis,mode) {
           }
         ],
         id: "attaching"
-      },      
+      },
       {
         title: "Edge Hover ",
         text:
@@ -667,13 +667,14 @@ function setupShepherd(vis,mode) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      }, 
+      },
       {
         title: "And you're ready!",
         text: "Thanks for taking the tour, you are ready to begin the practice tasks!",
         buttons: [
           {
             action: function() {
+
               window.controller.model.provenance.reset();
               updateStudyProvenance("ended guided tour");
               return this.next();
@@ -901,7 +902,7 @@ function setupShepherd(vis,mode) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      },      
+      },
       {
         title: "And you're ready!",
         text: "Thanks for taking this tour, you are ready to start the practice tasks!",
@@ -982,9 +983,9 @@ function setupShepherd(vis,mode) {
       },
       {
         title: "Legend",
-        text: "<p>The legend on the left shows what the color and size of the nodes represent.</p> " +  
-        
-        "<p>In this case, the color represents the continent of origin. <span class='instructions'>You can hover over the legend labels to see the full names.</span> </p> " + 
+        text: "<p>The legend on the left shows what the color and size of the nodes represent.</p> " +
+
+        "<p>In this case, the color represents the continent of origin. <span class='instructions'>You can hover over the legend labels to see the full names.</span> </p> " +
         " <p>The size is proportional to the the number of followers.</p>",
         attachTo: {
           element: "#legendDiv",
@@ -1037,7 +1038,7 @@ function setupShepherd(vis,mode) {
         ],
         id: "attaching",
         modalOverlayOpeningPadding: "10"
-      },      
+      },
       {
         title: "And you're ready!",
         text: "Thanks for taking this second tour, you are ready to take your last practice task!",

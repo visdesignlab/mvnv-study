@@ -472,16 +472,26 @@ class View {
         horizontalOffset = temp;
       }
 
-      this.edgeColumns.append('path').attr('id', d => 'sortIcon' + d[0].rowid).attr('class', 'sortIcon').attr('pointer-events', 'bounding-box')
-        .attr('d', (d) => { return this.controller.model.icons['cellSort'].d; })
-        .style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
-        .on('click', (d, i, nodes) => {
+      let edgeSortGlyphs = this.edgeColumns/*.append('g')
+      edgeSortGlyphs.append('rect')
+        .attr('fill-opacity',1)
+        .attr('x',horizontalOffset*scale)
+        .attr('y',verticalOffset*scale)
+        .attr('width',this.orderingScale.bandwidth()/1.2)
+        .attr('height',this.orderingScale.bandwidth()/1.2)
+        .attr('fill','pink')//.attr('cursor','pointer')
 
+      edgeSortGlyphs*/.append('path')
+      .attr('id', d => 'sortIcon' + d[0].rowid)
+      .attr('class', 'sortIcon').style('pointer-events', 'bounding-box')
+        .attr('d', (d) => { return this.controller.model.icons['cellSort'].d; })
+        .style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' })
+        .attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
+      //edgeSortGlyphs
+        .on('click', (d, i, nodes) => {
           let action = this.generateSortAction(d[0].rowid);
           this.controller.model.provenance.applyAction(action);
           pushProvenance(this.controller.model.app.currentState())
-
-
         }).attr('cursor', 'pointer')
         .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
         .on('mouseover', (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) });
@@ -1683,8 +1693,15 @@ class View {
     // Add headers
 
 
+    let attributeNames = Object.keys(this.controller.configuration.attributeScales.node);
+    let attributeLabels = Object.values(this.controller.configuration.attributeScales.node).map(obj=>obj.label);
+    this.columnNames = {};
+    for(let i = 0; i < attributeNames.length; i++){
+      this.columnNames[attributeNames[i]] = attributeLabels[i];
+    }
+    this.columnNames['selected'] = 'Answer';
 
-    this.columnNames = {
+    /*this.columnNames = {
       "followers_count": "Followers",
       "query_tweet_count": "On-Topic Tweets", // not going to be used (how active this person was on the conference)
       "friends_count": "Friends",
@@ -1696,7 +1713,7 @@ class View {
       "memberFor_days": "Account Age",
       "listed_count": "In Lists",
       "selected": "Answer"
-    }
+    }*/
     let that = this;
     function calculateMaxChars(numColumns) {
       switch (numColumns) {
@@ -1732,11 +1749,23 @@ class View {
     //this.createColumnHeaders();
     let columnHeaders = this.attributes.append('g')
       .classed('column-headers', true)
+
+
     let columnHeaderGroups = columnHeaders.selectAll('.header')
       .data(columns)
       .enter()
       .append('g')
       .attr('transform', (d) => 'translate(' + (this.columnScale(d)) + ',' + (-65) + ')')
+
+    columnHeaderGroups.on('click', (d) => {
+        if (d !== 'selected') {
+          let action = this.generateSortAction(d);
+          this.controller.model.provenance.applyAction(action);
+          pushProvenance(this.controller.model.app.currentState())
+          //this.sort(d);
+        }
+      }).attr('cursor','pointer').attr('pointer-events','bounding-box');
+
 
     columnHeaderGroups
       .append('rect')
@@ -1744,9 +1773,11 @@ class View {
       .attr('height', 20)
       .attr('y', 0)
       .attr('x', 0)
-      .attr('fill', 'none')
+      .attr('fill-opacity',0)
+      /*.attr('fill', 'none')*/
       .attr('stroke', 'lightgray')
       .attr('stroke-width', 1)
+      .attr('stroke-opacity', 1)
 
     columnHeaderGroups
       .append('text')
@@ -1783,25 +1814,15 @@ class View {
       .on('mouseout', function(d) {
         that.tooltip.transition().duration(250).style("opacity", 0);
       })
-      .on('click', (d) => {
-        if (d !== 'selected') {
-          let action = this.generateSortAction(d);
-          this.controller.model.provenance.applyAction(action);
-          pushProvenance(this.controller.model.app.currentState())
-          //this.sort(d);
-        }
-      })
+
 
     columnHeaderGroups
     if (columns.length < 6) {
       let path = columnHeaderGroups.filter(d => { return d !== 'selected' }).append('path').attr('class', 'sortIcon').attr('d', (d) => {
         let variable = this.isCategorical(d) ? 'categorical' : 'quant'
         return this.controller.model.icons[variable].d;
-      }).style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', (d, i, nodes) => {
-        let action = this.generateSortAction(d);
-        this.controller.model.provenance.applyAction(action);
-        pushProvenance(this.controller.model.app.currentState())
-      }).attr('cursor', 'pointer');
+      }).style('fill', d => { return d == this.controller.model.orderType ? '#EBB769' : '#8B8B8B' }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")")
+      .attr('cursor', 'pointer');
     }
 
 

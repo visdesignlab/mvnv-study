@@ -381,9 +381,23 @@ var View = /** @class */ (function () {
                 verticalOffset = horizontalOffset;
                 horizontalOffset = temp;
             }
-            this.edgeColumns.append('path').attr('id', function (d) { return 'sortIcon' + d[0].rowid; }).attr('class', 'sortIcon').attr('pointer-events', 'bounding-box')
+            var edgeSortGlyphs = this.edgeColumns /*.append('g')
+            edgeSortGlyphs.append('rect')
+              .attr('fill-opacity',1)
+              .attr('x',horizontalOffset*scale)
+              .attr('y',verticalOffset*scale)
+              .attr('width',this.orderingScale.bandwidth()/1.2)
+              .attr('height',this.orderingScale.bandwidth()/1.2)
+              .attr('fill','pink')//.attr('cursor','pointer')
+      
+            edgeSortGlyphs*/
+                .append('path')
+                .attr('id', function (d) { return 'sortIcon' + d[0].rowid; })
+                .attr('class', 'sortIcon').style('pointer-events', 'bounding-box')
                 .attr('d', function (d) { return _this.controller.model.icons['cellSort'].d; })
-                .style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
+                .style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; })
+                .attr("transform", "scale(" + scale + ")translate(" + (verticalOffset) + "," + (horizontalOffset) + ")rotate(" + rotation + ")")
+                //edgeSortGlyphs
                 .on('click', function (d, i, nodes) {
                 var action = _this.generateSortAction(d[0].rowid);
                 _this.controller.model.provenance.applyAction(action);
@@ -1408,19 +1422,26 @@ var View = /** @class */ (function () {
             .attr("y2", this.attributeHeight + this.margins.bottom)
             .attr('stroke-opacity', 0.4);
         // Add headers
-        this.columnNames = {
-            "followers_count": "Followers",
-            "query_tweet_count": "On-Topic Tweets",
-            "friends_count": "Friends",
-            "statuses_count": "Tweets",
-            "favourites_count": "Liked Tweets",
-            "count_followers_in_query": "In-Network Followers",
-            "continent": "Continent",
-            "type": "Type",
-            "memberFor_days": "Account Age",
-            "listed_count": "In Lists",
-            "selected": "Answer"
-        };
+        var attributeNames = Object.keys(this.controller.configuration.attributeScales.node);
+        var attributeLabels = Object.values(this.controller.configuration.attributeScales.node).map(function (obj) { return obj.label; });
+        this.columnNames = {};
+        for (var i = 0; i < attributeNames.length; i++) {
+            this.columnNames[attributeNames[i]] = attributeLabels[i];
+        }
+        this.columnNames['selected'] = 'Answer';
+        /*this.columnNames = {
+          "followers_count": "Followers",
+          "query_tweet_count": "On-Topic Tweets", // not going to be used (how active this person was on the conference)
+          "friends_count": "Friends",
+          "statuses_count": "Tweets",
+          "favourites_count": "Liked Tweets",
+          "count_followers_in_query": "In-Network Followers",
+          "continent": "Continent",
+          "type": "Type",
+          "memberFor_days": "Account Age",
+          "listed_count": "In Lists",
+          "selected": "Answer"
+        }*/
         var that = this;
         function calculateMaxChars(numColumns) {
             switch (numColumns) {
@@ -1459,15 +1480,25 @@ var View = /** @class */ (function () {
             .enter()
             .append('g')
             .attr('transform', function (d) { return 'translate(' + (_this.columnScale(d)) + ',' + (-65) + ')'; });
+        columnHeaderGroups.on('click', function (d) {
+            if (d !== 'selected') {
+                var action = _this.generateSortAction(d);
+                _this.controller.model.provenance.applyAction(action);
+                pushProvenance(_this.controller.model.app.currentState());
+                //this.sort(d);
+            }
+        }).attr('cursor', 'pointer').attr('pointer-events', 'bounding-box');
         columnHeaderGroups
             .append('rect')
             .attr('width', function (d) { return _this.columnWidths[d]; })
             .attr('height', 20)
             .attr('y', 0)
             .attr('x', 0)
-            .attr('fill', 'none')
+            .attr('fill-opacity', 0)
+            /*.attr('fill', 'none')*/
             .attr('stroke', 'lightgray')
-            .attr('stroke-width', 1);
+            .attr('stroke-width', 1)
+            .attr('stroke-opacity', 1);
         columnHeaderGroups
             .append('text')
             .classed('header', true)
@@ -1499,25 +1530,14 @@ var View = /** @class */ (function () {
         })
             .on('mouseout', function (d) {
             that.tooltip.transition().duration(250).style("opacity", 0);
-        })
-            .on('click', function (d) {
-            if (d !== 'selected') {
-                var action = _this.generateSortAction(d);
-                _this.controller.model.provenance.applyAction(action);
-                pushProvenance(_this.controller.model.app.currentState());
-                //this.sort(d);
-            }
         });
         columnHeaderGroups;
         if (columns.length < 6) {
             var path = columnHeaderGroups.filter(function (d) { return d !== 'selected'; }).append('path').attr('class', 'sortIcon').attr('d', function (d) {
                 var variable = _this.isCategorical(d) ? 'categorical' : 'quant';
                 return _this.controller.model.icons[variable].d;
-            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")").on('click', function (d, i, nodes) {
-                var action = _this.generateSortAction(d);
-                _this.controller.model.provenance.applyAction(action);
-                pushProvenance(_this.controller.model.app.currentState());
-            }).attr('cursor', 'pointer');
+            }).style('fill', function (d) { return d == _this.controller.model.orderType ? '#EBB769' : '#8B8B8B'; }).attr("transform", "scale(0.1)translate(" + (-50) + "," + (-300) + ")")
+                .attr('cursor', 'pointer');
         }
         var answerColumn = columnHeaders.selectAll('.header').filter(function (d) { return d == 'selected'; });
         answerColumn.attr('font-weight', 650);
