@@ -219,7 +219,8 @@ function screenTest(width, height) {
     pixelDepth: window.screen.pixelDepth
   };
 
-  return widthTest && heightTest ? screenSpecs : false;
+  return screenSpecs
+  // return widthTest && heightTest ? screenSpecs : false;
 }
 
 //If there is a value, check for validity
