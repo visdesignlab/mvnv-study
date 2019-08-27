@@ -131,16 +131,16 @@
                 // memberID variable
 
                 // let screenSize = screenTest(1400, 850);
-                let screenSize = screenTest(0,0);
-
-                //check screen size before allowing the user to proceed; 
+                let screenSize = true;//screenTest(0,0);
+                console.log(screenSize);
+                //check screen size before allowing the user to proceed;
                 if (!screenSize) {
                     d3.select('#consentYes').attr('disabled', true);
                     d3.select('#screenErrorMsg').style('display', 'inline');
                     return;
                 }
 
-                //set global variable to be the santizied version of the input workerID; 
+                //set global variable to be the santizied version of the input workerID;
                 workerID = sanitizeWorkerID(data.workerId);
 
                 //keep track just in case the user needs to reload
@@ -185,7 +185,7 @@
                 // experimentr.addData(data);
                 console.log('workerId is ', data.workerId)
 
-                //Check firebase to see if this participant has already participated: 
+                //Check firebase to see if this participant has already participated:
                 let pastParticipants = await db.collection(participantCollection).get();
 
                 let firstTimer = true;
@@ -208,5 +208,5 @@
 
     }());
 
-   
+
 </script>
