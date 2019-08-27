@@ -123,10 +123,11 @@
         experimentr.next();
       } else {
         
+        updateStudyProvenance("ended task",{"taskID":taskList[currentTask].taskID})
+        
         currentTask = currentTask + 1;
         //set startTime for next task;
         taskList[currentTask].startTime = new Date().toString();
-        updateStudyProvenance('ended Task')
 
         resetPanel();
 
