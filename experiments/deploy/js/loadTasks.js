@@ -745,6 +745,11 @@ async function resetPanel() {
 
 async function pushProvenance(provGraph, initialState = false, collectionName) {
 
+  //make sure this is not just a reload, and not an initialState:
+  //avoid clearing out provenance when the user reloads the page;
+  if (getCookie('onPage').length>0){
+    initialState = false;
+  }
 
   //Only push provenance is tracking is set to true;
   if (!track) {
@@ -908,10 +913,11 @@ function validateAnswer(answer, errorCheckField, force = false) {
   }
 
   if (replyTypes.includes("value")) {
-    isValid = isValid && d3.select("#answerBox").property("value").length > 0;
+    let v = d3.select("#answerBox").property("value");
+    isValid = isValid && v.length > 0 && (/^\d+$/.test(v)) ;
 
     if (errorCheckField === "value") {
-      let v = d3.select("#answerBox").property("value");
+      // console.log('value is ', v, !(/^\d+$/.test(v)) )
       if (v.length < 1 || !(/^\d+$/.test(v))) {
         errorMsg = "Please enter a numeric value in the answer box.";
       }
