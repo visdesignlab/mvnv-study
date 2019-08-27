@@ -178,14 +178,14 @@ function setupShepherd(vis,mode) {
         on: "right"
       },
       buttons: [
-        {
-          action: function() {
-            updateStudyProvenance("exited tour");
-            return this.cancel();
-          },
-          secondary: true,
-          text: "Exit"
-        },
+        // {
+        //   action: function() {
+        //     updateStudyProvenance("exited tour");
+        //     return this.cancel();
+        //   },
+        //   secondary: true,
+        //   text: "Exit"
+        // },
         {
           action: function() {
             updateStudyProvenance("started guided tour");
