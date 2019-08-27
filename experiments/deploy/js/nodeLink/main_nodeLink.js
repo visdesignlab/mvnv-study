@@ -361,7 +361,7 @@ function loadVis(id) {
   legend = d3
     .select("#legend-svg")
     .attr("width", parentWidth) //size + margin.left + margin.right)
-    .attr("height", 270);
+    .attr("height", 280);
 
     //add tooltip
     d3.select("body")
@@ -1846,7 +1846,7 @@ function drawLegend() {
   let circleOffset = function(d,i){
 
     let cumRadius=0
-    let radius = d.type === "node" ? 15 : d.type === "edgeType" ? 0 : 50;
+    let radius = d.type === "node" ? 20 : d.type === "edgeType" ? 0 : 50;
 
     let j = 0;
     while (j<i){

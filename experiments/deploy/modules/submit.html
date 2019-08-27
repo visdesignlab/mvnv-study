@@ -106,7 +106,7 @@
 
         <div  id="invalidAnswer" style="display:none">
           <p class="errorMsg">
-          In order to submit successfully, please be sure to answer all the questions with "*".
+          In order to submit successfully, please be sure to answer all the questions with "*" and that your age contains only digits.
           </p>
         </div>
 
@@ -203,8 +203,11 @@
           })    
           
           if (qname == 'age'){
-                // isValid = isValid ? (localSelection ? true : false ) : false; 
-                demographics[qname] = d3.select(this).property("value");
+            //check that the age is only numbers
+            let value = d3.select('#ageInput').property('value');
+
+             isValid = isValid ? (/^\d+$/.test(value)) : false
+                demographics[qname] = value;
           } else {
             isValid = isValid ? (localSelection ? true : false ) : false; 
           }

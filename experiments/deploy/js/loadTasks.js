@@ -911,8 +911,9 @@ function validateAnswer(answer, errorCheckField, force = false) {
     isValid = isValid && d3.select("#answerBox").property("value").length > 0;
 
     if (errorCheckField === "value") {
-      if (d3.select("#answerBox").property("value").length < 1) {
-        errorMsg = "Please enter a value in the answer box.";
+      let v = d3.select("#answerBox").property("value");
+      if (v.length < 1 || !(/^\d+$/.test(v))) {
+        errorMsg = "Please enter a numeric value in the answer box.";
       }
     }
   }
@@ -1434,11 +1435,11 @@ d3.select("#searchButton").on("click", function() {
     // d3.select('#clear-selection').attr('disabled', null)
   }
 
-  if (searchSuccess === 0) {
-    d3.select(".searchMsg")
-      .style("display", "block")
-      .text(selectedOption + " is already selected.");
-  }
+  // if (searchSuccess === 0) {
+  //   d3.select(".searchMsg")
+  //     .style("display", "block")
+  //     .text(selectedOption + " is already selected.");
+  // }
 
   updateStudyProvenance("searched for node", {
     searchedNode: selectedOption,
