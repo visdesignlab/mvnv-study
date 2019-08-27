@@ -935,14 +935,14 @@ function setupShepherd(vis,mode) {
           on: "left"
         },
         buttons: [
-          {
-            action: function() {
-              updateStudyProvenance("exited tour");
-              return this.cancel();
-            },
-            secondary: true,
-            text: "Exit"
-          },
+          // {
+          //   action: function() {
+          //     updateStudyProvenance("exited tour");
+          //     return this.cancel();
+          //   },
+          //   secondary: true,
+          //   text: "Exit"
+          // },
           {
             action: function() {
               updateStudyProvenance("started second guided tour");
