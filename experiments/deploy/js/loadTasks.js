@@ -799,6 +799,8 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
     } else {
       await docRef.set({
         initialSetup: new Date().toString(),
+        id:workerID, //for collection filtering
+        mode, //to isolate 'study mode'
         provGraphs: firebase.firestore.FieldValue.arrayUnion(provGraph)
       });
     }
