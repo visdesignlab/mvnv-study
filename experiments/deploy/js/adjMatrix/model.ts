@@ -146,35 +146,7 @@ class Model {
 
 
   populateSearchBox() {
-    /*
-    d3.select("#search-input").attr("list", "characters");
-    let inputParent = d3.select("#search-input").node().parentNode;
 
-    let datalist = d3
-    .select(inputParent).selectAll('#characters').data([0]);
-
-    let enterSelection = datalist.enter()
-    .append("datalist")
-    .attr("id", "characters");
-
-    datalist.exit().remove();
-
-    datalist= enterSelection.merge(datalist);
-
-    let options = datalist.selectAll("option").data(this.nodes);
-
-    let optionsEnter = options.enter().append("option");
-    options.exit().remove();
-
-    options = optionsEnter.merge(options);
-    options.attr("value", d => d.shortName);
-    options.attr("id", d => d.id);
-
-    d3.select("#search-input").on("change", (d,i,nodes) => {
-      let selectedOption = d3.select(nodes[i]).property("value");
-      console.log(this.controller.view.search(selectedOption))
-    });
-*/
   }
 
   /**
