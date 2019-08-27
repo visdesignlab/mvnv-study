@@ -1843,14 +1843,29 @@ function drawLegend() {
   sizeCirclesEnter.append("rect").attr("class", "sizeCircle");
   sizeCirclesEnter.append("text").attr("class", "sizeCircleLabel");
 
+  let circleOffset = function(d,i){
+
+    let cumRadius=0
+    let radius = d.type === "node" ? 15 : d.type === "edgeType" ? 0 : 50;
+
+    let j = 0;
+    while (j<i){
+      let cradius = circleScale(i-1)
+      cumRadius = cumRadius + radius + cradius/2
+      j = j+1
+    }
+
+    return cumRadius;
+  }
+
   sizeCircles.exit().remove();
 
   sizeCircles = sizeCirclesEnter.merge(sizeCircles);
 
+
   sizeCircles.attr("transform", (d, i) => {
-    let radius = d.type === "node" ? 15 : d.type === "edgeType" ? 0 : 50;
     let yOffset = d.type === "edgeType" ? 50 : 0;
-    return "translate(" + (i*radius+circleScale(i)) + "," + i * yOffset + ")";
+    return "translate(" + circleOffset(d,i) + "," + i * yOffset + ")";
   });
 
 
@@ -1858,6 +1873,8 @@ function drawLegend() {
   let findCenter = function(i) {
     return circleScale.range()[1] / 2 - circleScale(i) / 2;
   };
+
+
 
   sizeCircles
     .select(".sizeCircle")
@@ -1868,7 +1885,7 @@ function drawLegend() {
       : circleScale(i)     
     )
     .attr("width", (d, i) => (d.type === "node" ? circleScale(i) : 30))
-    .attr('x',(d,i)=>circleScale(i)/2)
+    // .attr('x',(d,i)=>circleScale(i)/2)
     .attr("y", (d, i) =>
       d.type === "node"
         ? findCenter(i) + 5
@@ -1889,7 +1906,7 @@ function drawLegend() {
       (d, i) =>
         "translate(" +
         (d.type === "node"
-          ? circleScale(i)
+          ? circleScale(i)/2
           : d.type === "edgeWidth"
           ? edgeScale(i)
           : 0) +
