@@ -377,7 +377,7 @@ function updateStudyProvenance(label, additionalInfo) {
         //Add any additional information here
         currentState.info = additionalInfo;
 
-        //Add flag for what task user is on
+        //Add flag for what task user is   on
         currentState.task = taskList ? taskList[currentTask].taskID : undefined;
 
         return currentState;

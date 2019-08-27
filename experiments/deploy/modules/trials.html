@@ -118,7 +118,7 @@
       if (currentTask === taskList.length-1) {
 
         d3.select(".hit").style("display", "none");
-
+        updateStudyProvenance("ended task",{"taskID":taskList[currentTask].taskID})
         updateStudyProvenance('ended trials')
         experimentr.next();
       } else {
