@@ -3305,14 +3305,13 @@
                 "neighborHighlightColor": "",
                 "neighborSelect": true,
                 "edgeBars": true,
-                "sortKey": "favourites_count"
+                "sortKey": "clusterLeaf"
             },
-            "loadedGraph": "large_undirected_singleEdge",
+            "loadedGraph": "small_undirected_multiEdge",
             "isDirected": false,
-            "isMultiEdge": false,
+            "isMultiEdge": true,
             "graphSize": "large",
-            "nodeAttributes": [
-                "followers_count",
+            "nodeAttributes": ["favourites_count","followers_count",
                 "statuses_count",
                 "memberFor_days",
                 "type",

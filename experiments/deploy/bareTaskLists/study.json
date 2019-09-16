@@ -186,7 +186,7 @@
             "value": ""
         },
         "taxonomy": {
-            "target": "subnetwork",
+            "target": "neighbors",
             "type": "TGA"
         }
     },
@@ -254,7 +254,7 @@
             "value": ""
         },
         "taxonomy": {
-            "target": "subnetwork",
+            "target": "paths",
             "type": "TGA"
         }
     },
