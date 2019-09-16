@@ -3307,9 +3307,9 @@
                 "edgeBars": true,
                 "sortKey": "clusterLeaf"
             },
-            "loadedGraph": "small_undirected_multiEdge",
+            "loadedGraph": "large_undirected_singleEdge",
             "isDirected": false,
-            "isMultiEdge": true,
+            "isMultiEdge": false,
             "graphSize": "large",
             "nodeAttributes": ["favourites_count","followers_count",
                 "statuses_count",
