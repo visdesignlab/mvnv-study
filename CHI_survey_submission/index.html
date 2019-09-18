@@ -814,6 +814,10 @@
     taskNum = eval(taskNum)-1;
     let reload = false;
 
+    if (taskNum&&vis){
+        startExperimentr('tasks',vis)
+    } 
+
     d3.select('#fullSurvey_AM').on("click",()=>startExperimentr('survey','adjMatrix'))
     d3.select('#tasksOnly_AM').on("click",()=>startExperimentr('tasks','adjMatrix'))
     d3.select('#fullSurvey_NL').on("click",()=>startExperimentr('survey','nodeLink'))
