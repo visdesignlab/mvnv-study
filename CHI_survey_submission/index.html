@@ -41,7 +41,7 @@
 
 <body>
 
-        <div id='landingPage' class="card">
+        <div id='landingPage' class="card" style=display:none>
 
                 <section class="section">
                         <div class="container">
@@ -816,7 +816,9 @@
 
     if (taskNum&&vis){
         startExperimentr('tasks',vis)
-    } 
+    } else {
+        d3.select('#landingPage').style('display','block')
+    }
 
     d3.select('#fullSurvey_AM').on("click",()=>startExperimentr('survey','adjMatrix'))
     d3.select('#tasksOnly_AM').on("click",()=>startExperimentr('tasks','adjMatrix'))
