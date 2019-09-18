@@ -1083,6 +1083,11 @@ async function assignVisType() {
 }
 async function loadTasks(visType, tasksType) {
   //reset currentTask to 0
+
+   //check if taskNum was passed in through the URL
+   if (taskNum){
+    setCookie('onTask',taskNum)
+  }
   let cachedTask = getCookie('onTask');
 
   if (cachedTask.length>0){
@@ -1187,9 +1192,12 @@ async function loadTasks(visType, tasksType) {
   
     console.log('setting new task order', taskOrder)
 
-    setCookie('taskOrder',taskOrder);
+    if (!taskNum){
+      setCookie('taskOrder',taskOrder);
     setCookie('onTask',0)
     currentTask = 0;
+    }
+    
   }
  
 

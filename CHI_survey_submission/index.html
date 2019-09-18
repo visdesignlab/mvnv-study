@@ -807,69 +807,17 @@
         taskMenu,
         configPanel,
         trials,
-        PROLIFIC_PID,
-        STUDY_ID,
-        SESSION_ID
+        taskNum
 
     } = getUrlVars();
 
-    // mode = mode || 'review'; //can be 'review', 'develop', 'test', 'heuristics', or 'study'
-
-    //set default values for any variables not passed in and assign the appropriate database collections; 
-
-    switch (mode) {
-        case 'heuristics':
-            track = true;
-            shuffleTasks = shuffleTasks || false;
-            taskMenu = taskMenu || false;;
-            configPanel = false;
-            trials = trials || false;
-            break;
-        case 'develop':
-            track = track || true;
-            shuffleTasks = shuffleTasks || false;
-            taskMenu = taskMenu || true;
-            configPanel = configPanel || false;
-            trials = trials || true;
-            break;
-        case 'study':
-            track = true;
-            shuffleTasks = true;
-            taskMenu = false;
-            configPanel = false;
-            trials = true;
-            break;
-        case 'test':
-            track = track || true;
-            shuffleTasks = shuffleTasks || true;
-            taskMenu = taskMenu || true;
-            configPanel = configPanel || false;
-            trials = trials || true;
-            break;
-        case 'review':
-            track = false;
-            shuffleTasks = false;
-            taskMenu = true; //TBD based on user selection on landing page;
-            configPanel = false;
-            trials = true ; // TBD based on user selection on landing page;
-            break;
-    }
-
-    track = eval(track);
-    shuffleTasks = eval(shuffleTasks);
-    taskMenu = eval(taskMenu);
-    configPanel = eval(configPanel);
-    trials = eval(trials);
-
-    participantCollection = mode + '_participants';
-
+    taskNum = eval(taskNum)-1;
     let reload = false;
 
     d3.select('#fullSurvey_AM').on("click",()=>startExperimentr('survey','adjMatrix'))
     d3.select('#tasksOnly_AM').on("click",()=>startExperimentr('tasks','adjMatrix'))
     d3.select('#fullSurvey_NL').on("click",()=>startExperimentr('survey','nodeLink'))
     d3.select('#tasksOnly_NL').on("click",()=>startExperimentr('tasks','nodeLink'))
-
 
     async function startExperimentr(runMode,visType) {
 
@@ -900,21 +848,6 @@
                     'modules/hit.html',
                     'modules/submit.html'
                 ];
-
-                // if (repeatVisitor) {
-                //     let onPage = getCookie('onPage');
-
-                //     switch (onPage) {
-                //         case ('trials'):
-                //             sequence.shift();
-                //             break;
-                //         case ('hit'):
-                //             sequence.shift();
-                //             sequence.shift();
-                //             break;
-
-                //     }
-                // }
 
                 break;
 

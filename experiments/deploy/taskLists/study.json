@@ -1641,7 +1641,7 @@
                 "edgeBars": true,
                 "sortKey": "followers_count"
             },
-            "loadedGraph": "large_undirected_singleEdge",
+            "loadedGraph": "cluster",
             "isDirected": false,
             "isMultiEdge": false,
             "graphSize": "large",
