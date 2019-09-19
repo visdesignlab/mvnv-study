@@ -815,7 +815,8 @@
     let reload = false;
 
     if (taskNum&&vis){
-        startExperimentr('tasks',vis == 'NL' ? 'nodeLink' : 'adjMatrix')
+        let visType = vis == 'NL' ? 'nodeLink' : 'adjMatrix';
+        startExperimentr('tasks',visType)
     } else {
         d3.select('#landingPage').style('display','block')
     }
