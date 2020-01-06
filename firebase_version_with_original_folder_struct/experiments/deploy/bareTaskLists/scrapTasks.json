@@ -1,0 +1,32 @@
+    {"S-task2": {
+        "hypothesis":"NA",
+        "prompt": "How many followers does Alex have?",
+        "replyType": [
+            "value"
+        ],
+        "answerKey": {
+            "nodes": [],
+            "value": "1048"
+        },
+        "taxonomy": {
+            "target": "single node",
+            "type": "AGT"
+        }
+    }}
+
+    "S-task10": {
+        "hypothesis":"Cluster Hypothesis",
+        "prompt": "Who has the highest number of followers among the people in the cluster containing Alex?",
+        "replyType": [
+            "singleNodeSelection"
+        ],
+        "replyCount": 1,
+        "answerKey": {
+            "nodes": ["84043985"],
+            "value": ""
+        },
+        "taxonomy": {
+            "target": "clusters",
+            "type": "TGA"
+        }
+    },
