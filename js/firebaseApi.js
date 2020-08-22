@@ -2,7 +2,7 @@
 
 
 let db;
- 
+
 let fireStore = {
 
     connect() {
@@ -17,13 +17,13 @@ let fireStore = {
           appId: "1:83565157892:web:9fff8e165c4e2651"
         };
         // Initialize Firebase
-        let app = firebase.initializeApp(firebaseConfig);
-      
+        let app = firebase.initializeApp(firebaseConfig, "writeApp");
+
         db = firebase.firestore(app);
       },
 
       updateTask(data){
-        db.collection('results').doc(workerID).set(data,{ merge: true }); //shouldn't need the merge value; 
+        db.collection('results').doc(workerID).set(data,{ merge: true }); //shouldn't need the merge value;
       },
 
       addDocument(data,collection) {
@@ -33,7 +33,7 @@ let fireStore = {
             console.error("Error adding document: ", error);
           });
       },
-      
+
       async getCollection(name = "tasks") {
         db.collection(name)
           .get()
@@ -41,10 +41,9 @@ let fireStore = {
             querySnapshot.forEach(doc => {
               console.log(`${doc.id} => ${doc.data()}`);
             });
-            
+
             return querySnapshot
           });
       }
 
 }
-

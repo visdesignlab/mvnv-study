@@ -17,14 +17,22 @@
 
 <!-- <script src="js/guidedTour.js" type="text/javascript"></script> -->
 
-<script src="js/guidedTour.js" type="text/javascript"></script>
 
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.18.0/firebase-firestore.js"></script>
+
+<script src="js/readFirebase.js" type="text/javascript"></script>
+
+<script src="js/guidedTour.js" type="text/javascript"></script>
 
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css"> -->
 
 <!-- Adding Provenance and Experimentr Libraries  -->
-<script src="libs/provenance.min.js"></script>
+<script src="libs/trrack.js"></script>
 <script src="libs/experimentr.js"></script>
+
+
+
 
 <!-- <script src="https://d3js.org/d3.v5.min.js" type="text/javascript"></script> -->
 <script src="libs/d3.min.js" type="text/javascript"></script>
@@ -47,18 +55,18 @@
                         <div class="container">
                           <h1 class="title">Multivariate Network Visualization Survey</h1>
                           <h2 class="subtitle">
-                            A companion website for the paper: The Multivariate Network Visualization Bake-Off: Adjacency Matrix vs. Node Link Diagram. 
+                            A companion website for the paper: The Multivariate Network Visualization Bake-Off: Adjacency Matrix vs. Node Link Diagram.
                           </h2>
 
                          <p> Here you can go through the survey as our crowdsourced participants did, or simply browse through the tasks. Note that survey responses will <strong>not</strong> be recorded.</Note>
-                       
+
                        <br/>
                        <br/>
 
                             <p>You can access the full source code for the study at <a href="http://github.com/mvnv-study/survey">http://github.com/mvnv-study/survey</a>.</p>
-                        
+
                             <br/>
-                            
+
                         </div>
 
                         <div class="tile is-vertical">
@@ -66,31 +74,31 @@
                                   <div class="tile is-parent ">
                                    <a href="#"><article id = "fullSurvey_NL" class="tile is-child notification is-primary">
                                       <p class="title">Click here to take the full    Node-Link survey.</p>
-                                      <p class="subtitle">You will be guided through a training session, trial tasks, and then the actual survey. 
-                                       
+                                      <p class="subtitle">You will be guided through a training session, trial tasks, and then the actual survey.
+
                                       <!-- </p> <figure class="image is-4by3">
                                             <img src="assets/NLSurvey.png">
                                           </figure> -->
                                     </article>
-                                </a> 
+                                </a>
                                   </div>
 
                                   <div class="tile is-parent ">
                                         <a href="#"><article id = "fullSurvey_AM" class="tile is-child notification is-info">
                                            <p class="title">Click here to take the full Adjacency Matrix survey.</p>
-                                           <p class="subtitle">You will be guided through a training session, trial tasks, and then the actual survey. 
-                                            
+                                           <p class="subtitle">You will be guided through a training session, trial tasks, and then the actual survey.
+
                                            <!-- </p> <figure class="image is-4by3">
                                                  <img src="assets/AMSurvey.png">
                                                </figure> -->
                                          </article>
-                                     </a> 
+                                     </a>
                                        </div>
-                                  
-                                 
+
+
                                 </div>
-                            
-                         
+
+
                             </div>
 
 
@@ -109,7 +117,7 @@
                                                 </article>
                                                 </a>
                                               </div>
-                                    
+
                                       <div class="tile is-parent">
                                             <a href="#"> <article id = "tasksOnly_AM" class="tile is-child notification is-info">
                                           <p class="title">Click here to browse the Adjacency Matrix study tasks.</p>
@@ -121,21 +129,21 @@
                                         </article>
                                         </a>
                                       </div>
-                                     
+
                                     </div>
-                                
-                             
+
+
                                 </div>
 
-                                
+
                       </section>
 
 
 
-                
-                        
-        
-        
+
+
+
+
         </div>
 
     <div class="hit" style=display:none>
@@ -786,8 +794,8 @@
     </div>
 
 </body>
-<script src="js/loadTasks.js" type="text/javascript"></script>
 
+<script src="js/loadTasks.js" type="text/javascript"></script>
 
 <script>
     function getUrlVars() {
@@ -875,7 +883,7 @@
                 break;
         }
 
-        //if this is a reload, refresh global workerID variable: 
+        //if this is a reload, refresh global workerID variable:
         if (getCookie('workerID').length > 0) {
             reload = true;
             workerID = getCookie('workerID');
@@ -883,7 +891,7 @@
 
         //remove ui components that are not relevant
         d3.selectAll('.development').remove();
-    
+
         if (!taskMenu) {
             d3.select('.taskMenu').remove();
         }

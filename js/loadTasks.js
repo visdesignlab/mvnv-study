@@ -28,24 +28,24 @@ function  detectBrowser(){
       browserName = "Microsoft Internet Explorer";
       fullVersion = nAgt.substring(verOffset + 5);
   }
-  // In Chrome, the true version is after "Chrome" 
+  // In Chrome, the true version is after "Chrome"
   else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
       browserName = "Chrome";
       fullVersion = nAgt.substring(verOffset + 7);
   }
-  // In Safari, the true version is after "Safari" or after "Version" 
+  // In Safari, the true version is after "Safari" or after "Version"
   else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
       browserName = "Safari";
       fullVersion = nAgt.substring(verOffset + 7);
       if ((verOffset = nAgt.indexOf("Version")) != -1)
           fullVersion = nAgt.substring(verOffset + 8);
   }
-  // In Firefox, the true version is after "Firefox" 
+  // In Firefox, the true version is after "Firefox"
   else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
       browserName = "Firefox";
       fullVersion = nAgt.substring(verOffset + 8);
   }
-  // In most other browsers, "name/version" is at the end of userAgent 
+  // In most other browsers, "name/version" is at the end of userAgent
   else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) <
       (verOffset = nAgt.lastIndexOf('/'))) {
       browserName = nAgt.substring(nameOffset, verOffset);
@@ -89,6 +89,8 @@ let app;
 let studyProvenance;
 let studyApp;
 
+
+
 function setCookie(cname, cvalue, exdays=1) {
   var d = new Date();
   d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -111,7 +113,6 @@ function getCookie(cname) {
   }
   return "";
 }
-
 
 async function setUpStudyProvenance(label) {
   const initialState = {
@@ -756,8 +757,6 @@ async function pushProvenance(provGraph, initialState = false, collectionName) {
     return;
   }
 
-
-
   let overallStudyProvenance = collectionName ? true : false;
   collectionName = overallStudyProvenance
     ? collectionName
@@ -973,7 +972,7 @@ function validateAnswer(answer, errorCheckField, force = false) {
   );
   //toggle visibility of error message;
   let errorMsgSelector;
-  
+
   switch (errorCheckField){
     case ("value"):
       errorMsgSelector = d3.select("#valueAnswer").select(".errorMsg");
@@ -989,7 +988,7 @@ function validateAnswer(answer, errorCheckField, force = false) {
       break;
 
   }
-   
+
   errorMsgSelector
     .style("display", !isValid ? "inline" : "none")
     .text(errorMsg);
@@ -1078,9 +1077,8 @@ async function assignVisType() {
       );
       resolve();
   });
-
-   
 }
+
 async function loadTasks(visType, tasksType) {
   //reset currentTask to 0
 
@@ -1120,7 +1118,7 @@ async function loadTasks(visType, tasksType) {
 
 
   let group = visType === "nodeLink" ? 0 : 1;
-  
+
   studyTracking.group = group;
 
   // vis =  track ? conditions[group].type : '/taskLists/study.json';
@@ -1165,7 +1163,7 @@ async function loadTasks(visType, tasksType) {
 
     let taskOrder = getCookie('taskOrder').split(',');
     // reorder tasks according to the cached order;
-    
+
     taskList = taskOrder.map((id,i)=>{
       let t = taskListEntries.find(t=>t[0] === id);
       let task = t[1];
@@ -1189,7 +1187,7 @@ async function loadTasks(visType, tasksType) {
       task.workerID = workerID;
       return task;
     });
-  
+
     console.log('setting new task order', taskOrder)
 
     if (!taskNum){
@@ -1197,9 +1195,9 @@ async function loadTasks(visType, tasksType) {
     setCookie('onTask',0)
     currentTask = 0;
     }
-    
+
   }
- 
+
 
   //remove divs that are irrelevant to the vis approach being used am/nl
   if (vis === "nodeLink") {
@@ -1289,6 +1287,9 @@ async function loadTasks(visType, tasksType) {
 
     await loadAllScripts();
 
+
+
+
     cssTags[vis].map(href => {
       var newStyleSheet = document.createElement("link");
       newStyleSheet.href = href;
@@ -1303,6 +1304,8 @@ async function loadTasks(visType, tasksType) {
 
 //function that loads in a .js script tag and only resolves the promise once the script is fully loaded
 function loadScript(url, callback) {
+  console.log(provenance);
+
   return new Promise(function(resolve, reject) {
     var script = document.createElement("script");
     script.type = "text/javascript";

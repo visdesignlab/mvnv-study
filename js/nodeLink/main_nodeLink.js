@@ -44,7 +44,7 @@ var margin = { left: 0, right: 100, top: 0, bottom: 0 };
 
 var simulation; //so we're not restarting it every time updateVis is called;
 
-// var tooltipTimeout; 
+// var tooltipTimeout;
 
 //global sizes
 let nodeMarkerLength, nodeMarkerHeight, checkboxSize;
@@ -180,18 +180,18 @@ function setGlobalScales() {
     .scaleLinear()
     .range([2, 10])
     .clamp(true)
-    
+
     if (config.nodeLink.edgeWidthAttr){
       edgeWidthScale
       .domain(config.attributeScales.edge[config.nodeLink.edgeWidthAttr].domain)
-    } 
-  
+    }
+
 
     let value = config.nodeLink.edgeWidthAttr
       ? edgeWidthScale(edge[config.nodeLink.edgeWidthAttr])
       : (edgeWidthScale.range()[1] - edgeWidthScale.range()[0])/3
 
-    
+
     return value;
   };
 }
@@ -227,7 +227,7 @@ function searchFor(selectedOption){
 
   //function that updates the state, and includes a flag for when this was done through a search
   function nodeClick(node, search = false) {
-   
+
     const currentState = app.currentState();
 
     //find out if this node was selected before;
@@ -254,9 +254,9 @@ function searchFor(selectedOption){
       ? "Unselect Node"
       : "Select Node";
 
-    let action = {
-      label: label,
-      action: () => {
+    let action = provenance.addAction(
+      label,
+      () => {
         const currentState = app.currentState();
         //add time stamp to the state graph
         currentState.time = Date.now();
@@ -270,11 +270,9 @@ function searchFor(selectedOption){
           currentState.search.push(node.id);
         }
         return currentState;
-      },
-      args: []
-    };
+      });
 
-    provenance.applyAction(action);
+    action.applyAction(action);
     pushProvenance(app.currentState());
   }
 
@@ -419,7 +417,7 @@ function loadVis(id) {
 }
 
 function loadTask(task) {
-  
+
   // update global variables from config;
   // setGlobalScales();
 
@@ -428,7 +426,7 @@ function loadTask(task) {
     //scale node positions to this screen;
 
 
-    //only scale if positions fall outside of domain; 
+    //only scale if positions fall outside of domain;
 
     let xPos = d3
       .scaleLinear()
@@ -457,21 +455,51 @@ function loadTask(task) {
     });
   }
 
-
   //pass in workerID to setupProvenance
   setUpProvenance(graph.nodes, task.taskID, task.order);
 
   setUpObserver("selected", highlightSelectedNodes);
   setUpObserver("hardSelected", highlightHardSelectedNodes);
-  setUpObserver("nodePos", updatePos);
+  setUpObserver("nodePos", posChange);
+  provenance.addGlobalObserver(() => {
+  })
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if(urlParams.get("taskID") && urlParams.get("participantID"))
+  {
+    readFire.connect();
+    let prom = readFire.readTask(urlParams.get("participantID"), urlParams.get("taskID"));
+
+    prom.then((graph) => {
+      provenance.importProvenanceGraph(JSON.stringify(graph));
+
+      if(window.location.hash.length > 0)
+      {
+        provenance.goToNode(window.location.hash.substr(1))
+      }
+    });
+  }
 
   update();
 }
 
-function highlightSelectedNodes(state) {
+function highlightSelectedNodes(s) {
   console.log("calling highlightSelectedNodes");
   // see if there is at least one node 'clicked'
   //check state not ui, since ui has not yet been updated;
+
+  let state = s;
+
+  if(!state.selected)
+  {
+    state.selected = [];
+  }
+  if(!state.hardSelected)
+  {
+    state.hardSelected = [];
+  }
+
   let hasUserSelection = state.selected.length > 0;
 
   //set the class of everything to 'muted', except for the selected node and it's neighbors;
@@ -527,9 +555,9 @@ function selectNode(node) {
 
   let label = wasSelected ? "Hard Unselected a Node" : "Hard Selected a Node";
 
-  let action = {
-    label: label,
-    action: () => {
+  let action = provenance.addAction(
+    label,
+    () => {
       const currentState = app.currentState();
       //add time stamp to the state graph
       currentState.time = Date.now();
@@ -538,11 +566,9 @@ function selectNode(node) {
       //Update actual node data
       currentState.hardSelected = selected;
       return currentState;
-    },
-    args: []
-  };
+    });
 
-  provenance.applyAction(action);
+  action.applyAction(action);
   pushProvenance(app.currentState());
 }
 
@@ -596,8 +622,15 @@ function dragNode() {
     return "translate(" + d.x + "," + d.y + ")";
   });
 }
-function updatePos(state) {
-  console.log("calling  updatePos");
+
+function posChange(state) {
+  graph.nodes.map(
+    n => {
+      n.x = state.nodePos[n.id].x;
+      n.y = state.nodePos[n.id].y;
+    }
+  );
+
   d3.selectAll(".linkGroup")
     .select("path")
     .attr("d", function(d) {
@@ -647,7 +680,7 @@ function arcPath(leftHand, d, state = false) {
   //   dry = dry / (1 + (1 / siblingCount) * (arcScale(d.type) - 1));
   // }
 
-  
+
 
   if (config.isMultiEdge){
     return (
@@ -677,7 +710,7 @@ function arcPath(leftHand, d, state = false) {
       'M '+source.x+' '+source.y+' L '+ target.x +' '+target.y );
   }
 
-  
+
 
   // return ("M" + x1 + "," + y1
   //    + "S" + x2 + "," + y2
@@ -690,7 +723,7 @@ function showTooltip(data,delay=200){
 
     tooltip.html(data)
     .style("left", (window.event.clientX + 10) + "px")
-    .style("top", (window.event.clientY - 20) + "px"); 
+    .style("top", (window.event.clientY - 20) + "px");
 
     tooltip.transition().duration(delay).style("opacity", .9);
 
@@ -770,7 +803,7 @@ function updateVis() {
   );
 
   //Drawing Graph
-  
+
     //Draw Links
     let link = d3
       .select(".links")
@@ -795,7 +828,7 @@ function updateVis() {
 
     link = linkEnter.merge(link);
 
-    
+
     link.classed("muted", false);
 
     link
@@ -804,10 +837,10 @@ function updateVis() {
       .style("stroke", edgeColor)
       .attr("id", d => d.id)
       .on("mouseover",function(d){
-        
+
         // console.log (d)
         let tooltipData = d.type;
-        
+
         if (config.nodeLink.edgeWidthAttr){
           tooltipData = tooltipData.concat (" [" + d.count + "]")
         }
@@ -815,14 +848,14 @@ function updateVis() {
         if (d3.select(d3.select(this).node().parentNode).classed("muted")){
           return;
         }
-        
+
 
         showTooltip(tooltipData,400)
 
 
       })
-  
-      .on("mouseout",function(d){ 
+
+      .on("mouseout",function(d){
         hideTooltip();
      })
 
@@ -833,7 +866,7 @@ function updateVis() {
       .text(d => (config.isDirected ? (d.type === "mentions" ? "▶" : "◀") : ""))
       .style("fill", edgeColor)
       .style("stroke", edgeColor)
-     
+
 
     //draw Nodes
     var node = d3
@@ -867,7 +900,7 @@ function updateVis() {
     .classed("selected", false)
 
 
-    //determine the size of the node here: 
+    //determine the size of the node here:
     let barAttrs = config.nodeLink.drawBars
     ? config.nodeAttributes.filter(isQuant)
     : [];
@@ -880,7 +913,7 @@ function updateVis() {
     nodeMarkerLength = config.nodeLink.drawBars? barAttrs.length * 10 + barPadding + radius*2 + padding : nodeMarkerLength ;
 
     let nodePadding = 2;
-    let sizeDiff = 55-nodeMarkerLength; 
+    let sizeDiff = 55-nodeMarkerLength;
     let extraPadding = sizeDiff > 0 ? sizeDiff : 0;
 
       node
@@ -898,15 +931,15 @@ function updateVis() {
       .style("fill", nodeFill)
       .classed("clicked", d => app.currentState().selected.includes(d.id))
       .classed("selected", d => app.currentState().hardSelected.includes(d.id))
-      
+
       .on("mouseover",function(d){
 
         let tooltipData = '';
-        
+
         if (config.nodeLink.nodeFillAttr){
           tooltipData = tooltipData.concat(config.nodeLink.nodeFillAttr + ":" + d[config.nodeLink.nodeFillAttr] + " " )
-        }; 
-        
+        };
+
         if (config.nodeLink.nodeSizeAttr){
           tooltipData = tooltipData.concat(config.attributeScales.node[config.nodeLink.nodeSizeAttr].label + ":" + Math.round(d[config.nodeLink.nodeSizeAttr]) + " " )
         }
@@ -914,7 +947,7 @@ function updateVis() {
         if (config.nodeLink.drawBars || d3.select(d3.select(this).node().parentNode).classed("muted")){
           return;
         }
-        
+
         showTooltip(tooltipData)
       })
 
@@ -932,7 +965,7 @@ function updateVis() {
 
         let textWidth = -d3.select(this).node().getBBox().width / 2
 
-        return config.nodeIsRect ? -nodeMarkerLength/ 2 -barPadding/2 -extraPadding/2 + checkboxSize+ 3 : textWidth + 8   
+        return config.nodeIsRect ? -nodeMarkerLength/ 2 -barPadding/2 -extraPadding/2 + checkboxSize+ 3 : textWidth + 8
       })
       // .attr("x", d => config.nodeIsRect ? -nodeMarkerLength/ 2 -barPadding/2 -extraPadding/2 + checkboxSize+ 3  :-nodeLength(d) / 2 + checkboxSize)
 
@@ -1008,10 +1041,10 @@ function updateVis() {
       //   // let nodeLabel = d3
       //   //     .select(d3.select(this).node().parentNode)
       //   //     .select("text");
-  
+
       //   //   let textWidth = nodeLabel.node().getBBox().width;
       //   //   return -textWidth / 2 - checkboxSize/2;
-        
+
       //   return config.nodeIsRect ? -nodeMarkerLength/2 - nodePadding/2 -extraPadding/2  :-nodeLength(d) / 2 - 4;
       // })
 
@@ -1025,10 +1058,10 @@ function updateVis() {
         .on("drag", dragged)
         .on("end", dragended)
     );
-  
+
 
   //Drawing Nested Bar Charts
-  
+
     // //  Separate enter/exit/update for bars so as to bind to the correct data;
 
     let xPos = drawCat ? nodeMarkerLength / 2 - radius : 0;
@@ -1087,10 +1120,10 @@ function updateVis() {
       if (d3.select(d3.select(this).node().parentNode).classed("muted")){
         return;
       }
-      
+
       showTooltip(label + " : " + Math.round(d.data))
     })
-  
+
     bars.attr("transform", (d, i) => {
       return "translate(" + barXScale(i) + ",2)";
     });
@@ -1173,11 +1206,11 @@ function updateVis() {
       if (d3.select(d3.select(this).node().parentNode).classed("muted")){
         return;
       }
-      
+
 
       showTooltip(d.attr  + ":" + d.data)
     })
-  
+
 
     catGlyphs.attr(
       "transform",
@@ -1209,7 +1242,7 @@ function updateVis() {
       .attr("y", radius * 2)
       .attr("x", radius * 2)
       .style("text-anchor", "start");
-  
+
 
   d3.select("#exportGraph").on("click", () => {
     let graphCopy = JSON.parse(JSON.stringify(graph));
@@ -1383,25 +1416,17 @@ function updateVis() {
       //update node position in state graph;
       // updateState("Dragged Node");
 
-      let action = {
-        label: "Dragged Node",
-        action: () => {
-          const currentState = app.currentState();
-          //add time stamp to the state graph
-          currentState.time = Date.now();
-          //Add label describing what the event was
-          currentState.event = "Dragged Node";
+      let action = provenance.addAction(
+        "Dragged Node",
+        (currentState) => {
+          console.log("dragging node");
           //Update node positions
-          graph.nodes.map(
-            n => (currentState.nodePos[n.id] = { x: n.x, y: n.y })
-          );
+          currentState.nodePos[d.id] = {x: d.x, y: d.y}
           return currentState;
-        },
-        args: []
-      };
+        });
 
-      provenance.applyAction(action);
-      pushProvenance(app.currentState());
+      action.applyAction();
+      // pushProvenance(app.currentState());
     }
     wasDragged = false;
   }
@@ -1456,7 +1481,7 @@ function drawLegend() {
     drawBars || !colorAttribute
       ? []
       : config.attributeScales.node[config.nodeLink.nodeFillAttr].legendLabels;
-      
+
   let sizeAttributeValues = drawBars || !config.nodeLink.nodeSizeAttr
     ? []
     : config.attributeScales.node[config.nodeLink.nodeSizeAttr].domain;
@@ -1619,7 +1644,7 @@ function drawLegend() {
     if (d3.select(d3.select(this).node().parentNode).classed("muted")){
       return;
     }
-    
+
 
     showTooltip(d.value)
   })
@@ -1731,11 +1756,11 @@ function drawLegend() {
       if (d3.select(d3.select(this).node().parentNode).classed("muted")){
         return;
       }
-      
+
 
       showTooltip(d.value)
     })
-  
+
     circles.on("mouseout",function(d){
       hideTooltip();
     })
@@ -1832,7 +1857,7 @@ function drawLegend() {
 
 
     }
-      
+
     );
 
   let sizeCirclesEnter = sizeCircles
@@ -1882,7 +1907,7 @@ function drawLegend() {
       ? edgeScale(1)
       : d.type === "edgeWidth"
       ? edgeScale(i)
-      : circleScale(i)     
+      : circleScale(i)
     )
     .attr("width", (d, i) => (d.type === "node" ? circleScale(i) : 30))
     // .attr('x',(d,i)=>circleScale(i)/2)
