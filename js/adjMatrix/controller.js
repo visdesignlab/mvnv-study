@@ -1,8 +1,9 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -121,29 +122,25 @@ var Controller = /** @class */ (function () {
     };
     Controller.prototype.clear = function () {
         var _this = this;
-        var action = {
-            label: 'clear',
-            action: function () {
-                var currentState = _this.model.app.currentState();
-                //add time stamp to the state graph
-                currentState.time = Date.now();
-                currentState.event = 'clear';
-                currentState.selections = {
-                    answerBox: currentState.selections.answerBox,
-                    attrRow: {},
-                    rowLabel: {},
-                    colLabel: {},
-                    cellcol: {},
-                    cellrow: {},
-                    search: {},
-                    neighborSelect: {},
-                    previousMouseovers: []
-                };
-                return currentState;
-            },
-            args: []
-        };
-        this.model.provenance.applyAction(action);
+        var action = this.model.provenance.addAction('clear', function () {
+            var currentState = _this.model.app.currentState();
+            //add time stamp to the state graph
+            currentState.time = Date.now();
+            currentState.event = 'clear';
+            currentState.selections = {
+                answerBox: currentState.selections.answerBox,
+                attrRow: {},
+                rowLabel: {},
+                colLabel: {},
+                cellcol: {},
+                cellrow: {},
+                search: {},
+                neighborSelect: {},
+                previousMouseovers: []
+            };
+            return currentState;
+        });
+        action.applyAction();
         pushProvenance(this.model.app.currentState());
     };
     Controller.prototype.sizeLayout = function () {

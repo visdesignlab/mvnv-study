@@ -12,7 +12,7 @@ var View = /** @class */ (function () {
             // this is necessary as the click events are attached to the hovered rect in attrRow
             var interaction = _this.sanitizeInteraction(d3.select(nodes[i]).attr('class'));
             var action = _this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
-            _this.controller.model.provenance.applyAction(action);
+            action.applyAction();
             pushProvenance(_this.controller.model.app.currentState());
         };
         // set up loading screen
@@ -78,7 +78,7 @@ var View = /** @class */ (function () {
             return 0;
         }
         var action = this.controller.view.changeInteractionWrapper(name, null, 'search');
-        this.controller.model.provenance.applyAction(action);
+        action.applyAction();
         pushProvenance(this.controller.model.app.currentState());
         return 1;
     };
@@ -189,7 +189,7 @@ var View = /** @class */ (function () {
             .on('click', function (d, i, nodes) {
             if (d.rowid in _this.controller.model.app.currentState().selections.search) {
                 var action = _this.changeInteractionWrapper(d.rowid, null, 'search');
-                _this.controller.model.provenance.applyAction(action);
+                action.applyAction();
                 pushProvenance(_this.controller.model.app.currentState());
             }
             // only trigger click if edge exists
@@ -400,7 +400,7 @@ var View = /** @class */ (function () {
                 //edgeSortGlyphs
                 .on('click', function (d, i, nodes) {
                 var action = _this.generateSortAction(d[0].rowid);
-                _this.controller.model.provenance.applyAction(action);
+                action.applyAction();
                 pushProvenance(_this.controller.model.app.currentState());
             }).attr('cursor', 'pointer')
                 .on("mouseout", function (d, i, nodes) { _this.mouseOverLabel(d, i, nodes); })
@@ -429,7 +429,7 @@ var View = /** @class */ (function () {
                 //this.sort(d[0].rowid)
                 _this.clickFunction(d, i, nodes);
                 var action = _this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
-                _this.controller.model.provenance.applyAction(action);
+                action.applyAction();
             }
             else {
                 _this.clickFunction(d, i, nodes);
@@ -577,53 +577,49 @@ var View = /** @class */ (function () {
      */
     View.prototype.changeInteractionWrapper = function (nodeID, node, interactionType) {
         var _this = this;
-        return {
-            label: interactionType,
-            action: function (nodeID) {
-                var currentState = _this.controller.model.app.currentState();
-                currentState.selections.previousMouseovers = _this.mouseoverEvents;
-                _this.mouseoverEvents.length = 0;
-                //add time stamp to the state graph
-                currentState.time = Date.now();
-                currentState.event = interactionType;
-                var interactionName = interactionType; //cell, search, etc
-                var interactedElement = interactionType;
-                if (interactionName == 'cell') {
-                    var cellData = d3.select(node).data()[0]; //
-                    nodeID = cellData.colid;
-                    interactedElement = cellData.cellName; // + cellData.rowid;
+        return this.controller.model.provenance.addAction(interactionType, function () {
+            var currentState = _this.controller.model.app.currentState();
+            currentState.selections.previousMouseovers = _this.mouseoverEvents;
+            _this.mouseoverEvents.length = 0;
+            //add time stamp to the state graph
+            currentState.time = Date.now();
+            currentState.event = interactionType;
+            var interactionName = interactionType; //cell, search, etc
+            var interactedElement = interactionType;
+            if (interactionName == 'cell') {
+                var cellData = d3.select(node).data()[0]; //
+                nodeID = cellData.colid;
+                interactedElement = cellData.cellName; // + cellData.rowid;
+                _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
+                _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
+                if (cellData.cellName != cellData.correspondingCell) {
+                    interactedElement = cellData.correspondingCell; // + cellData.rowid;
+                    nodeID = cellData.rowid;
                     _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
                     _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-                    if (cellData.cellName != cellData.correspondingCell) {
-                        interactedElement = cellData.correspondingCell; // + cellData.rowid;
-                        nodeID = cellData.rowid;
-                        _this.changeInteraction(currentState, nodeID, interactionName + 'col', interactedElement);
-                        _this.changeInteraction(currentState, nodeID, interactionName + 'row', interactedElement);
-                    }
-                    return currentState;
-                    //nodeID = cellData.rowid;
-                    //interactionName = interactionName + 'row'
                 }
-                else if (interactionName == 'neighborSelect') {
-                    //this.controller.model.provenance.applyAction(action);
-                    var columnData = d3.select(node).data()[0];
-                    interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
-                    columnData.map(function (node) {
-                        if (node.mentions != 0 || node.interacted != 0 || node.retweet != 0) {
-                            var neighbor = node.colid;
-                            _this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
-                        }
-                    });
-                    return currentState;
-                }
-                else if (interactionName == 'attrRow') {
-                    interactionName;
-                }
-                _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
                 return currentState;
-            },
-            args: [nodeID]
-        };
+                //nodeID = cellData.rowid;
+                //interactionName = interactionName + 'row'
+            }
+            else if (interactionName == 'neighborSelect') {
+                //this.controller.model.provenance.applyAction(action);
+                var columnData = d3.select(node).data()[0];
+                interactedElement = 'colClick' + d3.select(node).data()[0][0].rowid;
+                columnData.map(function (node) {
+                    if (node.mentions != 0 || node.interacted != 0 || node.retweet != 0) {
+                        var neighbor = node.colid;
+                        _this.changeInteraction(currentState, neighbor, interactionName, interactedElement);
+                    }
+                });
+                return currentState;
+            }
+            else if (interactionName == 'attrRow') {
+                interactionName;
+            }
+            _this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
+            return currentState;
+        });
     };
     /**
      * Used to determine the ID based upon the datum element.
@@ -934,7 +930,7 @@ var View = /** @class */ (function () {
         }
         // if there are other elements highlighting the node to highlight
         if (dict[nodeToHighlight].size > 1) { // if set has more than 1 object
-            dict[nodeToHighlight].delete(interactedElement); // delete element from set
+            dict[nodeToHighlight]["delete"](interactedElement); // delete element from set
         }
         else {
             delete dict[nodeToHighlight];
@@ -1039,24 +1035,19 @@ var View = /** @class */ (function () {
     };
     View.prototype.generateSortAction = function (sortKey) {
         var _this = this;
-        return {
-            label: 'sort',
-            action: function (sortKey) {
-                _this.orderType = sortKey;
-                _this.controller.configuration.adjMatrix.sortKey = sortKey;
-                var currentState = _this.controller.model.app.currentState();
-                //add time stamp to the state graph
-                currentState.time = Date.now();
-                currentState.event = 'sort';
-                currentState.sortKey = sortKey;
-                if (_this.controller.view, _this.controller.view.mouseoverEvents) {
-                    currentState.selections.previousMouseovers = _this.controller.view.mouseoverEvents;
-                    _this.controller.view.mouseoverEvents.length = 0;
-                }
-                return currentState;
-            },
-            args: [sortKey]
-        };
+        return this.controller.model.provenance.addAction('sort', function (currentState) {
+            _this.orderType = sortKey;
+            _this.controller.configuration.adjMatrix.sortKey = sortKey;
+            //add time stamp to the state graph
+            currentState.time = Date.now();
+            currentState.event = 'sort';
+            currentState.sortKey = sortKey;
+            if (_this.controller.view, _this.controller.view.mouseoverEvents) {
+                currentState.selections.previousMouseovers = _this.controller.view.mouseoverEvents;
+                _this.controller.view.mouseoverEvents.length = 0;
+            }
+            return currentState;
+        });
     };
     /**
      * [sort description]
@@ -1483,7 +1474,7 @@ var View = /** @class */ (function () {
         columnHeaderGroups.on('click', function (d) {
             if (d !== 'selected') {
                 var action = _this.generateSortAction(d);
-                _this.controller.model.provenance.applyAction(action);
+                action.applyAction();
                 pushProvenance(_this.controller.model.app.currentState());
                 //this.sort(d);
             }
@@ -1559,7 +1550,7 @@ var View = /** @class */ (function () {
                 .attr('transform', 'translate(' + (-this_2.margins.left) + ',' + (initalY) + ')');
             button.attr('cursor', 'pointer').on('click', function () {
                 var action = _this.generateSortAction(sortNames[i]);
-                _this.controller.model.provenance.applyAction(action);
+                action.applyAction();
                 pushProvenance(_this.controller.model.app.currentState());
                 //this.sort();
             });

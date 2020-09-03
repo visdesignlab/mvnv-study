@@ -68,7 +68,7 @@ class View {
       let interaction = this.sanitizeInteraction(d3.select(nodes[i]).attr('class'));
 
       let action = this.controller.view.changeInteractionWrapper(nodeID, nodes[i], interaction);
-      this.controller.model.provenance.applyAction(action);
+      action.applyAction();
       pushProvenance(this.controller.model.app.currentState())
 
     };
@@ -118,7 +118,7 @@ class View {
     }
 
     let action = this.controller.view.changeInteractionWrapper(name, null, 'search');
-    this.controller.model.provenance.applyAction(action);
+    action.applyAction();
     pushProvenance(this.controller.model.app.currentState())
     return 1;
   }
@@ -256,7 +256,7 @@ class View {
       .on('click', (d, i, nodes) => {
         if (d.rowid in this.controller.model.app.currentState().selections.search) {
           let action = this.changeInteractionWrapper(d.rowid, null, 'search');
-          this.controller.model.provenance.applyAction(action);
+          action.applyAction();
           pushProvenance(this.controller.model.app.currentState())
         }
         // only trigger click if edge exists
@@ -490,7 +490,7 @@ class View {
       //edgeSortGlyphs
         .on('click', (d, i, nodes) => {
           let action = this.generateSortAction(d[0].rowid);
-          this.controller.model.provenance.applyAction(action);
+          action.applyAction();
           pushProvenance(this.controller.model.app.currentState())
         }).attr('cursor', 'pointer')
         .on("mouseout", (d, i, nodes) => { this.mouseOverLabel(d, i, nodes) })
@@ -521,7 +521,7 @@ class View {
           //this.sort(d[0].rowid)
           this.clickFunction(d, i, nodes);
           let action = this.controller.view.changeInteractionWrapper(null, nodes[i], 'neighborSelect');
-          this.controller.model.provenance.applyAction(action);
+          action.applyAction();
         } else {
           this.clickFunction(d, i, nodes);
         }
@@ -568,7 +568,7 @@ class View {
       //let scale = d3.scaleLinear().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
       //let otherColors = ['#064B6E', '#4F0664', '#000000']
 
-      let scale = d3.scaleSqrt().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]);
+      let scale = d3.scaleSqrt().domain(extent).range(["white", this.controller.configuration.attributeScales.edge.type.range[typeIndex]]);
 
       scale.clamp(true);
       // store scales
@@ -682,9 +682,9 @@ class View {
    * @return        [description]
    */
   changeInteractionWrapper(nodeID, node, interactionType) {
-    return {
-      label: interactionType,
-      action: (nodeID) => {
+    return this.controller.model.provenance.addAction(
+      interactionType,
+      () => {
         const currentState = this.controller.model.app.currentState();
         currentState.selections.previousMouseovers = this.mouseoverEvents;
         this.mouseoverEvents.length = 0;
@@ -731,9 +731,8 @@ class View {
         }
         this.changeInteraction(currentState, nodeID, interactionName, interactedElement);
         return currentState;
-      },
-      args: [nodeID]
-    }
+      }
+    )
   }
 
   /**
@@ -1217,15 +1216,12 @@ class View {
 
   generateSortAction(sortKey) {
 
-    return {
-      label: 'sort',
-      action: (sortKey) => {
+    return this.controller.model.provenance.addAction(
+      'sort',
+      (currentState) => {
+
         this.orderType = sortKey;
         this.controller.configuration.adjMatrix.sortKey = sortKey;
-
-
-
-        const currentState = this.controller.model.app.currentState();
 
         //add time stamp to the state graph
         currentState.time = Date.now();
@@ -1239,9 +1235,8 @@ class View {
         }
 
         return currentState;
-      },
-      args: [sortKey]
-    }
+      }
+    )
   }
   /**
    * [sort description]
@@ -1760,7 +1755,7 @@ class View {
     columnHeaderGroups.on('click', (d) => {
         if (d !== 'selected') {
           let action = this.generateSortAction(d);
-          this.controller.model.provenance.applyAction(action);
+          action.applyAction();
           pushProvenance(this.controller.model.app.currentState())
           //this.sort(d);
         }
@@ -1854,7 +1849,7 @@ class View {
         .attr('transform', 'translate(' + (-this.margins.left) + ',' + (initalY) + ')')
       button.attr('cursor', 'pointer').on('click', () => {
         let action = this.generateSortAction(sortNames[i]);
-        this.controller.model.provenance.applyAction(action);
+        action.applyAction();
         pushProvenance(this.controller.model.app.currentState())
         //this.sort();
       })
@@ -1865,7 +1860,7 @@ class View {
         d3.select(nodes[i]).select('rect').attr('fill', '#fafafa')
       })
       button.append('text').attr('x', 27).attr('y', 11.5).attr('font-size', 11).text(text[i]);
-      let path = button.datum([sortNames[i]);
+      let path = button.datum([sortNames[i]]);
       let realPath = path
         .append('path').attr('class', 'sortIcon').attr('d', (d) => {
           return this.controller.model.icons[iconNames[i]].d;

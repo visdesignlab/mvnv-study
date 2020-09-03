@@ -122,7 +122,7 @@ var Model = /** @class */ (function () {
     Model.prototype.getApplicationState = function () {
         var _this = this;
         return {
-            currentState: function () { return _this.provenance.graph().current.state; }
+            currentState: function () { return _this.provenance.current().getState(); }
         };
     };
     /**
@@ -153,7 +153,7 @@ var Model = /** @class */ (function () {
                 previousMouseovers: []
             }
         };
-        var provenance = ProvenanceLibrary.initProvenance(initialState);
+        var provenance = Trrack.initProvenance(initialState, false);
         this.provenance = provenance;
         var app = this.getApplicationState();
         this.app = app;
@@ -267,18 +267,29 @@ var Model = /** @class */ (function () {
             var sortObserver = function (state) {
                 window.controller.view.sort(state.sortKey);
             };
-            provenance.addObserver("selections.attrRow", updateHighlights);
-            provenance.addObserver("selections.rowLabel", updateHighlights);
-            provenance.addObserver("selections.colLabel", updateHighlights);
-            provenance.addObserver("selections.cellcol", updateHighlights);
-            provenance.addObserver("selections.cellrow", updateHighlights);
-            provenance.addObserver("selections.neighborSelect", updateHighlights);
-            provenance.addObserver("selections.cellcol", updateCellClicks);
-            provenance.addObserver("selections.search", updateHighlights);
-            provenance.addObserver("selections.search", updateSearchCells);
-            provenance.addObserver("selections.answerBox", updateHighlights);
-            provenance.addObserver("selections.answerBox", updateAnswerBox);
-            provenance.addObserver("sortKey", sortObserver);
+            provenance.addObserver(["selections", "attrRow"], updateHighlights);
+            provenance.addObserver(["selections", "rowLabel"], updateHighlights);
+            provenance.addObserver(["selections", "colLabel"], updateHighlights);
+            provenance.addObserver(["selections", "cellcol"], updateHighlights);
+            provenance.addObserver(["selections", "cellrow"], updateHighlights);
+            provenance.addObserver(["selections", "neighborSelect"], updateHighlights);
+            provenance.addObserver(["selections", "cellcol"], updateCellClicks);
+            provenance.addObserver(["selections", "search"], updateHighlights);
+            provenance.addObserver(["selections", "search"], updateSearchCells);
+            provenance.addObserver(["selections", "answerBox"], updateHighlights);
+            provenance.addObserver(["selections", "answerBox"], updateAnswerBox);
+            provenance.addObserver(["sortKey"], sortObserver);
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("taskID") && urlParams.get("participantID")) {
+                readFire.connect();
+                var prom = readFire.readTask(urlParams.get("participantID"), urlParams.get("taskID"));
+                prom.then(function (graph) {
+                    provenance.importProvenanceGraph(JSON.stringify(graph));
+                    if (window.location.hash.length > 0) {
+                        provenance.goToNode(window.location.hash.substr(1));
+                    }
+                });
+            }
         }
         setUpObservers();
         return [app, provenance];

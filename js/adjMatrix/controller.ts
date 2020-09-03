@@ -151,9 +151,9 @@ class Controller {
   private clickedCells: any;
   clear() {
 
-      let action = {
-        label: 'clear',
-        action: () => {
+      let action = this.model.provenance.addAction(
+        'clear',
+        () => {
           const currentState = this.model.app.currentState();
           //add time stamp to the state graph
           currentState.time = Date.now();
@@ -170,13 +170,10 @@ class Controller {
             previousMouseovers: []
           }
           return currentState;
-        },
-        args: []
-      }
-      this.model.provenance.applyAction(action);
+        }
+      )
+      action.applyAction();
       pushProvenance(this.model.app.currentState())
-
-
   }
 
 

@@ -802,8 +802,6 @@ function updateVis() {
     s => (scales[s].fill = scaleColors[scales[s].domainKey])
   );
 
-  //Drawing Graph
-
     //Draw Links
     let link = d3
       .select(".links")

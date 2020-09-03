@@ -155,7 +155,7 @@ class Model {
    */
   getApplicationState() {
     return {
-      currentState: () => this.provenance.graph().current.state;
+      currentState: () => this.provenance.current().getState();
     };
   }
 
@@ -188,7 +188,7 @@ class Model {
       }
     };
 
-    const provenance = ProvenanceLibrary.initProvenance(initialState);
+    const provenance = Trrack.initProvenance(initialState, false);
 
     this.provenance = provenance;
 
@@ -323,28 +323,42 @@ class Model {
       let sortObserver = (state)=>{
         window.controller.view.sort(state.sortKey);
       }
-      provenance.addObserver("selections.attrRow", updateHighlights)
-      provenance.addObserver("selections.rowLabel", updateHighlights)
-      provenance.addObserver("selections.colLabel", updateHighlights)
-      provenance.addObserver("selections.cellcol", updateHighlights)
-      provenance.addObserver("selections.cellrow", updateHighlights)
-      provenance.addObserver("selections.neighborSelect", updateHighlights)
-      provenance.addObserver("selections.cellcol", updateCellClicks)
+      provenance.addObserver(["selections","attrRow"], updateHighlights)
+      provenance.addObserver(["selections", "rowLabel"], updateHighlights)
+      provenance.addObserver(["selections", "colLabel"], updateHighlights)
+      provenance.addObserver(["selections", "cellcol"], updateHighlights)
+      provenance.addObserver(["selections", "cellrow"], updateHighlights)
+      provenance.addObserver(["selections", "neighborSelect"], updateHighlights)
+      provenance.addObserver(["selections", "cellcol"], updateCellClicks)
 
-      provenance.addObserver("selections.search", updateHighlights)
-      provenance.addObserver("selections.search", updateSearchCells)
+      provenance.addObserver(["selections", "search"], updateHighlights)
+      provenance.addObserver(["selections", "search"], updateSearchCells)
 
-      provenance.addObserver("selections.answerBox", updateHighlights)
-      provenance.addObserver("selections.answerBox", updateAnswerBox)
-      provenance.addObserver("sortKey", sortObserver)
+      provenance.addObserver(["selections", "answerBox"], updateHighlights)
+      provenance.addObserver(["selections", "answerBox"], updateAnswerBox)
+      provenance.addObserver(["sortKey"], sortObserver)
 
+      const urlParams = new URLSearchParams(window.location.search);
+
+      if(urlParams.get("taskID") && urlParams.get("participantID"))
+      {
+        readFire.connect();
+        let prom = readFire.readTask(urlParams.get("participantID"), urlParams.get("taskID"));
+
+        prom.then((graph) => {
+          provenance.importProvenanceGraph(JSON.stringify(graph));
+
+          if(window.location.hash.length > 0)
+          {
+            provenance.goToNode(window.location.hash.substr(1))
+          }
+        });
+      }
     }
+
     setUpObservers();
 
-
     return [app, provenance];
-
-
   }
 
 
