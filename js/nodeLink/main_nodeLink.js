@@ -461,8 +461,6 @@ function loadTask(task) {
   setUpObserver("selected", highlightSelectedNodes);
   setUpObserver("hardSelected", highlightHardSelectedNodes);
   setUpObserver("nodePos", posChange);
-  provenance.addGlobalObserver(() => {
-  })
 
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -474,10 +472,9 @@ function loadTask(task) {
     prom.then((graph) => {
       provenance.importProvenanceGraph(JSON.stringify(graph));
 
-      if(window.location.hash.length > 0)
-      {
-        provenance.goToNode(window.location.hash.substr(1))
-      }
+      window.document.addEventListener('nodeChange', (e) => {
+        provenance.goToNode(e.nodeID);
+      }, false)
     });
   }
 
