@@ -472,9 +472,12 @@ function loadTask(task) {
     prom.then((graph) => {
       provenance.importProvenanceGraph(JSON.stringify(graph));
 
-      window.document.addEventListener('nodeChange', (e) => {
-        provenance.goToNode(e.nodeID);
-      }, false)
+      window.onmessage = function(e){
+        console.log("message recieved!");
+          if (e.data == 'hello') {
+              alert('It works!');
+          }
+      };
     });
   }
 
