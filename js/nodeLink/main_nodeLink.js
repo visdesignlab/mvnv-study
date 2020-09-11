@@ -474,9 +474,12 @@ function loadTask(task) {
 
       window.onmessage = function(e){
         console.log("message recieved!", e.data);
-          if (provenance.graph().nodes[e.data]) {
-              provenance.goToNode(e.data);
-          }
+        console.log(provenance.graph());
+        if (provenance.graph().nodes[e.data]) {
+            provenance.goToNode(e.data);
+        }
+        console.log(provenance.graph());
+
       };
     });
   }
