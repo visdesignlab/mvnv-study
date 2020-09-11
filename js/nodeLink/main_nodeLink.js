@@ -473,9 +473,9 @@ function loadTask(task) {
       provenance.importProvenanceGraph(JSON.stringify(graph));
 
       window.onmessage = function(e){
-        console.log("message recieved!");
-          if (e.data == 'hello') {
-              alert('It works!');
+        console.log("message recieved!", e.data);
+          if (provenance.graph().nodes[e.data]) {
+              provenance.goToNode(e.data);
           }
       };
     });
