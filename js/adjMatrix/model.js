@@ -285,6 +285,7 @@ var Model = /** @class */ (function () {
                 var prom = readFire.readTask(urlParams.get("participantID"), urlParams.get("taskID"));
                 prom.then(function (graph) {
                     provenance.importProvenanceGraph(JSON.stringify(graph));
+                    provenance.goToNode(provenance.graph().nodes[provenance.graph().root].children[0]);
                     window.onmessage = function (e) {
                         console.log("message recieved!", e.data);
                         console.log(provenance.graph());
