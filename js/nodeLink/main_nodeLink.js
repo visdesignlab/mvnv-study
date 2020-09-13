@@ -472,6 +472,8 @@ function loadTask(task) {
     prom.then((graph) => {
       provenance.importProvenanceGraph(JSON.stringify(graph));
 
+      provenance.goToNode(provenance.graph().nodes[provenance.graph().root].children(0))
+
       window.onmessage = function(e){
         console.log("message recieved!", e.data);
         console.log(provenance.graph());
