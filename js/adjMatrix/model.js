@@ -285,9 +285,14 @@ var Model = /** @class */ (function () {
                 var prom = readFire.readTask(urlParams.get("participantID"), urlParams.get("taskID"));
                 prom.then(function (graph) {
                     provenance.importProvenanceGraph(JSON.stringify(graph));
-                    if (window.location.hash.length > 0) {
-                        provenance.goToNode(window.location.hash.substr(1));
-                    }
+                    window.onmessage = function (e) {
+                        console.log("message recieved!", e.data);
+                        console.log(provenance.graph());
+                        if (provenance.graph().nodes[e.data]) {
+                            provenance.goToNode(e.data);
+                        }
+                        console.log(provenance.graph());
+                    };
                 });
             }
         }
